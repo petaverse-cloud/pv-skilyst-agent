@@ -1,0 +1,28 @@
+{
+    "ok": true,
+    "data": {
+        "session_id": "20260923-225025-b654b5",
+        "skill": null,
+        "stop_reason": "completed",
+        "answer": "I plan and produce Skilyst/Beehive audio/video shots by reading the relevant skill (embed-video, lipsync-audio-refs, prompt-craft, video-15s, doctor), following its method exactly, and handing back the platform's artifact URL \u2014 though right now no skill is active, so I can only read and discuss skills until you launch a run with `skilyst run <skill-id>`.",
+        "model": "deepseek/deepseek-v4.1-flash",
+        "turns": 1,
+        "wall_clock_s": 3.1,
+        "usage": {
+            "prompt_tokens": 1437,
+            "completion_tokens": 151,
+            "total_tokens": 1588,
+            "calls": 1,
+            "models_used": [
+                "deepseek/deepseek-v4.1-flash"
+            ]
+        },
+        "artifacts": [],
+        "tool_calls": [],
+        "preflight": null,
+        "error": null,
+        "ok": true,
+        "dry_run": true,
+        "notes": []
+    }
+}

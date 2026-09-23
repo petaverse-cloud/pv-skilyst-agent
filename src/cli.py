@@ -17,6 +17,9 @@ Runtime commands (A1: session + loop + platform tools):
   sessions                   list local sessions
   doctor [skill-id]          integrity + node pre-flight (acceptance line 2/3 precondition)
 
+Desktop shell (A2):
+  serve                      loopback HTTP control plane the Tauri shell drives (see src/serve.py)
+
 Platform diagnostics (acceptance line 3):
   authz-probe                what a scope-restricted key actually gets, client-side and server-side
   job --prompt …             direct 15s video submission (bypasses the loop; used for line-2 reruns)
@@ -31,15 +34,17 @@ import sys
 import time
 from pathlib import Path
 
-from agent import AgentLoop, LoopConfig, PromptContext, build_registry
+from agent import open_run
+from agent.runner import gated_client, load_skill, skill_store
 from beehive import (DEFAULT_SCOPE, DENIED_PREFIXES, BeehiveClient, BeehiveError, ScopeRefusal,
-                     client_for, client_from_bearer, job_handle, verify_artifact)
+                     job_handle, verify_artifact)
 from config import ConfigError, RuntimeConfig, resolve
-from llm import LLMError, ModelRouter
+from llm import LLMError
 from sandbox import (OfflineError, PermissionGate, SandboxViolation, refine_inventory,
                      resolve as resolve_ref)
+from serve import ServeOptions, serve
 from session import SessionStore
-from skills import SkillPackage, SkillStore, SkillValidationError, content_digest, load_package
+from skills import SkillStore, SkillValidationError, content_digest, load_package
 from skills.store import inventory_report, preflight_nodes
 
 EXIT_OK = 0
@@ -52,6 +57,11 @@ def emit(payload, stream=sys.stdout) -> None:
     print(json.dumps(payload, indent=2, ensure_ascii=False, default=str), file=stream)
 
 
+def emit_line(payload) -> None:
+    """One compact JSON object on one line -- the contract for machine readers."""
+    print(json.dumps(payload, ensure_ascii=False, default=str), file=sys.stdout, flush=True)
+
+
 def note(message: str) -> None:
     print(message, file=sys.stderr)
 
@@ -59,43 +69,27 @@ def note(message: str) -> None:
 # ---------------------------------------------------------------------------
 # shared plumbing
 # ---------------------------------------------------------------------------
+def resolve_kwargs(args) -> dict:
+    """The global configuration flags, in the shape `config.resolve` takes them.
+
+    Shared with `serve`, which re-resolves at the strictness each route needs.
+    """
+    return {"env_file": getattr(args, "env_file", None), "store_dir": getattr(args, "store", None),
+            "workspace_dir": getattr(args, "workspace", None),
+            "session_dir": getattr(args, "sessions", None),
+            "llm_config": getattr(args, "llm_config", None), "model": getattr(args, "model", None)}
+
+
 def runtime(args, *, require_llm: bool | None = None,
             require_beehive: bool | None = None) -> RuntimeConfig:
-    return resolve(env_file=getattr(args, "env_file", None),
-                   store_dir=getattr(args, "store", None),
-                   workspace_dir=getattr(args, "workspace", None),
-                   session_dir=getattr(args, "sessions", None),
-                   llm_config=getattr(args, "llm_config", None),
-                   model=getattr(args, "model", None),
+    return resolve(**resolve_kwargs(args),
                    require_llm=bool(getattr(args, "needs_llm", True)) if require_llm is None else require_llm,
                    require_beehive=(bool(getattr(args, "needs_beehive", True))
                                     if require_beehive is None else require_beehive))
 
 
 def store_for(cfg: RuntimeConfig, verify: bool = True) -> SkillStore:
-    return SkillStore(cfg.store_dir, verify=verify)
-
-
-def gated_client(cfg: RuntimeConfig, bypass: bool = False) -> BeehiveClient:
-    """The only way a skill-facing component reaches the platform."""
-    if cfg.beehive.has_api_key:
-        client = client_for(cfg.beehive.access_key, cfg.beehive.secret_key, cfg.beehive.user,
-                            cfg.beehive.base_url)
-        client.bypass_scope = bypass
-        return client
-    if cfg.beehive.has_password:
-        bearer = BeehiveClient(cfg.beehive.base_url).login(cfg.beehive.user, cfg.beehive.password)
-        client = client_from_bearer(cfg.beehive.base_url, bearer, cfg.beehive.user)
-        client.bypass_scope = bypass
-        return client
-    raise ConfigError("no usable Beehive credential (need AK/SK or user/password)")
-
-
-def load_skill(store: SkillStore, skill_id: str) -> SkillPackage:
-    try:
-        return store.get(skill_id)
-    except KeyError as exc:
-        raise SkillValidationError(str(exc)) from exc
+    return skill_store(cfg, verify=verify)
 
 
 # ---------------------------------------------------------------------------
@@ -197,68 +191,30 @@ def cmd_update_plan(args) -> int:
 # runtime commands (A1)
 # ---------------------------------------------------------------------------
 def _agent(args, cfg: RuntimeConfig, skill_id: str | None, session_title: str):
-    store = store_for(cfg)
-    skills, broken = store.list_partial()
-    for row in broken:
-        note(f"integrity[{row['skill_id']}]: {row['error']}")
-    active = load_skill(store, skill_id) if skill_id else None
-    if active is not None and active.skill_id not in {p.skill_id for p in skills}:
-        raise SkillValidationError(f"{active.skill_id} is not installed in {cfg.store_dir}")
-    gate = PermissionGate(active.dir, active.permission, workspace=cfg.workspace_dir) if active else None
-    client = None
-    preflight = None
-    if active is not None and active.requires_nodes:
-        client = gated_client(cfg)
-        preflight = preflight_nodes(active, client,
-                                    allow_fallback=bool(getattr(args, "allow_fallback", False)))
-    cfg.workspace_dir.mkdir(parents=True, exist_ok=True)
-    sessions = SessionStore(cfg.session_dir)
-    if getattr(args, "session", None):
-        session = sessions.open(args.session)
-    else:
-        session = sessions.create(title=session_title, model=cfg.llm.model,
-                                  workspace=str(cfg.workspace_dir),
-                                  skills=[active.skill_id] if active else [])
-    registry = build_registry(store, client, active, gate, cfg.workspace_dir,
-                              dry_run=getattr(args, "dry_run", False), on_event=note,
-                              max_jobs=getattr(args, "max_jobs", 1))
-    prompt_ctx = PromptContext(skills=skills, active_skill=active, workspace=str(cfg.workspace_dir),
-                               model=cfg.llm.model, platform=cfg.beehive.base_url)
-    loop = AgentLoop(ModelRouter(cfg.llm), registry, session, prompt_ctx,
-                     LoopConfig(max_turns=args.max_turns, stream=not args.no_stream),
-                     on_event=note, on_delta=(lambda text: print(text, end="", file=sys.stderr, flush=True))
-                     if not args.no_stream else None)
-    return loop, session, active, preflight
-
-
-def _run_summary(result, session, active, preflight) -> dict:
-    return {"session_id": session.session_id, "skill": active.skill_id if active else None,
-            "stop_reason": result.stop_reason, "answer": result.answer, "model": result.model,
-            "turns": result.turns, "wall_clock_s": result.wall_clock_s, "usage": result.usage,
-            "artifacts": result.artifact_urls(),
-            "tool_calls": [{"tool": c.name, "arguments": c.arguments, "result": c.result, "error": c.error,
-                            "duration_s": c.duration_s} for c in result.tool_calls],
-            "preflight": None if preflight is None else {
-                "registry_available": preflight.registry_available,
-                "problems": [{"node_id": p.node_id, "severity": p.severity, "detail": p.detail}
-                             for p in preflight.problems]},
-            "error": result.error or None}
+    """Build the run for one turn through the shared runner (same path `serve` uses)."""
+    return open_run(cfg, skill_id=skill_id, session_id=getattr(args, "session", None),
+                    title=session_title, dry_run=bool(getattr(args, "dry_run", False)),
+                    max_turns=args.max_turns, stream=not args.no_stream,
+                    allow_fallback=bool(getattr(args, "allow_fallback", False)),
+                    max_jobs=getattr(args, "max_jobs", 1), on_event=note,
+                    on_delta=(lambda text: print(text, end="", file=sys.stderr, flush=True))
+                    if not args.no_stream else None)
 
 
 def cmd_run(args) -> int:
     cfg = runtime(args)
-    loop, session, active, preflight = _agent(args, cfg, args.skill_id, args.request[:60])
-    if preflight is not None and not preflight.runnable:
+    ctx = _agent(args, cfg, args.skill_id, args.request[:60])
+    if ctx.preflight is not None and not ctx.preflight.runnable:
         emit({"refused": "node pre-flight failed -- the skill's required nodes are not runnable here",
-              "skill": active.skill_id,
+              "skill": ctx.active.skill_id,
               "problems": [{"node_id": p.node_id, "severity": p.severity, "detail": p.detail}
-                           for p in preflight.problems]}, stream=sys.stderr)
+                           for p in ctx.preflight.problems]}, stream=sys.stderr)
         return EXIT_REFUSED
-    if preflight is not None:
-        for problem in preflight.problems:
+    if ctx.preflight is not None:
+        for problem in ctx.preflight.problems:
             note(f"preflight[{problem.severity}] {problem.node_id}: {problem.detail}")
-    result = loop.run(args.request)
-    emit(_run_summary(result, session, active, preflight))
+    result = ctx.loop.run(args.request)
+    emit(ctx.result_payload(result))
     if result.stop_reason == "llm_error":
         return EXIT_INCOMPLETE
     if result.stop_reason != "completed":
@@ -269,12 +225,13 @@ def cmd_run(args) -> int:
 def cmd_chat(args) -> int:
     cfg = runtime(args)
     if args.message:
-        loop, session, active, preflight = _agent(args, cfg, args.skill, args.message[:60])
-        result = loop.run(args.message)
-        emit(_run_summary(result, session, active, preflight))
+        ctx = _agent(args, cfg, args.skill, args.message[:60])
+        result = ctx.loop.run(args.message)
+        emit(ctx.result_payload(result))
         return EXIT_OK if result.ok else EXIT_INCOMPLETE
 
-    loop, session, active, preflight = _agent(args, cfg, args.skill, "interactive session")
+    ctx = _agent(args, cfg, args.skill, "interactive session")
+    session, active, loop = ctx.session, ctx.active, ctx.loop
     note(f"session {session.session_id} | skill {active.skill_id if active else 'none'} | "
          f"model {cfg.llm.model} | tools {', '.join(loop.tools.names)}")
     note("commands: /skills /tools /session /exit")
@@ -304,6 +261,16 @@ def cmd_chat(args) -> int:
         note(f"[{result.stop_reason} turns={result.turns} tools={len(result.tool_calls)} "
              f"{result.wall_clock_s}s]")
     return EXIT_OK
+
+
+def cmd_serve(args) -> int:
+    """Loopback control plane for the desktop shell (see src/serve.py)."""
+    cfg = runtime(args, require_llm=False, require_beehive=False)
+    options = ServeOptions(host=args.host, port=args.port, token=args.token,
+                           token_file=args.token_file, skill=args.skill, dry_run=args.dry_run,
+                           max_turns=args.max_turns, max_jobs=args.max_jobs,
+                           allow_fallback=args.allow_fallback)
+    return serve(cfg, options, resolve_kwargs=resolve_kwargs(args), on_ready=emit_line, note=note)
 
 
 def cmd_sessions(args) -> int:
@@ -447,6 +414,19 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(func=cmd_chat)
 
     p = sub.add_parser("sessions"); p.set_defaults(func=cmd_sessions, needs_llm=False, needs_beehive=False)
+    p = sub.add_parser("serve")
+    p.add_argument("--host", default="127.0.0.1")
+    p.add_argument("--port", type=int, default=8765, help="0 picks a free port (the ready line reports it)")
+    p.add_argument("--token", default="", help="pin the bearer token (default: generated per process)")
+    p.add_argument("--token-file", default=None, help="also write the token here (mode 0600)")
+    p.add_argument("--skill", default=None, help="activate a skill for every session this server runs")
+    p.add_argument("--dry-run", dest="dry_run", action="store_true", default=True,
+                   help="refuse paid jobs (default)")
+    p.add_argument("--live", dest="dry_run", action="store_false",
+                   help="allow paid jobs -- an explicit operator decision")
+    p.add_argument("--max-turns", type=int, default=8); p.add_argument("--max-jobs", type=int, default=1)
+    p.add_argument("--allow-fallback", action="store_true")
+    p.set_defaults(func=cmd_serve, needs_llm=False, needs_beehive=False)
     p = sub.add_parser("doctor"); p.add_argument("skill_id", nargs="?")
     p.add_argument("--allow-fallback", action="store_true")
     p.set_defaults(func=cmd_doctor)

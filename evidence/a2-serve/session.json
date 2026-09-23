@@ -1,0 +1,76 @@
+{
+    "ok": true,
+    "data": {
+        "session_id": "20260923-225025-b654b5",
+        "meta": {
+            "session_id": "20260923-225025-b654b5",
+            "title": "In one sentence: what can you do?",
+            "created_at": 1790175025.665163,
+            "updated_at": 1790175028.8013508,
+            "model": "deepseek/deepseek-v4.1-flash",
+            "workspace": "/Users/wesley/.skilyst/workspace",
+            "skills": [],
+            "status": "open",
+            "message_count": 2,
+            "usage": {
+                "prompt_tokens": 1437,
+                "completion_tokens": 151,
+                "total_tokens": 1588,
+                "calls": 1,
+                "models_used": [
+                    "deepseek/deepseek-v4.1-flash"
+                ]
+            }
+        },
+        "messages": [
+            {
+                "seq": 0,
+                "ts": 1790175025.665483,
+                "role": "user",
+                "content": "In one sentence: what can you do?"
+            },
+            {
+                "seq": 1,
+                "ts": 1790175028.798784,
+                "role": "assistant",
+                "content": "I plan and produce Skilyst/Beehive audio/video shots by reading the relevant skill (embed-video, lipsync-audio-refs, prompt-craft, video-15s, doctor), following its method exactly, and handing back the platform's artifact URL \u2014 though right now no skill is active, so I can only read and discuss skills until you launch a run with `skilyst run <skill-id>`."
+            }
+        ],
+        "artifacts": [],
+        "trace": [
+            {
+                "ts": 1790175028.800844,
+                "kind": "llm_turn",
+                "turn": 0,
+                "model": "deepseek/deepseek-v4.1-flash",
+                "finish_reason": "stop",
+                "tool_calls": [],
+                "usage": {
+                    "prompt_tokens": 1437,
+                    "completion_tokens": 151,
+                    "total_tokens": 1588,
+                    "prompt_tokens_details": {
+                        "audio_tokens": 0,
+                        "cached_tokens": 0,
+                        "cache_write_tokens": 0,
+                        "cache_creation_input_tokens": 0,
+                        "cache_read_input_tokens": 0,
+                        "text_tokens": 0,
+                        "image_tokens": 0,
+                        "video_tokens": 0
+                    },
+                    "completion_tokens_details": {
+                        "audio_tokens": 0,
+                        "reasoning_tokens": 61,
+                        "accepted_prediction_tokens": 0,
+                        "rejected_prediction_tokens": 0,
+                        "text_tokens": 0,
+                        "image_tokens": 0,
+                        "video_tokens": 0
+                    }
+                }
+            }
+        ],
+        "path": "/Users/wesley/.skilyst/sessions/20260923-225025-b654b5"
+    }
+}

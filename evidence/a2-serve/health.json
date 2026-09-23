@@ -1,0 +1,22 @@
+{
+    "ok": true,
+    "data": {
+        "ok": true,
+        "api_version": 1,
+        "pid": 17116,
+        "started_at": 1790175025.43616,
+        "uptime_s": 0.1,
+        "host": "127.0.0.1",
+        "port": 62461,
+        "dry_run": true,
+        "skill": null,
+        "max_turns": 8,
+        "max_jobs": 1,
+        "paths": {
+            "store": "/Users/wesley/.skilyst/store",
+            "workspace": "/Users/wesley/.skilyst/workspace",
+            "sessions": "/Users/wesley/.skilyst/sessions"
+        },
+        "env_file": "/Users/wesley/.skilyst/env"
+    }
+}
