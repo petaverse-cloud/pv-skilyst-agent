@@ -1,0 +1,65 @@
+[
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/users",
+    "client_scope_gate": "refused client-side (blocked, exit 4)",
+    "server_with_restricted_key": 403,
+    "anonymous": "refused client-side"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/users",
+    "client_scope_gate": "refused client-side (blocked, exit 4)",
+    "server_with_restricted_key": 403,
+    "anonymous": "refused client-side"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/nodes/generate:drawnow",
+    "client_scope_gate": "refused client-side (blocked, exit 4)",
+    "server_with_restricted_key": 403,
+    "anonymous": "refused client-side"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/billing/nodes/generate:drawnow/pricing",
+    "client_scope_gate": "refused client-side (blocked, exit 4)",
+    "server_with_restricted_key": 403,
+    "anonymous": "refused client-side"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/billing/wallet/213508887911264/grant",
+    "client_scope_gate": "refused client-side (blocked, exit 4)",
+    "server_with_restricted_key": 403,
+    "anonymous": "refused client-side"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/billing/wallet",
+    "client_scope_gate": "refused client-side (blocked, exit 4)",
+    "server_with_restricted_key": 200,
+    "anonymous": "refused client-side"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/billing/history",
+    "client_scope_gate": "refused client-side (blocked, exit 4)",
+    "server_with_restricted_key": 200,
+    "anonymous": "refused client-side"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/jobs",
+    "client_scope_gate": 200,
+    "server_with_restricted_key": 200,
+    "anonymous": 401
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/assets",
+    "client_scope_gate": 200,
+    "server_with_restricted_key": 200,
+    "anonymous": 401
+  }
+]

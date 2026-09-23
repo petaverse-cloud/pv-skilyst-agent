@@ -1,0 +1,81 @@
+{
+  "denied_prefixes": [
+    "/api/v1/admin/",
+    "/api/v1/billing/wallet",
+    "/api/v1/billing/nodes",
+    "/api/v1/billing/history",
+    "/api/v1/auth/api-keys"
+  ],
+  "probes": [
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/users",
+      "scoped_ak_sk": "refused client-side: GET /api/v1/admin/users refused client-side: path /api/v1/admin/ is outside every granted scope (billing/admin are never granted to a skill)",
+      "nonadmin_jwt": 403,
+      "anonymous": 401
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/users",
+      "scoped_ak_sk": "refused client-side: POST /api/v1/admin/users refused client-side: path /api/v1/admin/ is outside every granted scope (billing/admin are never granted to a skill)",
+      "nonadmin_jwt": 403,
+      "anonymous": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/nodes/generate:drawnow",
+      "scoped_ak_sk": "refused client-side: PUT /api/v1/nodes/generate:drawnow refused client-side: no scope rule grants PUT /api/v1/nodes/generate:drawnow",
+      "nonadmin_jwt": 403,
+      "anonymous": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/billing/nodes/generate:drawnow/pricing",
+      "scoped_ak_sk": "refused client-side: PUT /api/v1/billing/nodes/generate:drawnow/pricing refused client-side: path /api/v1/billing/nodes is outside every granted scope (billing/admin are never granted to a skill)",
+      "nonadmin_jwt": 403,
+      "anonymous": 401
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/billing/wallet/213508887911264/grant",
+      "scoped_ak_sk": "refused client-side: POST /api/v1/billing/wallet/213508887911264/grant refused client-side: path /api/v1/billing/wallet is outside every granted scope (billing/admin are never granted to a skill)",
+      "nonadmin_jwt": 403,
+      "anonymous": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/billing/wallet",
+      "scoped_ak_sk": "refused client-side: GET /api/v1/billing/wallet refused client-side: path /api/v1/billing/wallet is outside every granted scope (billing/admin are never granted to a skill)",
+      "nonadmin_jwt": 200,
+      "anonymous": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/billing/history",
+      "scoped_ak_sk": "refused client-side: GET /api/v1/billing/history refused client-side: path /api/v1/billing/history is outside every granted scope (billing/admin are never granted to a skill)",
+      "nonadmin_jwt": 200,
+      "anonymous": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "scoped_ak_sk": 200,
+      "nonadmin_jwt": 200,
+      "anonymous": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/assets",
+      "scoped_ak_sk": 200,
+      "nonadmin_jwt": 200,
+      "anonymous": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/nodes",
+      "scoped_ak_sk": 200,
+      "nonadmin_jwt": 200,
+      "anonymous": 401
+    }
+  ]
+}

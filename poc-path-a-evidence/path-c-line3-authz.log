@@ -1,0 +1,8 @@
+### Path C (fork runtime) line 3 — same tool layer, fork home
+--- gated (default):
+BLOCKED — SCOPE-REFUSAL GET /api/v1/billing/wallet: path is under the forbidden prefix '/api/v1/billing'; admin/billing surfaces are out of scope for every adapter tool (granted scopes: jobs:write, jobs:read, assets:read)
+no HTTP request was made (client-side refusal, layer 1)
+--- gate bypassed (server-side answer only):
+http_status: 200
+--- admin write, gate bypassed:
+"http_status": 403

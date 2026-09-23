@@ -1,0 +1,56 @@
+[
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/users",
+    "server_status": 403,
+    "body": "{\"code\":403,\"message\":\"Forbidden\",\"payload\":{\"error\":\"admin required\"}}"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/users",
+    "server_status": 403,
+    "body": "{\"code\":403,\"message\":\"Forbidden\",\"payload\":{\"error\":\"admin required\"}}"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/nodes/generate:drawnow",
+    "server_status": 403,
+    "body": "{\"code\":403,\"message\":\"Forbidden\",\"payload\":{\"error\":\"forbidden: requires admin role\"}}"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/billing/nodes/generate:drawnow/pricing",
+    "server_status": 403,
+    "body": "{\"code\":403,\"message\":\"Forbidden\",\"payload\":{\"error\":\"forbidden: requires admin role\"}}"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/billing/wallet/213508887911264/grant",
+    "server_status": 403,
+    "body": "{\"code\":403,\"message\":\"Forbidden\",\"payload\":{\"error\":\"forbidden: requires admin role\"}}"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/billing/wallet",
+    "server_status": 200,
+    "body": "{\"code\":200,\"message\":\"OK\",\"payload\":{\"balance\":10001928828,\"frozen_usd\":0,\"spendable\":10001928828,\"user_uid\":2135088879"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/billing/history",
+    "server_status": 200,
+    "body": "{\"code\":200,\"message\":\"OK\",\"payload\":{\"events\":[{\"event_id\":3380715333297147031,\"job_id\":\"job-1790151041106-02037f3a581c"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/jobs",
+    "server_status": 200,
+    "body": "{\"code\":200,\"message\":\"OK\",\"payload\":{\"jobs\":[{\"id\":\"job-1790151041106-02037f3a581c21f0\",\"workflow_id\":\"skilyst-poc\",\"us"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/assets",
+    "server_status": 200,
+    "body": "{\"code\":200,\"message\":\"OK\",\"payload\":{\"assets\":[{\"id\":\"as-job-1790151041106-02037f3a581c21f0-node-job-1790151041106-0203"
+  }
+]

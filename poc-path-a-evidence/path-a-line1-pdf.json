@@ -1,0 +1,44 @@
+{
+  "skill_id": "pdf",
+  "version": "0.0.0+community",
+  "degraded": true,
+  "digest": "sha256:6a01b6dc757b8856d7eba5e9985d8550783f946d7afdf86402ba324b93239fc0",
+  "in_package": [],
+  "remote": [],
+  "missing_references": [],
+  "permission": {
+    "egress": "none",
+    "filesystem": "skill-dir",
+    "exec": "none",
+    "secrets": false
+  },
+  "requires_nodes": [],
+  "spec_warnings": [],
+  "unknown_frontmatter_keys": [],
+  "root_files": [
+    "LICENSE.txt",
+    "SKILL.md",
+    "forms.md",
+    "reference.md"
+  ],
+  "prose_file_refs": [],
+  "install_hints": [
+    "pip install"
+  ],
+  "network_hints": [],
+  "scripts": [
+    "check_bounding_boxes.py",
+    "check_fillable_fields.py",
+    "convert_pdf_to_images.py",
+    "create_validation_image.py",
+    "extract_form_field_info.py",
+    "extract_form_structure.py",
+    "fill_fillable_fields.py",
+    "fill_pdf_form_with_annotations.py"
+  ],
+  "scripts_total": 8,
+  "network_scripts": [],
+  "remote_refs": [],
+  "egress_grant_needed": false,
+  "load_mode": "degraded (community skill, no manifest.json)"
+}

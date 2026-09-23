@@ -1,0 +1,5 @@
+{
+  "proxy_env_isolated": false,
+  "note": "direct fetch still succeeded (HTTP 200) -> dead-proxy env does not isolate this workstation",
+  "unresolvable_host": "LOUD FAILURE (OfflineError): remote reference https://cdnjs-does-not-exist.invalid/p5.min.js could not be fetched: _ssl.c:1011: The handshake operation timed out (no cached copy exists; the reference cannot be silently skipped)"
+}

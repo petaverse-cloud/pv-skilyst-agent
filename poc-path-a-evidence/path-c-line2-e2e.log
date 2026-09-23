@@ -1,0 +1,22 @@
+  ⚠ tirith security scanner enabled but not available — command scanning will use pattern matching only
+Done — one clip rendered and verified.
+
+Artifact URL (dest_video_url):
+https://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790152872020-7a8cbebd954e6fb1/node-job-1790152872020-7a8cbebd954e6fb1-0-1790153259726.mp4
+
+Job id: job-1790152872020-7a8cbebd954e6fb1 (provider minimax-h3, 15s, 768P, 9:16, status completed)
+
+What I did, per the skill:
+- Assembly followed the shot-intent-first order: intent = one person's stillness against an awakening city; single visual centre = the backlit figure (wide shot, nothing competing); key light motivated by the low sun behind the smog bank at an explicit 4:1 key-to-fill; exactly one movement, resolved to "static locked-off" so nothing steals the frame; prompt written camera-first.
+- Submitted once through the documented tool (`skilyst-job run`), which polled to completion in 35 polls (~6.5 min). I did not use the `--no-scope-gate` / raw-request escape hatches.
+- Tier stayed at the skill's cheapest acceptable render; no upgrade made or offered.
+
+Verification (not just the tool's self-report):
+- `verify-artifact` → HEAD 200, video/mp4, 912,156 bytes; ranged GET 206. fetchable: true.
+- Downloaded the file and probed it: h264, 768x1344 (true 9:16 vertical), 15.08 s, 362 frames.
+
+Local copy if you want to watch it without a network round-trip: /Users/wesley/t1-poc/path-c-fork/workspace/clip.mp4
+
+One note: the CLI prints the URL as `artifact_url` while the evidence JSON calls it `dest_video_url` — same URL. I patched that wording into the skill, since the hand-off section referenced only the latter.
+
+session_id: 20260923_164046_559de1

@@ -1,0 +1,18 @@
+{
+  "package": "/Users/wesley/t1-poc/fixtures/anthropics-skills/skills/algorithmic-art",
+  "egress_poisoned": "http_proxy=https_proxy=http://127.0.0.1:9",
+  "child_exit_code": 0,
+  "child_stdout": "{\n  \"step\": \"validate\",\n  \"package\": \"/Users/wesley/t1-poc/fixtures/anthropics-skills/skills/algorithmic-art\",\n  \"frontmatter_parsed\": true,\n  \"frontmatter_name\": \"algorithmic-art\",\n  \"install\": \"ok\",\n  \"mode\": \"degraded\",\n  \"preflight\": \"skipped\"\n}\n",
+  "child_stderr": "",
+  "child_result": {
+    "step": "validate",
+    "package": "/Users/wesley/t1-poc/fixtures/anthropics-skills/skills/algorithmic-art",
+    "frontmatter_parsed": true,
+    "frontmatter_name": "algorithmic-art",
+    "install": "ok",
+    "mode": "degraded",
+    "preflight": "skipped"
+  },
+  "outcome": "silent-skip",
+  "interpretation": "The adapter completed without egress: the package declares no node requirements (or the pre-flight was explicitly skipped), so nothing needed the network."
+}

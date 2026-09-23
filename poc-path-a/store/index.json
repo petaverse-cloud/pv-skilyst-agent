@@ -1,0 +1,11 @@
+{
+  "skilyst/video-15s": {
+    "channel": "official",
+    "degraded": false,
+    "digest": "sha256:13c23509771ef9e20e7e10af37ffe36007dc27b1ee73d9686832f95f5b46acb6",
+    "dir": "video-15s",
+    "origin": "official-bundle",
+    "policy": "auto",
+    "version": "1.0.0"
+  }
+}

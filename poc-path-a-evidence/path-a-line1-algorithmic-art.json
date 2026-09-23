@@ -1,0 +1,40 @@
+{
+  "skill_id": "algorithmic-art",
+  "version": "0.0.0+community",
+  "degraded": true,
+  "digest": "sha256:8c15717769d76330df4387b85402a3754d858b97749ae259d3365ea9ea394f89",
+  "in_package": [
+    "templates/generator_template.js",
+    "templates/viewer.html"
+  ],
+  "remote": [
+    "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"
+  ],
+  "missing_references": [],
+  "permission": {
+    "egress": "none",
+    "filesystem": "skill-dir",
+    "exec": "none",
+    "secrets": false
+  },
+  "requires_nodes": [],
+  "spec_warnings": [],
+  "unknown_frontmatter_keys": [],
+  "root_files": [
+    "LICENSE.txt",
+    "SKILL.md"
+  ],
+  "prose_file_refs": [],
+  "install_hints": [],
+  "network_hints": [
+    "https://"
+  ],
+  "scripts": [],
+  "scripts_total": 0,
+  "network_scripts": [],
+  "remote_refs": [
+    "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"
+  ],
+  "egress_grant_needed": true,
+  "load_mode": "degraded (community skill, no manifest.json)"
+}

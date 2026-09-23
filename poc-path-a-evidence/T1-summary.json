@@ -1,0 +1,83 @@
+{
+  "issue": "petaverse-cloud/pv-beehive-core#585 T1",
+  "date": "2026-09-23 (UTC+8)",
+  "account": "e2e-platform (uid 213508887911264, role=user) via restricted AK/SK",
+  "paths": {
+    "A_from_scratch": {
+      "code_dir": "~/t1-poc/path-a-skilyst",
+      "src_loc": 1264,
+      "test_loc": 177,
+      "tests": "19/19 OK",
+      "line1": {
+        "pdf": "PASS",
+        "seedance_20": "PASS (compat warnings: name!=dir)",
+        "offline": "in-package refs read from disk; remote refs refused by egress=none; unreachable remote = loud OfflineError"
+      },
+      "line2": {
+        "job_id": "job-1790151984612-fe97ee5c68ad65de",
+        "artifact": "https://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790151984612-fe97ee5c68ad65de/node-job-1790151984612-fe97ee5c68ad65de-0-1790152253895.mp4",
+        "wall_clock_s": 296.3,
+        "ffprobe": "h264 768x1344 24fps + aac, duration=15.084s, 3412224 bytes"
+      },
+      "line3": {
+        "admin_billing_write": 403,
+        "billing_read_wallet_history": 200,
+        "admin_read": 403,
+        "anonymous": 401,
+        "client_scope_gate": "refuses every billing/admin path before HTTP"
+      }
+    },
+    "B_adapter_on_hermes": {
+      "code_dir": "~/t1-poc/path-b-hermes-adapter",
+      "src_loc": 2457,
+      "bin_loc": 26,
+      "line1": {
+        "pdf": "PASS zero-mod (12 files identical)",
+        "seedance_20": "PASS zero-mod (308 files identical)",
+        "offline_probe": "outcome=silent-skip for pdf/seedance/algorithmic-art (probe does not fetch remote refs -> finding)"
+      },
+      "line2": {
+        "job_id": "job-1790152742408-171b39e52a993216",
+        "artifact": "https://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790152742408-171b39e52a993216/node-job-1790152742408-171b39e52a993216-0-1790152994700.mp4",
+        "render_s": 253,
+        "ffprobe": "h264 768x1344 + aac, duration=15.084s, 3142039 bytes"
+      },
+      "line3": {
+        "admin_billing_write": 403,
+        "billing_read_wallet_history": 200,
+        "anonymous": 401,
+        "client_scope_gate": "refused (exit 4)"
+      }
+    },
+    "C_full_fork": {
+      "fork_dir": "~/t1-poc/path-c-fork/skilyst-agent",
+      "size": "1.9G (no .git/venv)",
+      "fork_delta_loc": 23,
+      "upstream": {
+        "python_loc": 1306528,
+        "python_files": 6554,
+        "all_language_loc_approx": 2500000,
+        "commits_last_60d": 18781,
+        "files_changed_last_60d": 13171,
+        "tags": 18,
+        "ci_workflows": 35,
+        "core_deps": 4,
+        "optional_dep_groups": 44
+      },
+      "line1": {
+        "seedance_20": "PASS via fork runtime: frontmatter name=seedance-20 version=6.7.0 + reference file heading '# Director's Read Contract' read from disk"
+      },
+      "line2": {
+        "job_id": "job-1790152872020-7a8cbebd954e6fb1",
+        "local_copy": "~/t1-poc/path-c-fork/workspace/clip.mp4",
+        "ffprobe": "duration=15.084s",
+        "bytes": 912156
+      },
+      "line3": {
+        "admin_billing_write": 403,
+        "billing_read_wallet_history": 200,
+        "client_scope_gate": "refused"
+      }
+    }
+  }
+}

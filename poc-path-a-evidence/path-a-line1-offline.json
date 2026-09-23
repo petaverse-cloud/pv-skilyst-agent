@@ -1,0 +1,48 @@
+{
+  "network_state": "http_proxy=http://127.0.0.1:9 (dead) for every subprocess",
+  "cases": [
+    {
+      "case": "in-package ref (pdf/reference.md) offline",
+      "outcome": "OK",
+      "detail": "read 16692 bytes from disk (no network needed)"
+    },
+    {
+      "case": "in-package ref (seedance references/directing-engine.md) offline",
+      "outcome": "OK",
+      "detail": "read 22925 bytes from disk (no network needed)"
+    },
+    {
+      "case": "remote ref with permission.egress=none (algorithmic-art p5 CDN)",
+      "outcome": "OK",
+      "detail": "refused before fetch: 'cdnjs.cloudflare.com' not in permission.egress"
+    },
+    {
+      "case": "remote ref with egress granted but network dead",
+      "outcome": "OK",
+      "detail": "fetched HTTP 200 (? bytes)"
+    },
+    {
+      "case": "run a skill script while permission.exec=none",
+      "outcome": "OK",
+      "detail": "LOUD REFUSAL: exec refused: skill declares permission.exec = none"
+    },
+    {
+      "case": "run seedance scripts/install_doctor.py with scripts-whitelist granted + dead network",
+      "outcome": "OK",
+      "detail": {
+        "exit_code": 1,
+        "stdout_tail": "Target: /Users/wesley/.codex/skills/seedance-20\nInstallation: missing\nVersion: installed unknown; source 6.7.0\nChecked 0 source-declared files; extra files were not scanned.\nRun the installer from the reviewed source checkout when ready.\n",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "case": "run anthropics pdf scripts/extract_form_field_info.py offline (no args)",
+      "outcome": "OK",
+      "detail": {
+        "exit_code": 1,
+        "stdout_tail": "",
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/Users/wesley/t1-poc/fixtures/anthropics-skills/skills/pdf/scripts/extract_form_field_info.py\", line 4, in <module>\n    from pypdf import PdfReader\nModuleNotFoundError: No module named 'pypdf'\n"
+      }
+    }
+  ]
+}

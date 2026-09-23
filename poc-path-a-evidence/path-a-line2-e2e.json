@@ -1,0 +1,38 @@
+{
+  "skill": "skilyst/video-15s",
+  "version": "1.0.0",
+  "answer": "Job completed on the first submission.\n\n**Artifact URL (verbatim):**\n`https://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790151984612-fe97ee5c68ad65de/node-job-1790151984612-fe97ee5c68ad65de-0-1790152253895.mp4`\n\n**Job id:** `job-1790151984612-fe97ee5c68ad65de` · status `completed` · 1 node · no error\n\n**Render tier used (exactly as the skill specifies, no silent upgrade):**\n- provider `minimax-h3`, `duration` 15, `resolution` 768P, `ratio` 9:16 — cheapest acceptable tier, ~$1.04.\n\n**What the shot carries:** close-up, one visual centre (the falling espresso stream), one motivated light source (rain-streaked window, key:fill ≈4:1 against a dim tungsten pendant), one camera move (slow dolly-in to extreme close-up). No second focal point, no second move, no on-screen text.",
+  "tool_calls": [
+    {
+      "tool": "beehive_submit_video",
+      "args": {
+        "prompt": "Slow dolly-in, camera locked at chest height, pushing from medium close-up to extreme close-up in one continuous move. Subject and action: a barista's hands — bare forearms, one hand steadying a small ceramic demitasse, the other resting easy on the portafilter handle — as two ribbons of dark espresso fall and braid into a single amber stream, pooling into a thick crema head; fine steam curls upward through the frame, drifting across the lens. Environment: a narrow neighbourhood cafe in Shanghai on a wet morning, rain-streaked window glass behind the bar, beaded condensation, blurred red lanterns and a soaked lane outside, a brass and dark-wood espresso machine, a few loose beans on the counter, no other people. Lighting and atmosphere: one motivated source — cool overcast morning daylight (~5600K) through the rain-streaked window on the left, key-to-fill ratio about 4:1 against dim warm interior fill from a small tungsten pendant above the bar; a rim of light catches the falling stream and the rising steam; humid, quiet, restrained, ordinary morning made exact. Style and technical: photorealistic, 35mm lens at T2.0, shallow depth of field with the espresso stream as the only sharp focal plane, subtle film grain, natural muted colour, no on-screen text or logos, composition holds a single visual centre — the falling espresso stream — for the full duration.",
+        "duration": 15,
+        "resolution": "768P",
+        "ratio": "9:16"
+      },
+      "result": {
+        "job_id": "job-1790151984612-fe97ee5c68ad65de",
+        "status": "completed",
+        "artifact_url": "https://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790151984612-fe97ee5c68ad65de/node-job-1790151984612-fe97ee5c68ad65de-0-1790152253895.mp4",
+        "error": null,
+        "node_count": 1
+      }
+    }
+  ],
+  "wall_clock_s": 296.3,
+  "llm_trace": [
+    {
+      "turn": 0,
+      "latency_s": 8.8,
+      "tool_calls": [
+        "beehive_submit_video"
+      ]
+    },
+    {
+      "turn": 1,
+      "latency_s": 3.8,
+      "tool_calls": []
+    }
+  ]
+}

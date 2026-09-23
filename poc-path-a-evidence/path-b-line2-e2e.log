@@ -1,0 +1,15 @@
+  ⚠ tirith security scanner enabled but not available — command scanning will use pattern matching only
+Done. Job completed and the artifact URL is live (HTTP 206, video/mp4).
+
+Artifact URL (dest_video_url):
+https://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790152742408-171b39e52a993216/node-job-1790152742408-171b39e52a993216-0-1790152994700.mp4
+
+Job id: job-1790152742408-171b39e52a993216
+Render tier: minimax-h3, duration=15, resolution=768P, ratio=9:16 (no silent upgrade). Cost actual 1,035,000 (units) ≈ $1.04. Watermark: none. Render time ~253s.
+
+Prompt used (five-part, camera first):
+"Slow lateral dolly right, tracking the bowl as it slides across the counter. A lone night-shift ramen cook in a dark apron slides a steaming bowl of ramen along a worn wooden counter, steam curling off the broth, his hands and lowered eyes the only part of him in focus. Rain-soaked Tokyo alley at night, a narrow six-seat ramen stall, wet asphalt and puddles beyond the counter, a red and cyan neon sign flickering across the alley. Neon key from camera-left at a 4:1 ratio against the warm practical lantern of the stall, rain glittering in the neon, steam glowing as it crosses the light. Cinematic, shallow depth of field, 9:16 vertical, 15 seconds."
+
+Supporting frames the platform returned: first-frame .jpg and last-frame .jpg in the same bucket prefix, if you want thumbnails. Full job evidence is at /Users/wesley/t1-poc/path-b-hermes-adapter/workspace/job.json.
+
+session_id: 20260923_163839_1a70cb
