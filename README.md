@@ -46,12 +46,13 @@ export SKILYST_ENV_FILE=~/.skilyst/env          # 0600, holds BEEHIVE_PLATFORM_*
 ./bin/skilyst run … --dry-run                   # same chain without submitting a paid job
 ./bin/skilyst chat --skill skilyst/video-15s    # conversation (REPL; --message for one-shot)
 ./bin/skilyst authz-probe --bypass-gate         # what a restricted key gets, client- and server-side
+./bin/skilyst serve --port 8765                 # localhost control plane for the desktop shell
 ```
 
 Layout: `src/skills` (loader/digest/store) · `src/manifest` (sidecar spec) · `src/beehive`
 (scope gate + API client) · `src/sandbox` (permission gate + resource resolution) ·
 `src/llm` (chat client + router) · `src/session` (transcript/trace/artifacts) ·
-`src/agent` (prompt/tools/loop) · `src/cli.py`.
+`src/agent` (prompt/tools/loop/runner) · `src/serve.py` (desktop control plane) · `src/cli.py`.
 
 Rules the loop enforces: tool availability is manifest-driven (no `permission.secrets`, no
 platform tools), the credential can never reach billing/admin (client-side scope gate plus a
@@ -59,9 +60,28 @@ per-run job budget), a missing required node is blocking unless `--allow-fallbac
 skills are digest-verified on every load, and a job's artifact URL is HEAD-verified before the
 runtime reports success. See `docs/adr/0001-runtime-layout.md`.
 
-Tests: `PYTHONPATH=src python3 -m unittest discover -s tests` (85 tests, offline, <1s).
+Tests: `PYTHONPATH=src python3 -m unittest discover -s tests` (117 tests, offline, <1s).
+
+## Desktop shell (A2 — Tauri v2 + React/Mantine)
+
+```bash
+cd desktop && npm install && npm run tauri:dev
+```
+
+The shell owns the runtime *process*: it spawns `skilyst serve` (the loopback control
+plane in `src/serve.py`), reads the one ready line that reports the port and the
+per-process token, and then the window speaks HTTP to that port — session list,
+transcript, streaming turns, and a settings page showing the resolved model routing and
+the credential/doctor status. Both entry points build a run through
+`agent.runner.open_run`, so the GUI cannot drift into being a second, weaker runtime.
+
+`skilyst serve` binds 127.0.0.1 only, requires the bearer token on every route (there is
+no unauthenticated endpoint), answers CORS preflight only for webview/dev origins, and
+runs **dry-run unless started with `--live`** — a stray click cannot submit a paid job.
+See `desktop/README.md` for packaging and the Apple signing chain.
 
 ## 状态
 
 M1 启动中（2026-09-23）。任务表：pv-beehive-core#585 §四。
 A1 phase-1（基线迁移 + agent loop 最小核心 + CLI）已交付——见 `docs/a1-verification.md`。
+A2 phase-1（Tauri 壳骨架 + `serve` 控制面 + CI）已交付——见 `docs/a2-verification.md`。
