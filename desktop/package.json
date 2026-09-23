@@ -1,0 +1,33 @@
+{
+  "name": "skilyst-agent-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "icons": "python3 scripts/make_icons.py"
+  },
+  "dependencies": {
+    "@mantine/core": "9.3.1",
+    "@mantine/hooks": "9.3.1",
+    "@mantine/notifications": "9.3.1",
+    "@tabler/icons-react": "3.44.0",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  },
+  "devDependencies": {
+    "@tauri-apps/api": "2.11.0",
+    "@tauri-apps/cli": "2.11.2",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.2",
+    "esbuild": "0.28.0",
+    "typescript": "6.0.3",
+    "vite": "8.0.16"
+  }
+}

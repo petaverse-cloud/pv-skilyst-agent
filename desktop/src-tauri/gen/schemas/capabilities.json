@@ -1,0 +1,1 @@
+{"default":{"identifier":"default","description":"Capability for the main window: the shell drives the local runtime over loopback HTTP with a per-process token, so it needs no filesystem or shell permissions of its own.","local":true,"windows":["main"],"permissions":["core:default"]}}

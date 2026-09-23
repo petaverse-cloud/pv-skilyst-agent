@@ -1,0 +1,9 @@
+app mounted; sessions in the sidebar before: 11
+runtime badge: DRY RUN · PORT 8899
+--- transcript (rendered) ---
+You Say hello in three words.
+Skilyst Hello there, friend.
+sessions in the sidebar after: 12
+error banners: 0
+page problems: none
+screenshot: ../evidence/a2-desktop/ui-window.png
