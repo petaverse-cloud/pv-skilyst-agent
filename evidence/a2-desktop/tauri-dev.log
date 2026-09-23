@@ -1,0 +1,25 @@
+
+> skilyst-agent-desktop@0.1.0 tauri
+> tauri dev
+
+     Running BeforeDevCommand (`npm run dev`)
+
+> skilyst-agent-desktop@0.1.0 dev
+> vite --host
+
+
+  VITE v8.0.16  ready in 188 ms
+
+  ➜  Local:   http://localhost:1420/
+  ➜  Network: http://192.168.1.166:1420/
+  ➜  Network: http://100.115.170.61:1420/
+     Running DevCommand (`cargo  run --no-default-features --color always --`)
+        Info Watching /Users/wesley/workspace/Petaverse/src/agents/planner/pv-skilyst-agent/desktop/src-tauri for changes...
+[1m[92m   Compiling[0m skilyst-agent v0.1.0 (/Users/wesley/workspace/Petaverse/src/agents/planner/pv-skilyst-agent/desktop/src-tauri)
+[1m[96m    Building[0m [=======================> ] 339/343: skilyst-agent(build.rs)     [1m[96m    Building[0m [=======================> ] 340/343: skilyst-agent(build)        [1m[96m    Building[0m [=======================> ] 341/343: skilyst-agent               [1m[96m    Building[0m [=======================> ] 342/343: skilyst-agent(bin)          [K[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 7.10s
+[1m[92m     Running[0m `target/debug/skilyst-agent`
+[runtime] orphan guard: watching stdin for EOF
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -

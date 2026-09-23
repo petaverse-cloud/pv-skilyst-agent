@@ -1,0 +1,41 @@
+{
+    "ok": true,
+    "data": {
+        "beehive": {
+            "base_url": "https://beehive-api.verse4.pet",
+            "account": "e2e-platform",
+            "uid": "213508887911264",
+            "access_key": "ak-a7e\u2026",
+            "secret_key": "set",
+            "password": "set",
+            "source": "/Users/wesley/.skilyst/env"
+        },
+        "llm": {
+            "base_url": "https://new-api.verse4.pet/v1",
+            "model": "deepseek/deepseek-v4.1-flash",
+            "fallbacks": [
+                "MiMo-V2.6-Flash"
+            ],
+            "api_key": "set"
+        },
+        "paths": {
+            "store": "/Users/wesley/.skilyst/store",
+            "workspace": "/Users/wesley/.skilyst/workspace",
+            "sessions": "/Users/wesley/.skilyst/sessions"
+        },
+        "env_file": "/Users/wesley/.skilyst/env",
+        "sources": {
+            "env_file": "/Users/wesley/.skilyst/env",
+            "dev_profile": null,
+            "process_env": [
+                "BEEHIVE_API",
+                "BEEHIVE_PLATFORM_AK",
+                "BEEHIVE_PLATFORM_KEY_ID",
+                "BEEHIVE_PLATFORM_PASS",
+                "BEEHIVE_PLATFORM_SK",
+                "BEEHIVE_PLATFORM_UID",
+                "BEEHIVE_PLATFORM_USER"
+            ]
+        }
+    }
+}

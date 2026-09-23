@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  runtime-tests:
+    name: Runtime + bundle tests (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.11 is the floor pyproject declares; 3.13 is what the desktop work runs on.
+        python-version: ["3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Official bundle integrity (digests + both manifests agree)
+        run: python3 tools/pack_official_bundle.py --check
+      - name: unittest discover
+        env:
+          PYTHONPATH: src
+        run: python3 -m unittest discover -s tests -v
+
+  secrets-scan:
+    name: Secrets scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      # The binary, not gitleaks-action: the action wants a license for org repos.
+      # Same rule set as pv-beehive-core's PR gates.
+      - name: Run gitleaks
+        run: |
+          VERSION=8.24.3
+          curl -sSL "https://github.com/gitleaks/gitleaks/releases/download/v${VERSION}/gitleaks_${VERSION}_linux_x64.tar.gz" | tar -xz -C /tmp gitleaks
+          /tmp/gitleaks detect --source . --redact --exit-code 1
+
+  desktop-build:
+    name: Desktop shell (linux smoke build)
+    runs-on: ubuntu-latest
+    # Hosted runners, deliberately: the shared sea-aks runner is for the beehive
+    # cluster work and a Tauri compile would occupy it for a quarter of an hour.
+    # The three-platform matrix (macOS arm64/x64 with the Apple signing chain,
+    # Windows x64, Linux bundle) needs the signing secrets and a release trigger;
+    # until then this job proves the shell compiles and its unit tests pass.
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: desktop/src-tauri
+      - name: Install webview dependencies (Linux)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev \
+            patchelf libssl-dev libgtk-3-dev
+      - name: Install frontend dependencies
+        run: npm ci
+      - name: Frontend (tsc + vite build)
+        run: npm run build
+      - name: Shell unit tests
+        run: cargo test --manifest-path src-tauri/Cargo.toml
+      - name: Cargo build
+        run: cargo build --manifest-path src-tauri/Cargo.toml
+      - name: Tauri build (no bundle)
+        run: npx tauri build --no-bundle

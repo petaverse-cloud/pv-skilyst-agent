@@ -1,0 +1,115 @@
+{
+    "ok": true,
+    "data": {
+        "store": "/Users/wesley/.skilyst/store",
+        "env_file": "/Users/wesley/.skilyst/env",
+        "integrity": [
+            {
+                "skill_id": "skilyst/doctor",
+                "dir": "doctor",
+                "version": "1.0.0",
+                "ok": true,
+                "differences": []
+            },
+            {
+                "skill_id": "skilyst/embed-video",
+                "dir": "embed-video",
+                "version": "1.0.0",
+                "ok": true,
+                "differences": []
+            },
+            {
+                "skill_id": "skilyst/lipsync-audio-refs",
+                "dir": "lipsync-audio-refs",
+                "version": "1.0.0",
+                "ok": true,
+                "differences": []
+            },
+            {
+                "skill_id": "skilyst/prompt-craft",
+                "dir": "prompt-craft",
+                "version": "1.0.0",
+                "ok": true,
+                "differences": []
+            },
+            {
+                "skill_id": "skilyst/video-15s",
+                "dir": "video-15s",
+                "version": "1.1.0",
+                "ok": true,
+                "differences": []
+            }
+        ],
+        "config": {
+            "beehive": {
+                "base_url": "https://beehive-api.verse4.pet",
+                "account": "e2e-platform",
+                "uid": "213508887911264",
+                "access_key": "ak-a7e\u2026",
+                "secret_key": "set",
+                "password": "set",
+                "source": "/Users/wesley/.skilyst/env"
+            },
+            "llm": {
+                "base_url": "https://new-api.verse4.pet/v1",
+                "model": "deepseek/deepseek-v4.1-flash",
+                "fallbacks": [
+                    "MiMo-V2.6-Flash"
+                ],
+                "api_key": "set"
+            },
+            "paths": {
+                "store": "/Users/wesley/.skilyst/store",
+                "workspace": "/Users/wesley/.skilyst/workspace",
+                "sessions": "/Users/wesley/.skilyst/sessions"
+            },
+            "env_file": "/Users/wesley/.skilyst/env",
+            "sources": {
+                "env_file": "/Users/wesley/.skilyst/env",
+                "dev_profile": null,
+                "process_env": [
+                    "BEEHIVE_API",
+                    "BEEHIVE_PLATFORM_AK",
+                    "BEEHIVE_PLATFORM_KEY_ID",
+                    "BEEHIVE_PLATFORM_PASS",
+                    "BEEHIVE_PLATFORM_SK",
+                    "BEEHIVE_PLATFORM_UID",
+                    "BEEHIVE_PLATFORM_USER"
+                ]
+            }
+        },
+        "skills": [
+            {
+                "skill_id": "skilyst/doctor",
+                "version": "1.0.0",
+                "degraded": false,
+                "description": "One-shot environment self-check for the Skilyst agent \u2014 credentials present, installed skills intact, platform reachable, required nodes registered, and which scopes the restricted key actually has. Use as the FIRST command of any session or troubleshooting thread, before submitting a paid job; the output says exactly what to fix."
+            },
+            {
+                "skill_id": "skilyst/embed-video",
+                "version": "1.0.0",
+                "degraded": false,
+                "description": "Image-to-video craft on the Skilyst/Beehive platform \u2014 animate a locked still (first-frame anchor) into a 4-15s clip that keeps the identity of that still, and cut several such clips together without a visible jump. Use when the user has a locked image (or needs one) and wants controlled motion from it, instead of a free text-to-video render."
+            },
+            {
+                "skill_id": "skilyst/lipsync-audio-refs",
+                "version": "1.0.0",
+                "degraded": false,
+                "description": "Dialogue shots on the Skilyst/Beehive platform \u2014 synthesize the line with TTS first, then drive the shot with that track (audio_refs plus reference images) so the mouth follows the voice and the clip ships with its own audio. Use when a shot has spoken dialogue; covers the 2-15s audio_refs bounds, the first_frame ban in audio mode, and the pacing rule that decides how long the line may be."
+            },
+            {
+                "skill_id": "skilyst/prompt-craft",
+                "version": "1.0.0",
+                "degraded": false,
+                "description": "Camera-and-prompt craft for the video nodes on the Skilyst/Beehive platform \u2014 the cross-model structural skeleton, the per-model deltas that actually change the output, the five-part reference-lock syntax that keeps a character consistent, and the dialogue pacing rule. Use when writing or reviewing any generation prompt, before submitting a job; contains no node dependency of its own."
+            },
+            {
+                "skill_id": "skilyst/video-15s",
+                "version": "1.1.0",
+                "degraded": false,
+                "description": "Produce a single 15-second vertical short video from a text idea on the Skilyst/Beehive platform. Use when the user wants a 15s social clip (no source media) and expects a finished video file URL. Covers the shot-intent-first prompt skeleton, the cheapest acceptable render tier, and the artifact hand-off."
+            }
+        ],
+        "runnable": true
+    }
+}

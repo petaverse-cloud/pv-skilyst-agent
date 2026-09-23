@@ -1,0 +1,10 @@
+shell pid=93042  runtime pid=93432
+--- what the shell logged about its runtime ---
+[runtime] orphan guard: watching stdin for EOF
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+--- SIGTERM the shell (its cleanup handler does not run) ---
+runtime exited on its own after ~1s
+PASS: window up, runtime driven over HTTP, nothing left behind
