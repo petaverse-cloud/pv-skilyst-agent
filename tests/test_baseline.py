@@ -159,9 +159,13 @@ class PermissionTests(unittest.TestCase):
             gate.require_secrets()
 
     def test_resource_classification(self):
-        inv = classify_resources(OFFICIAL, "see references/i18n/glossary.en.json and https://beehive-api.verse4.pet/x")
+        inv = classify_resources(OFFICIAL, "see references/i18n/glossary.en.json and https://beehive-api.verse4.pet/x\n"
+                                           "and the absent references/missing.md")
         self.assertIn("https://beehive-api.verse4.pet/x", inv.remote)
-        self.assertIn("references/i18n/glossary.en.json", inv.missing)
+        # a reference shipped inside the package resolves from disk, with no network
+        self.assertIn("references/i18n/glossary.en.json", inv.in_package)
+        # ... and a broken one is reported at load time, not at use time
+        self.assertIn("references/missing.md", inv.missing)
 
 
 class ScopeGateTests(unittest.TestCase):
@@ -341,8 +345,9 @@ class StoreBundleTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             store = SkillStore(Path(tmp) / "store")
             loaded = store.preload_official_bundle(BUNDLE)
-            self.assertEqual([p.skill_id for p in loaded], ["skilyst/video-15s"])
-            self.assertEqual(store.list()[0].version, "1.0.0")
+            self.assertIn("skilyst/video-15s", [p.skill_id for p in loaded])
+            video = store.get("skilyst/video-15s")
+            self.assertEqual(video.version, official_manifest()["version"])
             plan = store.plan_update(OFFICIAL)
             self.assertFalse(plan["content_changed"])
             self.assertTrue(plan["hot"])
@@ -367,7 +372,7 @@ class StoreBundleTests(unittest.TestCase):
             installed = Path(tmp) / "store" / "extra-skill" / "SKILL.md"
             installed.write_text(installed.read_text() + "\nedited behind the runtime's back\n")
             loaded, problems = store.list_partial()
-            self.assertEqual([p.skill_id for p in loaded], ["skilyst/video-15s"])
+            self.assertIn("skilyst/video-15s", [p.skill_id for p in loaded])
             self.assertEqual(problems[0]["skill_id"], "test/extra-skill")
             self.assertIn("modified: SKILL.md", problems[0]["differences"])
             with self.assertRaises(SkillMutationError):     # using it still refuses

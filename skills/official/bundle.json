@@ -2,10 +2,32 @@
   "bundle": "skilyst-official",
   "runtime": "0.1.0",
   "signed_by": "skilyst-platform",
+  "index": "index.json",
   "skills": [
     {
+      "path": "doctor",
+      "version": "1.0.0",
+      "content_digest": "sha256:3646cb63f93c1386433501981217ccc7fcd1352a488f162efd023cb99d30b5a1"
+    },
+    {
+      "path": "embed-video",
+      "version": "1.0.0",
+      "content_digest": "sha256:d447a57630fb22d655cce8e99d38b362dd87917e8cdeeab7e4e6b2b5811dfc54"
+    },
+    {
+      "path": "lipsync-audio-refs",
+      "version": "1.0.0",
+      "content_digest": "sha256:aa94ed5ed533ebdbcaeeb0fc80986ddfe65477044bee8caddcd3f00e14f4a28d"
+    },
+    {
+      "path": "prompt-craft",
+      "version": "1.0.0",
+      "content_digest": "sha256:fbe0856a93346abc15070b80c01a982bd6a4c000b925d0c4249dc05968226a13"
+    },
+    {
       "path": "video-15s",
-      "version": "1.0.0"
+      "version": "1.1.0",
+      "content_digest": "sha256:5663a4904ae9f486fed54b166e052a6dac9b4a7a614a6e9b4b3c9e868e0fae63"
     }
   ]
 }

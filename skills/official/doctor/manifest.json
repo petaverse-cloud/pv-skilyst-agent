@@ -1,0 +1,91 @@
+{
+  "skill_id": "skilyst/doctor",
+  "version": "1.0.0",
+  "display_name": "环境自检（凭据 / 完整性 / 连通性 / 配额）",
+  "description": "One-shot environment self-check for the Skilyst agent — credentials present, installed skills intact, platform reachable, required nodes registered, and which scopes the restricted key actually has. Use as the FIRST command of any session or troubleshooting thread, before submitting a paid job; the output says exactly what to fix.",
+  "kind": "official-bundle",
+  "content_digest": "sha256:3646cb63f93c1386433501981217ccc7fcd1352a488f162efd023cb99d30b5a1",
+  "upstream": null,
+  "fork_depth": 0,
+  "supply_chain": {
+    "source": {
+      "origin": "skilyst-registry",
+      "repo": "petaverse-cloud/pv-skilyst-agent",
+      "commit": "local-poc"
+    },
+    "static_scan": {
+      "status": "passed",
+      "scanner": "skilyst-scanner@0.1",
+      "scanned_at": "2026-09-23T00:00:00+08:00"
+    },
+    "signatures": [
+      {
+        "key_id": "skilyst-platform",
+        "algo": "ed25519",
+        "sig": "platform-signature-pending",
+        "digest": "sha256:3646cb63f93c1386433501981217ccc7fcd1352a488f162efd023cb99d30b5a1"
+      }
+    ]
+  },
+  "permission": {
+    "egress": [
+      "beehive-api.verse4.pet"
+    ],
+    "filesystem": "skill-dir",
+    "exec": "scripts-whitelist",
+    "secrets": true
+  },
+  "requires": {
+    "nodes": []
+  },
+  "i18n": {
+    "default_locale": "zh-CN",
+    "locales": [
+      "zh-CN",
+      "en"
+    ],
+    "glossary": {
+      "zh-CN": "references/i18n/glossary.zh-CN.json",
+      "en": "references/i18n/glossary.en.json"
+    }
+  },
+  "author": {
+    "name": "platform",
+    "handle": "@platform",
+    "verified": true
+  },
+  "attribution": {
+    "contributors": []
+  },
+  "license": {
+    "spdx": "MIT",
+    "file": "LICENSE"
+  },
+  "copyright": "Copyright (c) 2026 Petaverse",
+  "compatibility": {
+    "agent_runtime": {
+      "min": "0.1.0",
+      "tested": [
+        "0.1.0"
+      ]
+    }
+  },
+  "update": {
+    "channel": "official",
+    "policy": "auto",
+    "hot_reload": {
+      "allowed": true,
+      "exclusions": [
+        "node-schema"
+      ]
+    }
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-23",
+      "changes": "first official doctor skill: credential presence, installed-skill integrity, registry preflight, scope boundary probe; states explicitly that wallet/quota is outside the restricted key's scope",
+      "upstream_sync": false
+    }
+  ]
+}

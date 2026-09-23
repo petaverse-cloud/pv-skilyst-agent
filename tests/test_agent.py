@@ -214,14 +214,14 @@ class PromptTests(unittest.TestCase):
 
     def test_index_carries_descriptions_only(self):
         index = skill_index(self.fx.store.list())
-        self.assertIn("skilyst/video-15s@1.0.0", index)
+        self.assertIn(f"skilyst/video-15s@{self.fx.package().version}", index)
         self.assertIn("Produce a single 15-second vertical short video", index)
         self.assertNotIn("Prompt skeleton", index)          # the body stays out of context
 
     def test_active_skill_block_declares_sandbox_and_plan(self):
         package = self.fx.package()
         prompt = build_system_prompt(self.fx.prompt_ctx(package))
-        self.assertIn("Active skill: skilyst/video-15s@1.0.0", prompt)
+        self.assertIn(f"Active skill: skilyst/video-15s@{package.version}", prompt)
         self.assertIn("generate:minimax-h3", prompt)
         self.assertIn("'minimax-h3'", prompt.replace('"', "'"))
         self.assertIn("secrets=True", prompt)
@@ -258,7 +258,9 @@ class ToolRegistryTests(unittest.TestCase):
         result = registry.call("read_skill", {"skill_id": "skilyst/video-15s"})
         self.assertIn("Prompt skeleton", result["instructions"])
         self.assertEqual(result["requires_nodes"][0]["node_id"], "generate:minimax-h3")
-        self.assertEqual(result["files"], ["SKILL.md", "manifest.json"])
+        # layer-3 index: what the model can pull on demand, not just the two contract files
+        self.assertIn("SKILL.md", result["files"])
+        self.assertIn("references/i18n/glossary.en.json", result["files"])
 
     def test_unknown_tool_is_refused(self):
         with self.assertRaises(KeyError):
