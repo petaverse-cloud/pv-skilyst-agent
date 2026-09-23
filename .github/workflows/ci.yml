@@ -14,15 +14,24 @@ env:
 
 jobs:
   runtime-tests:
-    name: Runtime tests (offline suite)
+    name: Runtime + bundle tests (${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.11 is the floor pyproject declares; 3.13 is what the desktop work runs on.
+        python-version: ["3.11", "3.13"]
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
+      - name: Official bundle integrity (digests + both manifests agree)
+        run: python3 tools/pack_official_bundle.py --check
       - name: unittest discover
-        run: PYTHONPATH=src python3 -m unittest discover -s tests -v
+        env:
+          PYTHONPATH: src
+        run: python3 -m unittest discover -s tests -v
 
   secrets-scan:
     name: Secrets scan (gitleaks)

@@ -1,17 +1,17 @@
 {
     "ok": true,
     "data": {
-        "session_id": "20260923-233604-7150bc",
+        "session_id": "20260923-234459-c506ac",
         "skill": null,
         "stop_reason": "completed",
-        "answer": "I'm Skilyst's audio/video production agent: I load a skill's method (video-15s, embed-video, lipsync-audio-refs, prompt-craft, doctor) and follow it to drive Skilyst/Beehive renders \u2014 though in this session no skill is active, so I can read and discuss skills but platform tools stay disabled until you run one with `skilyst run <skill-id> \u2026`.",
+        "answer": "I'm Skilyst's audio/video production agent \u2014 I read production skills (video-15s, embed-video, lipsync-audio-refs, prompt-craft, doctor) and follow their methods to direct renders on the Skilyst/Beehive platform \u2014 but no skill is active in this session right now, so I can only read and discuss skills and draft files in the workspace until you start a run with `skilyst run <skill-id>`.",
         "model": "deepseek/deepseek-v4.1-flash",
         "turns": 1,
-        "wall_clock_s": 3.6,
+        "wall_clock_s": 5.2,
         "usage": {
             "prompt_tokens": 1437,
-            "completion_tokens": 166,
-            "total_tokens": 1603,
+            "completion_tokens": 355,
+            "total_tokens": 1792,
             "calls": 1,
             "models_used": [
                 "deepseek/deepseek-v4.1-flash"

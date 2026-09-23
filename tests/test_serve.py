@@ -44,6 +44,16 @@ ENV_KEYS = ("SKILYST_ENV_FILE", "SKILYST_DEV_PROFILE", "SKILYST_LLM_BASE_URL", "
             "BEEHIVE_PLATFORM_PASS", "BEEHIVE_PLATFORM_UID")
 
 
+def bundle_skill_ids() -> list[str]:
+    """The ids the official bundle installs, read from the bundle's own index.
+
+    Derived rather than hardcoded: the bundle is expected to grow, and a test that
+    fails every time it does is testing the test, not the runtime.
+    """
+    index = json.loads((BUNDLE / "index.json").read_text(encoding="utf-8"))
+    return sorted(row["skill_id"] for row in index["skills"])
+
+
 def chat_response(content="", tool_calls=None, finish_reason="stop", usage=None):
     message = {"role": "assistant", "content": content}
     if tool_calls:
@@ -221,7 +231,9 @@ class ConfigSurfaceTests(EnvIsolation):
         self.assertEqual(status, 200)
         self.assertTrue(body["data"]["runnable"])
         self.assertTrue(all(row["ok"] for row in body["data"]["integrity"]))
-        self.assertEqual([s["skill_id"] for s in body["data"]["skills"]], [OFFICIAL_SKILL])
+        listed = sorted(s["skill_id"] for s in body["data"]["skills"])
+        self.assertEqual(listed, bundle_skill_ids())          # everything the bundle installed
+        self.assertIn(OFFICIAL_SKILL, listed)
 
     def test_doctor_with_a_skill_needs_the_platform_credential(self):
         fx = ServeFixture(credentials=False)

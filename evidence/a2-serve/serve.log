@@ -4,7 +4,7 @@ http 127.0.0.1 "GET /doctor HTTP/1.1" 200 -
 http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
 http 127.0.0.1 "GET /health HTTP/1.1" 401 -
 http 127.0.0.1 "POST /message HTTP/1.1" 200 -
-http 127.0.0.1 "GET /session/20260923-233604-7150bc HTTP/1.1" 200 -
+http 127.0.0.1 "GET /session/20260923-234459-c506ac HTTP/1.1" 200 -
 http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
 http 127.0.0.1 "POST /message HTTP/1.1" 200 -
 http 127.0.0.1 "POST /shutdown HTTP/1.1" 200 -

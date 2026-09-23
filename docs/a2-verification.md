@@ -51,12 +51,15 @@ drives the same frontend (same bundle, same runtime contract) in Chrome and read
 transcript back out of the DOM. Evidence `ui-smoke.log`:
 
 ```
-app mounted; sessions in the sidebar before: 11
+app mounted; sessions in the sidebar before: 16
 runtime badge: DRY RUN · PORT 8899
 --- transcript (rendered) ---
-You Say hello in three words.
-Skilyst Hello there, friend.
-sessions in the sidebar after: 12
+You Name two of your skills, one line.
+Skilyst - **skilyst/embed-video@1.0.0** — animates a locked still into a 4–15s clip that keeps the
+image's identity, and cuts several such clips together without a visible jump. -
+**skilyst/lipsync-audio-refs@1.0.0** — dialogue shots: TTS the line first, then drive the shot with
+that audio so the mo…
+sessions in the sidebar after: 17
 error banners: 0
 page problems: none
 screenshot: ../evidence/a2-desktop/ui-window.png
@@ -64,7 +67,9 @@ screenshot: ../evidence/a2-desktop/ui-window.png
 
 The turn went out as `POST /message {"stream": true}`, the model text arrived as `delta` events
 and the summary as `done` (the same contract `tools/serve_smoke.sh` shows at the HTTP level in
-`evidence/a2-serve/message.sse`: 5 deltas + 1 done against the real model endpoint).
+`evidence/a2-serve/message.sse` against the real model endpoint). The answer naming two real
+skills from the official bundle is also a check on the runtime side of the chain: the skill index
+in the system prompt is what makes those ids available to the model.
 
 ### Line 3 -- process ownership
 
@@ -93,8 +98,9 @@ The guard took two attempts, both driven by real observation rather than reasoni
 
 | Suite | Command | Result |
 |---|---|---|
-| Runtime | `PYTHONPATH=src python3 -m unittest discover -s tests` | **122 tests, 4.7s, offline** (was 87) |
+| Runtime | `PYTHONPATH=src python3 -m unittest discover -s tests` | **140 tests, 7.3s, offline** (87 at A1; 122 from this branch + 18 from the T4 bundle) |
 | Shell | `cargo test --manifest-path desktop/src-tauri/Cargo.toml` | 3 tests (ready-line parsing: real line, log noise, live mode) |
+| Bundle | `python3 tools/pack_official_bundle.py --check` | `OK: 5 skills, digests and both manifests agree` |
 | Frontend | `cd desktop && npm run build` | `tsc` clean under `strict`, vite build 413KB js / 216KB css |
 
 `tests/test_serve.py` drives real HTTP over loopback against a real `RuntimeAPI`, store and
@@ -126,9 +132,22 @@ signals.
 
 `.github/workflows/ci.yml`, on push and pull request to `main`:
 
-* `runtime-tests` -- `PYTHONPATH=src python3 -m unittest discover -s tests`.
+* `runtime-tests` -- the official-bundle integrity check (`tools/pack_official_bundle.py --check`)
+  plus `python3 -m unittest discover -s tests`, on python 3.11 (the floor `pyproject.toml`
+  declares) and 3.13.
 * `secrets-scan` -- the gitleaks binary (8.24.3), `detect --source . --redact --exit-code 1`,
   full history; the same rule set as pv-beehive-core's PR gates. Local run over the branch:
   `no leaks found`.
 * `desktop-build` -- node 22 + rust stable + webview deps, `npm ci`, `npm run build`,
   `cargo test`, `cargo build`, `npx tauri build --no-bundle`.
+
+This is the only workflow: the T4 branch's `bundle-and-tests.yml` ran the same suite, so its
+bundle-integrity step was folded into `runtime-tests` and the duplicate workflow removed.
+
+### Cross-branch interaction worth recording
+
+The T4 bundle merged while this branch was open, and it broke one of these tests:
+`test_doctor_reports_integrity_without_needing_a_credential` asserted the doctor listed exactly
+`['skilyst/video-15s']`. The assertion was wrong, not the runtime -- the contract is "the doctor
+lists everything the bundle installed". It now derives the expected ids from the bundle's own
+`index.json`, so the bundle can grow without a test failing for the wrong reason.

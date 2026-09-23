@@ -1,9 +1,9 @@
-app mounted; sessions in the sidebar before: 11
+app mounted; sessions in the sidebar before: 16
 runtime badge: DRY RUN · PORT 8899
 --- transcript (rendered) ---
-You Say hello in three words.
-Skilyst Hello there, friend.
-sessions in the sidebar after: 12
+You Name two of your skills, one line.
+Skilyst - **skilyst/embed-video@1.0.0** — animates a locked still into a 4–15s clip that keeps the image's identity, and cuts several such clips together without a visible jump. - **skilyst/lipsync-audio-refs@1.0.0** — dialogue shots: TTS the line first, then drive the shot with that audio so the mo
+sessions in the sidebar after: 17
 error banners: 0
 page problems: none
 screenshot: ../evidence/a2-desktop/ui-window.png

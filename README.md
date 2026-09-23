@@ -61,7 +61,7 @@ per-run job budget), a missing required node is blocking unless `--allow-fallbac
 skills are digest-verified on every load, and a job's artifact URL is HEAD-verified before the
 runtime reports success. See `docs/adr/0001-runtime-layout.md`.
 
-Tests: `PYTHONPATH=src python3 -m unittest discover -s tests` (117 tests, offline, <1s).
+Tests: `PYTHONPATH=src python3 -m unittest discover -s tests` (140 tests, offline, ~7s).
 
 ## Desktop shell (A2 — Tauri v2 + React/Mantine)
 
