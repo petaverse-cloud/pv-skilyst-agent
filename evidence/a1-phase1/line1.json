@@ -1,0 +1,296 @@
+{
+  "line": "1 -- format ingestion + offline behaviour (post-migration re-run)",
+  "skills": {
+    "anthropics_pdf": {
+      "path": "/Users/wesley/t1-poc/fixtures/anthropics-skills/skills/pdf",
+      "files": 12,
+      "zero_modification": true,
+      "changed_files": [],
+      "load_mode": "degraded (community, no manifest.json)",
+      "skill_id": "pdf",
+      "version": "0.0.0+community",
+      "digest": "sha256:32be27944ae0d70920d737b12d0d97e335edf00839e07f626b02390a7285bf45",
+      "spec_warnings": [],
+      "inventory_exit": 0,
+      "inventory_summary": {
+        "skill_id": "pdf",
+        "version": "0.0.0+community",
+        "degraded": true,
+        "digest": "sha256:32be27944ae0d70920d737b12d0d97e335edf00839e07f626b02390a7285bf45",
+        "in_package": [],
+        "remote": [],
+        "missing_references": [],
+        "permission": {
+          "egress": "none",
+          "filesystem": "skill-dir",
+          "exec": "none",
+          "secrets": false
+        },
+        "requires_nodes": [],
+        "plan": {},
+        "spec_warnings": [],
+        "unknown_frontmatter_keys": [],
+        "root_files": [
+          "LICENSE.txt",
+          "SKILL.md",
+          "forms.md",
+          "reference.md"
+        ],
+        "prose_file_refs": [],
+        "install_hints": [
+          "pip install"
+        ],
+        "network_hints": [],
+        "scripts": [
+          "check_bounding_boxes.py",
+          "check_fillable_fields.py",
+          "convert_pdf_to_images.py",
+          "create_validation_image.py",
+          "extract_form_field_info.py",
+          "extract_form_structure.py",
+          "fill_fillable_fields.py",
+          "fill_pdf_form_with_annotations.py"
+        ],
+        "scripts_total": 8,
+        "network_scripts": [],
+        "remote_refs": [],
+        "egress_grant_needed": false,
+        "load_mode": "degraded (community skill, no manifest.json)",
+        "tree_digest": "sha256:32be27944ae0d70920d737b12d0d97e335edf00839e07f626b02390a7285bf45"
+      },
+      "load_exit": 0
+    },
+    "seedance_20": {
+      "path": "/Users/wesley/t1-poc/fixtures/seedance-2.0",
+      "files": 338,
+      "zero_modification": true,
+      "changed_files": [],
+      "load_mode": "degraded (community, no manifest.json)",
+      "skill_id": "seedance-20",
+      "version": "0.0.0+community",
+      "digest": "sha256:230d1b3480f3f3107312f3f0a19e5c81720fc61f61c812bfeb979177d015bdb3",
+      "spec_warnings": [
+        "`name` 'seedance-20' != directory name 'seedance-2.0' (spec requires equality) -- skill_id falls back to the directory name"
+      ],
+      "inventory_exit": 0,
+      "inventory_summary": {
+        "skill_id": "seedance-20",
+        "version": "0.0.0+community",
+        "degraded": true,
+        "digest": "sha256:230d1b3480f3f3107312f3f0a19e5c81720fc61f61c812bfeb979177d015bdb3",
+        "in_package": [
+          "references/2d-anime-grammar.md",
+          "references/allocation-model.md",
+          "references/api-status.md",
+          "references/api-workflow.md",
+          "references/aspect-ratio-delivery.md",
+          "references/audio-post-delivery.md",
+          "references/capability-map.md",
+          "references/cinematography-shot-language.md",
+          "references/color-pipeline-aces.md",
+          "references/continuation-handoff.md",
+          "references/continuity-qc.md",
+          "references/delivery-qc.md",
+          "references/dense-storyboard-mode.md",
+          "references/directing-engine-genre-library.md",
+          "references/directing-engine.md",
+          "references/directors-read.md",
+          "references/examples-by-mode.md",
+          "references/first-last-frame-guide.md",
+          "references/genre-guides.md",
+          "references/i2v-guide.md",
+          "references/intent-vs-precision.md",
+          "references/model-mechanics.md",
+          "references/model-name-map.md",
+          "references/multilingual-community-examples.md",
+          "references/multilingual-native-review.md",
+          "references/multishot-grammar.md",
+          "references/platform-surface-matrix.md",
+          "references/pro-filmmaking-standards.md",
+          "references/prompt-compiler.md",
+          "references/prompt-examples.md",
+          "references/quick-ref.md",
+          "references/reference-transfer-contract.md",
+          "references/reference-workflow.md",
+          "references/retake-protocol.md",
+          "references/sequence-project-state.md",
+          "references/sequence-worked-trace.md",
+          "references/shot-list-continuity.md",
+          "references/source-registry.md",
+          "references/subtitles-localization.md",
+          "references/surface-prompt-profiles.md",
+          "references/vocab/ja.md",
+          "references/vocab/ko.md",
+          "references/vocab/zh.md",
+          "skills/seedance-antislop/SKILL.md",
+          "skills/seedance-camera/SKILL.md",
+          "skills/seedance-continuation/SKILL.md",
+          "skills/seedance-copyright/SKILL.md",
+          "skills/seedance-examples-ja/SKILL.md",
+          "skills/seedance-examples-ko/SKILL.md",
+          "skills/seedance-examples-zh/SKILL.md",
+          "skills/seedance-filter/SKILL.md",
+          "skills/seedance-interview-short/SKILL.md",
+          "skills/seedance-interview/SKILL.md",
+          "skills/seedance-motion/SKILL.md",
+          "skills/seedance-pipeline/SKILL.md",
+          "skills/seedance-prompt-short/SKILL.md",
+          "skills/seedance-prompt/SKILL.md",
+          "skills/seedance-recipes/SKILL.md",
+          "skills/seedance-sequence/SKILL.md",
+          "skills/seedance-style/SKILL.md",
+          "skills/seedance-troubleshoot/SKILL.md",
+          "skills/seedance-vocab-en/SKILL.md",
+          "skills/seedance-vocab-es/SKILL.md",
+          "skills/seedance-vocab-ja/SKILL.md",
+          "skills/seedance-vocab-ko/SKILL.md",
+          "skills/seedance-vocab-ru/SKILL.md",
+          "skills/seedance-vocab-zh/SKILL.md"
+        ],
+        "remote": [],
+        "missing_references": [],
+        "permission": {
+          "egress": "none",
+          "filesystem": "skill-dir",
+          "exec": "none",
+          "secrets": false
+        },
+        "requires_nodes": [],
+        "plan": {},
+        "spec_warnings": [
+          "`name` 'seedance-20' != directory name 'seedance-2.0' (spec requires equality) -- skill_id falls back to the directory name"
+        ],
+        "unknown_frontmatter_keys": [
+          "tags",
+          "user-invocable"
+        ],
+        "root_files": [
+          ".gitattributes",
+          ".gitignore",
+          "CHANGELOG.md",
+          "LICENSE",
+          "README.md",
+          "SECURITY.md",
+          "SKILL.md",
+          "V6_SEQUENCE_PROMPT_COMPILER_MANIFEST.md",
+          "requirements-masthead.lock",
+          "requirements-validation.lock"
+        ],
+        "prose_file_refs": [],
+        "install_hints": [],
+        "network_hints": [],
+        "scripts": [
+          "__init__.py",
+          "atlas_seedance_generate.py",
+          "behavior_contract_check.py",
+          "build_hero.py",
+          "build_masthead_outlines.py",
+          "content_audit.py",
+          "continuity_chain_check.py",
+          "design_audit.py",
+          "eval_ledger_format.py",
+          "eval_run.py",
+          "eval_schema_check.py",
+          "extract_last_frame.py",
+          "generation_run_check.py",
+          "install_codex_skill.py",
+          "install_doctor.py",
+          "language_coverage.py",
+          "lineage_contract.py",
+          "outcome_comparison.py",
+          "pilot_plan.py",
+          "project_state_check.py",
+          "prompt_architecture_stress.py",
+          "prompt_lint.py",
+          "schema_check.py",
+          "sequence_eval_check.py",
+          "source_registry_check.py",
+          "strict_json.py",
+          "validate_repo.py",
+          "validate_skills.py",
+          "vocab_schema_check.py"
+        ],
+        "scripts_total": 29,
+        "network_scripts": [
+          "scripts/install_codex_skill.py",
+          "scripts/eval_run.py",
+          "scripts/build_masthead_outlines.py",
+          "scripts/build_hero.py"
+        ],
+        "remote_refs": [],
+        "egress_grant_needed": false,
+        "load_mode": "degraded (community skill, no manifest.json)",
+        "tree_digest": "sha256:230d1b3480f3f3107312f3f0a19e5c81720fc61f61c812bfeb979177d015bdb3"
+      },
+      "load_exit": 0
+    }
+  },
+  "reference_resolution": {
+    "skill": "anthropics_pdf",
+    "egress": "none",
+    "resolutions": [
+      {
+        "ref": "reference.md",
+        "kind": "in-package",
+        "detail": "read 16692 bytes from disk (no network needed)",
+        "skill": "pdf"
+      },
+      {
+        "ref": "scripts/extract_form_field_info.py",
+        "kind": "in-package",
+        "detail": "read 4300 bytes from disk (no network needed)",
+        "skill": "pdf"
+      },
+      {
+        "ref": "references/directing-engine.md",
+        "kind": "in-package",
+        "detail": "read 22925 bytes from disk (no network needed)",
+        "skill": "seedance-2.0"
+      },
+      {
+        "ref": "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js",
+        "kind": "remote",
+        "detail": "refused before fetch: 'cdnjs.cloudflare.com' not in permission.egress",
+        "skill": "pdf"
+      },
+      {
+        "ref": "does/not/exist.md",
+        "kind": "missing",
+        "detail": "referenced file does not exist inside the package",
+        "skill": "pdf"
+      }
+    ],
+    "unreachable_remote_with_egress_granted": "LOUD FAILURE: remote reference https://unreachable.invalid/method.md could not be fetched: _ssl.c:1011: The handshake operation timed out (no cached copy exists; the reference cannot be silently skipped)"
+  },
+  "sandbox_contract": [
+    {
+      "case": "exec=none -> refuse running a skill script",
+      "outcome": "LOUD REFUSAL: exec refused: skill declares permission.exec = none"
+    },
+    {
+      "case": "exec=none (community) -> refuse a package script",
+      "outcome": "LOUD REFUSAL: exec refused: skill declares permission.exec = none"
+    },
+    {
+      "case": "filesystem=workspace -> refuse a write outside the workspace",
+      "outcome": "LOUD REFUSAL: filesystem refused: /private/tmp/escape.md is outside /Users/wesley/.skilyst/workspace (permission.filesystem=workspace)"
+    },
+    {
+      "case": "filesystem=workspace -> allow a write inside the workspace",
+      "outcome": "allowed"
+    },
+    {
+      "case": "secrets=false (community) -> refuse a credential",
+      "outcome": "LOUD REFUSAL: user credential refused: skill declares permission.secrets = false (installing this skill required an explicit user confirmation)"
+    },
+    {
+      "case": "egress -> refuse an unknown host",
+      "outcome": "LOUD REFUSAL: egress refused: 'exfiltrate.example.com' is not in permission.egress ['beehive-api.verse4.pet'] (declared by the skill's manifest)"
+    }
+  ],
+  "official_package": {
+    "digest": "sha256:2ce9ac46f9d2b28fcf05c81c29cea23ab685643cd1d7c66f1ff7e2462b9ebadf",
+    "tree_digest": "sha256:eff1557cfd8cf96642695ddd2cf53cb6bc66eb08e5de7f3b5b949c6e9575830a",
+    "declared": "sha256:2ce9ac46f9d2b28fcf05c81c29cea23ab685643cd1d7c66f1ff7e2462b9ebadf"
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "base_url": "https://beehive-api.verse4.pet",
+  "token_scope": [
+    "assets:read",
+    "jobs:read",
+    "jobs:write"
+  ],
+  "denied_prefixes": [
+    "/api/v1/admin/",
+    "/api/v1/billing/wallet",
+    "/api/v1/billing/nodes",
+    "/api/v1/billing/history",
+    "/api/v1/auth/api-keys"
+  ],
+  "probes": [
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/users",
+      "scoped_client_gate": "refused client-side: GET /api/v1/admin/users refused client-side: path /api/v1/admin/ is outside every granted scope (billing/admin are never granted to a skill)",
+      "server_side_restricted_key": 403,
+      "server_body": "{\"code\":403,\"message\":\"Forbidden\",\"payload\":{\"error\":\"admin required\"}}",
+      "anonymous": 401
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/users",
+      "scoped_client_gate": "refused client-side: POST /api/v1/admin/users refused client-side: path /api/v1/admin/ is outside every granted scope (billing/admin are never granted to a skill)",
+      "server_side_restricted_key": 403,
+      "server_body": "{\"code\":403,\"message\":\"Forbidden\",\"payload\":{\"error\":\"admin required\"}}",
+      "anonymous": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/nodes/generate:drawnow",
+      "scoped_client_gate": "refused client-side: PUT /api/v1/nodes/generate:drawnow refused client-side: no scope rule grants PUT /api/v1/nodes/generate:drawnow",
+      "server_side_restricted_key": 403,
+      "server_body": "{\"code\":403,\"message\":\"Forbidden\",\"payload\":{\"error\":\"forbidden: requires admin role\"}}",
+      "anonymous": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/billing/nodes/generate:drawnow/pricing",
+      "scoped_client_gate": "refused client-side: PUT /api/v1/billing/nodes/generate:drawnow/pricing refused client-side: path /api/v1/billing/nodes is outside every granted scope (billing/admin are never granted to a skill)",
+      "server_side_restricted_key": 403,
+      "server_body": "{\"code\":403,\"message\":\"Forbidden\",\"payload\":{\"error\":\"forbidden: requires admin role\"}}",
+      "anonymous": 401
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/billing/wallet/213508887911264/grant",
+      "scoped_client_gate": "refused client-side: POST /api/v1/billing/wallet/213508887911264/grant refused client-side: path /api/v1/billing/wallet is outside every granted scope (billing/admin are never granted to a skill)",
+      "server_side_restricted_key": 403,
+      "server_body": "{\"code\":403,\"message\":\"Forbidden\",\"payload\":{\"error\":\"forbidden: requires admin role\"}}",
+      "anonymous": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/billing/wallet",
+      "scoped_client_gate": "refused client-side: GET /api/v1/billing/wallet refused client-side: path /api/v1/billing/wallet is outside every granted scope (billing/admin are never granted to a skill)",
+      "server_side_restricted_key": 200,
+      "server_body": "{\"code\":200,\"message\":\"OK\",\"payload\":{\"balance\":9998823828,\"frozen_usd\":0,\"spendable\":9998823828,\"user_uid\":213508887911264}}",
+      "anonymous": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/billing/history",
+      "scoped_client_gate": "refused client-side: GET /api/v1/billing/history refused client-side: path /api/v1/billing/history is outside every granted scope (billing/admin are never granted to a skill)",
+      "server_side_restricted_key": 200,
+      "server_body": "{\"code\":200,\"message\":\"OK\",\"payload\":{\"events\":[{\"event_id\":2390120118827346355,\"job_id\":\"job-1790152872020-7a8cbebd954e6fb1\",\"node_id\":\"node-job-1790152872020-",
+      "anonymous": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "scoped_client_gate": 200,
+      "server_side_restricted_key": 200,
+      "server_body": "{\"code\":200,\"message\":\"OK\",\"payload\":{\"jobs\":[{\"id\":\"job-1790152872020-7a8cbebd954e6fb1\",\"workflow_id\":\"\",\"user_uid\":213508887911264,\"status\":\"completed\",\"input",
+      "anonymous": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/assets",
+      "scoped_client_gate": 200,
+      "server_side_restricted_key": 200,
+      "server_body": "{\"code\":200,\"message\":\"OK\",\"payload\":{\"assets\":[{\"id\":\"as-job-1790152872020-7a8cbebd954e6fb1-node-job-1790152872020-7a8cbebd954e6fb1-0-video\",\"name\":\"node-job-1",
+      "anonymous": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/nodes",
+      "scoped_client_gate": 200,
+      "server_side_restricted_key": 200,
+      "server_body": "{\"code\":200,\"message\":\"OK\",\"payload\":{\"nodes\":[{\"id\":\"generate:drawnow\",\"name\":\"DrawNow Video Generation\",\"node_type\":\"generate\",\"provider\":\"drawnow\",\"input_sch",
+      "anonymous": 401
+    }
+  ]
+}

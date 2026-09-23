@@ -1,0 +1,275 @@
+{
+  "session_id": "20260923-175323-42adb5",
+  "skill": "skilyst/video-15s",
+  "stop_reason": "completed",
+  "answer": "我没有拿到可交付的视频 —— 需要如实说明情况。\n\n**发生了什么**\n\n我按 `skilyst/video-15s` 的方法走完了流程：\n\n1. **先定意图**：这条镜头承载的是\"孤独的守护 / 清晨交接前的寂静\"，信息量低 → 用偏大景别 + 缓慢推近。\n2. **唯一视觉中心**：灯塔（塔身静止、暖色灯光扫过一次），海雾与海面只做衬托，避免缩略图里出现第二个焦点。\n3. **有动机的光**：写明约 4:1 的光比，主光就是画面内的灯塔灯（暖琥珀色），冷蓝晨雾为补光。\n4. **单一运动**：只有一次 dolly-in，地平线锁定不动。\n5. **五段式提示词**：运镜 → 主体+动作 → 环境 → 光照/氛围 → 风格，英文。\n6. **档位**：按技能声明使用 minimax-h3 / 15s / 768P / 9:16，未做任何升级。\n\n**但是**：`beehive_submit_job` 的返回是\n\n```json\n{\"dry_run\": true, \"node\": {...}, \"workflow_id\": \"\"}\n```\n\n—— 这是**空跑（dry run）**，只回显了将要提交的节点配置，**没有 job id**，因此没有任务被真正创建。我随后核对了账户资产列表，最新的视频资产是今天 16:47 的，早于本次提交，**没有属于这次请求的新产物**。\n\n**结论**：本次没有产出视频文件，也没有 `dest_video_url` 可以给你。我不会用资产列表里别人的旧视频、或任何\"最接近\"的结果来冒充这条片子 —— 技能里也明确要求失败时只如实回报平台结果。\n\n**需要你这边确认**：平台目前似乎处于 dry-run / 预览模式，提交不会真正计费和出片。请在 Skilyst 应用里确认生成服务已开启（以及额度/计费状态 —— 充值这类操作由应用处理，我无法代为操作或花钱），开启后我可以用**完全相同的提示词和档位**重新提交一次，然后轮询 job 并把 `dest_video_url` 原样交给你。\n\n提示词已定稿，随时可复用：\n\n> Slow dolly-in toward a solitary lighthouse standing on a rocky headland at first light. The lighthouse is the single visual centre: the tower holds perfectly still while its warm amber lamp beam sweeps once, slowly, through the frame. Dense morning sea fog drifts in slow horizontal layers, swallowing the base of the tower and the water below; two gulls are barely readable as soft silhouettes. Pre-dawn cool blue ambient light with a key:fill ratio of about 4:1 — the lighthouse lamp is the in-frame key source, warm amber cutting through cold fog, with soft blue fill from the overcast sky. Muted desaturated teal-and-amber palette, fine mist grain, shallow atmospheric depth, static horizon, cinematic vertical framing, 24fps filmic look.",
+  "model": "deepseek/deepseek-v4.1-flash",
+  "turns": 4,
+  "wall_clock_s": 31.2,
+  "usage": {
+    "prompt_tokens": 14443,
+    "completion_tokens": 2545,
+    "total_tokens": 16988,
+    "calls": 4,
+    "models_used": [
+      "deepseek/deepseek-v4.1-flash"
+    ]
+  },
+  "artifacts": [],
+  "tool_calls": [
+    {
+      "tool": "read_skill",
+      "arguments": {
+        "skill_id": "skilyst/video-15s"
+      },
+      "result": {
+        "skill_id": "skilyst/video-15s",
+        "version": "1.0.0",
+        "degraded": false,
+        "digest": "sha256:2ce9ac46f9d2b28fcf05c81c29cea23ab685643cd1d7c66f1ff7e2462b9ebadf",
+        "permission": {
+          "egress": [
+            "beehive-api.verse4.pet"
+          ],
+          "filesystem": "workspace",
+          "exec": "none",
+          "secrets": true
+        },
+        "plan": {
+          "provider": "minimax-h3",
+          "duration": 15,
+          "resolution": "768P",
+          "ratio": "9:16"
+        },
+        "requires_nodes": [
+          {
+            "node_id": "generate:minimax-h3",
+            "version_range": ">=1.0.0",
+            "optional": false,
+            "fallback": [
+              "generate:drawnow",
+              "generate:byteplus-seedance-2.0"
+            ]
+          }
+        ],
+        "instructions": "\n# 15s Vertical Short Video (text-to-video)\n\n## When to use\n\nThe user asks for a short vertical clip generated from an idea, with no source\nfootage and no reference image. Deliverable = one playable video URL.\n\n## Method (order matters)\n\n1. **Intent first.** Decide the single piece of information / emotion this shot\n   carries, then the shot size (extreme wide → close-up = information dial).\n   Never start from visual adjectives.\n2. **One visual centre.** Exactly one dominant element per frame; everything\n   else supports it. If squinting at a thumbnail gives two focal points, rewrite.\n3. **Lighting with a motive.** Write the key:fill ratio explicitly and give the\n   light an in-frame source (window, practical, neon).\n4. **One movement per shot.** At most one camera move; lock it with \"static\" if\n   the shot should hold.\n5. **Prompt skeleton (camera first):** camera movement → subject + action →\n   environment → lighting/atmosphere → style/technical.\n6. **Cheapest acceptable render:** provider `minimax-h3`, `duration=15`,\n   `resolution=768P` (about $1.04 per clip). Do not silently upgrade the tier;\n   a higher tier is a separate, user-confirmed decision.\n\n## Call contract\n\nCall `beehive_submit_video` exactly once with:\n\n| field | value |\n| --- | --- |\n| `prompt` | the five-part skeleton assembled above, in English |\n| `duration` | `15` |\n| `resolution` | `768P` |\n| `ratio` | `9:16` |\n\n## Hand-off\n\nReport the artifact URL verbatim (`dest_video_url`) plus the job id. If the job\nfails, report the platform error verbatim — never substitute a different clip or\na \"closest\" result.",
+        "files": [
+          "SKILL.md",
+          "manifest.json"
+        ],
+        "spec_warnings": []
+      },
+      "error": null,
+      "duration_s": 0.0
+    },
+    {
+      "tool": "beehive_submit_job",
+      "arguments": {
+        "prompt": "Slow dolly-in toward a solitary lighthouse standing on a rocky headland at first light. The lighthouse is the single visual centre: the tower holds perfectly still while its warm amber lamp beam sweeps once, slowly, through the frame. Dense morning sea fog drifts in slow horizontal layers, swallowing the base of the tower and the water below; two gulls are barely readable as soft silhouettes. Pre-dawn cool blue ambient light with a key:fill ratio of about 4:1 — the lighthouse lamp is the in-frame key source, warm amber cutting through cold fog, with soft blue fill from the overcast sky. Muted desaturated teal-and-amber palette, fine mist grain, shallow atmospheric depth, static horizon, cinematic vertical framing, 24fps filmic look.",
+        "duration": 15,
+        "resolution": "768P",
+        "ratio": "9:16",
+        "node_id": "generate:minimax-h3",
+        "wait": true,
+        "timeout_s": 600
+      },
+      "result": {
+        "dry_run": true,
+        "node": {
+          "type": "generate",
+          "provider": "minimax-h3",
+          "config": {
+            "prompt": "Slow dolly-in toward a solitary lighthouse standing on a rocky headland at first light. The lighthouse is the single visual centre: the tower holds perfectly still while its warm amber lamp beam sweeps once, slowly, through the frame. Dense morning sea fog drifts in slow horizontal layers, swallowing the base of the tower and the water below; two gulls are barely readable as soft silhouettes. Pre-dawn cool blue ambient light with a key:fill ratio of about 4:1 — the lighthouse lamp is the in-frame key source, warm amber cutting through cold fog, with soft blue fill from the overcast sky. Muted desaturated teal-and-amber palette, fine mist grain, shallow atmospheric depth, static horizon, cinematic vertical framing, 24fps filmic look.",
+            "duration": 15,
+            "resolution": "768P",
+            "ratio": "9:16"
+          }
+        },
+        "workflow_id": ""
+      },
+      "error": null,
+      "duration_s": 0.0
+    },
+    {
+      "tool": "list_skill_files",
+      "arguments": {
+        "skill_id": "skilyst/video-15s"
+      },
+      "result": {
+        "skill_id": "skilyst/video-15s",
+        "files": [
+          "SKILL.md",
+          "manifest.json"
+        ]
+      },
+      "error": null,
+      "duration_s": 0.0
+    },
+    {
+      "tool": "read_skill_file",
+      "arguments": {
+        "skill_id": "skilyst/video-15s",
+        "path": "manifest.json"
+      },
+      "result": {
+        "skill_id": "skilyst/video-15s",
+        "path": "manifest.json",
+        "content": "{\n  \"skill_id\": \"skilyst/video-15s\",\n  \"version\": \"1.0.0\",\n  \"display_name\": \"15 秒竖版短视频生产\",\n  \"description\": \"Produce a single 15-second vertical short video from a text idea on the Skilyst/Beehive platform. Use when the user wants a 15s social clip (no source media) and expects a finished video file URL. Covers the shot-intent-first prompt skeleton, the cheapest acceptable render tier, and the artifact hand-off.\",\n  \"kind\": \"official-bundle\",\n  \"content_digest\": \"sha256:2ce9ac46f9d2b28fcf05c81c29cea23ab685643cd1d7c66f1ff7e2462b9ebadf\",\n  \"upstream\": null,\n  \"fork_depth\": 0,\n  \"supply_chain\": {\n    \"source\": {\n      \"origin\": \"skilyst-registry\",\n      \"repo\": \"petaverse-cloud/skilyst-official-skills\",\n      \"commit\": \"local-poc\"\n    },\n    \"static_scan\": {\n      \"status\": \"passed\",\n      \"scanner\": \"skilyst-scanner@0.1\",\n      \"scanned_at\": \"2026-09-23T00:00:00+08:00\"\n    },\n    \"signatures\": [\n      {\n        \"key_id\": \"skilyst-platform\",\n        \"algo\": \"ed25519\",\n        \"sig\": \"poc-placeholder\",\n        \"digest\": \"sha256:placeholder-filled-by-the-packer\"\n      }\n    ]\n  },\n  \"permission\": {\n    \"egress\": [\n      \"beehive-api.verse4.pet\"\n    ],\n    \"filesystem\": \"workspace\",\n    \"exec\": \"none\",\n    \"secrets\": true\n  },\n  \"plan\": {\n    \"provider\": \"minimax-h3\",\n    \"duration\": 15,\n    \"resolution\": \"768P\",\n    \"ratio\": \"9:16\"\n  },\n  \"requires\": {\n    \"nodes\": [\n      {\n        \"provider\": \"video-gen\",\n        \"node_id\": \"generate:minimax-h3\",\n        \"node_definition_version\": \">=1.0.0\",\n        \"optional\": false,\n        \"fallback\": [\n          \"generate:drawnow\",\n          \"generate:byteplus-seedance-2.0\"\n        ]\n      }\n    ]\n  },\n  \"i18n\": {\n    \"default_locale\": \"zh-CN\",\n    \"locales\": [\n      \"zh-CN\",\n      \"en\"\n    ],\n    \"glossary\": {\n      \"zh-CN\": \"references/i18n/glossary.zh-CN.json\",\n      \"en\": \"references/i18n/glossary.en.json\"\n    }\n  },\n  \"author\": {\n    \"name\": \"platform\",\n    \"handle\": \"@platform\",\n    \"verified\": true\n  },\n  \"attribution\": {\n    \"contributors\": []\n  },\n  \"license\": {\n    \"spdx\": \"MIT\",\n    \"file\": \"LICENSE\"\n  },\n  \"copyright\": \"Copyright (c) 2026 Petaverse\",\n  \"compatibility\": {\n    \"agent_runtime\": {\n      \"min\": \"0.1.0\",\n      \"tested\": [\n        \"0.1.0\"\n      ]\n    },\n    \"node_definitions\": {\n      \"min\": \"1.0.0\"\n    }\n  },\n  \"update\": {\n    \"channel\": \"official\",\n    \"policy\": \"auto\",\n    \"hot_reload\": {\n      \"allowed\": true,\n      \"exclusions\": [\n        \"node-schema\"\n      ]\n    }\n  },\n  \"changelog\": [\n    {\n      \"version\": \"1.0.0\",\n      \"date\": \"2026-09-23\",\n      \"changes\": \"first official video skill\",\n      \"upstream_sync\": false\n    }\n  ]\n}\n"
+      },
+      "error": null,
+      "duration_s": 0.0
+    },
+    {
+      "tool": "beehive_list_assets",
+      "arguments": {
+        "limit": 10
+      },
+      "result": {
+        "assets": [
+          {
+            "id": "as-job-1790152872020-7a8cbebd954e6fb1-node-job-1790152872020-7a8cbebd954e6fb1-0-video",
+            "name": "node-job-1790152872020-7a8cbebd954e6fb1-0-1790153259726.mp4",
+            "asset_type": "video",
+            "mime_type": "video/mp4",
+            "url": "https://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790152872020-7a8cbebd954e6fb1/node-job-1790152872020-7a8cbebd954e6fb1-0-1790153259726.mp4",
+            "file_size": 0,
+            "owner_id": "usr-1787815793337170547",
+            "thumbnail_url": "https://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790152872020-7a8cbebd954e6fb1/node-job-1790152872020-7a8cbebd954e6fb1-0-first-frame-1790153260022.jpg",
+            "source_job_id": "job-1790152872020-7a8cbebd954e6fb1",
+            "source_node_id": "node-job-1790152872020-7a8cbebd954e6fb1-0",
+            "created_at": "2026-09-23T16:47:40.392415+08:00",
+            "updated_at": "2026-09-23T16:47:40.392415+08:00"
+          },
+          {
+            "id": "as-job-1790152742408-171b39e52a993216-node-job-1790152742408-171b39e52a993216-0-video",
+            "name": "node-job-1790152742408-171b39e52a993216-0-1790152994700.mp4",
+            "asset_type": "video",
+            "mime_type": "video/mp4",
+            "url": "https://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790152742408-171b39e52a993216/node-job-1790152742408-171b39e52a993216-0-1790152994700.mp4",
+            "file_size": 0,
+            "owner_id": "usr-1787815793337170547",
+            "thumbnail_url": "https://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790152742408-171b39e52a993216/node-job-1790152742408-171b39e52a993216-0-first-frame-1790152994862.jpg",
+            "source_job_id": "job-1790152742408-171b39e52a993216",
+            "source_node_id": "node-job-1790152742408-171b39e52a993216-0",
+            "created_at": "2026-09-23T16:43:15.397705+08:00",
+            "updated_at": "2026-09-23T16:43:15.397705+08:00"
+          },
+          {
+            "id": "as-job-1790151984612-fe97ee5c68ad65de-node-job-1790151984612-fe97ee5c68ad65de-0-video",
+            "name": "node-job-1790151984612-fe97ee5c68ad65de-0-1790152253895.mp4",
+            "asset_type": "video",
+            "mime_type": "video/mp4",
+            "url": "https://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790151984612-fe97ee5c68ad65de/node-job-1790151984612-fe97ee5c68ad65de-0-1790152253895.mp4",
+            "file_size": 0,
+            "owner_id": "usr-1787815793337170547",
+            "thumbnail_url": "https://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790151984612-fe97ee5c68ad65de/node-job-1790151984612-fe97ee5c68ad65de-0-first-frame-1790152254086.jpg",
+            "source_job_id": "job-1790151984612-fe97ee5c68ad65de",
+            "source_node_id": "node-job-1790151984612-fe97ee5c68ad65de-0",
+            "created_at": "2026-09-23T16:30:54.651938+08:00",
+            "updated_at": "2026-09-23T16:30:54.651938+08:00"
+          },
+          {
+            "id": "as-job-1790151041106-02037f3a581c21f0-node-job-1790151041106-02037f3a581c21f0-0-video",
+            "name": "node-job-1790151041106-02037f3a581c21f0-0-1790151340608.mp4",
+            "asset_type": "video",
+            "mime_type": "video/mp4",
+            "url": "https://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790151041106-02037f3a581c21f0/node-job-1790151041106-02037f3a581c21f0-0-1790151340608.mp4",
+            "file_size": 0,
+            "owner_id": "usr-1787815793337170547",
+            "thumbnail_url": "https://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790151041106-02037f3a581c21f0/node-job-1790151041106-02037f3a581c21f0-0-first-frame-1790151340797.jpg",
+            "source_job_id": "job-1790151041106-02037f3a581c21f0",
+            "source_node_id": "node-job-1790151041106-02037f3a581c21f0-0",
+            "created_at": "2026-09-23T16:15:41.889232+08:00",
+            "updated_at": "2026-09-23T16:15:41.889232+08:00"
+          },
+          {
+            "id": "as-job-1789884560544-509eb18c0127a595-node-job-1789884560544-509eb18c0127a595-0-audio",
+            "name": "tts-1789884563323479796.mp3",
+            "asset_type": "audio",
+            "mime_type": "audio/mpeg",
+            "url": "https://petaversestoragesea.blob.core.windows.net/beehive-temp/job-1789884560544-509eb18c0127a595/tts-1789884563323479796.mp3?se=2126-08-27T14%3A09%3A23Z&sig=cm96lqYX%2B0hiDakJ%2Bu38T4w5tpbZk64JLwrRKmxVN6Q%3D&sp=r&spr=https&sr=b&sv=2026-06-06",
+            "file_size": 0,
+            "duration": 6.071428571428571,
+            "owner_id": "usr-1787815793337170547",
+            "source_job_id": "job-1789884560544-509eb18c0127a595",
+            "source_node_id": "node-job-1789884560544-509eb18c0127a595-0",
+            "created_at": "2026-09-20T14:09:23.432914+08:00",
+            "updated_at": "2026-09-20T14:09:23.432914+08:00"
+          },
+          {
+            "id": "as-job-1788854912353-0c32099d5ae9dae1-node-job-1788854912353-0c32099d5ae9dae1-bgm-audio",
+            "name": "428 close verification",
+            "asset_type": "audio",
+            "mime_type": "audio/mpeg",
+            "url": "https://petaversestoragesea.blob.core.windows.net/beehive-temp/beehive/job-1788854912353-0c32099d5ae9dae1/node-job-1788854912353-0c32099d5ae9dae1-bgm-audio-1788855138160.mp3?se=2126-08-15T16%3A12%3A18Z&sig=i2at0xZ5T4y2ICjvkk38YjlqBUzzqusKnl%2BeWZB%2B2X4%3D&sp=r&spr=https&sr=b&sv=2026-06-06",
+            "file_size": 0,
+            "duration": 185.52,
+            "owner_id": "usr-1787815793337170547",
+            "thumbnail_url": "https://petaversestoragesea.blob.core.windows.net/beehive-temp/beehive/job-1788854912353-0c32099d5ae9dae1/node-job-1788854912353-0c32099d5ae9dae1-bgm-cover-1788855138680.jpeg?se=2126-08-15T16%3A12%3A18Z&sig=RoYxZqXyonex%2FwJlntI%2F1IlIFHo8nglwPo1kgTUYjgA%3D&sp=r&spr=https&sr=b&sv=2026-06-06",
+            "source_job_id": "job-1788854912353-0c32099d5ae9dae1",
+            "source_node_id": "node-job-1788854912353-0c32099d5ae9dae1-bgm",
+            "created_at": "2026-09-08T16:12:18.732483+08:00",
+            "updated_at": "2026-09-08T16:12:18.732483+08:00"
+          },
+          {
+            "id": "as-job-1788766555689-3d4ecfa5b05fc5df-node-job-1788766555689-3d4ecfa5b05fc5df-notif-pg-video",
+            "name": "node-job-1788766555689-3d4ecfa5b05fc5df-notif-pg-1788766579719.mp4",
+            "asset_type": "video",
+            "mime_type": "video/mp4",
+            "url": "https://petaversestoragesea.blob.core.windows.net/beehive-temp/beehive/job-1788766555689-3d4ecfa5b05fc5df/node-job-1788766555689-3d4ecfa5b05fc5df-notif-pg-1788766579719.mp4?se=2126-08-14T15%3A36%3A19Z&sig=c0ZtDdgZV%2BrSFJQFoI3GBX3JBAyAivMcy79IdRx8X8I%3D&sp=r&spr=https&sr=b&sv=2026-06-06",
+            "file_size": 0,
+            "owner_id": "usr-1787815793337170547",
+            "source_job_id": "job-1788766555689-3d4ecfa5b05fc5df",
+            "source_node_id": "node-job-1788766555689-3d4ecfa5b05fc5df-notif-pg",
+            "created_at": "2026-09-07T15:36:20.346434+08:00",
+            "updated_at": "2026-09-07T15:36:20.346434+08:00"
+          },
+          {
+            "id": "as-job-1788506283917-486bd3ce87864c36-node-job-1788506283917-486bd3ce87864c36-notif-e2e-video",
+            "name": "node-job-1788506283917-486bd3ce87864c36-notif-e2e-1788506309823.mp4",
+            "asset_type": "video",
+            "mime_type": "video/mp4",
+            "url": "https://petaversestoragesea.blob.core.windows.net/beehive-temp/beehive/job-1788506283917-486bd3ce87864c36/node-job-1788506283917-486bd3ce87864c36-notif-e2e-1788506309823.mp4?se=2126-08-11T15%3A18%3A29Z&sig=rtVzWxBEqjX8%2B1pgNzMS9nAvtZCmHocBCjTCYKRlBtk%3D&sp=r&spr=https&sr=b&sv=2026-06-06",
+            "file_size": 0,
+            "owner_id": "usr-1787815793337170547",
+            "source_job_id": "job-1788506283917-486bd3ce87864c36",
+            "source_node_id": "node-job-1788506283917-486bd3ce87864c36-notif-e2e",
+            "created_at": "2026-09-04T15:18:30.6386+08:00",
+            "updated_at": "2026-09-04T15:18:30.6386+08:00"
+          },
+          {
+            "id": "as-job-1788482409462-1b0b3697891c728f-node-job-1788482409462-1b0b3697891c728f-v4-video",
+            "name": "node-job-1788482409462-1b0b3697891c728f-v4-1788482434344.mp4",
+            "asset_type": "video",
+            "mime_type": "video/mp4",
+            "url": "https://petaversestoragesea.blob.core.windows.net/beehive-temp/beehive/job-1788482409462-1b0b3697891c728f/node-job-1788482409462-1b0b3697891c728f-v4-1788482434344.mp4?se=2126-08-11T08%3A40%3A34Z&sig=br4LA%2Banp8neiaLTKPYjH2ZGk0WL0ws7Pxh4x1ouP6k%3D&sp=r&spr=https&sr=b&sv=2026-06-06",
+            "file_size": 0,
+            "owner_id": "usr-1787815793337170547",
+            "source_job_id": "job-1788482409462-1b0b3697891c728f",
+            "source_node_id": "node-job-1788482409462-1b0b3697891c728f-v4",
+            "created_at": "2026-09-04T08:40:34.753309+08:00",
+            "updated_at": "2026-09-04T08:40:34.753309+08:00"
+          },
+          {
+            "id": "as-job-1788458097567-b83591bf72d663b9-node-job-1788458097567-b83591bf72d663b9-v3-video",
+            "name": "node-job-1788458097567-b83591bf72d663b9-v3-1788458124662.mp4",
+            "asset_type": "video",
+            "mime_type": "video/mp4",
+            "url": "https://petaversestoragesea.blob.core.windows.net/beehive-temp/beehive/job-1788458097567-b83591bf72d663b9/node-job-1788458097567-b83591bf72d663b9-v3-1788458124662.mp4?se=2126-08-11T01%3A55%3A24Z&sig=5IxPumVi1J48UgPavVLv2oazfaHmHPaHRalX%2BcZZ8U0%3D&sp=r&spr=https&sr=b&sv=2026-06-06",
+            "file_size": 0,
+            "owner_id": "usr-1787815793337170547",
+            "created_at": "2026-09-04T01:55:24.847082+08:00",
+            "updated_at": "2026-09-04T01:55:24.847082+08:00"
+          }
+        ]
+      },
+      "error": null,
+      "duration_s": 1.07
+    }
+  ],
+  "preflight": {
+    "registry_available": true,
+    "problems": []
+  },
+  "error": null
+}

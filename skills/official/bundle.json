@@ -1,0 +1,11 @@
+{
+  "bundle": "skilyst-official",
+  "runtime": "0.1.0",
+  "signed_by": "skilyst-platform",
+  "skills": [
+    {
+      "path": "video-15s",
+      "version": "1.0.0"
+    }
+  ]
+}

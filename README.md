@@ -29,8 +29,39 @@
 ## 文档
 
 - `docs/` — 架构决策记录（ADR）/ 规范引用
+- `docs/adr/0001-runtime-layout.md` — 运行时模块划分与 agent loop 的不变量（A1）
 - 调研底稿：`~/wigowago-local/research/skill-ecosystem/`（选型报告/DSH 深度调研/manifest 规范草案）
+
+## Runtime (A1 — self-built core)
+
+Standard library only; no install step in development.
+
+```bash
+export SKILYST_ENV_FILE=~/.skilyst/env          # 0600, holds BEEHIVE_PLATFORM_* + SKILYST_LLM_*
+./bin/skilyst preload skills/official           # preload the platform-signed official bundle
+./bin/skilyst list                              # installed skills
+./bin/skilyst doctor skilyst/video-15s          # integrity + live node pre-flight
+./bin/skilyst inventory <skill-dir>             # community package, zero modification
+./bin/skilyst run skilyst/video-15s --request "…"   # skill -> agent loop -> tool -> artifact URL
+./bin/skilyst run … --dry-run                   # same chain without submitting a paid job
+./bin/skilyst chat --skill skilyst/video-15s    # conversation (REPL; --message for one-shot)
+./bin/skilyst authz-probe --bypass-gate         # what a restricted key gets, client- and server-side
+```
+
+Layout: `src/skills` (loader/digest/store) · `src/manifest` (sidecar spec) · `src/beehive`
+(scope gate + API client) · `src/sandbox` (permission gate + resource resolution) ·
+`src/llm` (chat client + router) · `src/session` (transcript/trace/artifacts) ·
+`src/agent` (prompt/tools/loop) · `src/cli.py`.
+
+Rules the loop enforces: tool availability is manifest-driven (no `permission.secrets`, no
+platform tools), the credential can never reach billing/admin (client-side scope gate plus a
+per-run job budget), a missing required node is blocking unless `--allow-fallback`, installed
+skills are digest-verified on every load, and a job's artifact URL is HEAD-verified before the
+runtime reports success. See `docs/adr/0001-runtime-layout.md`.
+
+Tests: `PYTHONPATH=src python3 -m unittest discover -s tests` (85 tests, offline, <1s).
 
 ## 状态
 
 M1 启动中（2026-09-23）。任务表：pv-beehive-core#585 §四。
+A1 phase-1（基线迁移 + agent loop 最小核心 + CLI）已交付——见 `docs/a1-verification.md`。

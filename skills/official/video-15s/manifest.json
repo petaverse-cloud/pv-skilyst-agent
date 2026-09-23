@@ -1,0 +1,111 @@
+{
+  "skill_id": "skilyst/video-15s",
+  "version": "1.0.0",
+  "display_name": "15 秒竖版短视频生产",
+  "description": "Produce a single 15-second vertical short video from a text idea on the Skilyst/Beehive platform. Use when the user wants a 15s social clip (no source media) and expects a finished video file URL. Covers the shot-intent-first prompt skeleton, the cheapest acceptable render tier, and the artifact hand-off.",
+  "kind": "official-bundle",
+  "content_digest": "sha256:2ce9ac46f9d2b28fcf05c81c29cea23ab685643cd1d7c66f1ff7e2462b9ebadf",
+  "upstream": null,
+  "fork_depth": 0,
+  "supply_chain": {
+    "source": {
+      "origin": "skilyst-registry",
+      "repo": "petaverse-cloud/skilyst-official-skills",
+      "commit": "local-poc"
+    },
+    "static_scan": {
+      "status": "passed",
+      "scanner": "skilyst-scanner@0.1",
+      "scanned_at": "2026-09-23T00:00:00+08:00"
+    },
+    "signatures": [
+      {
+        "key_id": "skilyst-platform",
+        "algo": "ed25519",
+        "sig": "poc-placeholder",
+        "digest": "sha256:placeholder-filled-by-the-packer"
+      }
+    ]
+  },
+  "permission": {
+    "egress": [
+      "beehive-api.verse4.pet"
+    ],
+    "filesystem": "workspace",
+    "exec": "none",
+    "secrets": true
+  },
+  "plan": {
+    "provider": "minimax-h3",
+    "duration": 15,
+    "resolution": "768P",
+    "ratio": "9:16"
+  },
+  "requires": {
+    "nodes": [
+      {
+        "provider": "video-gen",
+        "node_id": "generate:minimax-h3",
+        "node_definition_version": ">=1.0.0",
+        "optional": false,
+        "fallback": [
+          "generate:drawnow",
+          "generate:byteplus-seedance-2.0"
+        ]
+      }
+    ]
+  },
+  "i18n": {
+    "default_locale": "zh-CN",
+    "locales": [
+      "zh-CN",
+      "en"
+    ],
+    "glossary": {
+      "zh-CN": "references/i18n/glossary.zh-CN.json",
+      "en": "references/i18n/glossary.en.json"
+    }
+  },
+  "author": {
+    "name": "platform",
+    "handle": "@platform",
+    "verified": true
+  },
+  "attribution": {
+    "contributors": []
+  },
+  "license": {
+    "spdx": "MIT",
+    "file": "LICENSE"
+  },
+  "copyright": "Copyright (c) 2026 Petaverse",
+  "compatibility": {
+    "agent_runtime": {
+      "min": "0.1.0",
+      "tested": [
+        "0.1.0"
+      ]
+    },
+    "node_definitions": {
+      "min": "1.0.0"
+    }
+  },
+  "update": {
+    "channel": "official",
+    "policy": "auto",
+    "hot_reload": {
+      "allowed": true,
+      "exclusions": [
+        "node-schema"
+      ]
+    }
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-23",
+      "changes": "first official video skill",
+      "upstream_sync": false
+    }
+  ]
+}
