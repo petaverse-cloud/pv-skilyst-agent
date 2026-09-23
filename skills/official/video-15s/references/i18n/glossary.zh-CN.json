@@ -1,0 +1,11 @@
+{
+  "locale": "zh-CN",
+  "terms": [
+    {"term_key": "shot_size", "source_term": "shot size", "target_term": "景别", "note": "极远景到特写的连续档位，是信息量的旋钮"},
+    {"term_key": "camera_move", "source_term": "camera movement", "target_term": "运镜", "note": "单个镜头只允许一次运镜"},
+    {"term_key": "key_fill_ratio", "source_term": "key:fill ratio", "target_term": "主辅光比", "note": "布光动机必须写成可画的比值与光源"},
+    {"term_key": "text_to_video", "source_term": "text-to-video", "target_term": "文生视频", "note": "无源素材、无参考图的生成模式"},
+    {"term_key": "render_tier", "source_term": "render tier", "target_term": "渲染档位", "note": "分辨率/时长决定的计费档，升级需用户确认"},
+    {"term_key": "artifact_url", "source_term": "artifact URL", "target_term": "产物地址", "note": "成片可播放链接，交付时逐字回报，不做替换"}
+  ]
+}

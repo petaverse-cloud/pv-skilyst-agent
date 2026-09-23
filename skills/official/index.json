@@ -1,0 +1,56 @@
+{
+  "manifest_version": "0.2",
+  "bundle": "skilyst-official",
+  "kind": "official-bundle",
+  "runtime": "0.1.0",
+  "signed_by": "skilyst-platform",
+  "signature": {
+    "key_id": "skilyst-platform",
+    "algo": "ed25519",
+    "sig": "platform-signature-pending",
+    "digest": "covers every skills[].content_digest (see packer)"
+  },
+  "generated_at": "2026-09-23T22:58:37+08:00",
+  "skills": [
+    {
+      "path": "doctor",
+      "skill_id": "skilyst/doctor",
+      "version": "1.0.0",
+      "kind": "official-bundle",
+      "content_digest": "sha256:3646cb63f93c1386433501981217ccc7fcd1352a488f162efd023cb99d30b5a1",
+      "tree_digest": "sha256:4c866224a4efc3942af3b2026391878229a9956c8d986a5789d8d0d16713f260"
+    },
+    {
+      "path": "embed-video",
+      "skill_id": "skilyst/embed-video",
+      "version": "1.0.0",
+      "kind": "official-bundle",
+      "content_digest": "sha256:84015d3eeb056a2427a835308c84f91bba6ee8c730c6db57f494fd06f7eb5a3d",
+      "tree_digest": "sha256:4415dd47c30c7ad078ce4a842bcef77472f992fac934c34fa469a42e296b2b47"
+    },
+    {
+      "path": "lipsync-audio-refs",
+      "skill_id": "skilyst/lipsync-audio-refs",
+      "version": "1.0.0",
+      "kind": "official-bundle",
+      "content_digest": "sha256:2bfefc36b7d815aca28be893ba513568d788b865e9fd310a8a9ed4eb67ca04ea",
+      "tree_digest": "sha256:899aa522b9d3cfdba85c449959212db19f5288b7e1ac21e62b10cb9eab7a1004"
+    },
+    {
+      "path": "prompt-craft",
+      "skill_id": "skilyst/prompt-craft",
+      "version": "1.0.0",
+      "kind": "official-bundle",
+      "content_digest": "sha256:fbe0856a93346abc15070b80c01a982bd6a4c000b925d0c4249dc05968226a13",
+      "tree_digest": "sha256:de52d581f1a9959f2a3eabd63e4dc34fbf8f7b31be35e2be0fb9e5eba681b8a5"
+    },
+    {
+      "path": "video-15s",
+      "skill_id": "skilyst/video-15s",
+      "version": "1.1.0",
+      "kind": "official-bundle",
+      "content_digest": "sha256:5663a4904ae9f486fed54b166e052a6dac9b4a7a614a6e9b4b3c9e868e0fae63",
+      "tree_digest": "sha256:530e32b03490b6027ecab43bf9ff7c3024c7656f000e1d62f6170e61951886c7"
+    }
+  ]
+}

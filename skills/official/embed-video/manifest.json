@@ -1,10 +1,10 @@
 {
-  "skill_id": "skilyst/video-15s",
-  "version": "1.1.0",
-  "display_name": "15 秒竖版短视频生产",
-  "description": "Produce a single 15-second vertical short video from a text idea on the Skilyst/Beehive platform. Use when the user wants a 15s social clip (no source media) and expects a finished video file URL. Covers the shot-intent-first prompt skeleton, the cheapest acceptable render tier, and the artifact hand-off.",
+  "skill_id": "skilyst/embed-video",
+  "version": "1.0.0",
+  "display_name": "图生视频工艺（首帧锚 + 帧链拼接）",
+  "description": "Image-to-video craft on the Skilyst/Beehive platform — animate a locked still (first-frame anchor) into a 4-15s clip that keeps the identity of that still, and cut several such clips together without a visible jump. Use when the user has a locked image (or needs one) and wants controlled motion from it, instead of a free text-to-video render.",
   "kind": "official-bundle",
-  "content_digest": "sha256:5663a4904ae9f486fed54b166e052a6dac9b4a7a614a6e9b4b3c9e868e0fae63",
+  "content_digest": "sha256:84015d3eeb056a2427a835308c84f91bba6ee8c730c6db57f494fd06f7eb5a3d",
   "upstream": null,
   "fork_depth": 0,
   "supply_chain": {
@@ -23,7 +23,7 @@
         "key_id": "skilyst-platform",
         "algo": "ed25519",
         "sig": "platform-signature-pending",
-        "digest": "sha256:5663a4904ae9f486fed54b166e052a6dac9b4a7a614a6e9b4b3c9e868e0fae63"
+        "digest": "sha256:84015d3eeb056a2427a835308c84f91bba6ee8c730c6db57f494fd06f7eb5a3d"
       }
     ]
   },
@@ -37,12 +37,31 @@
   },
   "plan": {
     "provider": "minimax-h3",
-    "duration": 15,
+    "duration": 6,
     "resolution": "768P",
     "ratio": "9:16"
   },
   "requires": {
     "nodes": [
+      {
+        "provider": "image-gen",
+        "node_id": "generate:nb2-image",
+        "node_definition_version": ">=1.0.0",
+        "optional": true,
+        "fallback": [
+          "generate:nb2-lite-image",
+          "generate:gpt-image-2"
+        ],
+        "binding": {
+          "tool": "beehive_submit_job",
+          "node_id": "generate:nb2-image",
+          "config_map": {
+            "prompt": "prompt",
+            "images": "images",
+            "ratio": "aspect_ratio"
+          }
+        }
+      },
       {
         "provider": "video-gen",
         "node_id": "generate:minimax-h3",
@@ -57,6 +76,8 @@
           "node_id": "generate:minimax-h3",
           "config_map": {
             "prompt": "prompt",
+            "images": "images",
+            "image_roles": "image_roles",
             "duration": "duration",
             "resolution": "resolution",
             "ratio": "ratio"
@@ -114,13 +135,7 @@
     {
       "version": "1.0.0",
       "date": "2026-09-23",
-      "changes": "first official video skill",
-      "upstream_sync": false
-    },
-    {
-      "version": "1.1.0",
-      "date": "2026-09-23",
-      "changes": "manifest v0.2: requires.nodes[].binding added (tool<->node call contract) and pinned to the real runtime tool beehive_submit_job (1.0.0 named a tool that does not exist); license file and i18n glossaries shipped so every declared reference resolves; evidence lines added to every rule",
+      "changes": "first official image-to-video skill: frame/reference mode exclusivity, first-frame identity anchor, i2v prompt discipline, mode-dependent duration caps, frame-chain splice craft, i2v identity QA thresholds",
       "upstream_sync": false
     }
   ]
