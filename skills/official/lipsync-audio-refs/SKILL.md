@@ -50,10 +50,15 @@ relying on the picture alone.
 
 `audio_refs` accepts a single clip of 2-15 s. A shorter line is refused upstream
 as an invalid parameter: a 1.836 s line ("Raise your head.") was rejected, and
-re-rendering the TTS at `speed=0.6` produced 2.34 s, which passed. Do not assume
-the speed knob is linear — the same batch saw `speed=0.9` have no effect on that
-line, so **measure the produced duration of every line** before it becomes an
-input, and pad with a beat of room tone if a line is genuinely too short.
+re-rendering the TTS at `speed=0.6` produced 2.34 s, which passed. Note where the
+bound lives: the **upstream model API** enforces it — the platform's own
+submission validator only enforces the mode-mixing rule of Rule 1 (see
+`internal/provider/minimax_h3/runner.go`, which maps `audio_refs` straight to
+`reference_audio` without a length check). So an under-length line is not caught
+by local preflight; it fails on submit/run. Do not assume the speed knob is
+linear either — the same batch saw `speed=0.9` have no effect on that line, so
+**measure the produced duration of every line** before it becomes an input, and
+pad with a beat of room tone if a line is genuinely too short.
 
 ## Rule 3 — duration = ceil(audio) + tail
 

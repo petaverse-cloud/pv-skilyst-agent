@@ -44,6 +44,11 @@ roles or the job will be refused. The runtime validator
 the seedance family, so the failure is caught before money is spent; do not
 "try it and see".
 
+The runtime side of the same rule: `video_refs` and `audio_refs` are mapped
+unconditionally to the reference roles (`reference_video` / `reference_audio`) —
+"video / audio refs are always reference mode" (`internal/provider/minimax_h3/runner.go`)
+— which is why they can never be combined with a frame role in the first place.
+
 ## Rule 2 — the first frame carries identity, so build it before you animate
 
 Because frame mode forbids a `reference_image`, identity has to be baked into the

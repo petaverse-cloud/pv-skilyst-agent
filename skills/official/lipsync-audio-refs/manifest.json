@@ -4,7 +4,7 @@
   "display_name": "口型工艺（audio_refs 音频驱动）",
   "description": "Dialogue shots on the Skilyst/Beehive platform — synthesize the line with TTS first, then drive the shot with that track (audio_refs plus reference images) so the mouth follows the voice and the clip ships with its own audio. Use when a shot has spoken dialogue; covers the 2-15s audio_refs bounds, the first_frame ban in audio mode, and the pacing rule that decides how long the line may be.",
   "kind": "official-bundle",
-  "content_digest": "sha256:aa94ed5ed533ebdbcaeeb0fc80986ddfe65477044bee8caddcd3f00e14f4a28d",
+  "content_digest": "sha256:2bfefc36b7d815aca28be893ba513568d788b865e9fd310a8a9ed4eb67ca04ea",
   "upstream": null,
   "fork_depth": 0,
   "supply_chain": {
@@ -23,7 +23,7 @@
         "key_id": "skilyst-platform",
         "algo": "ed25519",
         "sig": "platform-signature-pending",
-        "digest": "sha256:aa94ed5ed533ebdbcaeeb0fc80986ddfe65477044bee8caddcd3f00e14f4a28d"
+        "digest": "sha256:2bfefc36b7d815aca28be893ba513568d788b865e9fd310a8a9ed4eb67ca04ea"
       }
     ]
   },

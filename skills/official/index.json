@@ -10,7 +10,7 @@
     "sig": "platform-signature-pending",
     "digest": "covers every skills[].content_digest (see packer)"
   },
-  "generated_at": "2026-09-23T22:46:38+08:00",
+  "generated_at": "2026-09-23T22:58:37+08:00",
   "skills": [
     {
       "path": "doctor",
@@ -25,16 +25,16 @@
       "skill_id": "skilyst/embed-video",
       "version": "1.0.0",
       "kind": "official-bundle",
-      "content_digest": "sha256:d447a57630fb22d655cce8e99d38b362dd87917e8cdeeab7e4e6b2b5811dfc54",
-      "tree_digest": "sha256:47739c7b2fadb82c91afd4aace701405bd0545c83e9a7482542f2d361fac23e6"
+      "content_digest": "sha256:84015d3eeb056a2427a835308c84f91bba6ee8c730c6db57f494fd06f7eb5a3d",
+      "tree_digest": "sha256:4415dd47c30c7ad078ce4a842bcef77472f992fac934c34fa469a42e296b2b47"
     },
     {
       "path": "lipsync-audio-refs",
       "skill_id": "skilyst/lipsync-audio-refs",
       "version": "1.0.0",
       "kind": "official-bundle",
-      "content_digest": "sha256:aa94ed5ed533ebdbcaeeb0fc80986ddfe65477044bee8caddcd3f00e14f4a28d",
-      "tree_digest": "sha256:d4595626b83b681ba575d88ddbdb54d1b03dc7a3a08137a67d7741533e7b7aab"
+      "content_digest": "sha256:2bfefc36b7d815aca28be893ba513568d788b865e9fd310a8a9ed4eb67ca04ea",
+      "tree_digest": "sha256:899aa522b9d3cfdba85c449959212db19f5288b7e1ac21e62b10cb9eab7a1004"
     },
     {
       "path": "prompt-craft",

@@ -12,12 +12,12 @@
     {
       "path": "embed-video",
       "version": "1.0.0",
-      "content_digest": "sha256:d447a57630fb22d655cce8e99d38b362dd87917e8cdeeab7e4e6b2b5811dfc54"
+      "content_digest": "sha256:84015d3eeb056a2427a835308c84f91bba6ee8c730c6db57f494fd06f7eb5a3d"
     },
     {
       "path": "lipsync-audio-refs",
       "version": "1.0.0",
-      "content_digest": "sha256:aa94ed5ed533ebdbcaeeb0fc80986ddfe65477044bee8caddcd3f00e14f4a28d"
+      "content_digest": "sha256:2bfefc36b7d815aca28be893ba513568d788b865e9fd310a8a9ed4eb67ca04ea"
     },
     {
       "path": "prompt-craft",
