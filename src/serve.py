@@ -48,9 +48,10 @@ import os
 import secrets
 import shutil
 import signal
+import sys
 import threading
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Callable
@@ -69,6 +70,7 @@ API_VERSION = 1
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 8765
 TOKEN_HEADER = "X-Skilyst-Token"
+PARENT_POLL_S = 2.0
 
 # The shell's webview origins. Tauri serves the window from `tauri://localhost`
 # on macOS and `http://tauri.localhost` on Windows/Linux; 1420 is the vite dev
@@ -150,6 +152,7 @@ class ServeOptions:
     max_turns: int = 8
     max_jobs: int = 1
     allow_fallback: bool = False
+    orphan_guard: bool = False
 
 
 class RuntimeAPI:
@@ -270,13 +273,23 @@ class RuntimeAPI:
             raise BadRequest("message is required")
         skill_id = payload.get("skill") or self.skill
         session_id = payload.get("session_id") or None
-        dry_run = bool(payload.get("dry_run", self.dry_run))
+        requested_dry_run = payload.get("dry_run")
+        # A server started in dry-run mode cannot be talked out of it per request: the
+        # operator's `--live` decision is the gate, and the message flag can only be
+        # *more* cautious than the server.
+        dry_run = self.dry_run or (self.dry_run if requested_dry_run is None
+                                   else bool(requested_dry_run))
         max_turns = int(payload.get("max_turns") or self.max_turns)
+        model = str(payload.get("model") or "").strip()
         # `stream` decides how the *model* is called too: a caller that did not ask for
         # SSE gets a plain completion, so a provider without streaming support is not a
         # hard failure for the non-streaming path.
         stream = bool(payload.get("stream"))
         cfg = self._resolve(llm=True, beehive=bool(skill_id))
+        if model:
+            # A per-message override, never a stored default: an experiment must not
+            # silently become what every later session runs on.
+            cfg = replace(cfg, llm=replace(cfg.llm, model=model))
 
         notes: list[str] = []
 
@@ -480,20 +493,41 @@ def make_handler(api: RuntimeAPI, token: str, allowed_origins: tuple[str, ...],
     return Handler
 
 
+def parent_gone(recorded_pid: int) -> bool:
+    """True when the process that started us is no longer our parent (POSIX)."""
+    return os.name == "posix" and os.getppid() != recorded_pid
+
+
 def ready_line(port: int, token: str, options: ServeOptions, cfg: RuntimeConfig) -> dict:
     """The single stdout line the shell parses to learn where the runtime is."""
     return {"event": "ready", "api_version": API_VERSION, "host": options.host, "port": port,
             "token": token, "pid": os.getpid(), "dry_run": options.dry_run, "skill": options.skill,
             "sessions_dir": str(cfg.session_dir), "store_dir": str(cfg.store_dir),
-            "workspace_dir": str(cfg.workspace_dir), "started_at": time.time()}
+            "workspace_dir": str(cfg.workspace_dir), "started_at": time.time(),
+            "orphan_guard": options.orphan_guard}
 
 
 def serve(cfg: RuntimeConfig, options: ServeOptions, *, resolve_kwargs: dict | None = None,
           on_ready: Callable[[dict], None] | None = None, note: Callable[[str], None] | None = None,
           client_factory: Callable | None = None, allowed_origins: tuple[str, ...] = WEBVIEW_ORIGINS,
-          server_factory: Callable = RuntimeHTTPServer) -> int:
+          server_factory: Callable = RuntimeHTTPServer, stdin=None) -> int:
     """Start the server and block until it is asked to stop. Returns 0 on a clean stop."""
-    log = note or (lambda _message: None)
+    sink = note or (lambda _message: None)
+
+    def log(message: str) -> None:
+        """Logging must never be able to break behaviour.
+
+        The moment the shell dies, its end of our stderr pipe closes, so every later
+        print raises BrokenPipeError -- including the ones inside the shutdown path.
+        That is how an orphan guard silently failed to stop an orphaned runtime: the
+        guard logged "the shell is gone" and died on the broken pipe before it could
+        call shutdown.
+        """
+        try:
+            sink(message)
+        except (OSError, ValueError):
+            pass
+
     token = options.token or secrets.token_urlsafe(32)
     api = RuntimeAPI(cfg, resolve_kwargs=resolve_kwargs, skill=options.skill, dry_run=options.dry_run,
                      max_turns=options.max_turns, max_jobs=options.max_jobs,
@@ -509,8 +543,46 @@ def serve(cfg: RuntimeConfig, options: ServeOptions, *, resolve_kwargs: dict | N
         path.chmod(0o600)
 
     def stop(_signum=None, _frame=None) -> None:
-        log(f"stopping (signal {_signum})")
+        # Shutdown first, announce second: the announcement can fail (see `log`), and a
+        # failure to print must never be a failure to stop.
         threading.Thread(target=httpd.shutdown, daemon=True).start()
+        log(f"stopping (signal {_signum})")
+
+    if options.orphan_guard:
+        # The shell that started us owns our life: if it dies without running its
+        # cleanup (SIGKILL, a crash), nothing will ever talk to this server again and
+        # an orphaned runtime would sit on a port holding a credential.
+        #
+        # Two signals, because neither is sufficient alone:
+        #   * stdin EOF -- the parent holds the write end of our stdin. This is the
+        #     portable one (it is what covers Windows) and it fires instantly.
+        #   * parent pid change -- in the real shell something in the process tree
+        #     keeps the pipe's write end open (verified: the guard armed, the shell
+        #     was SIGTERMed, no EOF arrived), so a poll of os.getppid() is the
+        #     backstop on POSIX. Reparenting to pid 1 is what a dead parent looks
+        #     like. Windows keeps the old value, where the stdin signal still works.
+        def watch_stdin() -> None:
+            stream = stdin if stdin is not None else sys.stdin
+            log("orphan guard: watching stdin for EOF")
+            try:
+                while stream.read(1):
+                    pass
+            except (OSError, ValueError) as exc:
+                log(f"orphan guard: stdin read ended: {type(exc).__name__}: {exc}")
+            log("stdin closed -- the shell is gone, stopping")
+            stop("stdin-eof")
+
+        def watch_parent(parent_pid: int) -> None:
+            while True:
+                time.sleep(PARENT_POLL_S)
+                if parent_gone(parent_pid):
+                    log(f"parent {parent_pid} is gone (reparented to {os.getppid()}) -- stopping")
+                    stop("orphaned")
+                    return
+
+        threading.Thread(target=watch_stdin, daemon=True).start()
+        if hasattr(os, "getppid") and os.name == "posix":
+            threading.Thread(target=watch_parent, args=(os.getppid(),), daemon=True).start()
 
     previous = {}
     for sig in (signal.SIGTERM, signal.SIGINT):

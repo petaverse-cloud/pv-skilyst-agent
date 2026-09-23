@@ -14,5 +14,5 @@ event: delta
 data: {"text": "."}
 
 event: done
-data: {"ok": true, "data": {"session_id": "20260923-225028-547809", "skill": null, "stop_reason": "completed", "answer": "Hello there, friend.", "model": "deepseek/deepseek-v4.1-flash", "turns": 1, "wall_clock_s": 2.8, "usage": {"prompt_tokens": 1434, "completion_tokens": 6, "total_tokens": 1440, "calls": 1, "models_used": ["deepseek/deepseek-v4.1-flash"]}, "artifacts": [], "tool_calls": [], "preflight": null, "error": null, "ok": true, "dry_run": true, "notes": []}}
+data: {"ok": true, "data": {"session_id": "20260923-233608-0d952c", "skill": null, "stop_reason": "completed", "answer": "Hello there, friend.", "model": "deepseek/deepseek-v4.1-flash", "turns": 1, "wall_clock_s": 2.5, "usage": {"prompt_tokens": 1434, "completion_tokens": 6, "total_tokens": 1440, "calls": 1, "models_used": ["deepseek/deepseek-v4.1-flash"]}, "artifacts": [], "tool_calls": [], "preflight": null, "error": null, "ok": true, "dry_run": true, "notes": []}}
 

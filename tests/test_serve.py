@@ -22,6 +22,7 @@ import urllib.error
 import urllib.request
 from http.client import HTTPConnection
 from pathlib import Path
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -29,7 +30,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from config import resolve                                                                  # noqa: E402
 from llm import ChatClient, LLMError, LLMConfig                                             # noqa: E402
 from serve import (API_VERSION, RuntimeAPI, RuntimeHTTPServer, ServeOptions, WEBVIEW_ORIGINS,  # noqa: E402
-                   make_handler, ready_line, serve)
+                   make_handler, parent_gone, ready_line, serve)
 from session import SessionStore                                                            # noqa: E402
 from skills import SkillStore                                                               # noqa: E402
 
@@ -346,6 +347,29 @@ class MessageTests(EnvIsolation):
         self.assertEqual(fx.request("POST", "/message", {"message": "   "})[0], 400)
         self.assertEqual(fx.request("POST", "/message", None)[0], 400)
 
+    def test_a_model_override_applies_to_that_message_only(self):
+        fx = ServeFixture(responses=[chat_response(content="one"), chat_response(content="two")])
+        self.addCleanup(fx.cleanup)
+        fx.request("POST", "/message", {"message": "hi", "model": "override/model"})
+        self.assertEqual(fx.chat.requests[0]["model"], "override/model")
+        fx.request("POST", "/message", {"message": "again"})
+        self.assertEqual(fx.chat.requests[1]["model"], MODEL)          # the default is untouched
+
+    def test_a_dry_run_server_cannot_be_talked_into_spending_per_message(self):
+        fx = ServeFixture(responses=[chat_response(content="ok")])
+        self.addCleanup(fx.cleanup)
+        data = fx.request("POST", "/message", {"message": "hi", "dry_run": False})[2]["data"]
+        self.assertTrue(data["dry_run"])
+
+    def test_a_live_server_honours_a_per_message_dry_run_request(self):
+        fx = ServeFixture(dry_run=False, responses=[chat_response(content="ok"),
+                                                   chat_response(content="ok")])
+        self.addCleanup(fx.cleanup)
+        cautious = fx.request("POST", "/message", {"message": "hi", "dry_run": True})[2]["data"]
+        self.assertTrue(cautious["dry_run"])
+        live = fx.request("POST", "/message", {"message": "hi", "dry_run": False})[2]["data"]
+        self.assertFalse(live["dry_run"])
+
     def test_streaming_emits_delta_and_done_events(self):
         frames = ['data: {"model": "test/model", "choices": [{"delta": {"content": "Hel"}}]}',
                   'data: {"choices": [{"delta": {"content": "lo"}}]}',
@@ -499,6 +523,140 @@ class LifecycleTests(EnvIsolation):
             self.assertEqual(resp.status, 200)
         thread.join(timeout=5)
         self.assertFalse(thread.is_alive(), "POST /shutdown did not stop the server")
+
+    def test_the_runtime_stops_when_its_stdin_closes(self):
+        """Orphan guard: the shell holds our stdin, so EOF means the shell is gone."""
+        class Stdin:
+            def __init__(self):
+                self.reads = 0
+
+            def read(self, _size):
+                self.reads += 1
+                return "" if self.reads > 1 else "x"
+
+        fx = ServeFixture()
+        self.addCleanup(fx.cleanup)
+        cfg = resolve(**fx.resolve_kwargs, require_llm=False, require_beehive=False)
+        captured = {}
+        thread = threading.Thread(target=serve,
+                                  kwargs={"cfg": cfg,
+                                          "options": ServeOptions(port=0, token=TOKEN,
+                                                                  orphan_guard=True),
+                                          "resolve_kwargs": fx.resolve_kwargs,
+                                          "on_ready": captured.update, "note": lambda _m: None,
+                                          "stdin": Stdin()},
+                                  daemon=True)
+        thread.start()
+        for _ in range(100):
+            if captured:
+                break
+            threading.Event().wait(0.05)
+        self.assertTrue(captured, "serve() never reported itself ready")
+        thread.join(timeout=5)
+        self.assertFalse(thread.is_alive(), "stdin EOF did not stop the server")
+
+    def test_the_guard_stops_the_server_when_the_parent_disappears(self):
+        """stdin EOF alone was not enough in the real shell, so the parent pid is watched too."""
+        class BlockingStdin:
+            def read(self, _size):
+                threading.Event().wait(0.05)
+                return "x"                      # never EOF: only the parent check can stop this
+
+        fx = ServeFixture()
+        self.addCleanup(fx.cleanup)
+        cfg = resolve(**fx.resolve_kwargs, require_llm=False, require_beehive=False)
+        captured = {}
+        thread = threading.Thread(target=serve,
+                                  kwargs={"cfg": cfg,
+                                          "options": ServeOptions(port=0, token=TOKEN,
+                                                                  orphan_guard=True),
+                                          "resolve_kwargs": fx.resolve_kwargs,
+                                          "on_ready": captured.update, "note": lambda _m: None,
+                                          "stdin": BlockingStdin()},
+                                  daemon=True)
+        calls = {"n": 0}
+
+        def fake_getppid():
+            # The first call records the parent at startup; every later call reports a
+            # process that has been reparented to pid 1.
+            calls["n"] += 1
+            return 4242 if calls["n"] == 1 else 1
+
+        with mock.patch("serve.PARENT_POLL_S", 0.05), \
+                mock.patch("serve.os.getppid", side_effect=fake_getppid):
+            thread.start()
+            for _ in range(100):
+                if captured:
+                    break
+                threading.Event().wait(0.05)
+            self.assertTrue(captured, "serve() never reported itself ready")
+            thread.join(timeout=5)
+        self.assertFalse(thread.is_alive(), "the parent-pid watch did not stop the server")
+
+    def test_a_broken_log_pipe_does_not_prevent_the_stop(self):
+        """The shell's death is exactly when our stderr has no reader: logging must not raise."""
+        class Stdin:
+            def __init__(self):
+                self.reads = 0
+
+            def read(self, _size):
+                self.reads += 1
+                return "" if self.reads > 1 else "x"
+
+        def broken_log(_message):
+            raise BrokenPipeError(32, "Broken pipe")
+
+        fx = ServeFixture()
+        self.addCleanup(fx.cleanup)
+        cfg = resolve(**fx.resolve_kwargs, require_llm=False, require_beehive=False)
+        captured = {}
+        thread = threading.Thread(target=serve,
+                                  kwargs={"cfg": cfg,
+                                          "options": ServeOptions(port=0, token=TOKEN,
+                                                                  orphan_guard=True),
+                                          "resolve_kwargs": fx.resolve_kwargs,
+                                          "on_ready": captured.update, "note": broken_log,
+                                          "stdin": Stdin()},
+                                  daemon=True)
+        thread.start()
+        for _ in range(100):
+            if captured:
+                break
+            threading.Event().wait(0.05)
+        self.assertTrue(captured, "serve() never reported itself ready")
+        thread.join(timeout=5)
+        self.assertFalse(thread.is_alive(), "a broken log pipe stopped the guard from stopping")
+
+    def test_parent_gone_is_posix_only(self):
+        with mock.patch("serve.os.getppid", return_value=1):
+            self.assertTrue(parent_gone(4242))
+        with mock.patch("serve.os.getppid", return_value=4242):
+            self.assertFalse(parent_gone(4242))
+        with mock.patch("serve.os.name", "nt"):
+            self.assertFalse(parent_gone(4242))
+
+    def test_without_the_guard_a_closed_stdin_is_ignored(self):
+        fx = ServeFixture()
+        self.addCleanup(fx.cleanup)
+        cfg = resolve(**fx.resolve_kwargs, require_llm=False, require_beehive=False)
+        captured = {}
+        thread = threading.Thread(target=serve,
+                                  kwargs={"cfg": cfg, "options": ServeOptions(port=0, token=TOKEN),
+                                          "resolve_kwargs": fx.resolve_kwargs,
+                                          "on_ready": captured.update, "note": lambda _m: None},
+                                  daemon=True)
+        thread.start()
+        for _ in range(100):
+            if captured:
+                break
+            threading.Event().wait(0.05)
+        self.assertTrue(captured)
+        thread.join(timeout=1)
+        self.assertTrue(thread.is_alive(), "the default serve must not exit on stdin EOF")
+        urllib.request.urlopen(urllib.request.Request(
+            f"http://127.0.0.1:{captured['port']}/shutdown", data=b"{}", method="POST",
+            headers={"Authorization": f"Bearer {TOKEN}"}), timeout=5).read()
+        thread.join(timeout=5)
 
 
 if __name__ == "__main__":
