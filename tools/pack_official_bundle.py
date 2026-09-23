@@ -27,7 +27,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import sys
 from datetime import datetime, timezone
@@ -104,9 +103,17 @@ def install_view(entries: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def apply_derived(skill_dir: Path, check: bool) -> list[str]:
-    """Record content_digest + signature digest in the package sidecar."""
+def apply_derived(skill_dir: Path, check: bool) -> tuple[list[str], list[str]]:
+    """Record content_digest + signature digest in the package sidecar.
+
+    Returns ``(refreshed, structural)``: *refreshed* is the list of derived fields
+    this run fixed (or, in ``--check`` mode, found stale); *structural* is the list
+    of problems the packer cannot fix by itself -- a package with no platform
+    signature entry, or a kind the preloader would refuse. Structural problems
+    make the pack fail loudly instead of exiting 0 on an unshippable bundle.
+    """
     drift: list[str] = []
+    structural: list[str] = []
     sidecar = skill_dir / "manifest.json"
     manifest = load_sidecar(sidecar)
     digest = content_digest(skill_dir)
@@ -121,7 +128,9 @@ def apply_derived(skill_dir: Path, check: bool) -> list[str]:
             manifest["content_digest"] = digest
     sigs = manifest.get("supply_chain", {}).get("signatures") or []
     if not sigs:
-        drift.append(f"{skill_dir.name}/manifest.json has no platform signature entry")
+        structural.append(f"{skill_dir.name}/manifest.json has no platform signature entry "
+                          f"(the preloader refuses an unsigned bundle entry -- add the signature "
+                          f"block by hand, the packer will fill its digest)")
     elif sigs[0].get("digest") != digest:
         drift.append(f"{skill_dir.name}/manifest.json signatures[0].digest "
                      f"{sigs[0].get('digest')} != {digest}")
@@ -134,9 +143,9 @@ def apply_derived(skill_dir: Path, check: bool) -> list[str]:
     # load_package is the authority: strict community rules + manifest v0.2 rules
     package = load_package(skill_dir)
     if package.manifest["kind"] != "official-bundle":
-        drift.append(f"{skill_dir.name} kind={package.manifest['kind']!r}, bundle entries must be "
-                     f"official-bundle (the preloader refuses anything else)")
-    return drift
+        structural.append(f"{skill_dir.name} kind={package.manifest['kind']!r}, bundle entries "
+                          f"must be official-bundle (the preloader refuses anything else)")
+    return drift, structural
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -153,8 +162,11 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     drift: list[str] = []
+    structural: list[str] = []
     for skill_dir in dirs:
-        drift.extend(apply_derived(skill_dir, args.check))
+        fixed, broken = apply_derived(skill_dir, args.check)
+        drift.extend(fixed)
+        structural.extend(broken)
 
     entries = [entry_for(d) for d in dirs]
 
@@ -178,9 +190,9 @@ def main(argv: list[str] | None = None) -> int:
             on_disk = load_sidecar(path)
             if on_disk != payload:
                 drift.append(f"{label} is stale: {_first_difference(on_disk, payload)}")
-        if drift:
+        if drift or structural:
             print("pack --check FAILED:", file=sys.stderr)
-            for line in drift:
+            for line in drift + structural:
                 print(f"  - {line}", file=sys.stderr)
             return 1
         print(f"pack --check OK: {len(entries)} skills, digests and both manifests agree")
@@ -196,6 +208,13 @@ def main(argv: list[str] | None = None) -> int:
         print(f"{e['skill_id']}@{e['version']}  {e['content_digest']}")
     print(f"packed {len(entries)} skills -> {index_path.relative_to(ROOT)} + "
           f"{legacy_path.relative_to(ROOT)}")
+    if structural:
+        # The derived fields and manifests are written; the bundle is still not
+        # shippable, so say so with a non-zero exit instead of a green run.
+        print("pack FAILED (bundle not shippable):", file=sys.stderr)
+        for line in structural:
+            print(f"  - {line}", file=sys.stderr)
+        return 1
     return 0
 
 
@@ -204,10 +223,6 @@ def _first_difference(a: dict[str, Any], b: dict[str, Any]) -> str:
         if a.get(key) != b.get(key):
             return f"{key}: on disk {a.get(key)!r} != packed {b.get(key)!r}"
     return "unknown difference"
-
-
-def _digest_of_file(path: Path) -> str:
-    return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 if __name__ == "__main__":

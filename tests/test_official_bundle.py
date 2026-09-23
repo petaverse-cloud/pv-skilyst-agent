@@ -94,6 +94,34 @@ class BundleShapeTests(unittest.TestCase):
                                 capture_output=True, text=True, cwd=ROOT)
         self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
 
+    def test_packer_refuses_to_report_success_on_an_unsigned_package(self):
+        """A missing platform signature is not a green run, even though the packer
+        cannot invent the signature itself."""
+        with tempfile.TemporaryDirectory() as tmp:
+            bundle = Path(tmp) / "official"
+            shutil.copytree(BUNDLE, bundle)
+            sidecar = bundle / "doctor" / "manifest.json"
+            manifest = json.loads(sidecar.read_text())
+            manifest["supply_chain"].pop("signatures")
+            sidecar.write_text(json.dumps(manifest))
+            result = subprocess.run([sys.executable, str(PACKER), "--check", "--bundle", str(bundle)],
+                                    capture_output=True, text=True, cwd=ROOT)
+            self.assertEqual(result.returncode, 1, result.stdout)
+            self.assertIn("no platform signature entry", result.stderr)
+
+    def test_sidecar_edits_do_not_change_the_content_digest(self):
+        """content_digest covers package content, manifest.json excluded -- so a
+        metadata-only fix is a metadata-only change (the v0.2 self-reference fix)."""
+        with tempfile.TemporaryDirectory() as tmp:
+            bundle = Path(tmp) / "official"
+            shutil.copytree(BUNDLE, bundle)
+            sidecar = bundle / "doctor" / "manifest.json"
+            manifest = json.loads(sidecar.read_text())
+            manifest["changelog"][0]["changes"] = "metadata-only edit"
+            sidecar.write_text(json.dumps(manifest))
+            self.assertEqual(content_digest(bundle / "doctor"),
+                             content_digest(BUNDLE / "doctor"))
+
 
 class ManifestV02Tests(unittest.TestCase):
     def test_every_manifest_validates_and_loads_strict(self):

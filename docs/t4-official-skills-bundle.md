@@ -84,7 +84,7 @@ sh skills/official/doctor/scripts/doctor.sh skilyst/embed-video
 # 4. 打包器自检 + 全量测试
 python3 tools/pack_official_bundle.py --check   # OK: 5 skills, digests and both manifests agree
 PYTHONPATH=src python3 -m unittest discover -s tests
-# -> Ran 103 tests ... OK（基线 87 + T4 新增 16）
+# -> Ran 105 tests ... OK（基线 87 + T4 新增 18）
 ```
 
 ---
