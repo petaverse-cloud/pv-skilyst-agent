@@ -1,0 +1,20 @@
+name: tests + bundle integrity
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"      # pyproject requires >=3.11; no third-party deps
+      - name: Official bundle integrity (digests + both manifests agree)
+        run: python3 tools/pack_official_bundle.py --check
+      - name: Runtime + bundle test suite
+        env:
+          PYTHONPATH: src
+        run: python3 -m unittest discover -s tests -v
