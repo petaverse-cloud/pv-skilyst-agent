@@ -347,6 +347,32 @@ class StoreBundleTests(unittest.TestCase):
             self.assertFalse(plan["content_changed"])
             self.assertTrue(plan["hot"])
 
+    def test_broken_skill_does_not_take_the_runtime_down(self):
+        """One edited package must not stop every other skill from loading."""
+        with tempfile.TemporaryDirectory() as tmp:
+            store = SkillStore(Path(tmp) / "store")
+            store.preload_official_bundle(BUNDLE)
+            extra = Path(tmp) / "extra-skill"
+            shutil.copytree(OFFICIAL, extra)
+            (extra / "SKILL.md").write_text(
+                (extra / "SKILL.md").read_text().replace("name: video-15s", "name: extra-skill"))
+            manifest = json.loads((extra / "manifest.json").read_text())
+            manifest["skill_id"] = "test/extra-skill"
+            manifest["content_digest"] = "sha256:" + "0" * 64
+            (extra / "manifest.json").write_text(json.dumps(manifest))
+            manifest["content_digest"] = content_digest(extra)
+            (extra / "manifest.json").write_text(json.dumps(manifest))
+            store.install(extra, origin="test")
+
+            installed = Path(tmp) / "store" / "extra-skill" / "SKILL.md"
+            installed.write_text(installed.read_text() + "\nedited behind the runtime's back\n")
+            loaded, problems = store.list_partial()
+            self.assertEqual([p.skill_id for p in loaded], ["skilyst/video-15s"])
+            self.assertEqual(problems[0]["skill_id"], "test/extra-skill")
+            self.assertIn("modified: SKILL.md", problems[0]["differences"])
+            with self.assertRaises(SkillMutationError):     # using it still refuses
+                store.get("test/extra-skill")
+
     def test_install_does_not_rewrite_the_package(self):
         with tempfile.TemporaryDirectory() as tmp:
             store = SkillStore(Path(tmp) / "store")

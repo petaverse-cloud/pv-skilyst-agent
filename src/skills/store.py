@@ -144,6 +144,27 @@ class SkillStore:
     def list(self) -> list[SkillPackage]:
         return [self.get(name) for name in sorted(self.index)]
 
+    def list_partial(self) -> tuple[list[SkillPackage], list[dict]]:
+        """Every installed skill that loads, plus the ones that did not.
+
+        One unreadable package (edited behind our back, or invalid) must not take
+        the whole runtime down: the healthy skills still load, and the broken ones
+        are reported with their integrity difference so the operator sees exactly
+        what to re-install. Anything that *uses* a broken skill still raises.
+        """
+        loaded: list[SkillPackage] = []
+        broken: list[dict] = []
+        for name in sorted(self.index):
+            entry = self.index[name]
+            skill_dir = self.root / entry["dir"]
+            try:
+                loaded.append(self._load(skill_dir, entry.get("receipt")))
+            except (SkillMutationError, SkillValidationError) as exc:
+                broken.append({"skill_id": name, "dir": entry["dir"], "error": str(exc),
+                               "differences": diff_tree(skill_dir, entry["receipt"])
+                               if entry.get("receipt") else []})
+        return loaded, broken
+
     def verify_all(self) -> list[dict]:
         """Integrity report for every installed skill (no exception, for `doctor`)."""
         out = []

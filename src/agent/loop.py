@@ -129,6 +129,7 @@ class AgentLoop:
                 self.session.append_trace("llm_error", turn=turn, error=str(exc))
                 self.session.update(status="error")
                 break
+            result.model = response.model or result.model
             self.session.add_usage({**response.usage, "calls": 1,
                                     "models_used": [response.model] if response.model else []})
             self.session.append_message("assistant", response.content,
@@ -139,7 +140,6 @@ class AgentLoop:
                                       usage=response.usage)
             if not response.tool_calls:
                 result.answer = response.content
-                result.model = response.model
                 result.stop_reason = "completed"
                 break
             for call in response.tool_calls:

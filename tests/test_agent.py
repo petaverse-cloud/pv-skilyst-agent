@@ -190,6 +190,14 @@ class SessionStoreTests(unittest.TestCase):
         self.assertEqual(reopened.meta["usage"]["calls"], 2)
         self.assertEqual(self.fx.sessions.list()[0]["session_id"], session.session_id)
 
+    def test_sessions_list_reports_artifacts_and_usage(self):
+        session = self.fx.session("listed")
+        session.record_artifact({"artifact_url": "https://cdn.example/a.mp4"})
+        session.add_usage({"total_tokens": 12, "calls": 1})
+        row = [r for r in self.fx.sessions.list() if r["session_id"] == session.session_id][0]
+        self.assertEqual(row["artifacts"], 1)
+        self.assertEqual(row["usage"]["total_tokens"], 12)
+
     def test_torn_final_line_does_not_lose_the_transcript(self):
         session = self.fx.session()
         session.append_message("user", "kept")
@@ -394,6 +402,7 @@ class AgentLoopTests(unittest.TestCase):
         result = loop.run("loop forever")
         self.assertFalse(result.ok)
         self.assertEqual(result.stop_reason, "max_turns")
+        self.assertEqual(result.model, MODEL)          # the model that was used is still reported
         self.assertEqual(session.meta["status"], "incomplete")
 
     def test_llm_failure_is_not_reported_as_success(self):

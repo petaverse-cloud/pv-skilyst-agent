@@ -90,10 +90,12 @@ def build_registry(store: SkillStore, client: BeehiveClient | None, active: Skil
 
     # -- layer 1/2/3: skill reading -----------------------------------------
     def list_skills(_args: dict) -> dict:
+        packages, broken = store.list_partial()
         return {"skills": [{"skill_id": p.skill_id, "version": p.version, "degraded": p.degraded,
                             "description": p.description,
                             "requires_nodes": [n.node_id for n in p.requires_nodes]}
-                           for p in store.list()]}
+                           for p in packages],
+                "unloadable": [{"skill_id": row["skill_id"], "error": row["error"]} for row in broken]}
 
     def read_skill(args: dict) -> dict:
         pkg = store.get(args["skill_id"])

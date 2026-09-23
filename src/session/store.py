@@ -171,11 +171,12 @@ class SessionStore:
         for child in sorted(self.root.iterdir()):
             if (child / META).is_file():
                 meta = json.loads((child / META).read_text(encoding="utf-8"))
+                session = Session(session_id=child.name, path=child, meta=meta)
                 rows.append({"session_id": child.name, "title": meta.get("title", ""),
                              "status": meta.get("status", "open"), "model": meta.get("model", ""),
                              "messages": meta.get("message_count", 0),
-                             "artifacts": len(_read_jsonl(child / ARTIFACTS) and
-                                              json.loads((child / ARTIFACTS).read_text())["artifacts"]),
+                             "artifacts": len(session.artifacts),
+                             "usage": meta.get("usage", {}),
                              "updated_at": meta.get("updated_at")})
         return sorted(rows, key=lambda r: r.get("updated_at") or 0, reverse=True)
 

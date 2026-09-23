@@ -59,15 +59,17 @@ def note(message: str) -> None:
 # ---------------------------------------------------------------------------
 # shared plumbing
 # ---------------------------------------------------------------------------
-def runtime(args) -> RuntimeConfig:
+def runtime(args, *, require_llm: bool | None = None,
+            require_beehive: bool | None = None) -> RuntimeConfig:
     return resolve(env_file=getattr(args, "env_file", None),
                    store_dir=getattr(args, "store", None),
                    workspace_dir=getattr(args, "workspace", None),
                    session_dir=getattr(args, "sessions", None),
                    llm_config=getattr(args, "llm_config", None),
                    model=getattr(args, "model", None),
-                   require_llm=bool(getattr(args, "needs_llm", True)),
-                   require_beehive=bool(getattr(args, "needs_beehive", True)))
+                   require_llm=bool(getattr(args, "needs_llm", True)) if require_llm is None else require_llm,
+                   require_beehive=(bool(getattr(args, "needs_beehive", True))
+                                    if require_beehive is None else require_beehive))
 
 
 def store_for(cfg: RuntimeConfig, verify: bool = True) -> SkillStore:
@@ -196,7 +198,9 @@ def cmd_update_plan(args) -> int:
 # ---------------------------------------------------------------------------
 def _agent(args, cfg: RuntimeConfig, skill_id: str | None, session_title: str):
     store = store_for(cfg)
-    skills = store.list()
+    skills, broken = store.list_partial()
+    for row in broken:
+        note(f"integrity[{row['skill_id']}]: {row['error']}")
     active = load_skill(store, skill_id) if skill_id else None
     if active is not None and active.skill_id not in {p.skill_id for p in skills}:
         raise SkillValidationError(f"{active.skill_id} is not installed in {cfg.store_dir}")
@@ -309,7 +313,7 @@ def cmd_sessions(args) -> int:
 
 
 def cmd_doctor(args) -> int:
-    cfg = runtime(args)
+    cfg = runtime(args, require_beehive=bool(args.skill_id), require_llm=False)
     store = store_for(cfg)
     payload: dict = {"store": str(cfg.store_dir), "env_file": str(cfg.env_file) if cfg.env_file else None,
                      "integrity": store.verify_all(), "config": cfg.redacted()}
@@ -334,7 +338,6 @@ def cmd_config(args) -> int:
     cfg = runtime(args)
     emit(cfg.redacted())
     return EXIT_OK
-
 
 # ---------------------------------------------------------------------------
 # platform diagnostics (acceptance line 2 / 3)
@@ -447,7 +450,7 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("doctor"); p.add_argument("skill_id", nargs="?")
     p.add_argument("--allow-fallback", action="store_true")
     p.set_defaults(func=cmd_doctor)
-    p = sub.add_parser("config"); p.set_defaults(func=cmd_config)
+    p = sub.add_parser("config"); p.set_defaults(func=cmd_config, needs_llm=False, needs_beehive=False)
 
     p = sub.add_parser("job")
     p.add_argument("--prompt", required=True); p.add_argument("--provider", default="minimax-h3")
