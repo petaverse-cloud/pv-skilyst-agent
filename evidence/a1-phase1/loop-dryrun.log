@@ -1,0 +1,4 @@
+=== dry-run log (tool events) ===
+dry-run: would submit generate:minimax-h3
+tool read_skill_file "{\"skill_id\": \"skilyst/video-15s\", \"path\": \"manifest.json\"}"
+tool beehive_list_assets "{\"limit\": 10}"

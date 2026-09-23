@@ -1,0 +1,122 @@
+{
+  "session_id": "20260923-175553-c9103d",
+  "skill": "skilyst/video-15s",
+  "stop_reason": "completed",
+  "answer": "作业已一次提交并完成（`wait=true`，平台已用 HEAD 校验产物：HTTP 200，2,563,359 字节）。\n\n**Job id:** `job-1790157367916-027fd42bc72436de`\n**产物 URL（原样返回）:**\nhttps://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790157367916-027fd42bc72436de/node-job-1790157367916-027fd42bc72436de-0-1790157780166.mp4\n\n制作说明（按技能方法）：\n- **意图先行**：这条镜头只承载\"静默的守望\"——灯塔是画面唯一视觉中心，无第二个主体。\n- **单一运动**：仅一次缓慢推近（dolly-in），塔身居中稳定，雾气在慢速中层层变薄。\n- **有动机的光**：黎明天空作辅光、塔灯暖琥珀光为画面内主光，key:fill ≈ 4:1，有体积光雾。\n- **渲染档位**：`minimax-h3` / `duration=15` / `768P` / `9:16`（技能声明的最省档位，未擅自升级）。\n\n提示词草稿已存至工作区 `lighthouse-15s-prompt.md`。",
+  "model": "deepseek/deepseek-v4.1-flash",
+  "turns": 3,
+  "wall_clock_s": 435.3,
+  "usage": {
+    "prompt_tokens": 7795,
+    "completion_tokens": 1401,
+    "total_tokens": 9196,
+    "calls": 3,
+    "models_used": [
+      "deepseek/deepseek-v4.1-flash"
+    ]
+  },
+  "artifacts": [
+    "https://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790157367916-027fd42bc72436de/node-job-1790157367916-027fd42bc72436de-0-1790157780166.mp4"
+  ],
+  "tool_calls": [
+    {
+      "tool": "read_skill",
+      "arguments": {
+        "skill_id": "skilyst/video-15s"
+      },
+      "result": {
+        "skill_id": "skilyst/video-15s",
+        "version": "1.0.0",
+        "degraded": false,
+        "digest": "sha256:2ce9ac46f9d2b28fcf05c81c29cea23ab685643cd1d7c66f1ff7e2462b9ebadf",
+        "permission": {
+          "egress": [
+            "beehive-api.verse4.pet"
+          ],
+          "filesystem": "workspace",
+          "exec": "none",
+          "secrets": true
+        },
+        "plan": {
+          "provider": "minimax-h3",
+          "duration": 15,
+          "resolution": "768P",
+          "ratio": "9:16"
+        },
+        "requires_nodes": [
+          {
+            "node_id": "generate:minimax-h3",
+            "version_range": ">=1.0.0",
+            "optional": false,
+            "fallback": [
+              "generate:drawnow",
+              "generate:byteplus-seedance-2.0"
+            ]
+          }
+        ],
+        "instructions": "\n# 15s Vertical Short Video (text-to-video)\n\n## When to use\n\nThe user asks for a short vertical clip generated from an idea, with no source\nfootage and no reference image. Deliverable = one playable video URL.\n\n## Method (order matters)\n\n1. **Intent first.** Decide the single piece of information / emotion this shot\n   carries, then the shot size (extreme wide → close-up = information dial).\n   Never start from visual adjectives.\n2. **One visual centre.** Exactly one dominant element per frame; everything\n   else supports it. If squinting at a thumbnail gives two focal points, rewrite.\n3. **Lighting with a motive.** Write the key:fill ratio explicitly and give the\n   light an in-frame source (window, practical, neon).\n4. **One movement per shot.** At most one camera move; lock it with \"static\" if\n   the shot should hold.\n5. **Prompt skeleton (camera first):** camera movement → subject + action →\n   environment → lighting/atmosphere → style/technical.\n6. **Cheapest acceptable render:** provider `minimax-h3`, `duration=15`,\n   `resolution=768P` (about $1.04 per clip). Do not silently upgrade the tier;\n   a higher tier is a separate, user-confirmed decision.\n\n## Call contract\n\nCall `beehive_submit_video` exactly once with:\n\n| field | value |\n| --- | --- |\n| `prompt` | the five-part skeleton assembled above, in English |\n| `duration` | `15` |\n| `resolution` | `768P` |\n| `ratio` | `9:16` |\n\n## Hand-off\n\nReport the artifact URL verbatim (`dest_video_url`) plus the job id. If the job\nfails, report the platform error verbatim — never substitute a different clip or\na \"closest\" result.",
+        "files": [
+          "SKILL.md",
+          "manifest.json"
+        ],
+        "spec_warnings": []
+      },
+      "error": null,
+      "duration_s": 0.0
+    },
+    {
+      "tool": "write_workspace_file",
+      "arguments": {
+        "path": "lighthouse-15s-prompt.md",
+        "content": "# 15s vertical short — \"Dawn Lighthouse\"\n\nIntent: quiet vigilance — one dominant element revealed by a slow push-in.\nShot size: wide (lighthouse held as the only focal point; no second subject).\nCamera move: ONE — slow steady dolly-in (push in), low, level horizon.\nLight: dawn sky is the key, the lamp is the practical/in-frame source; key:fill ~4:1,\ncool grey fog fill vs warm lamp key.\nTier: minimax-h3 / 15s / 768P / 9:16 (cheapest acceptable; not upgraded).\n\n## Final prompt (five-part skeleton, camera first)\nSlow steady dolly-in pushing straight toward a lone stone lighthouse on a rocky\nheadland, the tower centered and motionless in frame while the camera glides\nforward at a constant slow speed, no other subject entering the shot; thick sea\nfog drifts and thins in slow layers around the base of the tower, dark calm water\nwith soft low swells below, gulls absent, no boats; early dawn light, cool grey\nfog acting as fill and a warm amber lamp beam from the lighthouse lantern acting\nas the key light source in frame, key-to-fill ratio about 4:1, faint volumetric\nlight shafts through the mist; cinematic, photorealistic, 35mm lens look, shallow\natmosphere, subtle film grain, muted desaturated palette, vertical 9:16 framing.\n"
+      },
+      "result": {
+        "written": "/Users/wesley/.skilyst/workspace/lighthouse-15s-prompt.md",
+        "bytes": 1244
+      },
+      "error": null,
+      "duration_s": 0.0
+    },
+    {
+      "tool": "beehive_submit_job",
+      "arguments": {
+        "prompt": "Slow steady dolly-in pushing straight toward a lone stone lighthouse on a rocky headland, the tower centered and motionless in frame while the camera glides forward at a constant slow speed, no other subject entering the shot; thick sea fog drifts and thins in slow layers around the base of the tower, dark calm water with soft low swells below, gulls absent, no boats; early dawn light, cool grey fog acting as fill and a warm amber lamp beam from the lighthouse lantern acting as the key light source in frame, key-to-fill ratio about 4:1, faint volumetric light shafts through the mist; cinematic, photorealistic, 35mm lens look, shallow atmosphere, subtle film grain, muted desaturated palette, vertical 9:16 framing.",
+        "node_id": "generate:minimax-h3",
+        "duration": 15,
+        "resolution": "768P",
+        "ratio": "9:16",
+        "wait": true,
+        "timeout_s": 900
+      },
+      "result": {
+        "job_id": "job-1790157367916-027fd42bc72436de",
+        "status": "completed",
+        "node": {
+          "type": "generate",
+          "provider": "minimax-h3",
+          "config": {
+            "prompt": "Slow steady dolly-in pushing straight toward a lone stone lighthouse on a rocky headland, the tower centered and motionless in frame while the camera glides forward at a constant slow speed, no other subject entering the shot; thick sea fog drifts and thins in slow layers around the base of the tower, dark calm water with soft low swells below, gulls absent, no boats; early dawn light, cool grey fog acting as fill and a warm amber lamp beam from the lighthouse lantern acting as the key light source in frame, key-to-fill ratio about 4:1, faint volumetric light shafts through the mist; cinematic, photorealistic, 35mm lens look, shallow atmosphere, subtle film grain, muted desaturated palette, vertical 9:16 framing.",
+            "duration": 15,
+            "resolution": "768P",
+            "ratio": "9:16"
+          }
+        },
+        "next": "call beehive_get_job with job_id='job-1790157367916-027fd42bc72436de' to follow it",
+        "progress": null,
+        "artifact_url": "https://pv-devops-blob.s3.ap-southeast-1.amazonaws.com/beehive-temp/beehive/job-1790157367916-027fd42bc72436de/node-job-1790157367916-027fd42bc72436de-0-1790157780166.mp4",
+        "error": null,
+        "nodes": 1,
+        "report_url_verbatim": true,
+        "artifact_verified": true,
+        "artifact_detail": "HTTP 200, 2563359 bytes"
+      },
+      "error": null,
+      "duration_s": 415.65
+    }
+  ],
+  "preflight": {
+    "registry_available": true,
+    "problems": []
+  },
+  "error": null
+}

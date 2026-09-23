@@ -129,7 +129,8 @@ class AgentLoop:
                 self.session.append_trace("llm_error", turn=turn, error=str(exc))
                 self.session.update(status="error")
                 break
-            self.session.add_usage(response.usage)
+            self.session.add_usage({**response.usage, "calls": 1,
+                                    "models_used": [response.model] if response.model else []})
             self.session.append_message("assistant", response.content,
                                         tool_calls=self._assistant_message(response).get("tool_calls"))
             self.session.append_trace("llm_turn", turn=turn, model=response.model,

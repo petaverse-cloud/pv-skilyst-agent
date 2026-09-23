@@ -76,7 +76,14 @@ def _obj(properties: dict, required: list[str] | None = None) -> dict:
 def build_registry(store: SkillStore, client: BeehiveClient | None, active: SkillPackage | None,
                    gate: PermissionGate | None, workspace: Path, dry_run: bool = False,
                    on_event: Callable[[str], None] | None = None,
-                   artifact_verifier: Callable[[str], object] | None = None) -> ToolRegistry:
+                   artifact_verifier: Callable[[str], object] | None = None,
+                   max_jobs: int = 1) -> ToolRegistry:
+    """Assemble the tool set for one run.
+
+    ``max_jobs`` is a spend guard, not a convenience: a submitted job costs real
+    money, so a run gets a job budget (default 1) and the runtime refuses to
+    submit beyond it. Raising it is an explicit operator decision.
+    """
     registry = ToolRegistry()
     events = on_event or (lambda _msg: None)
     verify = artifact_verifier or verify_artifact
@@ -151,6 +158,7 @@ def build_registry(store: SkillStore, client: BeehiveClient | None, active: Skil
     default_node = node_ids[0]
     plan = active.plan or {}
     jobs: dict[str, dict] = {}
+    submitted = {"count": 0}
 
     def _require_secrets() -> None:
         if gate is not None:
@@ -174,9 +182,15 @@ def build_registry(store: SkillStore, client: BeehiveClient | None, active: Skil
         if dry_run:
             events(f"dry-run: would submit {node_id}")
             return {"dry_run": True, "node": node, "workflow_id": args.get("workflow_id", "")}
+        if submitted["count"] >= max_jobs:
+            raise RuntimeError(
+                f"this run has already submitted {submitted['count']} job(s) and its budget is "
+                f"{max_jobs} -- a submitted job costs real money, so a second one needs a new run "
+                f"or an explicit --max-jobs")
         payload = client.submit_job([node], workflow_id=args.get("workflow_id", ""))
         handle = job_handle(payload)
         jobs[handle.job_id] = payload
+        submitted["count"] += 1
         events(f"submitted job {handle.job_id} ({node_id})")
         result = {"job_id": handle.job_id, "status": handle.status, "node": node,
                   "next": f"call beehive_get_job with job_id={handle.job_id!r} to follow it"}

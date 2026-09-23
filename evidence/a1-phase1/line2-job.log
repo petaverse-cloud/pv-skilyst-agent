@@ -1,0 +1,10 @@
+=== line2 job log (progress lines) ===
+submitted job job-1790157367916-027fd42bc72436de (generate:minimax-h3)
+job job-1790157367916-027fd42bc72436de: waiting progress=None
+job job-1790157367916-027fd42bc72436de: waiting progress=None
+job job-1790157367916-027fd42bc72436de: running progress=None
+job job-1790157367916-027fd42bc72436de: running progress=None
+job job-1790157367916-027fd42bc72436de: running progress=None
+job job-1790157367916-027fd42bc72436de: running progress=None
+job job-1790157367916-027fd42bc72436de: running progress=None
+提示词草稿已存至工作区 `lighthouse-15s-prompt.md`。exit=0

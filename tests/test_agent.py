@@ -287,6 +287,24 @@ class ToolRegistryTests(unittest.TestCase):
         self.assertTrue(result["dry_run"])
         self.assertEqual(client.calls, [])
 
+    def test_job_budget_stops_a_second_paid_submission(self):
+        client = StubBeehiveClient()
+        registry = self.fx.registry(self.fx.package(), client)
+        registry.call("beehive_submit_job", {"prompt": "first"})
+        with self.assertRaises(RuntimeError) as ctx:
+            registry.call("beehive_submit_job", {"prompt": "second"})
+        self.assertIn("budget", str(ctx.exception))
+        self.assertEqual(len([c for c in client.calls if c[0] == "POST"]), 1)
+
+    def test_job_budget_can_be_raised_explicitly(self):
+        client = StubBeehiveClient()
+        registry = build_registry(self.fx.store, client, self.fx.package(),
+                                  self.fx.gate(self.fx.package()), self.fx.workspace,
+                                  artifact_verifier=self.fx.verify_artifact, max_jobs=2)
+        registry.call("beehive_submit_job", {"prompt": "first"})
+        registry.call("beehive_submit_job", {"prompt": "second"})
+        self.assertEqual(len([c for c in client.calls if c[0] == "POST"]), 2)
+
 
 class AgentLoopTests(unittest.TestCase):
     def setUp(self):
@@ -298,6 +316,15 @@ class AgentLoopTests(unittest.TestCase):
         loop = AgentLoop(router_with(script), registry or self.fx.registry(None), session,
                          self.fx.prompt_ctx(package), LoopConfig(max_turns=max_turns, stream=False))
         return loop, session
+
+    def test_usage_is_recorded_per_llm_call(self):
+        script = ScriptedTransport([chat_response(content="done")])
+        loop, session = self._loop(script)
+        loop.run("hi")
+        usage = self.fx.sessions.open(session.session_id).meta["usage"]
+        self.assertEqual(usage["calls"], 1)
+        self.assertEqual(usage["models_used"], [MODEL])
+        self.assertEqual(usage["total_tokens"], 15)
 
     def test_tool_call_then_answer(self):
         script = ScriptedTransport([
