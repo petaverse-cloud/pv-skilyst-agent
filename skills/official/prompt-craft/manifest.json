@@ -1,0 +1,89 @@
+{
+  "skill_id": "skilyst/prompt-craft",
+  "version": "1.0.0",
+  "display_name": "提示词工艺（结构骨架 / 分模型差异 / 参考锁定）",
+  "description": "Camera-and-prompt craft for the video nodes on the Skilyst/Beehive platform — the cross-model structural skeleton, the per-model deltas that actually change the output, the five-part reference-lock syntax that keeps a character consistent, and the dialogue pacing rule. Use when writing or reviewing any generation prompt, before submitting a job; contains no node dependency of its own.",
+  "kind": "official-bundle",
+  "content_digest": "sha256:fbe0856a93346abc15070b80c01a982bd6a4c000b925d0c4249dc05968226a13",
+  "upstream": null,
+  "fork_depth": 0,
+  "supply_chain": {
+    "source": {
+      "origin": "skilyst-registry",
+      "repo": "petaverse-cloud/pv-skilyst-agent",
+      "commit": "local-poc"
+    },
+    "static_scan": {
+      "status": "passed",
+      "scanner": "skilyst-scanner@0.1",
+      "scanned_at": "2026-09-23T00:00:00+08:00"
+    },
+    "signatures": [
+      {
+        "key_id": "skilyst-platform",
+        "algo": "ed25519",
+        "sig": "platform-signature-pending",
+        "digest": "sha256:fbe0856a93346abc15070b80c01a982bd6a4c000b925d0c4249dc05968226a13"
+      }
+    ]
+  },
+  "permission": {
+    "egress": "none",
+    "filesystem": "skill-dir",
+    "exec": "none",
+    "secrets": false
+  },
+  "requires": {
+    "nodes": []
+  },
+  "i18n": {
+    "default_locale": "zh-CN",
+    "locales": [
+      "zh-CN",
+      "en"
+    ],
+    "glossary": {
+      "zh-CN": "references/i18n/glossary.zh-CN.json",
+      "en": "references/i18n/glossary.en.json"
+    }
+  },
+  "author": {
+    "name": "platform",
+    "handle": "@platform",
+    "verified": true
+  },
+  "attribution": {
+    "contributors": []
+  },
+  "license": {
+    "spdx": "MIT",
+    "file": "LICENSE"
+  },
+  "copyright": "Copyright (c) 2026 Petaverse",
+  "compatibility": {
+    "agent_runtime": {
+      "min": "0.1.0",
+      "tested": [
+        "0.1.0"
+      ]
+    }
+  },
+  "update": {
+    "channel": "official",
+    "policy": "auto",
+    "hot_reload": {
+      "allowed": true,
+      "exclusions": [
+        "node-schema"
+      ]
+    }
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-23",
+      "changes": "first official prompt-craft skill: skeleton slot order, per-model deltas, five-part reference lock, dialogue pacing; distilled from the lane research corpus with pointers instead of copies",
+      "upstream_sync": false
+    }
+  ]
+}

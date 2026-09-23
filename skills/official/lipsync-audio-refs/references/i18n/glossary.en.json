@@ -1,0 +1,13 @@
+{
+  "locale": "en",
+  "terms": [
+    {"term_key": "audio_refs", "source_term": "audio_refs", "target_term": "audio_refs", "note": "the single 2-15s track that drives the mouth"},
+    {"term_key": "tts_first", "source_term": "TTS first", "target_term": "TTS first", "note": "synthesize the voice before the shot; the track is the mouth's input"},
+    {"term_key": "reference_image", "source_term": "reference_image", "target_term": "reference_image", "note": "the only usable image role in audio mode; frame roles are banned"},
+    {"term_key": "mouth_sync", "source_term": "mouth sync", "target_term": "mouth sync", "note": "quantified as frozen mouth in silence / active mouth in speech"},
+    {"term_key": "dialogue_presence", "source_term": "dialogue presence", "target_term": "dialogue presence", "note": "the line must be the prominent voice in the rendered audio"},
+    {"term_key": "tail_margin", "source_term": "tail margin", "target_term": "tail margin", "note": "duration = ceil(audio) + tail, so the cut never clips the performance"},
+    {"term_key": "resynthesized_voice", "source_term": "re-synthesized voice", "target_term": "re-synthesized voice", "note": "the clip's voice is not the same waveform as the TTS take; F0 drifts"},
+    {"term_key": "pacing", "source_term": "pacing (words per 3s)", "target_term": "pacing (words per 3s)", "note": "max 8 words per 3s; cut the line instead of speeding the render"}
+  ]
+}

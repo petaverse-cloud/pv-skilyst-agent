@@ -9,7 +9,9 @@ Design points the PoC had to solve (each is a hidden cost of "just load SKILL.md
   * installing a community package must NOT rewrite it (zero-modification) --
     the loader adapts to the package, never the other way round;
   * preloaded `official-bundle` skills arrive from the runtime distribution and
-    update on their own channel, decoupled from the runtime version;
+    update on their own channel, decoupled from the runtime version; the preload
+    reads the bundle manifest (`index.json`) and verifies every entry's declared
+    content digest before installing, so a bundle edited after packing is refused;
   * requires.nodes is pre-flighted against the live node registry before a run,
     matching registry `id` (the node *definition* id) -- never registry
     `node_type`, which is the workflow node type and matches nothing.
@@ -28,6 +30,15 @@ from .digest import IGNORED, content_digest, diff_tree, file_hashes, tree_digest
 from .loader import SkillPackage, load_package
 
 INDEX_VERSION = 2
+
+# The fields that must agree between index.json (bundle manifest) and bundle.json
+# (install entry point) -- the skill set and its content coordinates.
+BUNDLE_COORDINATE_FIELDS = ("path", "version", "content_digest")
+
+
+def _bundle_coordinates(spec: dict) -> list[tuple]:
+    return sorted(tuple((e.get(f) for f in BUNDLE_COORDINATE_FIELDS))
+                  for e in spec.get("skills") or [])
 
 
 @dataclass
@@ -184,17 +195,42 @@ class SkillStore:
 
     # -- official bundle -----------------------------------------------------
     def preload_official_bundle(self, bundle_dir: Path) -> list[SkillPackage]:
-        """Preload the platform-signed official bundle (manifest 6.1/6.4)."""
-        bundle_manifest = Path(bundle_dir) / "bundle.json"
+        """Preload the platform-signed official bundle (manifest 6.1/6.4).
+
+        The bundle manifest is ``index.json``: every entry carries the content
+        digest of the package it names, so the preload verifies the *packed*
+        content against the manifest before anything is installed. ``bundle.json``
+        is the older install entry point and is still accepted on its own; when
+        both files are present they must describe the same skills, otherwise the
+        bundle is internally inconsistent and is refused rather than guessed at.
+        """
+        bundle_dir = Path(bundle_dir)
+        bundle_manifest = bundle_dir / "index.json"
+        legacy_manifest = bundle_dir / "bundle.json"
         if not bundle_manifest.is_file():
-            raise RuntimeError(f"official bundle {bundle_dir} has no bundle.json")
+            bundle_manifest = legacy_manifest
+        if not bundle_manifest.is_file():
+            raise RuntimeError(f"official bundle {bundle_dir} has no index.json (or bundle.json)")
         spec = json.loads(bundle_manifest.read_text())
+        if legacy_manifest.is_file() and bundle_manifest != legacy_manifest:
+            legacy = json.loads(legacy_manifest.read_text())
+            if _bundle_coordinates(spec) != _bundle_coordinates(legacy):
+                raise RuntimeError(
+                    f"official bundle {bundle_dir} is internally inconsistent: index.json and "
+                    f"bundle.json disagree on the packed skills -- re-run "
+                    f"tools/pack_official_bundle.py instead of trusting either file")
         loaded = []
         for entry in spec["skills"]:
-            skill_dir = Path(bundle_dir) / entry["path"]
+            skill_dir = bundle_dir / entry["path"]
             if not (skill_dir / "manifest.json").is_file():
                 raise RuntimeError(f"official bundle entry {entry['path']} lacks manifest.json "
                                    f"(bundles must be signed)")
+            declared = entry.get("content_digest")
+            if declared and content_digest(skill_dir) != declared:
+                raise RuntimeError(
+                    f"official bundle entry {entry['path']} does not match the bundle manifest: "
+                    f"declared {declared}, package content hashes to {content_digest(skill_dir)} "
+                    f"-- the bundle was edited after packing (re-run tools/pack_official_bundle.py)")
             package = self._load(skill_dir)     # digest + manifest validation before touching the store
             if package.manifest["kind"] != "official-bundle":
                 raise RuntimeError(f"official bundle entry {entry['path']} kind="

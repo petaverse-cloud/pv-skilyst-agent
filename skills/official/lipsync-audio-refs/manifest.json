@@ -1,10 +1,10 @@
 {
-  "skill_id": "skilyst/video-15s",
-  "version": "1.1.0",
-  "display_name": "15 秒竖版短视频生产",
-  "description": "Produce a single 15-second vertical short video from a text idea on the Skilyst/Beehive platform. Use when the user wants a 15s social clip (no source media) and expects a finished video file URL. Covers the shot-intent-first prompt skeleton, the cheapest acceptable render tier, and the artifact hand-off.",
+  "skill_id": "skilyst/lipsync-audio-refs",
+  "version": "1.0.0",
+  "display_name": "口型工艺（audio_refs 音频驱动）",
+  "description": "Dialogue shots on the Skilyst/Beehive platform — synthesize the line with TTS first, then drive the shot with that track (audio_refs plus reference images) so the mouth follows the voice and the clip ships with its own audio. Use when a shot has spoken dialogue; covers the 2-15s audio_refs bounds, the first_frame ban in audio mode, and the pacing rule that decides how long the line may be.",
   "kind": "official-bundle",
-  "content_digest": "sha256:5663a4904ae9f486fed54b166e052a6dac9b4a7a614a6e9b4b3c9e868e0fae63",
+  "content_digest": "sha256:2bfefc36b7d815aca28be893ba513568d788b865e9fd310a8a9ed4eb67ca04ea",
   "upstream": null,
   "fork_depth": 0,
   "supply_chain": {
@@ -23,7 +23,7 @@
         "key_id": "skilyst-platform",
         "algo": "ed25519",
         "sig": "platform-signature-pending",
-        "digest": "sha256:5663a4904ae9f486fed54b166e052a6dac9b4a7a614a6e9b4b3c9e868e0fae63"
+        "digest": "sha256:2bfefc36b7d815aca28be893ba513568d788b865e9fd310a8a9ed4eb67ca04ea"
       }
     ]
   },
@@ -37,26 +37,48 @@
   },
   "plan": {
     "provider": "minimax-h3",
-    "duration": 15,
+    "duration": 8,
     "resolution": "768P",
     "ratio": "9:16"
   },
   "requires": {
     "nodes": [
       {
+        "provider": "tts",
+        "node_id": "generate:tts-minimax-hd",
+        "node_definition_version": ">=1.0.0",
+        "optional": false,
+        "fallback": [
+          "generate:tts-minimax-turbo",
+          "generate:tts-deepgram"
+        ],
+        "binding": {
+          "tool": "beehive_submit_job",
+          "node_id": "generate:tts-minimax-hd",
+          "config_map": {
+            "text": "text",
+            "voice_id": "voice_id",
+            "emotion": "emotion",
+            "speed": "speed"
+          }
+        }
+      },
+      {
         "provider": "video-gen",
         "node_id": "generate:minimax-h3",
         "node_definition_version": ">=1.0.0",
         "optional": false,
         "fallback": [
-          "generate:byteplus-seedance-2.0",
-          "generate:drawnow"
+          "generate:byteplus-seedance-2.0"
         ],
         "binding": {
           "tool": "beehive_submit_job",
           "node_id": "generate:minimax-h3",
           "config_map": {
             "prompt": "prompt",
+            "images": "images",
+            "image_roles": "image_roles",
+            "audio_refs": "audio_refs",
             "duration": "duration",
             "resolution": "resolution",
             "ratio": "ratio"
@@ -114,13 +136,7 @@
     {
       "version": "1.0.0",
       "date": "2026-09-23",
-      "changes": "first official video skill",
-      "upstream_sync": false
-    },
-    {
-      "version": "1.1.0",
-      "date": "2026-09-23",
-      "changes": "manifest v0.2: requires.nodes[].binding added (tool<->node call contract) and pinned to the real runtime tool beehive_submit_job (1.0.0 named a tool that does not exist); license file and i18n glossaries shipped so every declared reference resolves; evidence lines added to every rule",
+      "changes": "first official lipsync skill: TTS-first pipeline, audio_refs 2-15s bounds, first_frame ban in audio mode, duration sizing from the track, embedded-audio behaviour, one-speaker rule, 8-words-per-3s pacing",
       "upstream_sync": false
     }
   ]
