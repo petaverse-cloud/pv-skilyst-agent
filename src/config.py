@@ -28,6 +28,17 @@ BEEHIVE_KEYS = ("BEEHIVE_PLATFORM_AK", "BEEHIVE_PLATFORM_SK", "BEEHIVE_PLATFORM_
                 "BEEHIVE_PLATFORM_PASS", "BEEHIVE_PLATFORM_UID", "BEEHIVE_API")
 LLM_KEYS = ("SKILYST_LLM_BASE_URL", "SKILYST_LLM_API_KEY", "SKILYST_LLM_MODEL", "SKILYST_LLM_FALLBACKS")
 
+# Paid-job budget per run (`beehive_submit_job` calls that spend money).
+#
+# The budget exists because a submitted job cannot be un-submitted: one shot is the
+# only safe default for an unattended `run`, while an interactive session is where a
+# multi-shot request actually arrives ("cut me three beats of this"), so it gets a
+# small working budget instead of a refusal the user cannot fix from the GUI.
+# `SKILYST_MAX_JOBS` overrides both.
+MAX_JOBS_ENV = "SKILYST_MAX_JOBS"
+DEFAULT_MAX_JOBS_ONE_SHOT = 1
+DEFAULT_MAX_JOBS_INTERACTIVE = 3
+
 
 class ConfigError(RuntimeError):
     """Configuration is incomplete -- say exactly what is missing, then stop."""
@@ -68,6 +79,16 @@ class RuntimeConfig:
     session_dir: Path
     env_file: Path | None = None
     sources: dict = field(default_factory=dict)
+    # Operator-set paid-job budget; None means "use the mode default"
+    # (DEFAULT_MAX_JOBS_ONE_SHOT for `run`/`job`, DEFAULT_MAX_JOBS_INTERACTIVE for a
+    # chat/serve session). A run may always lower it via --max-jobs.
+    max_jobs: int | None = None
+
+    def job_budget(self, interactive: bool = False) -> int:
+        """The budget this run gets, and why (the *why* is reported to the operator)."""
+        if self.max_jobs is not None:
+            return self.max_jobs
+        return DEFAULT_MAX_JOBS_INTERACTIVE if interactive else DEFAULT_MAX_JOBS_ONE_SHOT
 
     def redacted(self) -> dict:
         return {"beehive": self.beehive.redacted(),
@@ -76,6 +97,11 @@ class RuntimeConfig:
                         "api_key": "set" if self.llm.api_key else "-"},
                 "paths": {"store": str(self.store_dir), "workspace": str(self.workspace_dir),
                           "sessions": str(self.session_dir)},
+                "limits": {"job_budget": {"configured": self.max_jobs,
+                                          "source": MAX_JOBS_ENV if self.max_jobs is not None
+                                          else "mode default",
+                                          "one_shot_default": DEFAULT_MAX_JOBS_ONE_SHOT,
+                                          "interactive_default": DEFAULT_MAX_JOBS_INTERACTIVE}},
                 "env_file": str(self.env_file) if self.env_file else None,
                 "sources": self.sources}
 
@@ -190,9 +216,17 @@ def resolve(env_file: str | Path | None = None, *, store_dir: str | Path | None 
                     model=llm_model or DEFAULT_MODEL, fallbacks=fallbacks)
 
     root = Path(HOME_ROOT).expanduser()
+    max_jobs = None
+    if values.get(MAX_JOBS_ENV):
+        raw = str(values[MAX_JOBS_ENV]).strip()
+        if not raw.isdigit() or int(raw) < 1:
+            raise ConfigError(f"{MAX_JOBS_ENV}={raw!r} must be a positive integer (paid jobs per run); "
+                              f"it is a spend guard, so an unreadable value is refused rather than "
+                              f"guessed at")
+        max_jobs = int(raw)
     return RuntimeConfig(beehive=beehive, llm=llm,
                          store_dir=Path(store_dir).expanduser() if store_dir else root / "store",
                          workspace_dir=Path(workspace_dir).expanduser() if workspace_dir else root / "workspace",
                          session_dir=Path(session_dir).expanduser() if session_dir else root / "sessions",
                          env_file=candidate_env if candidate_env.is_file() else None,
-                         sources=sources)
+                         sources=sources, max_jobs=max_jobs)

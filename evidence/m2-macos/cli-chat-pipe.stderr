@@ -1,0 +1,6 @@
+session 20260924-144943-44d5f3 | skill none | model deepseek/deepseek-v4.1-flash | job budget None | tools list_skill_files, list_skills, read_skill, read_skill_file, write_workspace_file
+commands: /skills /tools /session /exit
+skilyst> OK
+[completed turns=1 tools=0 3.8s]
+skilyst> 
+EXIT=0

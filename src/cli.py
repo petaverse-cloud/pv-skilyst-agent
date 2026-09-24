@@ -38,7 +38,8 @@ from agent import open_run
 from agent.runner import gated_client, load_skill, skill_store
 from beehive import (DEFAULT_SCOPE, DENIED_PREFIXES, BeehiveClient, BeehiveError, ScopeRefusal,
                      job_handle, verify_artifact)
-from config import ConfigError, RuntimeConfig, resolve
+from config import (DEFAULT_MAX_JOBS_INTERACTIVE, DEFAULT_MAX_JOBS_ONE_SHOT, MAX_JOBS_ENV, ConfigError,
+                    RuntimeConfig, resolve)
 from llm import LLMError
 from sandbox import (OfflineError, PermissionGate, SandboxViolation, refine_inventory,
                      resolve as resolve_ref)
@@ -51,6 +52,9 @@ EXIT_OK = 0
 EXIT_REFUSED = 2          # a rule said no (scope/sandbox/validation)
 EXIT_INCOMPLETE = 3       # the loop did not reach an answer
 EXIT_PLATFORM = 4         # the platform call failed
+
+# The placeholder title a REPL session starts with, replaced by the first request.
+INTERACTIVE_TITLE = "interactive session"
 
 
 def emit(payload, stream=sys.stdout) -> None:
@@ -190,13 +194,20 @@ def cmd_update_plan(args) -> int:
 # ---------------------------------------------------------------------------
 # runtime commands (A1)
 # ---------------------------------------------------------------------------
-def _agent(args, cfg: RuntimeConfig, skill_id: str | None, session_title: str):
-    """Build the run for one turn through the shared runner (same path `serve` uses)."""
+def _agent(args, cfg: RuntimeConfig, skill_id: str | None, session_title: str,
+           interactive: bool = False):
+    """Build the run for one turn through the shared runner (same path `serve` uses).
+
+    ``interactive`` picks the job-budget default: an unattended one-shot run gets one
+    paid job, a session where the user is watching gets the interactive default. An
+    explicit ``--max-jobs`` or ``SKILYST_MAX_JOBS`` always wins.
+    """
+    budget = args.max_jobs if getattr(args, "max_jobs", None) else cfg.job_budget(interactive)
     return open_run(cfg, skill_id=skill_id, session_id=getattr(args, "session", None),
                     title=session_title, dry_run=bool(getattr(args, "dry_run", False)),
                     max_turns=args.max_turns, stream=not args.no_stream,
                     allow_fallback=bool(getattr(args, "allow_fallback", False)),
-                    max_jobs=getattr(args, "max_jobs", 1), on_event=note,
+                    max_jobs=budget, on_event=note,
                     on_delta=(lambda text: print(text, end="", file=sys.stderr, flush=True))
                     if not args.no_stream else None)
 
@@ -230,14 +241,23 @@ def cmd_chat(args) -> int:
         emit(ctx.result_payload(result))
         return EXIT_OK if result.ok else EXIT_INCOMPLETE
 
-    ctx = _agent(args, cfg, args.skill, "interactive session")
+    ctx = _agent(args, cfg, args.skill, INTERACTIVE_TITLE, interactive=True)
     session, active, loop = ctx.session, ctx.active, ctx.loop
     note(f"session {session.session_id} | skill {active.skill_id if active else 'none'} | "
-         f"model {cfg.llm.model} | tools {', '.join(loop.tools.names)}")
+         f"model {cfg.llm.model} | job budget {loop.tools.job_budget} | "
+         f"tools {', '.join(loop.tools.names)}")
     note("commands: /skills /tools /session /exit")
+    note("this is the interactive surface: it streams the run and writes the JSON summary to "
+         "stderr. For a scriptable one-shot (summary on stdout) use `skilyst chat --message …` "
+         "or `skilyst run <skill-id>`.")
     while True:
         try:
-            line = input("skilyst> ").strip()
+            # The prompt goes to stderr: stdout carries the machine-readable JSON
+            # (same contract as `run`), so `skilyst chat < request.txt | jq` must not
+            # have to strip prompt text out of its input.
+            sys.stderr.write("skilyst> ")
+            sys.stderr.flush()
+            line = input().strip()
         except (EOFError, KeyboardInterrupt):
             note("")
             break
@@ -255,6 +275,11 @@ def cmd_chat(args) -> int:
         if line == "/session":
             emit(session.summary())
             continue
+        if session.meta.get("title") == INTERACTIVE_TITLE:
+            # Every REPL session used to be titled "interactive session", so the desktop
+            # shell's list showed a column of identical rows. Name it after the first
+            # request, like the one-shot paths do.
+            session.update(title=line[:60])
         result = loop.run(line)
         if result.answer:
             note("")
@@ -400,8 +425,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--dry-run", action="store_true", help="run the loop without submitting a paid job")
     p.add_argument("--allow-fallback", action="store_true",
                    help="accept the manifest's declared fallback node when the required one is absent")
-    p.add_argument("--max-jobs", type=int, default=1,
-                   help="how many paid jobs this run may submit (default 1)")
+    p.add_argument("--max-jobs", type=int, default=None,
+                   help=f"paid jobs this run may submit (default: ${MAX_JOBS_ENV}, else "
+                        f"{DEFAULT_MAX_JOBS_ONE_SHOT} for a one-shot run)")
     p.add_argument("--session", default=None)
     p.set_defaults(func=cmd_run)
 
@@ -411,7 +437,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--max-turns", type=int, default=8); p.add_argument("--no-stream", action="store_true")
     p.add_argument("--dry-run", action="store_true"); p.add_argument("--session", default=None)
     p.add_argument("--allow-fallback", action="store_true")
-    p.add_argument("--max-jobs", type=int, default=1)
+    p.add_argument("--max-jobs", type=int, default=None,
+                   help=f"paid jobs this session may submit (default: ${MAX_JOBS_ENV}, else "
+                        f"{DEFAULT_MAX_JOBS_ONE_SHOT} for --message and "
+                        f"{DEFAULT_MAX_JOBS_INTERACTIVE} for an interactive session)")
     p.set_defaults(func=cmd_chat)
 
     p = sub.add_parser("sessions"); p.set_defaults(func=cmd_sessions, needs_llm=False, needs_beehive=False)
@@ -425,7 +454,10 @@ def build_parser() -> argparse.ArgumentParser:
                    help="refuse paid jobs (default)")
     p.add_argument("--live", dest="dry_run", action="store_false",
                    help="allow paid jobs -- an explicit operator decision")
-    p.add_argument("--max-turns", type=int, default=8); p.add_argument("--max-jobs", type=int, default=1)
+    p.add_argument("--max-turns", type=int, default=8); p.add_argument("--max-jobs", type=int, default=None,
+                                                                      help=f"paid jobs per message (default: "
+                                                                           f"${MAX_JOBS_ENV}, else "
+                                                                           f"{DEFAULT_MAX_JOBS_INTERACTIVE}")
     p.add_argument("--allow-fallback", action="store_true")
     p.add_argument("--orphan-guard", action="store_true",
                    help="stop when the parent that started us is gone (stdin EOF or a parent pid "

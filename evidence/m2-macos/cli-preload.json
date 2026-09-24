@@ -1,0 +1,25 @@
+{
+  "preloaded": [
+    {
+      "skill_id": "skilyst/doctor",
+      "version": "1.0.0"
+    },
+    {
+      "skill_id": "skilyst/embed-video",
+      "version": "1.0.0"
+    },
+    {
+      "skill_id": "skilyst/lipsync-audio-refs",
+      "version": "1.0.0"
+    },
+    {
+      "skill_id": "skilyst/prompt-craft",
+      "version": "1.0.0"
+    },
+    {
+      "skill_id": "skilyst/video-15s",
+      "version": "1.1.0"
+    }
+  ],
+  "store": "/Users/wesley/.skilyst/store"
+}

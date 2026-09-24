@@ -1,0 +1,50 @@
+session 20260924-135555-1ebc33 | skill skilyst/video-15s | model deepseek/deepseek-v4.1-flash | tools beehive_get_job, beehive_list_assets, beehive_submit_job, beehive_verify_artifact, list_skill_files, list_skills, read_skill, read_skill_file, write_workspace_file
+commands: /skills /tools /session /exit
+I'll load the skill's full method first, and run the environment self-check before any paid submission.tool read_skill "{\"skill_id\": \"skilyst/video-15s\"}"
+tool read_skill "{\"skill_id\": \"skilyst/doctor\"}"
+Now the prompt craft rules the method points to:tool read_skill "{\"skill_id\": \"skilyst/prompt-craft\"}"
+I can't run the doctor script here — this runtime exposes no shell tool (`exec=none`), so I'll do the checks I do have available and then use the skill's own preflight-by-submission path. Recording the check and the prompt draft:tool list_skills "{}"
+tool write_workspace_file "{\"path\": \"rainy-tokyo-corner/prompt.txt\", \"content\": \"Run: rainy Tokyo convenience-store corner, 15s vertical (skilyst/video-15s@1.1.0)\\nDate: 2026-09-
+wrote /Users/wesley/.skilyst/workspace/rainy-tokyo-corner/prompt.txt
+All installed skills loaded clean (`unloadable: []`), so integrity is intact. Submitting the single paid job now — one submission, at the declared cheapest tier:tool beehive_submit_job "{\"prompt\": \"Static locked camera on a rainy Tokyo street corner at night. A single passer-by -- a person in a dark olive coat, mid-20s, short black hair, ho
+submitted job job-1790229409388-3526e6fdfe702d9e (generate:minimax-h3)
+job job-1790229409388-3526e6fdfe702d9e: waiting progress=None
+job job-1790229409388-3526e6fdfe702d9e: running progress=None
+job job-1790229409388-3526e6fdfe702d9e: running progress=None
+job job-1790229409388-3526e6fdfe702d9e: running progress=None
+job job-1790229409388-3526e6fdfe702d9e: completed progress=None
+Job completed on the first submission. Pulling the full record and independently verifying the artifact:tool beehive_get_job "{\"job_id\": \"job-1790229409388-3526e6fdfe702d9e\"}"
+tool beehive_verify_artifact "{\"url\": \"https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790229409388-3526e6fdfe702d9e/node-job-1790229409388-3526e6fdfe702d9e-0-1790229717982.mp4\
+Done — the clip rendered on the first submission and the artifact verifies.
+
+## Result
+
+**Video URL (verbatim, as returned):**
+`https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790229409388-3526e6fdfe702d9e/node-job-1790229409388-3526e6fdfe702d9e-0-1790229717982.mp4`
+
+**Job id:** `job-1790229409388-3526e6fdfe702d9e` — status `completed`
+**Verified:** HTTP 200, `video/mp4`, 3,751,755 bytes (confirmed twice — by the platform's post-run HEAD and by an independent `beehive_verify_artifact`)
+
+**Tier used (the skill's declared cheapest acceptable — nothing upgraded):**
+`minimax-h3` · 15s · 768P · 9:16 · ~1,035,000 µUSD (~$1.04). 2K was not taken.
+
+## How I read your idea into a shot
+
+Following the skill's order — intent before adjectives, one visual centre, then light:
+
+- **Intent:** a lone passer-by crossing a rainy corner; the emotion is solitary, slightly melancholic night. Shot size **full shot, static** — wide enough to hold storefront + neon + puddle together, with the walker carrying the information.
+- **One visual centre:** the walker under the transparent umbrella, neon-rimmed. The neon sign, its puddle reflection, the storefront, the vending machine and the cable-tangled pole all *support* that centre rather than compete for it.
+- **Light with a motive:** the storefront window is the key (warm), set explicitly at ~4:1 against a cool magenta/cyan neon rim, with the puddle reflection doubling the neon as a second in-frame source — deep wet black fill.
+- **One movement:** the walker crosses left→right; camera locked ("static"). Rain streaks, puddle ripples and neon shimmer supply the micro-motion.
+- **Model delta:** written in natural-language camera phrasing for H3 (no bracketed V1 commands) and closed with `one continuous shot`.
+
+Draft and the full decision record are saved at `rainy-tokyo-corner/prompt.txt` in the workspace.
+
+## One caveat worth stating plainly
+
+`skilyst/doctor` could not actually be *run* here: it's a shell script and this runtime declares `exec=none` with no shell tool exposed. So the credential, registry-reachability and node-preflight sections were never executed — I substituted `list_skills` (all packages loaded clean, `unloadable: []`, so integrity is intact) and relied on the runtime's own submission preflight for the `generate:minimax-h3` node requirement. It passed, since the job ran. No fallback node was taken, and no second job was submitted — a re-render would be a new run or an explicit budget decision.
+
+Also note the `dest_first_frame_url` / `dest_last_frame_url` previews the node returns are review aids, not deliverables — the URL above is the clip.
+[completed turns=6 tools=8 398.8s]
+
+EXIT=0
