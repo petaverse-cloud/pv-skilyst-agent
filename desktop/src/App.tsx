@@ -28,8 +28,13 @@ import Composer from "./components/Composer";
 import ConversationView from "./components/ConversationView";
 import SessionList from "./components/SessionList";
 import SettingsPage from "./components/SettingsPage";
+import { appendDelta, emptyStream, freezeTurn, type StreamState } from "./stream";
 
 const MODEL_KEY = "skilyst.model";
+// The session list is the only thing the shell shows that another process (a CLI run)
+// can change behind its back, so it is polled rather than pushed: the runtime has no
+// subscription channel, and a 5s `GET /sessions` on loopback is cheaper than adding one.
+const SESSION_POLL_MS = 5000;
 
 export default function App() {
   const [info, setInfo] = useState<RuntimeInfo | null>(null);
@@ -39,7 +44,7 @@ export default function App() {
   const [detail, setDetail] = useState<SessionDetail | null>(null);
   const [view, setView] = useState<"chat" | "settings">("chat");
   const [sending, setSending] = useState(false);
-  const [streaming, setStreaming] = useState("");
+  const [stream, setStream] = useState<StreamState>(emptyStream);
   const [notes, setNotes] = useState<string[]>([]);
   const [dryRun, setDryRun] = useState(true);
   const [model, setModel] = useState(() => window.localStorage.getItem(MODEL_KEY) ?? "");
@@ -69,6 +74,18 @@ export default function App() {
     void connect();
   }, [connect]);
 
+  // A session created by anything other than this window (a CLI run, another shell)
+  // shows up within one poll interval instead of needing a restart.
+  useEffect(() => {
+    if (!info) return;
+    const timer = window.setInterval(() => {
+      // A failed poll is not worth a banner: the connection state already says the
+      // runtime is gone.
+      void refreshSessions().catch(() => undefined);
+    }, SESSION_POLL_MS);
+    return () => window.clearInterval(timer);
+  }, [info, refreshSessions]);
+
   const openSession = useCallback(async (sessionId: string) => {
     setError(null);
     try {
@@ -95,23 +112,33 @@ export default function App() {
       setSending(true);
       setError(null);
       setNotes([]);
-      setStreaming("");
+      setStream(emptyStream);
       try {
         const summary: RunSummary = await sendMessage(
           { message: text, session_id: detail?.session_id, model: model || undefined, dry_run: dryRun },
           {
-            onDelta: (chunk) => setStreaming((current) => current + chunk),
-            onNote: (line) => setNotes((current) => [...current, line]),
+            onDelta: (chunk) => setStream((state) => appendDelta(state, chunk)),
+            // A progress note is the end of the turn that was streaming: freeze what
+            // arrived so a tool call does not glue two turns into one bubble.
+            onNote: (line) => {
+              setStream((state) => freezeTurn(state));
+              setNotes((current) => [...current, line]);
+            },
           },
         );
-        setStreaming("");
-        setDetail(await api<SessionDetail>(`/session/${summary.session_id}`));
+        const refreshed = await api<SessionDetail>(`/session/${summary.session_id}`);
+        setDetail(refreshed);
+        // The transcript now holds everything that streamed; keeping the buffers as
+        // well would render every answer twice.
+        setStream(emptyStream);
         await refreshSessions();
         if (!summary.ok) {
           setError(`${summary.stop_reason}: ${summary.error ?? "the run did not complete"}`);
         }
       } catch (exc) {
-        setStreaming("");
+        // Keep whatever the agent had already said: the transcript is not refetched on
+        // a failed request, and losing the text would hide the evidence of the failure.
+        setStream((state) => freezeTurn(state));
         setError(exc instanceof Error ? exc.message : String(exc));
       } finally {
         setSending(false);
@@ -222,7 +249,7 @@ export default function App() {
           </Stack>
         ) : (
           <>
-            <ConversationView detail={detail} streaming={streaming} notes={notes} busy={sending} />
+            <ConversationView detail={detail} stream={stream} notes={notes} busy={sending} />
             <Composer
               onSend={(text) => void send(text)}
               busy={sending || !info}
