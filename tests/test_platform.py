@@ -173,7 +173,7 @@ class ConfigTests(unittest.TestCase):
         self.saved = {k: os.environ.pop(k, None) for k in
                       ("SKILYST_ENV_FILE", "SKILYST_DEV_PROFILE", "SKILYST_LLM_BASE_URL",
                        "SKILYST_LLM_API_KEY", "SKILYST_LLM_MODEL", "SKILYST_LLM_CONFIG",
-                       "SKILYST_LLM_FALLBACKS", "BEEHIVE_API", "BEEHIVE_PLATFORM_AK",
+                       "SKILYST_LLM_FALLBACKS", "SKILYST_MAX_JOBS", "BEEHIVE_API", "BEEHIVE_PLATFORM_AK",
                        "BEEHIVE_PLATFORM_SK", "BEEHIVE_PLATFORM_USER", "BEEHIVE_PLATFORM_PASS",
                        "BEEHIVE_PLATFORM_UID")}
         self.addCleanup(self._restore)
@@ -231,6 +231,30 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(cfg.beehive.access_key, "fromprofile")
         self.assertEqual(cfg.beehive.base_url, "https://dev.invalid")
         self.assertIn("dev profile", cfg.beehive.source)
+
+    def test_job_budget_is_configurable_and_a_bad_value_is_refused(self):
+        path = self._env_file("BEEHIVE_PLATFORM_AK=AK\nBEEHIVE_PLATFORM_SK=SK\n"
+                              "SKILYST_LLM_BASE_URL=https://llm.invalid/v1\n"
+                              "SKILYST_LLM_API_KEY=k\nSKILYST_LLM_MODEL=m\nSKILYST_MAX_JOBS=5\n")
+        self.assertEqual(resolve(env_file=path).max_jobs, 5)
+        self.assertEqual(resolve(env_file=path).job_budget(interactive=False), 5)
+        # the budget is a spend guard: an unreadable value must not be guessed at
+        for bad in ("0", "-2", "many"):
+            bad_path = self._env_file("BEEHIVE_PLATFORM_AK=AK\nBEEHIVE_PLATFORM_SK=SK\n"
+                                      "SKILYST_LLM_BASE_URL=https://llm.invalid/v1\n"
+                                      "SKILYST_LLM_API_KEY=k\nSKILYST_LLM_MODEL=m\n"
+                                      f"SKILYST_MAX_JOBS={bad}\n")
+            with self.assertRaises(ConfigError) as ctx:
+                resolve(env_file=bad_path)
+            self.assertIn("SKILYST_MAX_JOBS", str(ctx.exception))
+
+    def test_redaction_reports_the_effective_budget_without_a_secret(self):
+        path = self._env_file("BEEHIVE_PLATFORM_AK=AK\nBEEHIVE_PLATFORM_SK=SK\n"
+                              "SKILYST_LLM_BASE_URL=https://llm.invalid/v1\n"
+                              "SKILYST_LLM_API_KEY=k\nSKILYST_LLM_MODEL=m\n")
+        redacted = resolve(env_file=path).redacted()
+        self.assertEqual(redacted["limits"]["job_budget"]["source"], "mode default")
+        self.assertEqual(redacted["limits"]["job_budget"]["interactive_default"], 3)
 
     def test_redaction_never_prints_a_secret(self):
         path = self._env_file("BEEHIVE_PLATFORM_AK=AKSECRET123\nBEEHIVE_PLATFORM_SK=SKSECRET456\n"

@@ -1,0 +1,139 @@
+{
+  "session_id": "20260924-150022-958ffe",
+  "skill": "skilyst/embed-video",
+  "stop_reason": "completed",
+  "answer": "Rehearsal accepted — dry run, nothing submitted, nothing charged (`jobs_submitted: 0`, `job_budget: 1`).\n\n**Exact node config the runtime would send** (reported verbatim, no edits):\n\n```json\n{\n  \"type\": \"generate\",\n  \"provider\": \"minimax-h3\",\n  \"config\": {\n    \"duration\": 6,\n    \"image_roles\": [\"first_frame\"],\n    \"images\": [\"https://example.test/still.png\"],\n    \"prompt\": \"she lifts her head and settles\",\n    \"ratio\": \"9:16\",\n    \"resolution\": \"768P\"\n  }\n}\n```\n\nAlongside it: `workflow_id: \"\"`, `dry_run: true`, and `arguments_sent_as` echoing the same six keys — so every argument landed under the binding `generate:minimax-h3` declares (`duration`, `image_roles`, `images`, `prompt`, `ratio`, `resolution`). Nothing was refused, nothing was dropped.\n\nThree notes for when this becomes a real job rather than a rehearsal:\n\n1. **The placeholder URL is the blocker, not a detail.** `https://example.test/still.png` doesn't resolve, so a live submit would fail at fetch. In frame mode the first frame *is* the identity (Rule 2) — generate the still with `generate:nb2-image`, inspect and approve it, then animate that real URL.\n2. **The prompt is compliant but thin.** It has a primary action and an end state (\"settles\"), which satisfies Rule 3's tail-stall requirement — but at 6 words it spends none of the 15–40 word budget on camera move or environmental micro-motion. Something like `she lifts her head, slow push-in, mist drifting behind her, then settles back into place` would give the model more to hold onto.\n3. **Tier is unchanged and correct.** 6s @ 768P @ 9:16 matches the skill's declared plan, so no tier change was made and none is needed.\n\nSay the word once you have a real approved still URL and I'll submit the live animation.",
+  "model": "deepseek/deepseek-v4.1-flash",
+  "turns": 3,
+  "wall_clock_s": 26.7,
+  "usage": {
+    "prompt_tokens": 11599,
+    "completion_tokens": 1926,
+    "total_tokens": 13525,
+    "calls": 3,
+    "models_used": [
+      "deepseek/deepseek-v4.1-flash"
+    ]
+  },
+  "artifacts": [],
+  "jobs": {
+    "submitted": 0,
+    "budget": 1
+  },
+  "tool_calls": [
+    {
+      "tool": "read_skill",
+      "arguments": {
+        "skill_id": "skilyst/embed-video"
+      },
+      "result": {
+        "skill_id": "skilyst/embed-video",
+        "version": "1.1.0",
+        "degraded": false,
+        "digest": "sha256:c6b36e776d8d1458f1796f88f1e623cd360a1c23bcacfe58b33d9af44ca3644b",
+        "permission": {
+          "egress": [
+            "beehive-api.verse4.pet"
+          ],
+          "filesystem": "workspace",
+          "exec": "none",
+          "secrets": true
+        },
+        "plan": {
+          "provider": "minimax-h3",
+          "duration": 6,
+          "resolution": "768P",
+          "ratio": "9:16"
+        },
+        "requires_nodes": [
+          {
+            "node_id": "generate:nb2-image",
+            "version_range": ">=1.0.0",
+            "optional": true,
+            "fallback": [
+              "generate:nb2-lite-image",
+              "generate:gpt-image-2"
+            ]
+          },
+          {
+            "node_id": "generate:minimax-h3",
+            "version_range": ">=1.0.0",
+            "optional": false,
+            "fallback": [
+              "generate:byteplus-seedance-2.0",
+              "generate:drawnow"
+            ]
+          }
+        ],
+        "instructions": "\n# Image-to-video: lock the still, animate the change\n\n## When to use\n\nThe user has a locked image (or approves generating one) and wants motion from\nit: a character shot, a product beat, a shot that must match a neighbouring shot.\nDeliverable = one playable video URL per shot, plus the still that anchors it.\n\nNot this skill: a clip with no source image (`skilyst/video-15s`) or a shot whose\nmotion is driven by a voice track (`skilyst/lipsync-audio-refs`).\n\n## Rule 1 — pick ONE mode per job, never mix (this is the expensive one)\n\nTwo modes exist on the video nodes, and they cannot coexist inside one job:\n\n| mode | how it is declared | what the model does |\n| --- | --- | --- |\n| **frame mode** | `image_roles[0] = first_frame` (optionally `last_frame`) | animates *from* the locked still(s) toward the described end state |\n| **reference mode** | `image_roles = [reference_image, …]` (optionally + `video_refs` / `audio_refs`) | treats the image(s) as style/identity reference while generating freely |\n\nMixing them is rejected upstream with *\"first/last frame content cannot be mixed\nwith reference image, video, or audio\"*. That is not a theoretical risk: the\nplatform's own 30-day failed-node distribution carried 17 jobs killed by exactly\nthis message, our lane's first i2v attempt was rejected the same way (then a\nplain `first_frame` run succeeded for $0.414 at 6s/768P), and the audio-driven\nroute hits it again (see `skilyst/lipsync-audio-refs`).\n\nThe implicit form counts too: **a frame role anywhere makes every other image a\nreference** (un-roled images get no role and the upstream reads them as\n`reference_image`). So `images=[still, style_ref]` with\n`image_roles=[first_frame]` is the same forbidden mix — N images need N frame\nroles or the job will be refused. The runtime validator\n(`internal/api/validation/seedance_mode.go`) enforces this at submission time for\nthe seedance family, so the failure is caught before money is spent; do not\n\"try it and see\".\n\nThe runtime side of the same rule: `video_refs` and `audio_refs` are mapped\nunconditionally to the reference roles (`reference_video` / `reference_audio`) —\n\"video / audio refs are always reference mode\" (`internal/provider/minimax_h3/runner.go`)\n— which is why they can never be combined with a frame role in the first place.\n\n## Rule 2 — the first frame carries identity, so build it before you animate\n\nBecause frame mode forbids a `reference_image`, identity has to be baked into the\nstill *before* the animation step: generate the still from the character anchor\n(or the approved asset), inspect it, then animate it. *Why: in reference mode a\npicture alone is read as a style image — the lane measured identity drift on\nbatches that handed over an image with no written lock; the fix is either the\nframe-mode chain below, or the five-part reference-lock syntax documented in\n`skilyst/prompt-craft`.*\n\nWhen the user has no still yet, generate it with the declared optional image\nnode (`generate:nb2-image`, fallbacks `generate:nb2-lite-image`,\n`generate:gpt-image-2`) and get it approved before animating — an animation of a\nstill nobody approved is a wasted render.\n\n## Rule 3 — write only the change (I2V prompts are not T2V prompts)\n\nThe still already says who/what/where. The prompt spends its budget on motion:\n\n- 15-40 words; camera move + subject motion + environmental micro-motion only;\n  never re-describe what is already visible.\n- One primary action per shot; environmental motion (steam, drifting mist,\n  background passers-by) supports it and must not compete with it.\n- **Always give the end state** — `…then settles back into place`, `…comes to\n  rest`. *Why: without an end state the shot stalls or keeps drifting at the tail\n  of the clip; the tail is exactly where a splice lands.*\n\n## Rule 4 — duration and resolution are mode-dependent\n\n| node | duration | resolution | note |\n| --- | --- | --- | --- |\n| `generate:minimax-h3` | 4-15 s integer | `768P` (ratio 1.0) / `2K` (×1.6) | primary node; no auto length; 768P at 14 s ≈ $0.97, 6 s ≈ $0.41 |\n| `generate:byteplus-seedance-2.0` | 4-15 s in text/image/frame modes; **4-30 s only when `video_refs` is present** (r2v); `-1` = auto | `480p` / `720p` / `1080p` / `4k` | declared fallback; pricing is per second, resolution and model multipliers stack |\n\nA single job cannot exceed the frame-mode cap, so anything longer than 15 s is\nseveral jobs spliced in post. Do not reach for `video_refs` just to unlock 30 s:\nthat switches the job into reference mode (Rule 1) and changes the price.\n\n## Rule 5 — splice craft for multi-shot sequences\n\nIndependently generated clips cut together read as different people unless the\nchain is built and verified:\n\n1. Derive the next shot's still **from the previous shot's tail frame** (or a\n   frame of it), so the chain is continuous.\n2. In frame mode that tail frame becomes the next shot's `first_frame`. In\n   reference mode the same craft is expressed as `reference_image` — never carry\n   it as `reference_image` while a frame role is present (Rule 1).\n3. QA the splice on three elements — shoulder line, camera pitch, light ratio —\n   and regenerate the later shot when any of them mismatches. This is a measured\n   cost decision: the lane's three-clip trailer had to specify these three at the\n   splice or the cut was visible.\n\n## Rule 6 — identity QA thresholds differ for i2v\n\nSampled frames of an i2v output score lower than a static image, purely from\nmotion blur and intermediate-frame warping. Measured across 8 shots × 7 frames\n(min distribution 0.47-0.75, ±0.03 within a shot, no visible drift): use\n**PASS ≥ 0.60, GRAY 0.50-0.60, regenerate below 0.50** on animated frames, and\nkeep the stricter **0.70** for the still image itself. Applying the static\nthreshold to i2v frames manufactures false failures.\n\n## Call contract\n\nBound through the tool named in the manifest\n(`requires.nodes[].binding.tool` = `beehive_submit_job`):\n\n| argument | value |\n| --- | --- |\n| `node_id` | `generate:minimax-h3` |\n| `prompt` | motion-only prompt (Rule 3) |\n| `images` | `[<locked still URL>]` |\n| `image_roles` | `[\"first_frame\"]` (or `[\"reference_image\", …]` in reference mode — not both) |\n| `duration` | integer 4-15 |\n| `resolution` | `768P` unless a higher tier was approved |\n| `ratio` | `9:16` / `16:9` as delivered |\n\n### Runtime support (A1 phase-2)\n\n`beehive_submit_job` forwards every argument this binding declares, under the node\nfield the manifest names: `prompt`, `images`, `image_roles`, `duration`,\n`resolution`, `ratio` (for the still: `prompt`, `images`, `ratio` → the node's\n`aspect_ratio`). An argument that is *not* declared here is refused with the declared\nlist rather than dropped — a dropped image would silently turn an i2v render into a\ntext-to-video render, at the same price. `images` and `image_roles` are validated as\npositionally paired before submission, so the frame/reference mix that the platform\nrejects is caught before the job is paid for.\n\n## Hand-off\n\nReport `dest_video_url` verbatim plus the job id, and name the still that anchored\nthe shot (path or URL) so the sequence can be rebuilt. Report platform errors\nverbatim; never substitute a neighbouring take.",
+        "files": [
+          "LICENSE",
+          "SKILL.md",
+          "manifest.json",
+          "references/i18n/glossary.en.json",
+          "references/i18n/glossary.zh-CN.json"
+        ],
+        "spec_warnings": []
+      },
+      "error": null,
+      "duration_s": 0.0
+    },
+    {
+      "tool": "beehive_submit_job",
+      "arguments": {
+        "node_id": "generate:minimax-h3",
+        "prompt": "she lifts her head and settles",
+        "images": [
+          "https://example.test/still.png"
+        ],
+        "image_roles": [
+          "first_frame"
+        ],
+        "duration": 6,
+        "resolution": "768P",
+        "ratio": "9:16"
+      },
+      "result": {
+        "dry_run": true,
+        "node": {
+          "type": "generate",
+          "provider": "minimax-h3",
+          "config": {
+            "duration": 6,
+            "image_roles": [
+              "first_frame"
+            ],
+            "images": [
+              "https://example.test/still.png"
+            ],
+            "prompt": "she lifts her head and settles",
+            "ratio": "9:16",
+            "resolution": "768P"
+          }
+        },
+        "workflow_id": "",
+        "arguments_sent_as": {
+          "duration": 6,
+          "image_roles": [
+            "first_frame"
+          ],
+          "images": [
+            "https://example.test/still.png"
+          ],
+          "prompt": "she lifts her head and settles",
+          "ratio": "9:16",
+          "resolution": "768P"
+        },
+        "job_budget": 1,
+        "jobs_submitted": 0
+      },
+      "error": null,
+      "duration_s": 0.0
+    }
+  ],
+  "preflight": {
+    "registry_available": true,
+    "problems": []
+  },
+  "error": null
+}

@@ -1,0 +1,62 @@
+
+> skilyst-agent-desktop@0.1.0 tauri
+> tauri dev
+
+     Running BeforeDevCommand (`npm run dev`)
+
+> skilyst-agent-desktop@0.1.0 dev
+> vite --host
+
+
+  VITE v8.0.16  ready in 194 ms
+
+  ➜  Local:   http://localhost:1420/
+  ➜  Network: http://192.168.1.166:1420/
+  ➜  Network: http://100.115.170.61:1420/
+     Running DevCommand (`cargo  run --no-default-features --color always --`)
+        Info Watching /Users/wesley/workspace/Petaverse/src/agents/planner/pv-skilyst-agent/desktop/src-tauri for changes...
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.64s
+[1m[92m     Running[0m `target/debug/skilyst-agent`
+[runtime] orphan guard: watching stdin for EOF
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[runtime] 
+[runtime] http 127.0.0.1 "OPTIONS /session/20260923-234459-c506ac HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /session/20260923-234459-c506ac HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /session/20260924-135555-1ebc33 HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /session/20260924-135555-1ebc33 HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /session/20260924-135059-68097a HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /session/20260924-135059-68097a HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "GET /session/20260924-135059-68097a HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /session/20260923-234459-c506ac HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /session/20260923-234459-c506ac HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "GET /session/20260923-234459-c506ac HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /session/20260924-135555-1ebc33 HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /session/20260924-135555-1ebc33 HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /config HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "OPTIONS /doctor HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "OPTIONS /config HTTP/1.1" 204 -http 127.0.0.1 "OPTIONS /doctor HTTP/1.1" 204 -
+[runtime] 
+[runtime] http 127.0.0.1 "GET /config HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "GET /config HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "GET /doctor HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "GET /doctor HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /session/20260924-135555-1ebc33 HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /session/20260924-135555-1ebc33 HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /message HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /session/20260924-135555-1ebc33 HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /session/20260924-135555-1ebc33 HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /session/20260923-233608-0d952c HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /session/20260923-233608-0d952c HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /session/20260924-135059-68097a HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /session/20260924-135059-68097a HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /message HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /session/20260924-135059-68097a HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /session/20260924-135059-68097a HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -

@@ -1,0 +1,37 @@
+I'll load the active skill's method before touching the platform.tool read_skill "{\"skill_id\": \"skilyst/embed-video\"}"
+Method loaded. Key checks against this rehearsal before I fire it:
+
+- **Rule 1 (one mode per job):** one image + one `first_frame` role = pure frame mode. N images need N frame roles, and this has N=1/1, so no mix. ✅
+- **Rule 4:** `generate:minimax-h3` accepts 4–15s integer, `768P`/`2K` — 6s @ 768P is inside the tier. ✅
+- **Rule 2/3:** placeholder URL is fine for a dry run (nothing is fetched or charged); it would *not* be fine for a live job, since frame mode bakes identity into the still.
+
+Calling the rehearsal exactly as specified:tool beehive_submit_job "{\"node_id\": \"generate:minimax-h3\", \"prompt\": \"she lifts her head and settles\", \"images\": [\"https://example.test/still.png\"], \"image_roles\": [\"fi
+dry-run: would submit generate:minimax-h3
+Rehearsal accepted — dry run, nothing submitted, nothing charged (`jobs_submitted: 0`, `job_budget: 1`).
+
+**Exact node config the runtime would send** (reported verbatim, no edits):
+
+```json
+{
+  "type": "generate",
+  "provider": "minimax-h3",
+  "config": {
+    "duration": 6,
+    "image_roles": ["first_frame"],
+    "images": ["https://example.test/still.png"],
+    "prompt": "she lifts her head and settles",
+    "ratio": "9:16",
+    "resolution": "768P"
+  }
+}
+```
+
+Alongside it: `workflow_id: ""`, `dry_run: true`, and `arguments_sent_as` echoing the same six keys — so every argument landed under the binding `generate:minimax-h3` declares (`duration`, `image_roles`, `images`, `prompt`, `ratio`, `resolution`). Nothing was refused, nothing was dropped.
+
+Three notes for when this becomes a real job rather than a rehearsal:
+
+1. **The placeholder URL is the blocker, not a detail.** `https://example.test/still.png` doesn't resolve, so a live submit would fail at fetch. In frame mode the first frame *is* the identity (Rule 2) — generate the still with `generate:nb2-image`, inspect and approve it, then animate that real URL.
+2. **The prompt is compliant but thin.** It has a primary action and an end state ("settles"), which satisfies Rule 3's tail-stall requirement — but at 6 words it spends none of the 15–40 word budget on camera move or environmental micro-motion. Something like `she lifts her head, slow push-in, mist drifting behind her, then settles back into place` would give the model more to hold onto.
+3. **Tier is unchanged and correct.** 6s @ 768P @ 9:16 matches the skill's declared plan, so no tier change was made and none is needed.
+
+Say the word once you have a real approved still URL and I'll submit the live animation.EXIT=0

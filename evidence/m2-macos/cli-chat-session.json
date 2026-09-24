@@ -1,0 +1,23 @@
+{
+  "session_id": "20260924-135555-1ebc33",
+  "title": "interactive session",
+  "created_at": 1790229355.256168,
+  "updated_at": 1790229754.049302,
+  "model": "deepseek/deepseek-v4.1-flash",
+  "workspace": "/Users/wesley/.skilyst/workspace",
+  "skills": [
+    "skilyst/video-15s"
+  ],
+  "status": "open",
+  "message_count": 15,
+  "usage": {
+    "prompt_tokens": 39632,
+    "completion_tokens": 4945,
+    "total_tokens": 44577,
+    "calls": 6,
+    "models_used": [
+      "deepseek/deepseek-v4.1-flash"
+    ]
+  },
+  "artifacts": 2
+}

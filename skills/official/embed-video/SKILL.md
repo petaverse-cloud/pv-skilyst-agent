@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires the skilyst runtime (>=0.1.0) with the tool named in manifest.json requires.nodes[].binding and network access to the Beehive API host declared in permission.egress.
 metadata:
   skilyst.skill_id: skilyst/embed-video
-  skilyst.version: "1.0.0"
+  skilyst.version: "1.1.0"
 ---
 
 # Image-to-video: lock the still, animate the change
@@ -126,14 +126,16 @@ Bound through the tool named in the manifest
 | `resolution` | `768P` unless a higher tier was approved |
 | `ratio` | `9:16` / `16:9` as delivered |
 
-### Runtime support (M1)
+### Runtime support (A1 phase-2)
 
-`beehive_submit_job` currently forwards `prompt` / `duration` / `resolution` /
-`ratio` only. The multimodal keys above are declared in the binding so the call
-contract is runtime-independent and preflight/QA stay meaningful, but until the
-tool forwards `images` / `image_roles` an end-to-end run of this skill has to
-submit the job through the Beehive jobs API directly. This is a recorded gap, not
-a silent degradation — preflight will not pretend the run is complete.
+`beehive_submit_job` forwards every argument this binding declares, under the node
+field the manifest names: `prompt`, `images`, `image_roles`, `duration`,
+`resolution`, `ratio` (for the still: `prompt`, `images`, `ratio` → the node's
+`aspect_ratio`). An argument that is *not* declared here is refused with the declared
+list rather than dropped — a dropped image would silently turn an i2v render into a
+text-to-video render, at the same price. `images` and `image_roles` are validated as
+positionally paired before submission, so the frame/reference mix that the platform
+rejects is caught before the job is paid for.
 
 ## Hand-off
 

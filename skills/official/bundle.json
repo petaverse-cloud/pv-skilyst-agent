@@ -11,13 +11,13 @@
     },
     {
       "path": "embed-video",
-      "version": "1.0.0",
-      "content_digest": "sha256:84015d3eeb056a2427a835308c84f91bba6ee8c730c6db57f494fd06f7eb5a3d"
+      "version": "1.1.0",
+      "content_digest": "sha256:c6b36e776d8d1458f1796f88f1e623cd360a1c23bcacfe58b33d9af44ca3644b"
     },
     {
       "path": "lipsync-audio-refs",
-      "version": "1.0.0",
-      "content_digest": "sha256:2bfefc36b7d815aca28be893ba513568d788b865e9fd310a8a9ed4eb67ca04ea"
+      "version": "1.1.0",
+      "content_digest": "sha256:f7677cd2c460eebba269fc02292501072d34b476c32ec8d74094f3f73550e50e"
     },
     {
       "path": "prompt-craft",

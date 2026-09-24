@@ -1,0 +1,23 @@
+        Info Looking up installed tauri packages to check mismatched versions...
+     Running beforeBuildCommand `npm run build`
+
+> skilyst-agent-desktop@0.1.0 build
+> tsc && vite build
+
+vite v8.0.16 building client environment for production...
+[2Ktransforming...✓ 6936 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.45 kB │ gzip:   0.29 kB
+dist/assets/index-CNTDuEat.css  216.58 kB │ gzip:  32.09 kB
+dist/assets/index-CoFv3k1K.js   413.14 kB │ gzip: 126.52 kB
+
+✓ built in 876ms
+   Compiling skilyst-agent v0.1.0 (/Users/wesley/workspace/Petaverse/src/agents/planner/pv-skilyst-agent/desktop/src-tauri)
+    Finished `release` profile [optimized] target(s) in 18.72s
+       Built application at: /Users/wesley/workspace/Petaverse/src/agents/planner/pv-skilyst-agent/desktop/src-tauri/target/release/skilyst-agent
+    Bundling Skilyst Agent.app (/Users/wesley/workspace/Petaverse/src/agents/planner/pv-skilyst-agent/desktop/src-tauri/target/release/bundle/macos/Skilyst Agent.app)
+    Finished 1 bundle at:
+        /Users/wesley/workspace/Petaverse/src/agents/planner/pv-skilyst-agent/desktop/src-tauri/target/release/bundle/macos/Skilyst Agent.app
+
+BUILD_EXIT=0

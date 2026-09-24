@@ -285,6 +285,50 @@ class NodeRequirementTests(unittest.TestCase):
         with self.assertRaises(ManifestError):
             validate_manifest(manifest)
 
+    def test_binding_is_parsed_and_reverse_lookup_works(self):
+        reqs = node_requirements(official_manifest())
+        binding = reqs[0].binding
+        self.assertIsNotNone(binding)
+        self.assertEqual(binding.tool, "beehive_submit_job")
+        self.assertEqual(binding.node_id, "generate:minimax-h3")
+        self.assertEqual(binding.api_field("prompt"), "prompt")
+        self.assertEqual(binding.argument_for("prompt"), "prompt")
+        self.assertEqual(binding.tool_args(), ["duration", "prompt", "ratio", "resolution"])
+
+    def test_binding_must_not_map_a_control_argument(self):
+        """`wait` steers the call, it is not a node field: a manifest must not be able to
+        route the runtime's own controls into a node's config."""
+        for control in ("wait", "timeout_s", "workflow_id", "node_id"):
+            manifest = official_manifest()
+            manifest["requires"]["nodes"][0]["binding"]["config_map"] = {control: "prompt"}
+            with self.assertRaises(ManifestError) as ctx:
+                validate_manifest(manifest)
+            self.assertIn("control argument", str(ctx.exception))
+
+    def test_binding_cannot_map_two_arguments_to_one_field(self):
+        manifest = official_manifest()
+        manifest["requires"]["nodes"][0]["binding"]["config_map"] = {"prompt": "prompt",
+                                                                    "duration": "prompt"}
+        with self.assertRaises(ManifestError) as ctx:
+            validate_manifest(manifest)
+        self.assertIn("ambiguous", str(ctx.exception))
+
+    def test_binding_must_bind_its_own_node(self):
+        manifest = official_manifest()
+        manifest["requires"]["nodes"][0]["binding"]["node_id"] = "generate:drawnow"
+        with self.assertRaises(ManifestError):
+            validate_manifest(manifest)
+
+    def test_binding_needs_a_tool_and_a_config_map(self):
+        manifest = official_manifest()
+        manifest["requires"]["nodes"][0]["binding"].pop("tool")
+        with self.assertRaises(ManifestError):
+            validate_manifest(manifest)
+        manifest = official_manifest()
+        manifest["requires"]["nodes"][0]["binding"]["config_map"] = {}
+        with self.assertRaises(ManifestError):
+            validate_manifest(manifest)
+
     def test_preflight_matches_on_registry_id(self):
         package = load_package(OFFICIAL)
         client = FakeRegistryClient([{"id": "generate:minimax-h3", "node_type": "generate",

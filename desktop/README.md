@@ -114,3 +114,17 @@ npm run tauri:build            # .app/.dmg under src-tauri/target/release/bundle
 
 Note `cargo build` alone needs `dist/` to exist (`npm run build` first) — the Tauri
 build script embeds the frontend at compile time.
+
+### macOS: what actually builds where (measured 2026-09-24, Apple Silicon)
+
+| step | unsigned local build | note |
+|---|---|---|
+| `npm run build` (tsc + vite) | ✅ | |
+| `cargo build --release` + `.app` | ✅ | `--bundles app` is enough to get a runnable bundle |
+| `.dmg` (`bundle_dmg.sh`) | ⚠️ needs an interactive session | the script drives Finder by AppleScript to lay out the volume; from a non-GUI/automation-restricted shell that AppleScript times out (`-1712`) and the dmg step fails *after* the `.app` was produced |
+
+So a headless/local smoke is `npm run tauri:build -- --bundles app`, and the dmg is a
+job for an interactive session or CI (which also has the notarization secrets). The
+unsigned `.app` runs on the build machine (no quarantine: it was never downloaded) and
+starts its runtime exactly like the dev shell — it is the artifact to click when
+verifying a packaging change on macOS.

@@ -1,10 +1,10 @@
 {
   "skill_id": "skilyst/lipsync-audio-refs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "display_name": "口型工艺（audio_refs 音频驱动）",
   "description": "Dialogue shots on the Skilyst/Beehive platform — synthesize the line with TTS first, then drive the shot with that track (audio_refs plus reference images) so the mouth follows the voice and the clip ships with its own audio. Use when a shot has spoken dialogue; covers the 2-15s audio_refs bounds, the first_frame ban in audio mode, and the pacing rule that decides how long the line may be.",
   "kind": "official-bundle",
-  "content_digest": "sha256:2bfefc36b7d815aca28be893ba513568d788b865e9fd310a8a9ed4eb67ca04ea",
+  "content_digest": "sha256:f7677cd2c460eebba269fc02292501072d34b476c32ec8d74094f3f73550e50e",
   "upstream": null,
   "fork_depth": 0,
   "supply_chain": {
@@ -23,7 +23,7 @@
         "key_id": "skilyst-platform",
         "algo": "ed25519",
         "sig": "platform-signature-pending",
-        "digest": "sha256:2bfefc36b7d815aca28be893ba513568d788b865e9fd310a8a9ed4eb67ca04ea"
+        "digest": "sha256:f7677cd2c460eebba269fc02292501072d34b476c32ec8d74094f3f73550e50e"
       }
     ]
   },
@@ -137,6 +137,12 @@
       "version": "1.0.0",
       "date": "2026-09-23",
       "changes": "first official lipsync skill: TTS-first pipeline, audio_refs 2-15s bounds, first_frame ban in audio mode, duration sizing from the track, embedded-audio behaviour, one-speaker rule, 8-words-per-3s pacing",
+      "upstream_sync": false
+    },
+    {
+      "version": "1.1.0",
+      "date": "2026-09-24",
+      "changes": "A1 phase-2: beehive_submit_job forwards the binding's declared arguments for the TTS node (text / voice_id / emotion / speed) and the dialogue-shot node (images / image_roles / audio_refs); the M1 note that a direct API call is required is superseded",
       "upstream_sync": false
     }
   ]
