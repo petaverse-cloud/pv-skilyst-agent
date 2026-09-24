@@ -46,6 +46,10 @@ class TokenRecord:
     scopes: list
     expires_at: float
     storage: str = "keychain"  # or "dev-file" | "mock"
+    # A2 auth final contract (beehive-core #596): the exchange product is an
+    # AgentScopes AK/SK pair, not a JWT — a JWT would bypass ScopeGuard (D3).
+    access_key: str = ""
+    secret_key: str = ""
 
     def to_json(self) -> str:
         return json.dumps(self.__dict__)
@@ -61,7 +65,10 @@ class TokenStore:
     SERVICE = "skilyst-agent"
 
     def __init__(self, home: Optional[Path] = None):
-        self.home = Path(home or Path.home() / ".skilyst")
+        # SKILYST_AUTH_STORE_HOME lets tests (and multi-install setups) point
+        # the store somewhere other than the default ~/.skilyst.
+        default = os.environ.get("SKILYST_AUTH_STORE_HOME") or Path.home() / ".skilyst"
+        self.home = Path(home or default)
         self.home.mkdir(parents=True, exist_ok=True)
         self._dev_path = self.home / "credentials"
 
@@ -77,13 +84,13 @@ class TokenStore:
             subprocess.run(
                 ["security", "add-generic-password",
                  "-a", record.account_uid, "-s", self.SERVICE,
-                 "-U", "-w", record.access_token],
+                 "-U", "-w", record.access_key or record.access_token],
                 check=True, capture_output=True)
             meta = self.home / "credentials.meta"
             meta.write_text(json.dumps({
                 "account_uid": record.account_uid, "account_name": record.account_name,
                 "scopes": record.scopes, "expires_at": record.expires_at,
-                "storage": "keychain"}))
+                "storage": "keychain", "secret_key": record.secret_key}))
             meta.chmod(0o600)
             return
         # fallback: 0600 dev file, explicitly marked
@@ -103,7 +110,8 @@ class TokenStore:
                 return TokenRecord(
                     access_token=r.stdout.strip(), account_uid=m["account_uid"],
                     account_name=m.get("account_name", ""), scopes=m.get("scopes", []),
-                    expires_at=m.get("expires_at", 0), storage="keychain")
+                    expires_at=m.get("expires_at", 0), storage="keychain",
+                    access_key=r.stdout.strip(), secret_key=m.get("secret_key", ""))
         if self._dev_path.is_file():
             rec = TokenRecord.from_json(self._dev_path.read_text())
             if rec.storage == "dev-file":
@@ -209,8 +217,10 @@ class AuthFlow:
         self.state = AuthState.EXCHANGING
         try:
             if self.mock:
+                _ak = "ak-mock-" + secrets.token_hex(8)
+                _sk = "sk-mock-" + secrets.token_hex(16)
                 resp = {
-                    "access_token": "mock_token_" + secrets.token_hex(12),
+                    "access_key": _ak, "secret_key": _sk,
                     "account": {"uid": "0", "name": "mock-user"},
                     "scopes": ["jobs:read", "jobs:write", "assets:read",
                                "assets:write", "workflows:read", "workflows:write"],
@@ -222,12 +232,14 @@ class AuthFlow:
                     "code_verifier": self._verifier})
             acct = resp.get("account") or {}
             self._exchange_result = TokenRecord(
-                access_token=resp["access_token"],
+                access_token=resp.get("access_key", ""),  # AK/SK contract: the pair IS the token
                 account_uid=str(acct.get("uid", "")),
                 account_name=acct.get("name", ""),
                 scopes=resp.get("scopes", []),
                 expires_at=time.time() + resp.get("expires_in", 86400),
-                storage="mock" if self.mock else "keychain")
+                storage="mock" if self.mock else "keychain",
+                access_key=resp.get("access_key", ""),
+                secret_key=resp.get("secret_key", ""))
             self._exchange_error = None
         except Exception as e:  # noqa: BLE001 — surface any failure to the waiter
             self._exchange_error = f"token exchange failed: {e}"
