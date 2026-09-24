@@ -74,9 +74,11 @@ PARENT_POLL_S = 2.0
 
 # The shell's webview origins. Tauri serves the window from `tauri://localhost`
 # on macOS and `http://tauri.localhost` on Windows/Linux; 1420 is the vite dev
-# server used by `npm run dev` in the browser.
+# server used by `npm run dev` in the browser, 1421+ reserved for parallel
+# dev sessions (any 142x port on localhost).
 WEBVIEW_ORIGINS = ("tauri://localhost", "http://tauri.localhost", "https://tauri.localhost",
-                   "http://localhost:1420", "http://127.0.0.1:1420")
+                   "http://localhost:1420", "http://127.0.0.1:1420",
+                   "http://localhost:1421", "http://127.0.0.1:1421")
 
 
 # ---------------------------------------------------------------------------
@@ -192,6 +194,77 @@ class RuntimeAPI:
     # -- configuration ------------------------------------------------------
     def _resolve(self, *, llm: bool, beehive: bool) -> RuntimeConfig:
         return resolve(**self.resolve_kwargs, require_llm=llm, require_beehive=beehive)
+
+    # -- auth (A2: Figma-style deep-link login; docs/auth-deep-link.md) ----
+    def auth_status(self) -> dict:
+        from auth import AuthFlow
+        flow = AuthFlow()
+        rec = flow.current()
+        if rec is None:
+            dev_mode = bool(os.environ.get("SKILYST_DEV_PROFILE"))
+            return {"state": flow.state, "authenticated": False, "dev_mode": dev_mode}
+        import time as _t
+        return {"state": flow.state, "authenticated": True,
+                "account": {"uid": rec.account_uid, "name": rec.account_name},
+                "scopes": rec.scopes, "storage": rec.storage,
+                "expires_in": int(rec.expires_at - _t.time())}
+
+    def auth_login(self, body: dict) -> dict:
+        """Start a login. In mock mode (SKILYST_MOCK_AUTH=1) the browser step is
+        simulated and the flow completes within this call. In real mode the
+        shell receives {state:'awaiting_browser'} and later POSTs the code
+        captured from the skilyst:// deep link to /auth/deliver-code."""
+        from auth import AuthFlow, AuthError
+        flow = AuthFlow()
+        if flow.mock:
+            import threading
+            result: dict = {}
+            def _bg():
+                try:
+                    result["rec"] = flow.login(redirect_uri="skilyst://callback", poll_timeout=30)
+                except AuthError as exc:
+                    result["err"] = str(exc)
+            t = threading.Thread(target=_bg)
+            t.start()
+            # give the flow a moment to reach AWAITING_BROWSER, then deliver
+            import time as _t
+            deadline = _t.time() + 5
+            while flow.state != "awaiting_browser" and _t.time() < deadline:
+                _t.sleep(0.02)
+            if flow.state == "awaiting_browser":
+                flow.deliver_code("mock-code")
+            t.join(timeout=10)
+            if "err" in result:
+                raise BadRequest(result["err"])
+            rec = result["rec"]
+            return {"state": "authenticated",
+                    "account": {"uid": rec.account_uid, "name": rec.account_name},
+                    "scopes": rec.scopes, "storage": rec.storage}
+        # real mode: GUI opens the browser itself; we just report the launch target
+        rec = None
+        raise BadRequest("real-mode login is driven by the shell deep-link handler; "
+                         "use /auth/deliver-code after the browser callback")
+
+    def auth_logout(self) -> dict:
+        from auth import AuthFlow
+        flow = AuthFlow()
+        flow.logout()
+        return {"state": flow.state, "authenticated": False}
+
+    def auth_deliver_code(self, body: dict) -> dict:
+        """Called by the Tauri deep-link handler with the one-time code."""
+        from auth import AuthFlow, AuthError
+        flow = AuthFlow()
+        code = str(body.get("code") or "")
+        if not code:
+            raise BadRequest("code is required")
+        flow.deliver_code(code)
+        rec = flow.current()
+        if rec is None:
+            raise BadRequest("code exchange did not authenticate")
+        return {"state": "authenticated",
+                "account": {"uid": rec.account_uid, "name": rec.account_name},
+                "scopes": rec.scopes}
 
     def health(self) -> dict:
         return {"ok": True, "api_version": API_VERSION, "pid": os.getpid(),
@@ -439,6 +512,8 @@ def make_handler(api: RuntimeAPI, token: str, allowed_origins: tuple[str, ...],
                     self._ok(api.health())
                 elif path == "/config":
                     self._ok(api.config())
+                elif path == "/auth/status":
+                    self._ok(api.auth_status())
                 elif path == "/doctor":
                     self._ok(api.doctor(params.get("skill")))
                 elif path == "/sessions":
@@ -473,6 +548,12 @@ def make_handler(api: RuntimeAPI, token: str, allowed_origins: tuple[str, ...],
                     self._ok(api.message(body))
                 elif path == "/sessions":
                     self._ok(api.create_session(self._parse_json(raw)))
+                elif path == "/auth/login":
+                    self._ok(api.auth_login(self._parse_json(raw)))
+                elif path == "/auth/logout":
+                    self._ok(api.auth_logout())
+                elif path == "/auth/deliver-code":
+                    self._ok(api.auth_deliver_code(self._parse_json(raw)))
                 elif path == "/shutdown":
                     self._ok({"stopping": True})
                     threading.Thread(target=self.server.shutdown, daemon=True).start()
