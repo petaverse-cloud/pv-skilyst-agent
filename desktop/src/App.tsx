@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import { IconPlayerPlay, IconSettings, IconMessage, IconX } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
+import { LoginScreen, AccountChip, fetchAuthStatus, postAuthLogout, type AuthStatus } from "./components/LoginScreen";
 import {
   api,
   inShell,
@@ -47,6 +48,7 @@ export default function App() {
   const [stream, setStream] = useState<StreamState>(emptyStream);
   const [notes, setNotes] = useState<string[]>([]);
   const [dryRun, setDryRun] = useState(true);
+  const [authStatus, setAuthStatus] = useState<AuthStatus | null>(null);
   const [model, setModel] = useState(() => window.localStorage.getItem(MODEL_KEY) ?? "");
 
   const refreshSessions = useCallback(async () => {
@@ -62,6 +64,12 @@ export default function App() {
       const connected = status ?? (await startRuntime(false));
       setInfo(connected);
       setDryRun(connected.dry_run);
+      try {
+        setAuthStatus(await fetchAuthStatus());
+      } catch {
+        // dev profile or older runtime without auth endpoints: treat as dev-mode pass-through
+        setAuthStatus({ state: "dev", authenticated: true, dev_mode: true });
+      }
       await refreshSessions();
     } catch (exc) {
       setError(exc instanceof Error ? exc.message : String(exc));
@@ -73,6 +81,14 @@ export default function App() {
   useEffect(() => {
     void connect();
   }, [connect]);
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await postAuthLogout();
+    } finally {
+      setAuthStatus(await fetchAuthStatus().catch(() => null));
+    }
+  }, []);
 
   // A session created by anything other than this window (a CLI run, another shell)
   // shows up within one poll interval instead of needing a restart.
@@ -152,6 +168,17 @@ export default function App() {
     window.localStorage.setItem(MODEL_KEY, value);
   }, []);
 
+  // Login gate: no credentials and not in dev mode -> the whole app is the login screen.
+  if (authStatus && !authStatus.authenticated && !authStatus.dev_mode) {
+    return (
+      <LoginScreen
+        onAuthenticated={async () => {
+          setAuthStatus(await fetchAuthStatus());
+        }}
+      />
+    );
+  }
+
   return (
     <AppShell
       header={{ height: 52 }}
@@ -174,6 +201,9 @@ export default function App() {
             )}
           </Group>
           <Group gap="xs">
+            {authStatus?.authenticated && (
+              <AccountChip status={authStatus} onLogout={() => void handleLogout()} />
+            )}
             <Button
               size="xs"
               variant="subtle"
