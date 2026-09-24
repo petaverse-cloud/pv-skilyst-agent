@@ -1,0 +1,3 @@
+[runtime] orphan guard: watching stdin for EOF
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
