@@ -61,7 +61,35 @@ per-run job budget), a missing required node is blocking unless `--allow-fallbac
 skills are digest-verified on every load, and a job's artifact URL is HEAD-verified before the
 runtime reports success. See `docs/adr/0001-runtime-layout.md`.
 
-Tests: `PYTHONPATH=src python3 -m unittest discover -s tests` (140 tests, offline, ~7s).
+### Tool arguments are the manifest's, not the runtime's
+
+`beehive_submit_job` has no hand-written argument list. For the active skill it offers exactly
+what `requires.nodes[].binding.config_map` declares, sends each argument under the node field the
+manifest names (`ratio` → `aspect_ratio` on the still node), and **refuses** an argument the
+binding does not declare for the chosen node instead of dropping it — a dropped `images` is a
+paid text-to-video render of what should have been an image-to-video one. Types, enums and the
+per-node `required` list come from the node's live `input_schema` (`GET /api/v1/nodes`), so the
+model is told which field it is missing *before* money is spent. Extending a skill with a new
+multimodal field (`images` / `image_roles` / `audio_refs` / `video_refs` / `text`) is a manifest
+change, not a runtime release.
+
+### Paid-job budget
+
+A submitted job cannot be un-submitted, so every run carries a budget:
+
+| mode | default | override |
+|---|---|---|
+| `run`, `job`, `chat --message` (unattended, one shot) | 1 job | `--max-jobs N` |
+| `chat` REPL, `serve` (the user is watching) | 3 jobs | `--max-jobs N` |
+| operator-wide | — | `SKILYST_MAX_JOBS=N` in `~/.skilyst/env` (overrides both defaults) |
+
+The budget and what was spent are reported in every run summary (`jobs: {submitted, budget}`) and
+in `skilyst config` (`limits.job_budget`). An unreadable `SKILYST_MAX_JOBS` is a hard error, not a
+silently ignored value. The default is deliberately not "unlimited": a multi-shot request in the
+GUI is what the interactive budget exists for, and a one-shot run that quietly spends three times
+its cost is worse than a refusal that names the flag.
+
+Tests: `PYTHONPATH=src python3 -m unittest discover -s tests` (165 tests, offline, ~9s).
 
 ## Desktop shell (A2 — Tauri v2 + React/Mantine)
 
@@ -86,3 +114,5 @@ See `desktop/README.md` for packaging and the Apple signing chain.
 M1 启动中（2026-09-23）。任务表：pv-beehive-core#585 §四。
 A1 phase-1（基线迁移 + agent loop 最小核心 + CLI）已交付——见 `docs/a1-verification.md`。
 A2 phase-1（Tauri 壳骨架 + `serve` 控制面 + CI）已交付——见 `docs/a2-verification.md`。
+M2（macOS 真机 E2E：CLI 付费链路 + 桌面壳真机 + 打包冒烟 + A1 phase-2 工具透传）已交付——
+见 `docs/m2-macos-verification.md`（含证据清单与真机发现的问题）。

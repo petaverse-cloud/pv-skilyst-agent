@@ -1,0 +1,32 @@
+I'll start by loading the active skill's full instructions.tool read_skill "{\"skill_id\": \"skilyst/embed-video\"}"
+Skill loaded. Per Rule 2, the still must be generated and approved before animating. Submitting the image node first.tool beehive_submit_job "{\"node_id\": \"generate:nb2-image\", \"prompt\": \"Photorealistic cinematic medium shot: a young girl in a bright yellow raincoat stands on a rain-soaked city
+submitted job job-1790232255875-43bb799ca8836d4c (generate:nb2-image)
+job job-1790232255875-43bb799ca8836d4c: running progress=None
+Still generated and HEAD-verified. Now animating it as the first-frame anchor — frame mode, single image, so no mode mixing (Rule 1).tool beehive_submit_job "{\"node_id\": \"generate:minimax-h3\", \"prompt\": \"She slowly lifts her head and raises her gaze to the camera; rain keeps streaking past in the neon light; 
+submitted job job-1790232288287-e384e7bbc6bd8eab (generate:minimax-h3)
+job job-1790232288287-e384e7bbc6bd8eab: running progress=None
+job job-1790232288287-e384e7bbc6bd8eab: running progress=None
+job job-1790232288287-e384e7bbc6bd8eab: running progress=None
+tool beehive_verify_artifact "{\"url\": \"https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790232288287-e384e7bbc6bd8eab/node-job-1790232288287-e384e7bbc6bd8eab-0-1790232479797.mp4\
+6 秒竖版片段已完成，两步都按技能规则走：先锁静帧，再以它为首帧锚做微动。
+
+**1. 锁定静帧（generate:nb2-image，可选图像节点）**
+- job: `job-1790232255875-43bb799ca8836d4c`
+- URL: https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790232255875-43bb799ca8836d4c/node-job-1790232255875-43bb799ca8836d4c-0-1790232267628.png
+- 校验：HTTP 200，1,942,713 bytes
+
+黄雨衣女孩、雨中霓虹街角、中景、写实电影感，9:16。这张静帧先出、先校验，再进入动画步骤（Rule 2：身份必须在动画之前烘进静帧里）。
+
+**2. 动画（generate:minimax-h3，frame mode）**
+- job: `job-1790232288287-e384e7bbc6bd8eab`
+- 参数：`image_roles=["first_frame"]`，单图 —— 因此没有混入任何 reference 角色（Rule 1）
+- duration 6s / 768P / 9:16，与技能声明的档位一致，未做任何改动
+- 提示词只写"变化"：缓缓抬头看向镜头 + 雨丝持续落下 + 轻微推近，并给出终态"然后停住、定住视线"（Rule 3：必须给 end state，否则尾帧会漂移）
+
+**dest_video_url（原样报告，已 HEAD 校验）**
+
+https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790232288287-e384e7bbc6bd8eab/node-job-1790232288287-e384e7bbc6bd8eab-0-1790232479797.mp4
+
+- HEAD：`reachable: true`，HTTP 200，`content_type: video/mp4`，3,011,524 bytes
+
+若后续要接第二个镜头，按 Rule 5 应该从这条片段的尾帧导出下一张静帧，再作为下一镜的 `first_frame`，并检查肩线、机位俯仰、光比三项是否对得上。EXIT=0

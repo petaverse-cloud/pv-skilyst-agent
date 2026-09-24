@@ -43,6 +43,73 @@ CHANNELS = ("official", "community")
 POLICIES = ("auto", "manual", "pinned")
 # `requires.nodes[]` field spellings: v0.2 name first, v0.1 name second.
 NODE_ID_KEYS = ("node_id", "node_type")
+# Tool arguments the runtime owns. A binding must not map them into node config:
+# they steer the *call* (which node, whether to block, how long), and letting a
+# manifest route them into a node field would let a package click its own controls.
+BINDING_CONTROL_ARGS = ("node_id", "workflow_id", "wait", "timeout_s")
+FIELD_NAME_RE = re.compile(r"^[a-z][a-z0-9_]*$")
+
+
+@dataclass
+class NodeBinding:
+    """How a skill's method is called, in the manifest (v0.2 `requires.nodes[].binding`).
+
+    ``config_map`` maps a *tool argument* to the *node input field* it must be sent
+    as (``{"ratio": "aspect_ratio"}`` for Nano Banana 2). That mapping is the whole
+    point: without it the runtime would have to guess field names, and a guess that
+    silently drops an argument is how an image-to-video call becomes a paid
+    text-to-video render.
+    """
+
+    tool: str
+    node_id: str
+    config_map: dict[str, str]
+
+    def tool_args(self) -> list[str]:
+        return sorted(self.config_map)
+
+    def api_field(self, argument: str) -> str:
+        return self.config_map[argument]
+
+    def argument_for(self, api_field: str) -> str | None:
+        """Reverse lookup: which tool argument feeds this node field."""
+        for argument, field in self.config_map.items():
+            if field == api_field:
+                return argument
+        return None
+
+
+def parse_node_binding(raw: object, node_id: str) -> NodeBinding:
+    """Validate one `binding` block. Absent is allowed (v0.1 packages); malformed is not."""
+    if not isinstance(raw, dict):
+        raise ManifestError(f"requires.nodes[{node_id}].binding must be an object")
+    tool = str(raw.get("tool") or "")
+    if not tool:
+        raise ManifestError(f"requires.nodes[{node_id}].binding.tool is required "
+                            f"(the runtime tool that calls this node)")
+    declared_node = str(raw.get("node_id") or node_id)
+    if declared_node != node_id:
+        raise ManifestError(f"requires.nodes[{node_id}].binding.node_id {declared_node!r} does not "
+                            f"match the entry's node_id -- the binding must bind this node")
+    config_map = raw.get("config_map")
+    if not isinstance(config_map, dict) or not config_map:
+        raise ManifestError(f"requires.nodes[{node_id}].binding.config_map must be a non-empty object "
+                            f"mapping tool argument -> node input field")
+    cleaned: dict[str, str] = {}
+    for argument, field in config_map.items():
+        argument, field = str(argument), str(field)
+        if not FIELD_NAME_RE.match(argument) or not FIELD_NAME_RE.match(field):
+            raise ManifestError(f"requires.nodes[{node_id}].binding.config_map entry "
+                                f"{argument!r}: {field!r} must be snake_case identifiers")
+        if argument in BINDING_CONTROL_ARGS:
+            raise ManifestError(f"requires.nodes[{node_id}].binding.config_map maps the runtime control "
+                                f"argument {argument!r}; control arguments ({', '.join(BINDING_CONTROL_ARGS)}) "
+                                f"are not node fields")
+        if field in cleaned.values():
+            raise ManifestError(f"requires.nodes[{node_id}].binding.config_map maps two arguments to the "
+                                f"same node field {field!r} -- the forward direction would be ambiguous")
+        cleaned[argument] = field
+    return NodeBinding(tool=tool, node_id=node_id, config_map=cleaned)
 
 
 @dataclass
@@ -59,6 +126,7 @@ class NodeRequirement:
     optional: bool = False
     fallback: list[str] = field(default_factory=list)
     legacy_field: bool = False
+    binding: NodeBinding | None = None
 
     @property
     def node_type(self) -> str:
@@ -90,7 +158,8 @@ def parse_node_requirement(raw: dict) -> NodeRequirement:
                            version_range=str(raw["node_definition_version"]),
                            optional=bool(raw.get("optional", False)),
                            fallback=[str(f) for f in fallback],
-                           legacy_field=(key == "node_type"))
+                           legacy_field=(key == "node_type"),
+                           binding=parse_node_binding(raw["binding"], node_id) if "binding" in raw else None)
 
 
 def node_requirements(manifest: dict) -> list[NodeRequirement]:

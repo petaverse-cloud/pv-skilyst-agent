@@ -26,6 +26,48 @@ OFFICIAL = ROOT / "skills" / "official" / "video-15s"
 BUNDLE = ROOT / "skills" / "official"
 MODEL = "test/model"
 
+# Registry entries as `GET /api/v1/nodes` returns them on the dev cluster, trimmed to
+# the parts the runtime reads (field names, types, enums, required). Tests run the
+# real code path -- the tool types its arguments from these, not from a fixture list.
+NODE_SCHEMAS = {
+    "generate:minimax-h3": {
+        "id": "generate:minimax-h3", "node_type": "generate", "enabled": True,
+        "input_schema": {
+            "type": "object", "required": ["prompt"],
+            "properties": {
+                "prompt": {"type": "string"},
+                "images": {"type": "array", "items": {"type": "string"}},
+                "image_roles": {"type": "array", "items": {"type": "string",
+                                                           "enum": ["first_frame", "last_frame",
+                                                                    "reference_image"]}},
+                "audio_refs": {"type": "array", "items": {"type": "string"}},
+                "video_refs": {"type": "array", "items": {"type": "string"}},
+                "duration": {"type": "integer", "minimum": 4, "maximum": 15},
+                "resolution": {"type": "string", "enum": ["768P", "2K"]},
+                "ratio": {"type": "string", "enum": ["21:9", "16:9", "4:3", "1:1", "3:4", "9:16"]}}}},
+
+    "generate:nb2-image": {
+        "id": "generate:nb2-image", "node_type": "generate", "enabled": True,
+        "input_schema": {
+            "type": "object", "required": ["prompt"],
+            "properties": {
+                "prompt": {"type": "string"},
+                "images": {"type": "array", "items": {"type": "string"}},
+                # the still node spells the ratio `aspect_ratio`: the manifest's
+                # config_map is what makes that rename explicit
+                "aspect_ratio": {"type": "string", "enum": ["", "1:1", "9:16", "16:9"]}}}},
+
+    "generate:tts-minimax-hd": {
+        "id": "generate:tts-minimax-hd", "node_type": "generate", "enabled": True,
+        "input_schema": {
+            "type": "object", "required": ["text"],
+            "properties": {
+                "text": {"type": "string"},
+                "voice_id": {"type": "string"},
+                "emotion": {"type": "string"},
+                "speed": {"type": "number"}}}},
+}
+
 
 def chat_response(content="", tool_calls=None, finish_reason="stop", usage=None):
     message = {"role": "assistant", "content": content}
@@ -106,9 +148,10 @@ class Fixture:
     def gate(self, package):
         return PermissionGate(package.dir, package.permission, workspace=self.workspace)
 
-    def registry(self, package=None, client=None, dry_run=False):
+    def registry(self, package=None, client=None, dry_run=False, node_schemas=None):
         return build_registry(self.store, client, package, self.gate(package) if package else None,
-                              self.workspace, dry_run=dry_run, artifact_verifier=self.verify_artifact)
+                              self.workspace, dry_run=dry_run, artifact_verifier=self.verify_artifact,
+                              node_schemas=NODE_SCHEMAS if node_schemas is None else node_schemas)
 
     @staticmethod
     def verify_artifact(url):
@@ -310,10 +353,242 @@ class ToolRegistryTests(unittest.TestCase):
         client = StubBeehiveClient()
         registry = build_registry(self.fx.store, client, self.fx.package(),
                                   self.fx.gate(self.fx.package()), self.fx.workspace,
-                                  artifact_verifier=self.fx.verify_artifact, max_jobs=2)
+                                  artifact_verifier=self.fx.verify_artifact, max_jobs=2,
+                                  node_schemas=NODE_SCHEMAS)
         registry.call("beehive_submit_job", {"prompt": "first"})
         registry.call("beehive_submit_job", {"prompt": "second"})
         self.assertEqual(len([c for c in client.calls if c[0] == "POST"]), 2)
+
+
+class ToolPassthroughTests(unittest.TestCase):
+    """A1 phase-2: the multimodal arguments a manifest declares actually reach the node.
+
+    Every assertion here is about *silence* being impossible: what the binding declares
+    is forwarded under the field the manifest names, and what it does not declare is
+    refused out loud instead of being dropped from a paid submission.
+    """
+
+    def setUp(self):
+        self.fx = Fixture()
+        self.addCleanup(self.fx.cleanup)
+
+    def _registry(self, skill_id, client=None, **kwargs):
+        client = client or StubBeehiveClient()
+        return self.fx.registry(self.fx.package(skill_id), client, **kwargs), client
+
+    @staticmethod
+    def _config(client):
+        return client.calls[-1][2][0]["config"]
+
+    # -- the happy path ------------------------------------------------------
+    def test_image_and_image_role_reach_the_node(self):
+        registry, client = self._registry("skilyst/embed-video")
+        result = registry.call("beehive_submit_job", {
+            "prompt": "slow dolly-in on the still, mist thins, then settles",
+            "images": ["https://cdn.example/still.png"],
+            "image_roles": ["first_frame"]})
+        node = client.calls[-1][2][0]
+        self.assertEqual(node["provider"], "minimax-h3")          # the binding's node
+        self.assertEqual(self._config(client)["images"], ["https://cdn.example/still.png"])
+        self.assertEqual(self._config(client)["image_roles"], ["first_frame"])
+        # the model can see exactly what was sent, under the node's own field names
+        self.assertEqual(result["arguments_sent_as"], self._config(client))
+        self.assertEqual(result["jobs_submitted"], 1)
+        self.assertEqual(result["job_budget"], 1)
+
+    def test_audio_refs_and_reference_images_reach_the_node(self):
+        registry, client = self._registry("skilyst/lipsync-audio-refs")
+        registry.call("beehive_submit_job", {
+            "node_id": "generate:minimax-h3", "prompt": "the speaker's line lands, then stillness",
+            "images": ["https://cdn.example/speaker.png"],
+            "image_roles": ["reference_image"],
+            "audio_refs": ["https://cdn.example/line.mp3"], "duration": 8})
+        config = self._config(client)
+        self.assertEqual(config["audio_refs"], ["https://cdn.example/line.mp3"])
+        self.assertEqual(config["image_roles"], ["reference_image"])
+        self.assertEqual(config["duration"], 8)
+
+    def test_tts_node_takes_text_instead_of_prompt(self):
+        registry, client = self._registry("skilyst/lipsync-audio-refs")
+        registry.call("beehive_submit_job", {"node_id": "generate:tts-minimax-hd",
+                                             "text": "Meet me at the corner.", "voice_id": "warm-f",
+                                             "speed": 1.0})
+        node = client.calls[-1][2][0]
+        self.assertEqual(node["provider"], "tts-minimax-hd")
+        self.assertEqual(node["config"]["text"], "Meet me at the corner.")
+        self.assertEqual(node["config"]["voice_id"], "warm-f")
+        self.assertNotIn("prompt", node["config"])
+
+    def test_config_map_renames_the_field_the_node_expects(self):
+        """The still node spells the ratio `aspect_ratio` -- the manifest says so, and
+        the runtime must not send `ratio` and hope."""
+        registry, client = self._registry("skilyst/embed-video")
+        registry.call("beehive_submit_job", {"node_id": "generate:nb2-image",
+                                             "prompt": "a locked still, 9:16",
+                                             "ratio": "9:16"})
+        config = self._config(client)
+        self.assertEqual(config["aspect_ratio"], "9:16")
+        self.assertNotIn("ratio", config)
+
+    def test_default_node_is_the_required_one_not_the_optional_helper(self):
+        """embed-video declares the still generator first and marks it optional; a call
+        with no node_id must land on the animation, not on the helper."""
+        registry, client = self._registry("skilyst/embed-video")
+        registry.call("beehive_submit_job", {"prompt": "motion only"})
+        self.assertEqual(client.calls[-1][2][0]["provider"], "minimax-h3")
+        description = [spec for spec in registry.schemas()
+                       if spec["function"]["name"] == "beehive_submit_job"][0]["function"]
+        self.assertIn("(default generate:minimax-h3)", description["parameters"]["properties"]["node_id"]["description"])
+
+    # -- refusals: never drop an argument ------------------------------------
+    def test_argument_the_binding_does_not_declare_is_refused(self):
+        registry, _ = self._registry("skilyst/embed-video")
+        with self.assertRaises(ValueError) as ctx:
+            registry.call("beehive_submit_job", {"prompt": "x",
+                                                 "audio_refs": ["https://cdn.example/a.mp3"]})
+        message = str(ctx.exception)
+        self.assertIn("audio_refs", message)
+        self.assertIn("not declared", message)
+        self.assertIn("prompt", message)          # the declared list is named
+
+    def test_undeclared_image_role_is_refused_before_submission(self):
+        registry, client = self._registry("skilyst/embed-video")
+        with self.assertRaises(ValueError) as ctx:
+            registry.call("beehive_submit_job", {"prompt": "x",
+                                                 "images": ["https://cdn.example/s.png"],
+                                                 "image_roles": ["portrait"]})
+        self.assertIn("first_frame", str(ctx.exception))
+        self.assertEqual([c for c in client.calls if c[0] == "POST"], [])
+
+    def test_images_and_image_roles_must_be_paired(self):
+        registry, _ = self._registry("skilyst/embed-video")
+        with self.assertRaises(ValueError) as ctx:
+            registry.call("beehive_submit_job", {"prompt": "x",
+                                                 "images": ["https://cdn.example/a.png",
+                                                            "https://cdn.example/b.png"],
+                                                 "image_roles": ["first_frame"]})
+        self.assertIn("positionally", str(ctx.exception))
+
+    def test_reference_list_must_hold_non_empty_strings(self):
+        registry, _ = self._registry("skilyst/embed-video")
+        with self.assertRaises(ValueError):
+            registry.call("beehive_submit_job", {"prompt": "x", "images": [""]})
+
+    def test_required_field_is_read_from_the_live_schema(self):
+        """The node's own `required` list, reported under the manifest's argument name."""
+        registry, client = self._registry("skilyst/video-15s")
+        with self.assertRaises(ValueError) as ctx:
+            registry.call("beehive_submit_job", {"duration": 15})
+        self.assertIn("prompt", str(ctx.exception))
+        self.assertEqual([c for c in client.calls if c[0] == "POST"], [])
+
+    def test_a_binding_naming_another_tool_is_refused(self):
+        directory = make_skill(self.fx.root / "wrong-tool", requires={
+            "nodes": [{"node_id": "generate:minimax-h3", "node_definition_version": ">=1.0.0",
+                       "optional": False, "fallback": [],
+                       "binding": {"tool": "beehive_submit_job_v2", "node_id": "generate:minimax-h3",
+                                   "config_map": {"prompt": "prompt"}}}]})
+        package = load_package(directory)
+        registry = self.fx.registry(package, StubBeehiveClient())
+        with self.assertRaises(ValueError) as ctx:
+            registry.call("beehive_submit_job", {"prompt": "x"})
+        self.assertIn("beehive_submit_job_v2", str(ctx.exception))
+
+    def test_a_package_without_a_binding_is_refused_with_the_fix(self):
+        """No binding = no declared mapping. The runtime refuses instead of guessing
+        field names (a guess is how an argument disappears)."""
+        directory = make_skill(self.fx.root / "no-binding", requires={
+            "nodes": [{"node_id": "generate:minimax-h3", "node_definition_version": ">=1.0.0",
+                       "optional": False, "fallback": []}]})
+        package = load_package(directory)
+        registry = self.fx.registry(package, StubBeehiveClient())
+        with self.assertRaises(ValueError) as ctx:
+            registry.call("beehive_submit_job", {"prompt": "x"})
+        self.assertIn("config_map", str(ctx.exception))
+
+    # -- the declared surface the model is shown ------------------------------
+    def test_tool_schema_is_the_declared_surface(self):
+        registry, _ = self._registry("skilyst/embed-video")
+        parameters = [spec for spec in registry.schemas()
+                      if spec["function"]["name"] == "beehive_submit_job"][0]["function"]["parameters"]
+        self.assertIn("images", parameters["properties"])
+        self.assertIn("image_roles", parameters["properties"])
+        self.assertEqual(parameters["properties"]["images"]["type"], "array")
+        self.assertEqual(parameters["properties"]["image_roles"]["items"]["enum"],
+                         ["first_frame", "last_frame", "reference_image"])
+        self.assertEqual(parameters["required"], ["prompt"])
+
+    def test_tool_schema_does_not_require_a_prompt_where_a_node_rejects_it(self):
+        """lipsync declares a TTS node that takes `text`: requiring `prompt` in the
+        JSON schema would make the model's first call invalid by construction."""
+        registry, _ = self._registry("skilyst/lipsync-audio-refs")
+        parameters = [spec for spec in registry.schemas()
+                      if spec["function"]["name"] == "beehive_submit_job"][0]["function"]["parameters"]
+        self.assertIn("text", parameters["properties"])
+        self.assertIn("audio_refs", parameters["properties"])
+        self.assertEqual(parameters["required"], [])
+
+    def test_a_dry_run_still_checks_the_arguments(self):
+        """A rehearsal that accepts what the paid call would refuse is worthless."""
+        client = StubBeehiveClient()
+        registry, _ = self._registry("skilyst/embed-video", client, dry_run=True)
+        plan = registry.call("beehive_submit_job", {"prompt": "x",
+                                                    "images": ["https://cdn.example/s.png"],
+                                                    "image_roles": ["first_frame"]})
+        self.assertTrue(plan["dry_run"])
+        self.assertEqual(plan["node"]["config"]["images"], ["https://cdn.example/s.png"])
+        self.assertEqual(client.calls, [])
+        with self.assertRaises(ValueError):
+            registry.call("beehive_submit_job", {"prompt": "x", "audio_refs": ["https://c/a.mp3"]})
+
+    def test_run_summary_reports_the_spend(self):
+        from agent.runner import run_summary
+        registry, _ = self._registry("skilyst/video-15s")
+        registry.call("beehive_submit_job", {"prompt": "x"})
+        loop, session = self._loop_with(registry)
+        result = loop.run("make the clip")
+        summary = run_summary(result, session, self.fx.package(), None)
+        # the registry is shared with the loop, so the run reports what it spent
+        self.assertEqual(summary["jobs"], {"submitted": 1, "budget": 1})
+
+    def test_every_official_binding_names_a_tool_the_runtime_registers(self):
+        """The M1 defect this pins: a manifest whose binding.tool names a tool that does
+        not exist reads as a working call contract and fails at the first paid call."""
+        for skill_id in ("skilyst/doctor", "skilyst/embed-video", "skilyst/lipsync-audio-refs",
+                         "skilyst/prompt-craft", "skilyst/video-15s"):
+            package = self.fx.package(skill_id)
+            registry = self.fx.registry(package, StubBeehiveClient())
+            for requirement in package.requires_nodes:
+                self.assertIsNotNone(requirement.binding, f"{skill_id}: {requirement.node_id}")
+                self.assertIn(requirement.binding.tool, registry.names,
+                              f"{skill_id}: binding names tool {requirement.binding.tool!r}")
+
+    def test_job_budget_defaults_come_from_configuration(self):
+        """One paid job for an unattended run, a small working budget for a session the
+        user is watching, and SKILYST_MAX_JOBS overrides both."""
+        from config import (BeehiveCredentials, DEFAULT_MAX_JOBS_INTERACTIVE,
+                            DEFAULT_MAX_JOBS_ONE_SHOT, RuntimeConfig)
+        from llm import LLMConfig
+
+        def cfg(max_jobs=None):
+            return RuntimeConfig(beehive=BeehiveCredentials(),
+                                 llm=LLMConfig(base_url="https://llm.invalid/v1", api_key="k", model=MODEL),
+                                 store_dir=self.fx.root, workspace_dir=self.fx.workspace,
+                                 session_dir=self.fx.root, max_jobs=max_jobs)
+
+        self.assertEqual(cfg().job_budget(), DEFAULT_MAX_JOBS_ONE_SHOT)
+        self.assertEqual(cfg().job_budget(interactive=True), DEFAULT_MAX_JOBS_INTERACTIVE)
+        self.assertEqual(cfg(7).job_budget(), 7)
+        self.assertEqual(cfg(7).job_budget(interactive=True), 7)
+
+    def _loop_with(self, registry):
+        from agent import AgentLoop, LoopConfig
+        script = ScriptedTransport([chat_response(content="done")])
+        session = self.fx.session()
+        loop = AgentLoop(router_with(script), registry, session,
+                         self.fx.prompt_ctx(self.fx.package()),
+                         LoopConfig(max_turns=2, stream=False))
+        return loop, session
 
 
 class AgentLoopTests(unittest.TestCase):

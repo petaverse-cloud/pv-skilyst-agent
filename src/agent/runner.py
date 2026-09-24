@@ -104,7 +104,8 @@ def open_run(cfg: RuntimeConfig, *, skill_id: str | None = None, session_id: str
                                     workspace=str(cfg.workspace_dir),
                                     skills=[active.skill_id] if active else []))
     registry = build_registry(store, client, active, gate, cfg.workspace_dir, dry_run=dry_run,
-                              on_event=note, max_jobs=max_jobs)
+                              on_event=note, max_jobs=max_jobs,
+                              node_schemas=preflight.node_schemas if preflight else None)
     prompt_ctx = PromptContext(skills=skills, active_skill=active, workspace=str(cfg.workspace_dir),
                                model=cfg.llm.model, platform=cfg.beehive.base_url)
     loop = AgentLoop(ModelRouter(cfg.llm, client_factory=client_factory), registry, session, prompt_ctx,
@@ -120,6 +121,7 @@ def run_summary(result: LoopResult, session: Session, active: SkillPackage | Non
             "stop_reason": result.stop_reason, "answer": result.answer, "model": result.model,
             "turns": result.turns, "wall_clock_s": result.wall_clock_s, "usage": result.usage,
             "artifacts": result.artifact_urls(),
+            "jobs": {"submitted": result.jobs_submitted, "budget": result.job_budget},
             "tool_calls": [{"tool": c.name, "arguments": c.arguments, "result": c.result, "error": c.error,
                             "duration_s": c.duration_s} for c in result.tool_calls],
             "preflight": None if preflight is None else {

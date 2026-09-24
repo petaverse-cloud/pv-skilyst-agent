@@ -150,7 +150,9 @@ class ServeOptions:
     skill: str | None = None
     dry_run: bool = True
     max_turns: int = 8
-    max_jobs: int = 1
+    # None = resolve from configuration (SKILYST_MAX_JOBS, else the interactive default):
+    # the shell starts the server without a flag, so the default has to come from config.
+    max_jobs: int | None = None
     allow_fallback: bool = False
     orphan_guard: bool = False
 
@@ -169,7 +171,7 @@ class RuntimeAPI:
 
     def __init__(self, cfg: RuntimeConfig, *, resolve_kwargs: dict | None = None,
                  skill: str | None = None, dry_run: bool = True, max_turns: int = 8,
-                 max_jobs: int = 1, allow_fallback: bool = False,
+                 max_jobs: int | None = None, allow_fallback: bool = False,
                  client_factory: Callable | None = None, opener: Callable = open_run,
                  host: str = DEFAULT_HOST, port: int = DEFAULT_PORT):
         self.cfg = cfg
@@ -177,7 +179,9 @@ class RuntimeAPI:
         self.skill = skill
         self.dry_run = dry_run
         self.max_turns = max_turns
-        self.max_jobs = max_jobs
+        # A GUI client cannot pass --max-jobs, so the server's budget comes from the
+        # operator's configuration (SKILYST_MAX_JOBS) or the interactive default.
+        self.max_jobs = max_jobs if max_jobs is not None else cfg.job_budget(interactive=True)
         self.allow_fallback = allow_fallback
         self.client_factory = client_factory
         self.opener = opener

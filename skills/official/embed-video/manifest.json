@@ -1,10 +1,10 @@
 {
   "skill_id": "skilyst/embed-video",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "display_name": "图生视频工艺（首帧锚 + 帧链拼接）",
   "description": "Image-to-video craft on the Skilyst/Beehive platform — animate a locked still (first-frame anchor) into a 4-15s clip that keeps the identity of that still, and cut several such clips together without a visible jump. Use when the user has a locked image (or needs one) and wants controlled motion from it, instead of a free text-to-video render.",
   "kind": "official-bundle",
-  "content_digest": "sha256:84015d3eeb056a2427a835308c84f91bba6ee8c730c6db57f494fd06f7eb5a3d",
+  "content_digest": "sha256:c6b36e776d8d1458f1796f88f1e623cd360a1c23bcacfe58b33d9af44ca3644b",
   "upstream": null,
   "fork_depth": 0,
   "supply_chain": {
@@ -23,7 +23,7 @@
         "key_id": "skilyst-platform",
         "algo": "ed25519",
         "sig": "platform-signature-pending",
-        "digest": "sha256:84015d3eeb056a2427a835308c84f91bba6ee8c730c6db57f494fd06f7eb5a3d"
+        "digest": "sha256:c6b36e776d8d1458f1796f88f1e623cd360a1c23bcacfe58b33d9af44ca3644b"
       }
     ]
   },
@@ -136,6 +136,12 @@
       "version": "1.0.0",
       "date": "2026-09-23",
       "changes": "first official image-to-video skill: frame/reference mode exclusivity, first-frame identity anchor, i2v prompt discipline, mode-dependent duration caps, frame-chain splice craft, i2v identity QA thresholds",
+      "upstream_sync": false
+    },
+    {
+      "version": "1.1.0",
+      "date": "2026-09-24",
+      "changes": "A1 phase-2: beehive_submit_job forwards the binding's declared multimodal arguments (images / image_roles) under the manifest's config_map; the M1 note that an end-to-end run needs a direct API call is superseded",
       "upstream_sync": false
     }
   ]

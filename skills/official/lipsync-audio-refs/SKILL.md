@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires the skilyst runtime (>=0.1.0) with the tool named in manifest.json requires.nodes[].binding and network access to the Beehive API host declared in permission.egress.
 metadata:
   skilyst.skill_id: skilyst/lipsync-audio-refs
-  skilyst.version: "1.0.0"
+  skilyst.version: "1.1.0"
 ---
 
 # Dialogue shots: TTS first, then audio-driven generation
@@ -105,13 +105,16 @@ Bound through the tool named in the manifest
 | `duration` | | `ceil(audio_seconds) + tail`, 4-15 |
 | `resolution` / `ratio` | | `768P` / the delivered ratio |
 
-### Runtime support (M1)
+### Runtime support (A1 phase-2)
 
-`beehive_submit_job` currently forwards `prompt` / `duration` / `resolution` /
-`ratio` only, so `images` / `image_roles` / `audio_refs` are declared here but not
-yet forwarded by the agent tool: an end-to-end run today submits through the
-Beehive jobs API directly. Recorded gap — preflight and QA still gate the run, and
-nothing here degrades silently.
+`beehive_submit_job` forwards every argument this binding declares, under the node
+field the manifest names: for the dialogue shot `prompt`, `images`, `image_roles`,
+`audio_refs`, `duration`, `resolution`, `ratio`; for the TTS node `text`, `voice_id`,
+`emotion`, `speed`. An argument the binding does not declare for the chosen node is
+refused with the declared list, never dropped — dropping `audio_refs` would produce a
+silent shot at the price of a dialogue shot. The 2-15s per-track bound is the upstream
+model's rule, not the runtime's: preflight cannot see it, so size the track before
+submission.
 
 ## QA gates (acceptance, not vibes)
 

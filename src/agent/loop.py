@@ -54,6 +54,9 @@ class LoopResult:
     model: str = ""
     wall_clock_s: float = 0.0
     error: str = ""
+    # Spend accounting for this run: what the registry submitted, against its budget.
+    jobs_submitted: int = 0
+    job_budget: int | None = None
 
     @property
     def ok(self) -> bool:
@@ -159,6 +162,8 @@ class AgentLoop:
 
         result.usage = self.router.total_usage
         result.wall_clock_s = round(time.time() - started, 1)
+        result.jobs_submitted = self.tools.jobs_submitted
+        result.job_budget = self.tools.job_budget
         self.session.update(status={"completed": "open", "max_turns": "incomplete",
                                     "llm_error": "error"}.get(result.stop_reason, "incomplete"))
         for url in result.artifact_urls():
