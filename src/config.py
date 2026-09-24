@@ -163,6 +163,23 @@ def _read_hermes_model_config(path: Path) -> tuple[str, str, str]:
     return base, key, model
 
 
+def _login_credentials() -> tuple[str, str, str, str]:
+    """Read the logged-in AgentScopes AK/SK from the auth TokenStore.
+
+    Returns (access_key, secret_key, account_uid, account_name); all empty
+    when not logged in. Never raises — an unreadable store means "not logged
+    in", and the dev fallback below carries the error story.
+    """
+    try:
+        from auth import AuthFlow
+        rec = AuthFlow().current()
+    except Exception:  # noqa: BLE001 — auth is an optional layer here
+        return "", "", "", ""
+    if rec is None:
+        return "", "", "", ""
+    return rec.access_key, rec.secret_key, rec.account_uid, rec.account_name
+
+
 def resolve(env_file: str | Path | None = None, *, store_dir: str | Path | None = None,
             workspace_dir: str | Path | None = None, session_dir: str | Path | None = None,
             llm_config: str | Path | None = None, model: str | None = None,
@@ -171,15 +188,28 @@ def resolve(env_file: str | Path | None = None, *, store_dir: str | Path | None 
     candidate_env = explicit_env or Path(os.environ.get("SKILYST_ENV_FILE", ENV_FILE_DEFAULT)).expanduser()
     values, sources = _layered_env(candidate_env if candidate_env.is_file() else None)
 
-    beehive = BeehiveCredentials(
-        base_url=values.get("BEEHIVE_API") or "https://beehive-api.verse4.pet",
-        access_key=values.get("BEEHIVE_PLATFORM_AK", ""),
-        secret_key=values.get("BEEHIVE_PLATFORM_SK", ""),
-        user=values.get("BEEHIVE_PLATFORM_USER", ""),
-        password=values.get("BEEHIVE_PLATFORM_PASS", ""),
-        uid=str(values.get("BEEHIVE_PLATFORM_UID", "")),
-        source=sources.get("env_file") or sources.get("dev_profile") or "process env",
-    )
+    # A2 auth (issue #8): a logged-in session's AgentScopes AK/SK (minted by
+    # beehive-core #596, stored in keychain) takes precedence over dev env
+    # credentials. Dev profile / env file remains the developer fallback.
+    login_ak, login_sk, login_uid, login_name = _login_credentials()
+    if login_ak and login_sk:
+        beehive = BeehiveCredentials(
+            base_url=values.get("BEEHIVE_API") or "https://beehive-api.verse4.pet",
+            access_key=login_ak, secret_key=login_sk,
+            user=login_name or "", password="",
+            uid=str(login_uid or ""),
+            source="login (keychain)",
+        )
+    else:
+        beehive = BeehiveCredentials(
+            base_url=values.get("BEEHIVE_API") or "https://beehive-api.verse4.pet",
+            access_key=values.get("BEEHIVE_PLATFORM_AK", ""),
+            secret_key=values.get("BEEHIVE_PLATFORM_SK", ""),
+            user=values.get("BEEHIVE_PLATFORM_USER", ""),
+            password=values.get("BEEHIVE_PLATFORM_PASS", ""),
+            uid=str(values.get("BEEHIVE_PLATFORM_UID", "")),
+            source=sources.get("env_file") or sources.get("dev_profile") or "process env",
+        )
     if require_beehive and not (beehive.has_api_key or beehive.has_password):
         raise ConfigError(
             "no Beehive credential found: set BEEHIVE_PLATFORM_AK/BEEHIVE_PLATFORM_SK "
