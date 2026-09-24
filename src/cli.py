@@ -489,7 +489,49 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--bypass-gate", action="store_true",
                    help="also measure what the platform enforces server-side with this key")
     p.set_defaults(func=cmd_authz_probe)
+
+    p = sub.add_parser("login")
+    p.set_defaults(func=cmd_login, needs_llm=False, needs_beehive=False)
+    p = sub.add_parser("logout")
+    p.set_defaults(func=cmd_logout, needs_llm=False, needs_beehive=False)
+    p = sub.add_parser("whoami")
+    p.set_defaults(func=cmd_whoami, needs_llm=False, needs_beehive=False)
     return parser
+
+
+def cmd_login(args) -> int:
+    from auth import run_cli_login, AuthError
+    print("Opening browser for Skilyst login (web console account)...")
+    try:
+        rec = run_cli_login()
+    except AuthError as e:
+        print(f"login failed: {e}")
+        return 2
+    print(f"Logged in as {rec.account_name or rec.account_uid} "
+          f"(scopes: {', '.join(rec.scopes)}; storage: {rec.storage})")
+    return 0
+
+
+def cmd_logout(args) -> int:
+    from auth import AuthFlow
+    AuthFlow().logout()
+    print("Logged out.")
+    return 0
+
+
+def cmd_whoami(args) -> int:
+    from auth import AuthFlow
+    rec = AuthFlow().current()
+    if rec is None:
+        print("Not logged in.")
+        return 1
+    import time as _t
+    remaining = int(rec.expires_at - _t.time())
+    print(f"account: {rec.account_name or rec.account_uid}\n"
+          f"scopes:  {', '.join(rec.scopes)}\n"
+          f"storage: {rec.storage}\n"
+          f"token expires in: {remaining // 3600}h{(remaining % 3600) // 60}m")
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
