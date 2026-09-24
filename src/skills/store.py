@@ -286,8 +286,8 @@ def preflight_nodes(package: SkillPackage, client, allow_fallback: bool = False)
     payload = resp.get("payload", resp)
     nodes = payload.get("nodes", payload) if isinstance(payload, dict) else payload
     known = {n.get("id"): n for n in nodes if isinstance(n, dict) and n.get("id")}
-    wanted_ids = {r.node_id for r in package.requires_nodes}
     plan_provider = (package.plan or {}).get("provider")
+    wanted_ids = {r.node_id for r in package.requires_nodes}
     if plan_provider:
         wanted_ids.add(f"generate:{plan_provider}")
     report.node_schemas = {nid: known[nid] for nid in sorted(wanted_ids) if nid in known}
@@ -295,7 +295,6 @@ def preflight_nodes(package: SkillPackage, client, allow_fallback: bool = False)
     for req in package.requires_nodes:
         report.problems.extend(_check_requirement(req, known, allow_fallback))
 
-    plan_provider = (package.plan or {}).get("provider")
     if plan_provider:
         wanted = f"generate:{plan_provider}"
         if wanted not in known:

@@ -194,6 +194,15 @@ def cmd_update_plan(args) -> int:
 # ---------------------------------------------------------------------------
 # runtime commands (A1)
 # ---------------------------------------------------------------------------
+def job_budget(explicit: int | None, cfg: RuntimeConfig, interactive: bool) -> int:
+    """The paid-job budget for one run: an explicit flag, else the configured value,
+    else the mode default. Pure, so the rule is testable without a run."""
+    if explicit is not None and explicit < 1:
+        raise ConfigError(f"--max-jobs {explicit} must be a positive integer (paid jobs per run); "
+                          f"a job budget of 0 is what --dry-run is for")
+    return explicit if explicit is not None else cfg.job_budget(interactive)
+
+
 def _agent(args, cfg: RuntimeConfig, skill_id: str | None, session_title: str,
            interactive: bool = False):
     """Build the run for one turn through the shared runner (same path `serve` uses).
@@ -202,7 +211,7 @@ def _agent(args, cfg: RuntimeConfig, skill_id: str | None, session_title: str,
     paid job, a session where the user is watching gets the interactive default. An
     explicit ``--max-jobs`` or ``SKILYST_MAX_JOBS`` always wins.
     """
-    budget = args.max_jobs if getattr(args, "max_jobs", None) else cfg.job_budget(interactive)
+    budget = job_budget(getattr(args, "max_jobs", None), cfg, interactive)
     return open_run(cfg, skill_id=skill_id, session_id=getattr(args, "session", None),
                     title=session_title, dry_run=bool(getattr(args, "dry_run", False)),
                     max_turns=args.max_turns, stream=not args.no_stream,

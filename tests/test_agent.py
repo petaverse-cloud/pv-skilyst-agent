@@ -412,11 +412,13 @@ class ToolPassthroughTests(unittest.TestCase):
         registry, client = self._registry("skilyst/lipsync-audio-refs")
         registry.call("beehive_submit_job", {"node_id": "generate:tts-minimax-hd",
                                              "text": "Meet me at the corner.", "voice_id": "warm-f",
-                                             "speed": 1.0})
+                                             "speed": 1.05})
         node = client.calls[-1][2][0]
         self.assertEqual(node["provider"], "tts-minimax-hd")
         self.assertEqual(node["config"]["text"], "Meet me at the corner.")
         self.assertEqual(node["config"]["voice_id"], "warm-f")
+        # a `number` field must stay a number: stringifying it is a silent shape bug
+        self.assertEqual(node["config"]["speed"], 1.05)
         self.assertNotIn("prompt", node["config"])
 
     def test_config_map_renames_the_field_the_node_expects(self):
@@ -528,6 +530,19 @@ class ToolPassthroughTests(unittest.TestCase):
         self.assertIn("audio_refs", parameters["properties"])
         self.assertEqual(parameters["required"], [])
 
+    def test_dry_run_is_stated_in_the_tool_contract(self):
+        """A careful agent reads an unqualified submit call as spending money and refuses
+        to rehearse (observed on the real cluster). The contract has to say which mode the
+        runtime is in, and stay quiet about dry-run when it is live."""
+        def description(registry):
+            return [spec for spec in registry.schemas()
+                    if spec["function"]["name"] == "beehive_submit_job"][0]["function"]["description"]
+
+        dry = self.fx.registry(self.fx.package("skilyst/embed-video"), StubBeehiveClient(), dry_run=True)
+        self.assertIn("DRY-RUN", description(dry))
+        live = self.fx.registry(self.fx.package("skilyst/embed-video"), StubBeehiveClient())
+        self.assertNotIn("DRY-RUN", description(live))
+
     def test_a_dry_run_still_checks_the_arguments(self):
         """A rehearsal that accepts what the paid call would refuse is worthless."""
         client = StubBeehiveClient()
@@ -562,6 +577,28 @@ class ToolPassthroughTests(unittest.TestCase):
                 self.assertIsNotNone(requirement.binding, f"{skill_id}: {requirement.node_id}")
                 self.assertIn(requirement.binding.tool, registry.names,
                               f"{skill_id}: binding names tool {requirement.binding.tool!r}")
+
+    def test_cli_budget_resolution_rule(self):
+        """--max-jobs > SKILYST_MAX_JOBS > mode default, and 0 is refused (that is what
+        --dry-run is for). Pure function, so no run is needed to test the rule."""
+        from cli import job_budget
+        from config import DEFAULT_MAX_JOBS_INTERACTIVE, DEFAULT_MAX_JOBS_ONE_SHOT, RuntimeConfig
+        from llm import LLMConfig
+        from config import BeehiveCredentials, ConfigError
+
+        def cfg(configured=None):
+            return RuntimeConfig(beehive=BeehiveCredentials(),
+                                 llm=LLMConfig(base_url="https://llm.invalid/v1", api_key="k", model=MODEL),
+                                 store_dir=self.fx.root, workspace_dir=self.fx.workspace,
+                                 session_dir=self.fx.root, max_jobs=configured)
+
+        self.assertEqual(job_budget(None, cfg(), interactive=False), DEFAULT_MAX_JOBS_ONE_SHOT)
+        self.assertEqual(job_budget(None, cfg(), interactive=True), DEFAULT_MAX_JOBS_INTERACTIVE)
+        self.assertEqual(job_budget(None, cfg(9), interactive=False), 9)
+        self.assertEqual(job_budget(2, cfg(9), interactive=True), 2)
+        for bad in (0, -1):
+            with self.assertRaises(ConfigError):
+                job_budget(bad, cfg(), interactive=False)
 
     def test_job_budget_defaults_come_from_configuration(self):
         """One paid job for an unattended run, a small working budget for a session the

@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import Callable
 
 from beehive import BeehiveClient, job_handle, verify_artifact
-from manifest import NodeBinding
+from manifest import BINDING_CONTROL_ARGS, NodeBinding
 from sandbox import PermissionGate, SandboxViolation, list_resources, read_resource
 from skills import SkillPackage, SkillStore
 
@@ -30,10 +30,10 @@ MAX_TOOL_RESULT = 6000
 # requires.nodes[].binding.tool may name today (the binding is validated against it).
 SUBMIT_TOOL = "beehive_submit_job"
 
-# Arguments that steer the call itself rather than the node's input. They are always
-# accepted and are deliberately not part of any binding's config_map (the manifest
-# validator refuses a binding that maps one).
-CONTROL_ARGS = ("node_id", "workflow_id", "wait", "timeout_s")
+# Arguments that steer the call itself rather than the node's input. One definition
+# lives in the manifest spec (it is what a binding may not map); the runtime reads it
+# from there so the two can never disagree.
+CONTROL_ARGS = BINDING_CONTROL_ARGS
 
 
 def _empty(value) -> bool:
@@ -136,12 +136,19 @@ def _required_intersection(node_ids: list[str], required_args) -> list[str]:
 
 
 def _submit_description(active, node_ids: list[str], default_node: str, plan: dict,
-                        declared_args, required_args) -> str:
+                        declared_args, required_args, dry_run: bool = False) -> str:
     lines = [f"Submit a generation job to the Beehive platform and return its job id. Node ids allowed "
-             f"for {active.skill_id}: {', '.join(node_ids)}.",
-             "Every argument is sent under the node input field the manifest's "
-             "requires.nodes[].binding.config_map declares; an argument the binding does not declare "
-             "for the chosen node is refused, never dropped."]
+             f"for {active.skill_id}: {', '.join(node_ids)} (default {default_node})."]
+    if dry_run:
+        # Without this line an agent that is careful about spending money reads the call
+        # as a live submission and refuses to rehearse at all (observed: it declined and
+        # explained why). Dry-run must be visible in the contract, not inferred.
+        lines.append("This runtime is running in DRY-RUN: a call is validated and returns the exact "
+                     "node config it would send, and nothing is submitted or charged.")
+    lines.append(
+        "Every argument is sent under the node input field the manifest's "
+        "requires.nodes[].binding.config_map declares; an argument the binding does not declare "
+        "for the chosen node is refused, never dropped.")
     for node_id in node_ids:
         args = ", ".join(declared_args(node_id)) or "none declared"
         required = ", ".join(required_args(node_id)) or "none"
@@ -349,6 +356,13 @@ def build_registry(store: SkillStore, client: BeehiveClient | None, active: Skil
                 return int(value)
             except (TypeError, ValueError) as exc:
                 raise ValueError(f"{where} must be an integer, got {value!r}") from exc
+        if kind == "number":
+            if isinstance(value, bool):
+                raise ValueError(f"{where} must be a number, got a boolean")
+            try:
+                return float(value)
+            except (TypeError, ValueError) as exc:
+                raise ValueError(f"{where} must be a number, got {value!r}") from exc
         if kind == "boolean":
             if not isinstance(value, bool):
                 raise ValueError(f"{where} must be a boolean, got {value!r}")
@@ -474,7 +488,8 @@ def build_registry(store: SkillStore, client: BeehiveClient | None, active: Skil
 
     registry.register(ToolSpec(
         "beehive_submit_job",
-        _submit_description(active, node_ids, default_node, plan, _declared_args, _required_args),
+        _submit_description(active, node_ids, default_node, plan, _declared_args, _required_args,
+                            dry_run=dry_run),
         _obj(_submit_properties(node_ids, _declared_args, _json_shape, default_node),
              _required_intersection(node_ids, _required_args)),
         submit_job, scope="secrets"))

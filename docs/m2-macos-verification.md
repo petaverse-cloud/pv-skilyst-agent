@@ -129,6 +129,9 @@ M1 时 `beehive_submit_job` 的参数是硬编码的 `prompt/duration/resolution
    混用，提前拦掉）。
 6. 默认节点从「第一个声明的」改为「第一个 **required** 的」：embed-video 先声明的是可选静帧
    节点，过去不带 `node_id` 的调用会打到静帧上。
+7. dry-run 模式写进工具契约：`--dry-run` 的 run 里描述会明说"当前是 DRY-RUN，调用会被校验并
+   返回将要发出的 node config，不提交不扣费"。**这是审计轮发现的**：没有这句话时，谨慎的 agent
+   会以"提交就是花钱，不能算彩排"为由拒绝排练整条链路（原文见 `findings.md` A5）。
 
 ### 真机验证（一条 embed-video，两条 job，$0.481）
 

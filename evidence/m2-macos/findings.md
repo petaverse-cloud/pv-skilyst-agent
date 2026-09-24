@@ -34,6 +34,16 @@ CLI REPL 建的会话标题是写死的，桌面壳列表里就是一列同名�
 一次性路径（GUI / `run`）用的是首条请求前 60 字符。
 **修复**：REPL 首条请求到达时用它命名（保持"首条消息决定标题"的单一约定）。
 
+### A5. 工具契约没说"当前是 dry-run"，模型因此拒绝彩排
+用 `--dry-run` 排练 embed-video 时，agent **拒绝调用 `beehive_submit_job`**，理由写得很清楚：
+"`beehive_submit_job` 是实付路径，没有 dry-run 标志，成功的调用会排一条付费渲染——不能把
+提交当彩排"。它说得对：工具描述里确实没有任何地方表明该 run 处于 dry-run（而实际上 dry-run
+的 registry 会校验参数并返回"会发出什么"，一分钱不花）。
+**修复**：tool 描述在 dry-run 的 run 里显式写明 "This runtime is running in DRY-RUN: …nothing is
+submitted or charged."；非 dry-run 时这句话不出现（不能反过来误导）。测试
+`test_dry_run_is_stated_in_the_tool_contract` 双向钉住。
+**教训**：钱相关的模式必须写进契约，让模型去"推断"就是让谨慎的模型什么都不做。
+
 ## B. 环境限制（记录，非产品缺陷）
 
 ### B1. 合成键盘事件被系统丢弃

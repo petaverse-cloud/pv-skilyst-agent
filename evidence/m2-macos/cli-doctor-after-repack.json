@@ -1,0 +1,90 @@
+{
+  "store": "/Users/wesley/.skilyst/store",
+  "env_file": "/Users/wesley/.skilyst/env",
+  "integrity": [
+    {
+      "skill_id": "skilyst/doctor",
+      "dir": "doctor",
+      "version": "1.0.0",
+      "ok": true,
+      "differences": []
+    },
+    {
+      "skill_id": "skilyst/embed-video",
+      "dir": "embed-video",
+      "version": "1.1.0",
+      "ok": true,
+      "differences": []
+    },
+    {
+      "skill_id": "skilyst/lipsync-audio-refs",
+      "dir": "lipsync-audio-refs",
+      "version": "1.1.0",
+      "ok": true,
+      "differences": []
+    },
+    {
+      "skill_id": "skilyst/prompt-craft",
+      "dir": "prompt-craft",
+      "version": "1.0.0",
+      "ok": true,
+      "differences": []
+    },
+    {
+      "skill_id": "skilyst/video-15s",
+      "dir": "video-15s",
+      "version": "1.1.0",
+      "ok": true,
+      "differences": []
+    }
+  ],
+  "config": {
+    "beehive": {
+      "base_url": "https://beehive-api.verse4.pet",
+      "account": "e2e-platform",
+      "uid": "213508887911264",
+      "access_key": "ak-a7e…",
+      "secret_key": "set",
+      "password": "set",
+      "source": "/Users/wesley/.skilyst/env"
+    },
+    "llm": {
+      "base_url": "https://new-api.verse4.pet/v1",
+      "model": "deepseek/deepseek-v4.1-flash",
+      "fallbacks": [
+        "MiMo-V2.6-Flash"
+      ],
+      "api_key": "set"
+    },
+    "paths": {
+      "store": "/Users/wesley/.skilyst/store",
+      "workspace": "/Users/wesley/.skilyst/workspace",
+      "sessions": "/Users/wesley/.skilyst/sessions"
+    },
+    "limits": {
+      "job_budget": {
+        "configured": null,
+        "source": "mode default",
+        "one_shot_default": 1,
+        "interactive_default": 3
+      }
+    },
+    "env_file": "/Users/wesley/.skilyst/env",
+    "sources": {
+      "env_file": "/Users/wesley/.skilyst/env",
+      "dev_profile": null,
+      "process_env": [
+        "BEEHIVE_API",
+        "BEEHIVE_PLATFORM_AK",
+        "BEEHIVE_PLATFORM_KEY_ID",
+        "BEEHIVE_PLATFORM_PASS",
+        "BEEHIVE_PLATFORM_SK",
+        "BEEHIVE_PLATFORM_UID",
+        "BEEHIVE_PLATFORM_USER",
+        "SKILYST_LLM_API_KEY",
+        "SKILYST_LLM_BASE_URL",
+        "SKILYST_LLM_MODEL"
+      ]
+    }
+  }
+}
