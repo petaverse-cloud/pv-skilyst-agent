@@ -146,7 +146,7 @@ export function CanvasView({ onExit, focus }: { onExit: () => void; focus?: Canv
         <Group justify="space-between">
           <Group gap="sm">
             <Title order={4}>Workflow 画板</Title>
-            <Badge size="sm" variant="light" color="teal">A3 S1 · 只读</Badge>
+            <Badge size="sm" variant="light" color="teal">A3 S4 · 工作台</Badge>
           </Group>
           <Group gap="xs">
             <Button size="xs" variant="default" onClick={() => void loadWorkflows()}>刷新</Button>
@@ -202,7 +202,7 @@ export function CanvasView({ onExit, focus }: { onExit: () => void; focus?: Canv
       <Group px="md" py={6} justify="space-between" bg="var(--mantine-color-dark-8)">
         <Group gap="sm">
           <Button size="xs" variant="subtle" onClick={() => setStage("list")}>← Workflow 列表</Button>
-          <Badge size="sm" variant="light" color="teal">只读渲染 · skilyst-studio 包</Badge>
+          <Badge size="sm" variant="light" color="teal">完整工作台 · skilyst-studio 包</Badge>
           {focus?.node_key ? (
             <Badge size="sm" variant="light" color="blue" data-testid="canvas-focus-node">
               定位节点: {focus.node_key}
@@ -214,7 +214,7 @@ export function CanvasView({ onExit, focus }: { onExit: () => void; focus?: Canv
       <div style={{ flex: 1, minHeight: 0 }}>
         <QueryClientProvider client={queryClient}>
           <HostProvider adapter={host}>
-            <WorkflowCanvas ref={canvasRef} workflowId={activeId} variant="designer" readOnly />
+            <WorkflowCanvas ref={canvasRef} workflowId={activeId} variant="designer" liveBoard />
           </HostProvider>
         </QueryClientProvider>
       </div>

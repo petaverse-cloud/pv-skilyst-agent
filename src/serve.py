@@ -353,10 +353,11 @@ class RuntimeAPI:
         self.port = port
         self.started_at = time.time()
         # S4 paid-confirmation gates. Keyed by session id; a run whose session
-        # does not exist yet registers under "" and re-keys once the run
-        # context knows the real id (single-user loopback runtime: at most one
-        # in-flight message, so a bare "" slot cannot collide).
+        # does not exist yet reads the real id from `_confirm_session_ref`
+        # once the run context created it (single-user loopback runtime: at
+        # most one in-flight message, so a bare "" slot cannot collide).
         self._confirm_gates: dict[str, dict] = {}
+        self._confirm_session_ref: list[str] = [""]
 
     def resolve_confirm(self, session_id: str, approve: bool) -> dict:
         """Answer the session's pending paid-confirmation gate, if any."""
@@ -378,20 +379,25 @@ class RuntimeAPI:
         the session's gate until POST /confirm resolves it or the timeout
         lapses (a lapsed gate counts as declined -- money needs a yes, never
         a silence).
+
+        `session_id` may be "" for a brand-new session: the real id only
+        exists once the run context created it, so the callback reads it
+        through the mutable `self._confirm_session_ref` at gate time.
         """
         def confirm(quote: dict) -> bool:
+            sid = session_id or self._confirm_session_ref[0]
             gate = {"event": threading.Event(), "quote": quote, "approved": False}
-            self._confirm_gates[session_id] = gate
+            self._confirm_gates[sid] = gate
             try:
                 on_note(f"paid confirm: waiting for the user ({quote.get('total_hold_display')} USD hold)")
                 if emit:
-                    emit("confirm_request", {"session_id": session_id, "quote": quote})
+                    emit("confirm_request", {"session_id": sid, "quote": quote})
                 decided = gate["event"].wait(self.CONFIRM_TIMEOUT_S)
                 if not decided:
                     on_note("paid confirm: timed out -- declining (nothing charged)")
                 return bool(gate["approved"]) and decided
             finally:
-                self._confirm_gates.pop(session_id, None)
+                self._confirm_gates.pop(sid, None)
         return confirm
 
     def message(self, payload: dict, emit: Callable[[str, dict], None] | None = None) -> dict:
@@ -445,12 +451,10 @@ class RuntimeAPI:
                          stream=stream, on_event=on_event, on_delta=on_delta,
                          paid_confirm=paid_confirm)
         if paid_confirm is not None:
-            # re-key the gate onto the real session id (a fresh session's id
-            # only exists once the run context created it) so the shell can
-            # answer POST /confirm/<real-id>.
-            gate = self._confirm_gates.pop("", None)
-            if gate is not None:
-                self._confirm_gates[ctx.session.session_id] = gate
+            # publish the real session id so a gate opened for a brand-new
+            # session (the callback saw session_id="") can be answered at
+            # POST /confirm/<real-id>.
+            self._confirm_session_ref[0] = ctx.session.session_id
         if ctx.preflight is not None and not ctx.preflight.runnable:
             raise NotRunnable("node pre-flight failed -- the skill's required nodes are not runnable "
                               "here", preflight_payload(ctx.preflight))

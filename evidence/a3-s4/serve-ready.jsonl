@@ -1,0 +1,5 @@
+{"event": "ready", "api_version": 1, "host": "127.0.0.1", "port": 8791, "token": "<redacted>", "pid": 68605, "dry_run": false, "skill": "skilyst/canvas-ops", "sessions_dir": "/Users/wesley/.skilyst/sessions", "store_dir": "/Users/wesley/.skilyst/store", "workspace_dir": "/Users/wesley/.skilyst/workspace", "started_at": 1790593891.0487301, "orphan_guard": false}
+http 127.0.0.1 "GET /health HTTP/1.1" 200 -
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+stopping (signal 15)
