@@ -1,0 +1,14 @@
+{
+  "url": "http://localhost:3457/studio/agent",
+  "connected": false,
+  "console_errors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)?token=<redacted>",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)?token=<redacted>",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)?token=<redacted>",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)?token=<redacted>",
+    "WebSocket connection to 'wss://notification-api.verse4.pet/notifications/ws?token=<redacted>"
+  ],
+  "action_cards": 0,
+  "canvas_nodes": 0,
+  "canvas_edges": 0
+}

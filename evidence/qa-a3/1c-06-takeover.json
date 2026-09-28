@@ -1,0 +1,20 @@
+{
+  "killed_at": 1790602912.095124,
+  "granted_at": 1790603004.012396,
+  "elapsed_s": 91.91727209091187,
+  "status": 200,
+  "body": {
+    "code": 200,
+    "message": "OK",
+    "payload": {
+      "lock": {
+        "holder": {
+          "kind": "user-session",
+          "id": "takeover-probe"
+        },
+        "acquired_at": "2026-09-28T13:43:23.742195682Z",
+        "heartbeat_dead_after_s": 90
+      }
+    }
+  }
+}

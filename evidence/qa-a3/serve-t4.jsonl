@@ -1,0 +1,187 @@
+{"event": "ready", "api_version": 1, "host": "127.0.0.1", "port": 8801, "token": "qa-t4-1790601217", "pid": 20336, "dry_run": false, "skill": "skilyst/canvas-ops", "sessions_dir": "/Users/wesley/.skilyst/sessions", "store_dir": "/Users/wesley/.skilyst/store", "workspace_dir": "/Users/wesley/.skilyst/workspace", "started_at": 1790601217.177013, "orphan_guard": false}
+http 127.0.0.1 "GET /health HTTP/1.1" 200 -
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+http 127.0.0.1 "GET /session/20260928-211422-b0e11a HTTP/1.1" 200 -
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+http 127.0.0.1 "GET /session/20260928-211422-b0e11a HTTP/1.1" 200 -
+http 127.0.0.1 "GET /session/20260928-211422-b0e11a/history HTTP/1.1" 400 -
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+http 127.0.0.1 "GET /session/20260928-211422-b0e11a HTTP/1.1" 200 -
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+http 127.0.0.1 "POST /confirm/20260928-211707-46b134 HTTP/1.1" 200 -
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+http 127.0.0.1 "POST /confirm/20260928-211707-46b134 HTTP/1.1" 200 -
+http 127.0.0.1 "GET /session/20260928-211707-46b134 HTTP/1.1" 200 -
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+http 127.0.0.1 "GET /session/20260928-213514-baf690 HTTP/1.1" 200 -
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+http 127.0.0.1 "GET /session/20260928-213514-baf690 HTTP/1.1" 200 -
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+http 127.0.0.1 "GET /session/20260928-214008-a800c0 HTTP/1.1" 200 -
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+http 127.0.0.1 "GET /session/20260928-214429-eb20af HTTP/1.1" 200 -
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /health HTTP/1.1" 204 -
+stopping (signal 15)
+{"event": "ready", "api_version": 1, "host": "127.0.0.1", "port": 8801, "token": "qa-t4-1790601217", "pid": 75886, "dry_run": false, "skill": "skilyst/canvas-ops", "sessions_dir": "/Users/wesley/.skilyst/sessions", "store_dir": "/Users/wesley/.skilyst/store", "workspace_dir": "/Users/wesley/.skilyst/workspace", "started_at": 1790604293.369441, "orphan_guard": false}
+http 127.0.0.1 "GET /health HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /health HTTP/1.1" 204 -
+http 127.0.0.1 "GET /health HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /health HTTP/1.1" 204 -
+http 127.0.0.1 "GET /health HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /health HTTP/1.1" 204 -
+http 127.0.0.1 "GET /health HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /health HTTP/1.1" 204 -
+http 127.0.0.1 "GET /health HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /session/20260928-211707-46b134 HTTP/1.1" 204 -
+http 127.0.0.1 "GET /session/20260928-211707-46b134 HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /health HTTP/1.1" 204 -
+http 127.0.0.1 "GET /health HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /health HTTP/1.1" 204 -
+http 127.0.0.1 "GET /health HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /session/20260928-211707-46b134 HTTP/1.1" 204 -
+http 127.0.0.1 "GET /session/20260928-211707-46b134 HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /health HTTP/1.1" 204 -
+http 127.0.0.1 "GET /health HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /health HTTP/1.1" 204 -
+http 127.0.0.1 "OPTIONS /health HTTP/1.1" 204 -
+http 127.0.0.1 "OPTIONS /health HTTP/1.1" 204 -
+http 127.0.0.1 "OPTIONS /health HTTP/1.1" 204 -
+http 127.0.0.1 "OPTIONS /health HTTP/1.1" 204 -
+http 127.0.0.1 "GET /health HTTP/1.1" 200 -
+stopping (signal 15)
+{"event": "ready", "api_version": 1, "host": "127.0.0.1", "port": 8801, "token": "qa-t4-1790601217", "pid": 97744, "dry_run": false, "skill": "skilyst/canvas-ops", "sessions_dir": "/Users/wesley/.skilyst/sessions", "store_dir": "/Users/wesley/.skilyst/store", "workspace_dir": "/Users/wesley/.skilyst/workspace", "started_at": 1790605322.023605, "orphan_guard": false}
+http 127.0.0.1 "GET /health HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /health HTTP/1.1" 204 -
+http 127.0.0.1 "GET /health HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /session/20260928-211707-46b134 HTTP/1.1" 204 -
+http 127.0.0.1 "GET /session/20260928-211707-46b134 HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -
+
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -
+http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -
+
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /session/20260928-211707-46b134 HTTP/1.1" 204 -
+http 127.0.0.1 "GET /session/20260928-211707-46b134 HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -
+
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+stopping (signal 15)
+{"event": "ready", "api_version": 1, "host": "127.0.0.1", "port": 8801, "token": "qa-t4-1790601217", "pid": 11736, "dry_run": false, "skill": "skilyst/canvas-ops", "sessions_dir": "/Users/wesley/.skilyst/sessions", "store_dir": "/Users/wesley/.skilyst/store", "workspace_dir": "/Users/wesley/.skilyst/workspace", "started_at": 1790605781.338689, "orphan_guard": false}
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "POST /auth/login HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -
+http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -
+http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -
+
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /session/20260928-211707-46b134 HTTP/1.1" 204 -
+http 127.0.0.1 "GET /session/20260928-211707-46b134 HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -
+
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /session/20260928-211707-46b134 HTTP/1.1" 204 -
+http 127.0.0.1 "GET /session/20260928-211707-46b134 HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -
+
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /session/20260928-211707-46b134 HTTP/1.1" 204 -
+http 127.0.0.1 "GET /session/20260928-211707-46b134 HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+stopping (signal 15)

@@ -1,0 +1,15 @@
+{
+  "nodes": 6,
+  "edges": 5,
+  "node_titles": [
+    "VIGeneratescriptAI Script (Prompt Writer)RunV",
+    "VIGenerate donegpt-image-2GPT Image 2 (OpenAI-compatible)Re-runI",
+    "imageempty image",
+    "VIGenerate doneminimax-h3MiniMax-H3 Video GenerationRe-runV",
+    "Previewgpt-image-2 Click to browse generated history",
+    "Previewminimax-h3 Click to browse generated history"
+  ],
+  "focus_badge": 0,
+  "pool_imgs": 1,
+  "preview_hatch": 4
+}

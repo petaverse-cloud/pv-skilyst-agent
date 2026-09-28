@@ -1,0 +1,65 @@
+{
+  "killed_at": 1790602912.095124,
+  "rows_tail": [
+    {
+      "event": "delta",
+      "data": {
+        "text": " Creating"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": " step"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": " "
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "1"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": " —"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": " the"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": " script"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": " node"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "."
+      }
+    },
+    {
+      "event": "note",
+      "data": {
+        "text": "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790602746185338407\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\", \\\"config\\\": {\\\"instruction\\\": \\\"崩溃接管测试\\\"}}\""
+      }
+    }
+  ]
+}

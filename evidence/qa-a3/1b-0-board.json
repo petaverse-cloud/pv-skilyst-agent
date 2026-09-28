@@ -1,0 +1,14 @@
+{
+  "code": 201,
+  "message": "Created",
+  "payload": {
+    "id": "workflow-1790602514078143757",
+    "name": "qa-a3-t1b-1790602513",
+    "description": "QA T1b port mutex negative path",
+    "nodes": null,
+    "owner_id": "usr-1787815793337170547",
+    "schema_version": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z"
+  }
+}

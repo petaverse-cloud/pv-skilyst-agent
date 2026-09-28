@@ -1,0 +1,10 @@
+SELECT kind, job_id, node_id, amount, created_at FROM wallet_ledger
+WHERE user_uid=213508887911264 AND created_at > '2026-09-28 13:10:00+00' ORDER BY created_at;
+
+ kind   |               job_id               |                            node_id                             | amount  |          created_at
+---------+------------------------------------+-----------------------------------------------------------------+---------+-------------------------------
+ reserve | job-1790601545790-53c28591cf336fa8 | node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2 |  960000 | 2026-09-28 13:19:05.796721+00
+ settle  | job-1790601545790-53c28591cf336fa8 | node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2 |  960000 | 2026-09-28 13:19:30.098772+00
+ reserve | job-1790601716186-423e0a9970c16522 | node-job-1790601716186-423e0a9970c16522-generate-minimax-h3-4  | 1035000 | 2026-09-28 13:21:56.191728+00
+ settle  | job-1790601716186-423e0a9970c16522 | node-job-1790601716186-423e0a9970c16522-generate-minimax-h3-4  | 1035000 | 2026-09-28 13:26:29.334121+00
+(4 rows)

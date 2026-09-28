@@ -1,0 +1,1266 @@
+[
+  {
+    "event": "delta",
+    "data": {
+      "text": "I"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'ll start by loading"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the active"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " skill's method, then"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " look at the board"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool read_skill \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790603067997635889\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"process\\\", \\\"provider\\\": \\\"script\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema refused: ValueError: no node definition 'process:script' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790603067997635889\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\", \\\"config\\\": {\\\"instruction\\\": \\\"锁竞争测试\\\"}}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: canvas_create_node refused -- workflow workflow-1790603067997635889 is locked by another holder"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_create_node refused: LockHeldError: 画板正被占用 (workflow workflow-1790603067997635889 is locked by holder kind='manual-client' id='qa-manual-1' acquired_at='2026-09-28T13:44:29.099283097Z')"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "I couldn"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'t create"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the node — the board is"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " locked."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Reporting"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " as-is, and"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " I'm"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " not retrying.\n\n**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Result"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": failed"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " ("
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "no"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " change"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " made)."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**\n\nPlatform"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " error,"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " verbatim:\n\n```\nLockH"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "eldError: 画板"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "正被占用 (workflow"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " workflow-179060306799"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "7635889 is locked by"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " holder kind='manual-client'"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " id='qa-manual-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1' acquired_at"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "='2026-09-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "28T13:44:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "29.099283"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "097Z')\n```\n\n**What"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " this"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " means, per"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the canvas"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-ops lock discipline:**\n\n-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " The board `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "workflow-179060306"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "7997635889` (`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "qa-a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "3-t1c"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-owned-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1790603066`) is"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " currently held"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " by another writer"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " —"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " a **"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "manual client** session"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " with"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " holder"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " id `qa-manual-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1`, holding"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the lock since **2026"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-09-28T13"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":44:29Z**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " (i.e. ~"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "13:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "44 UTC /"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 21:44 CST,"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " just"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " about now"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ").\n- That holder is alive"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " and working. My"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " calls do"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " not preempt it,"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " so ret"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "rying in a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " loop would only produce"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the same refusal"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " —"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " I've stopped after"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " this"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " single attempt, as you"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " asked.\n\n**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "What I did get"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " done"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":**\n\n1. Read"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " board's current"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " state (reads"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " aren"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'t blocked"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " by"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the lock): it is"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " empty — **0"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " nodes, 0 edges,"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " no media pool entries"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**.\n2. Confirmed"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " type before writing:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " there"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " is **no `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "process:script`** on"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " this platform; the script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node is **`generate:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "script`** (\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "AI Script ("
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Prompt Writer)\"), whose"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " single required"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " field is `instruction`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " (plain-language"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " brief"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node rewrites into a generation"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-ready prompt;"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " default"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " model `deep"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "seek-v4-flash-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "0731`, `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "max_output_tokens` default"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 2048).\n\nSo"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " I was"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " about"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " to add"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " is fully"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " specified:\n\n-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " **"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "node_type:** `generate`,"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " **provider:** `script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`\n- **config:** `{\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "instruction\": \"锁"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "竞争测试\"}`\n\n**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "How"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " to"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " proceed —"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " your"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " call, no"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " action taken:**\n- Ask"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the other writer"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " (`qa-man"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ual-1`, the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " manual client) to release"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the board"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ", then tell me and"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " I'll create the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node immediately"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "; or\n- Wait"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " for"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " that"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " session to finish — the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " lock is taken over"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " server"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-side once"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the holder is gone"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ", and"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the next write"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " will just succeed"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ".\n\nI"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " have"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " not created"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ","
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " modified, or deleted"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " anything on"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " this"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " board."
+    }
+  },
+  {
+    "event": "done",
+    "data": {
+      "ok": true,
+      "data": {
+        "session_id": "20260928-214429-eb20af",
+        "skill": "skilyst/canvas-ops",
+        "stop_reason": "completed",
+        "answer": "I couldn't create the node — the board is locked. Reporting as-is, and I'm not retrying.\n\n**Result: failed (no change made).**\n\nPlatform error, verbatim:\n\n```\nLockHeldError: 画板正被占用 (workflow workflow-1790603067997635889 is locked by holder kind='manual-client' id='qa-manual-1' acquired_at='2026-09-28T13:44:29.099283097Z')\n```\n\n**What this means, per the canvas-ops lock discipline:**\n\n- The board `workflow-1790603067997635889` (`qa-a3-t1c-owned-1790603066`) is currently held by another writer — a **manual client** session with holder id `qa-manual-1`, holding the lock since **2026-09-28T13:44:29Z** (i.e. ~13:44 UTC / 21:44 CST, just about now).\n- That holder is alive and working. My calls do not preempt it, so retrying in a loop would only produce the same refusal — I've stopped after this single attempt, as you asked.\n\n**What I did get done:**\n\n1. Read the board's current state (reads aren't blocked by the lock): it is empty — **0 nodes, 0 edges, no media pool entries**.\n2. Confirmed the node type before writing: there is **no `process:script`** on this platform; the script node is **`generate:script`** (\"AI Script (Prompt Writer)\"), whose single required field is `instruction` (plain-language brief the node rewrites into a generation-ready prompt; default model `deepseek-v4-flash-0731`, `max_output_tokens` default 2048).\n\nSo the node I was about to add is fully specified:\n\n- **node_type:** `generate`, **provider:** `script`\n- **config:** `{\"instruction\": \"锁竞争测试\"}`\n\n**How to proceed — your call, no action taken:**\n- Ask the other writer (`qa-manual-1`, the manual client) to release the board, then tell me and I'll create the node immediately; or\n- Wait for that session to finish — the lock is taken over server-side once the holder is gone, and the next write will just succeed.\n\nI have not created, modified, or deleted anything on this board.",
+        "model": "deepseek/deepseek-v4.1-flash",
+        "turns": 5,
+        "wall_clock_s": 31.7,
+        "usage": {
+          "prompt_tokens": 28573,
+          "completion_tokens": 1109,
+          "total_tokens": 29682,
+          "calls": 5,
+          "models_used": [
+            "deepseek/deepseek-v4.1-flash"
+          ]
+        },
+        "artifacts": [],
+        "jobs": {
+          "submitted": 0,
+          "budget": null
+        },
+        "tool_calls": [
+          {
+            "tool": "read_skill",
+            "arguments": {
+              "skill_id": "skilyst/canvas-ops"
+            },
+            "result": {
+              "skill_id": "skilyst/canvas-ops",
+              "version": "1.0.0",
+              "degraded": false,
+              "digest": "sha256:f9cac603776ce8ab7384eda079182742ff4ceb12de18d91d1d165ab60daf518a",
+              "permission": {
+                "egress": [
+                  "beehive-api.verse4.pet"
+                ],
+                "filesystem": "skill-dir",
+                "exec": "none",
+                "secrets": true
+              },
+              "plan": {},
+              "requires_nodes": [],
+              "instructions": "\n# Canvas operations (the conversation-driven board)\n\nThe board is the workflow; you are its writer. Every tool below lands a\nstructured change on the server-side blueprint and an action card in the\nconversation — the user watches the board move as you speak.\n\n## When to use\n\nThe user wants to build or edit a board by conversation: \"add a script node\nthat writes a 15-second ghost-catcher patrol script\", \"wire the reference\nimage to the first frame\", \"generate a reference image\", \"run it\".\n\n**Start every session with `canvas_list_workflows` + `canvas_read_board`.**\nIf the user did not name a board, list them, pick the most recently updated\none, and *say which one you picked* before editing.\n\n## The tools\n\n| tool | what it does | key params | reach for it when |\n| --- | --- | --- | --- |\n| `canvas_list_workflows` | boards this account can see | limit | picking the board to operate on |\n| `canvas_read_board` | full board state: nodes, edges (derived from `material_deps`/`depends_on`), media pool | workflow_id | before any edit; after a conflict |\n| `canvas_create_node` | add a node to the blueprint (auto-key `{type}-{provider}-{n}`, auto-position) | workflow_id, node_type, provider, config? | \"创建一个 script 节点\" |\n| `canvas_write_node_config` | deep-merge a config patch into one node | workflow_id, key, config | \"把时长改成 15 秒\" |\n| `canvas_connect_ports` | wire an edge; a material source wires as `material_deps {key, input_port}` + depends_on | workflow_id, from_key, to_key, input_port? | \"把参考图接到首帧\" |\n| `canvas_query_schema` | node definition + derived port analysis (enums, required, alternative input modes) | node_type+provider or node_id | **before every connect or submission** |\n| `canvas_read_node_output` | newest job output for one node (async poll) | workflow_id, key | after submitting a generation |\n| `canvas_submit_node_job` | submit ONE node as a job, quote-first | workflow_id, node_type, provider, config | running a single node |\n| `canvas_run_workflow` | submit the whole board as one job, quote-first | workflow_id | \"跑一下这个流程\" |\n| `canvas_generate_image` | submit a PAID gpt-image-2 image job | workflow_id, prompt, size? | \"生成一张参考图\" |\n| `canvas_list_media` | the board's media pool entries | workflow_id | checking what is available |\n| `canvas_add_media` | add an upload-origin pool entry by URL | workflow_id, url, name | bringing an external image onto the board |\n\nNode types you will meet: `process` (script/LLM nodes, e.g.\n`process:script`), `generate` (minimax-h3, gpt-image-2, ...), `material` (a\nmedia-pool reference — pure data input, never executed).\n\n## Lock discipline (写锁纪律)\n\nEvery blueprint write (`create_node` / `write_node_config` / `connect_ports`)\nis **already wrapped** by the runtime in the server-side lock protocol:\nlock → read → modify → PUT → unlock, with finally semantics (a failed PUT\nstill unlocks — a crash can never strand a lock; a dead holder's lock is\ntaken over by the next applicant server-side).\n\nIf a write raises `LockHeldError` (画板正被占用):\n\n1. **Stop.** Tell the user the board is busy and *who* holds it (the error\n   carries holder kind/id and since when).\n2. **Do not retry in a loop.** The holder is alive and working; your calls\n   do not preempt it.\n3. Reads (`canvas_read_board`, `canvas_query_schema`) still work — you can\n   keep planning, just not writing.\n\nYour own API calls refresh the lock heartbeat implicitly while you hold it —\nyou never need to think about expiry.\n\n## Port matching iron rule (端口匹配铁律)\n\n**Before `canvas_connect_ports`, ALWAYS `canvas_query_schema` the TARGET\nnode.** The schema is the judge of which ports may receive what:\n\n- **enum fields** — e.g. `image_roles` accepts exactly\n  `reference_image` / `first_frame` / `last_frame`;\n- **required fields** — what a submission will 400 without;\n- **alternative input modes** — arrays that cannot be mixed.\n\n**Canonical case — minimax-h3.** Its image inputs are *exclusive*:\n`first_frame` and `reference_image` cannot coexist in one submission. Wiring\na reference image to `first_frame` when `reference_image` entries already\nexist (or vice versa) is a 400 *at submit time* — expensive to discover\nlate. Query the schema, decide the port deliberately, then connect. Never\nguess a port from the field name alone.\n\n## Quote-first (先报价)\n\nPaid submissions (`canvas_submit_node_job`, `canvas_run_workflow`,\n`canvas_generate_image`) fetch an estimate *before* the submission exists.\nQuote amounts are integer micro-USD plus a USD display figure. When the\nestimate is material, state the USD figure to the user and get the go-ahead\n— the wallet is charged on submit (held at the quote's upper bound, settled\nat measured usage).\n\n## Failure self-correction (失败自修正)\n\n| failure | what to do |\n| --- | --- |\n| schema/validation 400 | read the **structured** error — the platform names the offending field and the allowed values. Fix that field, retry **once**. No blind retries, no fallback wrappers. |\n| 409 workflow-modified | the runtime already retried once; `canvas_read_board` again before your next write — the board moved under you. |\n| `LockHeldError` | report to the user, stop writing (see above). |\n| 402 / 413 quota | report the number, do not retry. |\n\n## Media pool flow (参考图上板)\n\nGeneration is async and the pool is where artifacts land:\n\n1. `canvas_generate_image` **submits only** — a paid gpt-image-2 job.\n2. Poll with `canvas_read_node_output` (or `beehive_get_job`) until\n   `completed`.\n3. On completion the server **auto-captures** the image into the board's\n   media pool (`origin.kind=generated`) — no add needed.\n\nFor an external image the user supplied by URL: `canvas_add_media`, then\nmake it wireable as a material node, then connect:\n\n```\ncanvas_add_media(workflow_id, url, name)          -> pool entry id\ncanvas_create_node(workflow_id, 'material', '',   -> material node\n                   config={pool_entry_id: <id>})\ncanvas_query_schema(node_type='generate', provider='minimax-h3')\ncanvas_connect_ports(workflow_id, from_key=<material key>,\n                     to_key=<consumer key>, input_port='first_frame')\n```\n\nMaterial nodes are identified by `config.pool_entry_id`; the runtime wires\nthem into the consumer's `material_deps` and `depends_on`, and the server\ncompiles that to `images[]` + `image_roles[]` (or `video_refs`/`audio_refs`)\nat submit time.\n\n## Board delta awareness\n\nEvery successful canvas call lands an action row in the conversation with a\n`board_delta` (added node, wired edge, pool entry, submitted job). The UI\nrenders these as cards the user can expand and click to locate on the board.\nKeep your result summaries human-readable — the card's one-liner is what the\nuser reads first.",
+              "files": [
+                "LICENSE",
+                "SKILL.md",
+                "manifest.json",
+                "references/i18n/glossary.en.json",
+                "references/i18n/glossary.zh-CN.json"
+              ],
+              "spec_warnings": []
+            },
+            "error": null,
+            "duration_s": 0.01
+          },
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790603067997635889"
+            },
+            "result": {
+              "id": "workflow-1790603067997635889",
+              "name": "qa-a3-t1c-owned-1790603066",
+              "nodes": [],
+              "edges": [],
+              "media_pool": []
+            },
+            "error": null,
+            "duration_s": 1.12
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "process",
+              "provider": "script"
+            },
+            "result": null,
+            "error": "ValueError: no node definition 'process:script' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)",
+            "duration_s": 2.11
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "generate",
+              "provider": "script"
+            },
+            "result": {
+              "node_id": "generate:script",
+              "name": "AI Script (Prompt Writer)",
+              "description": null,
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "properties": {
+                  "context_urls": {
+                    "description": "Optional reference media URLs appended to the instruction as context",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "maxItems": 8,
+                    "type": "array"
+                  },
+                  "goal": {
+                    "description": "compose mode: the original goal (defaults to instruction when empty)",
+                    "type": "string"
+                  },
+                  "instruction": {
+                    "description": "What you want the video/audio/image to be, in plain language — the script node rewrites it into a generation-ready prompt",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "material_refs": {
+                    "description": "#504: material references — resolved at submit, woven into the instruction, passed through to downstream nodes via dest_refs",
+                    "items": {
+                      "properties": {
+                        "entry_id": {
+                          "description": "Media-pool entry id (mp-...)",
+                          "type": "string"
+                        },
+                        "note": {
+                          "description": "Free-text usage note — woven into the prompt's referenced-materials section",
+                          "type": "string"
+                        },
+                        "role": {
+                          "enum": [
+                            "first_frame",
+                            "last_frame",
+                            "reference_image",
+                            "reference_video",
+                            "reference_audio"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "entry_id",
+                        "role"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "max_output_tokens": {
+                    "default": 2048,
+                    "description": "Upper bound on the generated prompt length; also the billing hold bound",
+                    "maximum": 8192,
+                    "minimum": 64,
+                    "type": "integer"
+                  },
+                  "mode": {
+                    "description": "decompose = instruction is a goal, output is the questionnaire JSON (#432); compose = synthesize the final prompt + ir from goal/selections (#432); storyboard = instruction is a narrative brief, output is a template-v2 sequence JSON with shots/transitions/elements/continuity locks (#381). Absent = single-phase instruction→prompt",
+                    "enum": [
+                      "decompose",
+                      "compose",
+                      "storyboard"
+                    ],
+                    "type": "string"
+                  },
+                  "model": {
+                    "default": "deepseek-v4-flash-0731",
+                    "description": "Model. Currently only deepseek-v4-flash-0731; a value outside this set is rejected at submit time",
+                    "enum": [
+                      "deepseek-v4-flash-0731"
+                    ],
+                    "type": "string"
+                  },
+                  "selections": {
+                    "description": "compose mode: the user's picks + custom values keyed by dimension (subject/action/camera/mood/sound)",
+                    "type": "object"
+                  },
+                  "system_prompt": {
+                    "description": "Optional — overrides the built-in prompt-engineering system prompt (advanced)",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "instruction"
+                ],
+                "type": "object",
+                "x-input-ports": [
+                  {
+                    "accepts": [
+                      "text"
+                    ],
+                    "field": "instruction"
+                  }
+                ]
+              },
+              "output_schema": {
+                "completion_tokens": "integer",
+                "dest_prompt": "string — the generation-ready prompt, flows into downstream nodes' prompt field",
+                "ir": "string (JSON) — compose mode only: IR-lite axes the model applied (flat snake_case object)",
+                "prompt_tokens": "integer"
+              },
+              "config_defaults": {
+                "pricing": {
+                  "input_price_usd": 140,
+                  "model": "per_token",
+                  "output_price_usd": 280,
+                  "qty_max": 8192
+                }
+              },
+              "enabled": true,
+              "port_analysis": {
+                "enum_fields": [
+                  {
+                    "field": "mode",
+                    "enum": [
+                      "decompose",
+                      "compose",
+                      "storyboard"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "model",
+                    "enum": [
+                      "deepseek-v4-flash-0731"
+                    ],
+                    "on": "field"
+                  }
+                ],
+                "required": [
+                  "instruction"
+                ],
+                "notes": []
+              }
+            },
+            "error": null,
+            "duration_s": 2.17
+          },
+          {
+            "tool": "canvas_create_node",
+            "arguments": {
+              "workflow_id": "workflow-1790603067997635889",
+              "node_type": "generate",
+              "provider": "script",
+              "config": {
+                "instruction": "锁竞争测试"
+              }
+            },
+            "result": null,
+            "error": "LockHeldError: 画板正被占用 (workflow workflow-1790603067997635889 is locked by holder kind='manual-client' id='qa-manual-1' acquired_at='2026-09-28T13:44:29.099283097Z')",
+            "duration_s": 1.47
+          }
+        ],
+        "preflight": null,
+        "error": null,
+        "ok": true,
+        "dry_run": false,
+        "notes": [
+          "tool read_skill \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops\\\"}\"",
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790603067997635889\\\"}\"",
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"process\\\", \\\"provider\\\": \\\"script\\\"}\"",
+          "tool canvas_query_schema refused: ValueError: no node definition 'process:script' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)",
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\"}\"",
+          "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790603067997635889\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\", \\\"config\\\": {\\\"instruction\\\": \\\"锁竞争测试\\\"}}\"",
+          "canvas: canvas_create_node refused -- workflow workflow-1790603067997635889 is locked by another holder",
+          "tool canvas_create_node refused: LockHeldError: 画板正被占用 (workflow workflow-1790603067997635889 is locked by holder kind='manual-client' id='qa-manual-1' acquired_at='2026-09-28T13:44:29.099283097Z')"
+        ]
+      }
+    }
+  }
+]

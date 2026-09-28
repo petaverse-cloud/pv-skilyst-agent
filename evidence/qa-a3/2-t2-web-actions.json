@@ -1,0 +1,16 @@
+{
+  "action_cards": 30,
+  "action_toggle": 30,
+  "action_locate": 30,
+  "action_cost": 0,
+  "note_chip": 0,
+  "assistant_bubble": 23,
+  "conversation_stream": 1,
+  "locate_flow": true,
+  "card_samples": [
+    "read_boardcanvas_read_board 完成1.25sparams{\n  \"workflow_id\": \"workflow-1790601427457590393\"\n}result{}",
+    "query_schemacanvas_query_schema 完成1.32s",
+    "create_node新增节点 generate-script-15.86s",
+    "read_node_outputcanvas_read_node_output 完成1.97s"
+  ]
+}

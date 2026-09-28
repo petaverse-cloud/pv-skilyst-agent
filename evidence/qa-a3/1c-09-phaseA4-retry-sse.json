@@ -1,0 +1,797 @@
+[
+  {
+    "event": "delta",
+    "data": {
+      "text": "Lock"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " released"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " — per"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " lock"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " discipline I re"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-read the board before writing"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ","
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " since the other"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " writer may have left"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " changes"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " behind"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790603067997635889\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Board"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " is"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " still"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " empty"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " (nothing left"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " behind by the other"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " writer). Creating the node now"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_create_node \"{\\\"config\\\": {\\\"instruction\\\": \\\"锁竞争测试\\\"}, \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\", \\\"workflow_id\\\": \\\"workflow-1790603067997635889\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: node generate-script-1 added to workflow-1790603067997635889"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Done"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " — the node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " was created on"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the second attempt.\n\n**Result"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": created"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " successfully"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ".**\n\n| field"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " | value |\n|"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " --- | --- |\n| board"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " | `work"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "flow-179060306799"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "763"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "5889` (`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "qa-a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "3-t1c-owned"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-179"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "0603066`) |\n|"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node key | `generate-s"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "cript-1` |\n|"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node type | `generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "` |\n| provider"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " | `script` (\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "AI Script (Prompt"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Writer)\") |\n| config"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " | `{\"instruction\": \""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "锁竞争测试\"}`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n| position | `{x"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": 80, y:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 80}` ("
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "auto)"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n\nThe"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " create ran"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " through the server-side write lock (lock"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " → read →"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " modify → PUT"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " → unlock),"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " so the board now"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " holds exactly this"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " one node — no edges"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ", no media"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " pool entries.\n\nTwo"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " notes on the request"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " as"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " written, both"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " unchanged from"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " my"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " earlier check"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":\n- You"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " asked"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " for a **"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`script` "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "; `process"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":script` does not exist"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " on this platform,"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " so the closest"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "/types"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "et"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " match is `generate:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "script`,"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " which is"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " what I created"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " with"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "instruction: \"锁"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "竞争测试\"`.\n- No"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " generation job"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " was submitted — the node is"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " just a blueprint entry"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ", and creating"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " it costs nothing."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " I only"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " submit"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " paid"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " work"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " after"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " quoting"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " and"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " getting"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " your go-ahead,"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " so tell me if"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " you want this"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node run"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ".\n\nSay the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " word if you'd like me"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " to wire it to"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " downstream node, adjust"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the config ("
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "e.g. `mode"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`, `max_output_tokens"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`), or run it."
+    }
+  },
+  {
+    "event": "done",
+    "data": {
+      "ok": true,
+      "data": {
+        "session_id": "20260928-214429-eb20af",
+        "skill": "skilyst/canvas-ops",
+        "stop_reason": "completed",
+        "answer": "Done — the node was created on the second attempt.\n\n**Result: created successfully.**\n\n| field | value |\n| --- | --- |\n| board | `workflow-1790603067997635889` (`qa-a3-t1c-owned-1790603066`) |\n| node key | `generate-script-1` |\n| node type | `generate` |\n| provider | `script` (\"AI Script (Prompt Writer)\") |\n| config | `{\"instruction\": \"锁竞争测试\"}` |\n| position | `{x: 80, y: 80}` (auto) |\n\nThe create ran through the server-side write lock (lock → read → modify → PUT → unlock), so the board now holds exactly this one node — no edges, no media pool entries.\n\nTwo notes on the request as written, both unchanged from my earlier check:\n- You asked for a **`script` 节点**; `process:script` does not exist on this platform, so the closest/typeset match is `generate:script`, which is what I created with `instruction: \"锁竞争测试\"`.\n- No generation job was submitted — the node is just a blueprint entry, and creating it costs nothing. I only submit paid work after quoting and getting your go-ahead, so tell me if you want this node run.\n\nSay the word if you'd like me to wire it to a downstream node, adjust the config (e.g. `mode`, `max_output_tokens`), or run it.",
+        "model": "deepseek/deepseek-v4.1-flash",
+        "turns": 3,
+        "wall_clock_s": 22.9,
+        "usage": {
+          "prompt_tokens": 22825,
+          "completion_tokens": 630,
+          "total_tokens": 23455,
+          "calls": 3,
+          "models_used": [
+            "deepseek/deepseek-v4.1-flash"
+          ]
+        },
+        "artifacts": [],
+        "jobs": {
+          "submitted": 0,
+          "budget": null
+        },
+        "tool_calls": [
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790603067997635889"
+            },
+            "result": {
+              "id": "workflow-1790603067997635889",
+              "name": "qa-a3-t1c-owned-1790603066",
+              "nodes": [],
+              "edges": [],
+              "media_pool": []
+            },
+            "error": null,
+            "duration_s": 1.33
+          },
+          {
+            "tool": "canvas_create_node",
+            "arguments": {
+              "config": {
+                "instruction": "锁竞争测试"
+              },
+              "node_type": "generate",
+              "provider": "script",
+              "workflow_id": "workflow-1790603067997635889"
+            },
+            "result": {
+              "node": {
+                "type": "generate",
+                "provider": "script",
+                "key": "generate-script-1",
+                "config": {
+                  "instruction": "锁竞争测试"
+                },
+                "position": {
+                  "x": 80,
+                  "y": 80
+                }
+              },
+              "workflow": {
+                "id": "workflow-1790603067997635889",
+                "name": "qa-a3-t1c-owned-1790603066",
+                "description": "QA T1c phase A owned board",
+                "nodes": [
+                  {
+                    "type": "generate",
+                    "provider": "script",
+                    "key": "generate-script-1",
+                    "config": {
+                      "instruction": "锁竞争测试"
+                    },
+                    "position": {
+                      "x": 80,
+                      "y": 80
+                    }
+                  }
+                ],
+                "owner_id": "usr-1787815793337170547",
+                "schema_version": 0,
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z"
+              }
+            },
+            "error": null,
+            "duration_s": 5.25
+          }
+        ],
+        "preflight": null,
+        "error": null,
+        "ok": true,
+        "dry_run": false,
+        "notes": [
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790603067997635889\\\"}\"",
+          "tool canvas_create_node \"{\\\"config\\\": {\\\"instruction\\\": \\\"锁竞争测试\\\"}, \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\", \\\"workflow_id\\\": \\\"workflow-1790603067997635889\\\"}\"",
+          "canvas: node generate-script-1 added to workflow-1790603067997635889"
+        ]
+      }
+    }
+  }
+]

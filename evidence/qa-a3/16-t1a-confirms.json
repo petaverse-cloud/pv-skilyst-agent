@@ -1,0 +1,48 @@
+[
+  {
+    "turn_text": "现在把白猫道士参考图生成出来（付费任务），完成后告诉我。",
+    "quote": {
+      "total_estimate_usd": null,
+      "total_hold": 960000,
+      "total_estimate_usd_display": null,
+      "total_hold_display": 0.96,
+      "nodes": [
+        {
+          "node_type": "generate",
+          "provider": "gpt-image-2",
+          "key": "generate-gpt-image-2-2",
+          "priced": true,
+          "model": "per_piece",
+          "unit_price_usd": 960000,
+          "qty_estimate": 1,
+          "amount_hold": 960000
+        }
+      ]
+    },
+    "session_id": "20260928-211707-46b134",
+    "ts": 1790601544.5687401
+  },
+  {
+    "turn_text": "创建 minimax-h3 视频生成节点（15 秒、9:16、768P，白猫道士",
+    "quote": {
+      "total_estimate_usd": null,
+      "total_hold": 1035000,
+      "total_estimate_usd_display": null,
+      "total_hold_display": 1.035,
+      "nodes": [
+        {
+          "node_type": "generate",
+          "provider": "minimax-h3",
+          "key": "generate-minimax-h3-4",
+          "priced": true,
+          "model": "per_second",
+          "unit_price_usd": 69000,
+          "qty_estimate": 15,
+          "amount_hold": 1035000
+        }
+      ]
+    },
+    "session_id": "20260928-211707-46b134",
+    "ts": 1790601713.9518888
+  }
+]

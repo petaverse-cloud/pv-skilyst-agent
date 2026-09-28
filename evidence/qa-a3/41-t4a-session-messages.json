@@ -1,0 +1,78 @@
+{
+  "ok": true,
+  "data": {
+    "session_id": "20260928-211422-b0e11a",
+    "meta": {
+      "session_id": "20260928-211422-b0e11a",
+      "title": "你好，请只用文字回答，不要调用任何工具：一句话介绍你能做什么。",
+      "created_at": 1790601262.768849,
+      "updated_at": 1790601267.2700539,
+      "model": "deepseek/deepseek-v4.1-flash",
+      "workspace": "/Users/wesley/.skilyst/workspace",
+      "skills": [
+        "skilyst/canvas-ops"
+      ],
+      "status": "open",
+      "message_count": 2,
+      "usage": {
+        "prompt_tokens": 3667,
+        "completion_tokens": 90,
+        "total_tokens": 3757,
+        "calls": 1,
+        "models_used": [
+          "deepseek/deepseek-v4.1-flash"
+        ]
+      }
+    },
+    "messages": [
+      {
+        "seq": 0,
+        "ts": 1790601262.7691379,
+        "role": "user",
+        "content": "你好，请只用文字回答，不要调用任何工具：一句话介绍你能做什么。"
+      },
+      {
+        "seq": 1,
+        "ts": 1790601267.268383,
+        "role": "assistant",
+        "content": "我是 Skilyst 的视频制作代理：你告诉我想做什么，我会读懂相应技能方法、在画布上搭好并连好节点、按先报价后提交的方式生成图像/视频（文生视频、图生视频、对口型等），最后把平台返回的成品链接交给你。"
+      }
+    ],
+    "artifacts": [],
+    "trace": [
+      {
+        "ts": 1790601267.269678,
+        "kind": "llm_turn",
+        "turn": 0,
+        "model": "deepseek/deepseek-v4.1-flash",
+        "finish_reason": "stop",
+        "tool_calls": [],
+        "usage": {
+          "prompt_tokens": 3667,
+          "completion_tokens": 90,
+          "total_tokens": 3757,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "text_tokens": 0,
+            "image_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 25,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0,
+            "text_tokens": 0,
+            "image_tokens": 0,
+            "video_tokens": 0
+          }
+        }
+      }
+    ],
+    "path": "/Users/wesley/.skilyst/sessions/20260928-211422-b0e11a"
+  }
+}

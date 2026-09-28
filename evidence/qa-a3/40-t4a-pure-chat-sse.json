@@ -1,0 +1,255 @@
+{
+  "session_id": "20260928-211422-b0e11a",
+  "done": {
+    "session_id": "20260928-211422-b0e11a",
+    "skill": "skilyst/canvas-ops",
+    "stop_reason": "completed",
+    "answer": "我是 Skilyst 的视频制作代理：你告诉我想做什么，我会读懂相应技能方法、在画布上搭好并连好节点、按先报价后提交的方式生成图像/视频（文生视频、图生视频、对口型等），最后把平台返回的成品链接交给你。",
+    "model": "deepseek/deepseek-v4.1-flash",
+    "turns": 1,
+    "wall_clock_s": 4.5,
+    "usage": {
+      "prompt_tokens": 3667,
+      "completion_tokens": 90,
+      "total_tokens": 3757,
+      "calls": 1,
+      "models_used": [
+        "deepseek/deepseek-v4.1-flash"
+      ]
+    },
+    "artifacts": [],
+    "jobs": {
+      "submitted": 0,
+      "budget": null
+    },
+    "tool_calls": [],
+    "preflight": null,
+    "error": null,
+    "ok": true,
+    "dry_run": false,
+    "notes": []
+  },
+  "rows": [
+    {
+      "event": "delta",
+      "data": {
+        "text": "我是"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": " Skil"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "yst 的视频"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "制作"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "代理"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "：你"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "告诉"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "我想"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "做什么，我会读懂"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "相应"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "技能方法"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "、在"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "画布上搭"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "好并"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "连"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "好节点、"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "按"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "先报价"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "后提交"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "的方式生成图像"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "/"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "视频（"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "文"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "生视频、图"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "生视频、对口"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "型"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "等"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "），最后"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "把平台"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "返回的成品链接"
+      }
+    },
+    {
+      "event": "delta",
+      "data": {
+        "text": "交给你。"
+      }
+    },
+    {
+      "event": "done",
+      "data": {
+        "ok": true,
+        "data": {
+          "session_id": "20260928-211422-b0e11a",
+          "skill": "skilyst/canvas-ops",
+          "stop_reason": "completed",
+          "answer": "我是 Skilyst 的视频制作代理：你告诉我想做什么，我会读懂相应技能方法、在画布上搭好并连好节点、按先报价后提交的方式生成图像/视频（文生视频、图生视频、对口型等），最后把平台返回的成品链接交给你。",
+          "model": "deepseek/deepseek-v4.1-flash",
+          "turns": 1,
+          "wall_clock_s": 4.5,
+          "usage": {
+            "prompt_tokens": 3667,
+            "completion_tokens": 90,
+            "total_tokens": 3757,
+            "calls": 1,
+            "models_used": [
+              "deepseek/deepseek-v4.1-flash"
+            ]
+          },
+          "artifacts": [],
+          "jobs": {
+            "submitted": 0,
+            "budget": null
+          },
+          "tool_calls": [],
+          "preflight": null,
+          "error": null,
+          "ok": true,
+          "dry_run": false,
+          "notes": []
+        }
+      }
+    }
+  ]
+}

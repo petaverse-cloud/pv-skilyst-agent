@@ -1,0 +1,33 @@
+{
+  "id": "workflow-1790602514078143757",
+  "name": "qa-a3-t1b-1790602513",
+  "description": "QA T1b port mutex negative path",
+  "nodes": [
+    {
+      "type": "generate",
+      "provider": "minimax-h3",
+      "key": "generate-minimax-h3-1",
+      "config": {},
+      "position": {
+        "x": 80,
+        "y": 80
+      }
+    },
+    {
+      "type": "generate",
+      "provider": "script",
+      "key": "generate-script-2",
+      "config": {
+        "instruction": "夜景测试"
+      },
+      "position": {
+        "x": 320,
+        "y": 80
+      }
+    }
+  ],
+  "owner_id": "usr-1787815793337170547",
+  "schema_version": 0,
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
+}
