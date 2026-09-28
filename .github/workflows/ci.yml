@@ -69,6 +69,7 @@ jobs:
         with:
           repository: petaverse-cloud/pv-beehive-web
           path: pv-beehive-web-companion
+          token: ${{ secrets.BEEHIVE_WEB_READ_TOKEN }}
       - name: Symlink companion to planner-layout path
         run: |
           mkdir -p "$GITHUB_WORKSPACE/.."
