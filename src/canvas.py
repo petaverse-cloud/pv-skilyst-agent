@@ -102,6 +102,16 @@ def _find_node(workflow: dict, key: str) -> dict:
                      f"(existing keys: {', '.join(keys) or 'none'})")
 
 
+def _list_field(holder: dict, name: str) -> list:
+    """A list-valued config field, normalized: core serializes empties as
+    null, so `setdefault` alone can hand back a None that .append() dies on."""
+    value = holder.setdefault("config", {}).get(name)
+    if not isinstance(value, list):
+        value = []
+        holder["config"][name] = value
+    return value
+
+
 def _material_kind(workflow: dict, node: dict) -> str:
     """What kind of media a material node carries: its own config declaration
     first, then the media-pool entry it points at."""
@@ -339,7 +349,12 @@ class CanvasOps:
         created: dict = {}
 
         def mutate(wf: dict) -> None:
-            nodes = wf.setdefault("nodes", [])
+            # core serializes an empty blueprint as `"nodes": null` -- setdefault
+            # alone returns that None, so normalize before appending.
+            nodes = wf.get("nodes")
+            if not isinstance(nodes, list):
+                nodes = []
+                wf["nodes"] = nodes
             node = {"type": node_type, "provider": provider,
                     "key": key or f"{node_type}-{provider}-{len(nodes) + 1}",
                     "config": copy.deepcopy(config or {}),
@@ -392,11 +407,14 @@ class CanvasOps:
                         f"{from_key!r}; valid image ports: {', '.join(VALID_IMAGE_PORTS)}. "
                         f"Call query_schema first -- the platform rejects any other port.")
             if is_material:
-                deps = to_node.setdefault("config", {}).setdefault("material_deps", [])
+                deps = _list_field(to_node, "material_deps")
                 port = input_port or ""
                 if not any(d.get("key") == from_key and d.get("input_port") == port for d in deps):
                     deps.append({"key": from_key, "input_port": port})
-            depends = to_node.setdefault("depends_on", [])
+            depends = to_node.get("depends_on")
+            if not isinstance(depends, list):
+                depends = []
+                to_node["depends_on"] = depends
             if from_key not in depends:
                 depends.append(from_key)
 
