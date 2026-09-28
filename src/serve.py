@@ -157,6 +157,10 @@ class ServeOptions:
     max_jobs: int | None = None
     allow_fallback: bool = False
     orphan_guard: bool = False
+    # Extra CORS origins beyond the webview defaults (repeatable --cors-origin):
+    # the web console workbench drives a local runtime directly, so its dev
+    # origin must be allowlisted without opening CORS to the world.
+    cors_origins: tuple[str, ...] = ()
 
 
 class RuntimeAPI:
@@ -170,26 +174,6 @@ class RuntimeAPI:
     therefore fails on the route that actually needs it, loudly, with the file
     and variable it looked at.
     """
-
-    def __init__(self, cfg: RuntimeConfig, *, resolve_kwargs: dict | None = None,
-                 skill: str | None = None, dry_run: bool = True, max_turns: int = 8,
-                 max_jobs: int | None = None, allow_fallback: bool = False,
-                 client_factory: Callable | None = None, opener: Callable = open_run,
-                 host: str = DEFAULT_HOST, port: int = DEFAULT_PORT):
-        self.cfg = cfg
-        self.resolve_kwargs = dict(resolve_kwargs or {})
-        self.skill = skill
-        self.dry_run = dry_run
-        self.max_turns = max_turns
-        # A GUI client cannot pass --max-jobs, so the server's budget comes from the
-        # operator's configuration (SKILYST_MAX_JOBS) or the interactive default.
-        self.max_jobs = max_jobs if max_jobs is not None else cfg.job_budget(interactive=True)
-        self.allow_fallback = allow_fallback
-        self.client_factory = client_factory
-        self.opener = opener
-        self.host = host
-        self.port = port
-        self.started_at = time.time()
 
     # -- configuration ------------------------------------------------------
     def _resolve(self, *, llm: bool, beehive: bool) -> RuntimeConfig:
@@ -342,6 +326,74 @@ class RuntimeAPI:
     def _open(self, cfg: RuntimeConfig, **kwargs):
         return self.opener(cfg, client_factory=self.client_factory, **kwargs)
 
+    # -- S4 quote UX: pending paid confirmations ---------------------------
+    # A confirm-gated run blocks inside its tool call until the shell answers
+    # POST /confirm/{session_id} {approve: bool} or the timeout lapses. One
+    # gate per session at a time: the loop is single-threaded per message, so
+    # two concurrent gates for one session cannot happen by construction.
+    CONFIRM_TIMEOUT_S = 300
+
+    def __init__(self, cfg: RuntimeConfig, *, resolve_kwargs: dict | None = None,
+                 skill: str | None = None, dry_run: bool = True, max_turns: int = 8,
+                 max_jobs: int | None = None, allow_fallback: bool = False,
+                 client_factory: Callable | None = None, opener: Callable = open_run,
+                 host: str = DEFAULT_HOST, port: int = DEFAULT_PORT):
+        self.cfg = cfg
+        self.resolve_kwargs = dict(resolve_kwargs or {})
+        self.skill = skill
+        self.dry_run = dry_run
+        self.max_turns = max_turns
+        # A GUI client cannot pass --max-jobs, so the server's budget comes from the
+        # operator's configuration (SKILYST_MAX_JOBS) or the interactive default.
+        self.max_jobs = max_jobs if max_jobs is not None else cfg.job_budget(interactive=True)
+        self.allow_fallback = allow_fallback
+        self.client_factory = client_factory
+        self.opener = opener
+        self.host = host
+        self.port = port
+        self.started_at = time.time()
+        # S4 paid-confirmation gates. Keyed by session id; a run whose session
+        # does not exist yet registers under "" and re-keys once the run
+        # context knows the real id (single-user loopback runtime: at most one
+        # in-flight message, so a bare "" slot cannot collide).
+        self._confirm_gates: dict[str, dict] = {}
+
+    def resolve_confirm(self, session_id: str, approve: bool) -> dict:
+        """Answer the session's pending paid-confirmation gate, if any."""
+        gate = self._confirm_gates.get(session_id)
+        if gate is None:
+            raise NotFound(f"no pending paid confirmation for session {session_id!r}")
+        gate["approved"] = bool(approve)
+        gate["event"].set()
+        return {"session_id": session_id, "resolved": True, "approved": bool(approve)}
+
+    def pending_confirms(self) -> dict:
+        return {sid: gate["quote"] for sid, gate in self._confirm_gates.items()}
+
+    def _make_paid_confirm(self, session_id: str, emit: Callable[[str, dict], None] | None,
+                           on_note: Callable[[str], None]) -> Callable[[dict], bool]:
+        """The confirm callback a `confirm_paid: true` message runs with.
+
+        Emits an SSE `confirm_request` carrying the quote view, then blocks on
+        the session's gate until POST /confirm resolves it or the timeout
+        lapses (a lapsed gate counts as declined -- money needs a yes, never
+        a silence).
+        """
+        def confirm(quote: dict) -> bool:
+            gate = {"event": threading.Event(), "quote": quote, "approved": False}
+            self._confirm_gates[session_id] = gate
+            try:
+                on_note(f"paid confirm: waiting for the user ({quote.get('total_hold_display')} USD hold)")
+                if emit:
+                    emit("confirm_request", {"session_id": session_id, "quote": quote})
+                decided = gate["event"].wait(self.CONFIRM_TIMEOUT_S)
+                if not decided:
+                    on_note("paid confirm: timed out -- declining (nothing charged)")
+                return bool(gate["approved"]) and decided
+            finally:
+                self._confirm_gates.pop(session_id, None)
+        return confirm
+
     def message(self, payload: dict, emit: Callable[[str, dict], None] | None = None) -> dict:
         if not isinstance(payload, dict):
             raise BadRequest("body must be a JSON object")
@@ -379,10 +431,26 @@ class RuntimeAPI:
             if emit:
                 emit("delta", {"text": chunk})
 
+        # S4 quote UX: `confirm_paid: true` installs the blocking confirm gate
+        # (paid canvas submissions stop at the quote until the shell answers
+        # POST /confirm/{session_id}). Opt-in per message: a caller that
+        # confirms in conversation keeps the S3 flow untouched.
+        confirm_paid = bool(payload.get("confirm_paid")) and not dry_run
+        paid_confirm = self._make_paid_confirm(session_id or "", emit, on_event) \
+            if (confirm_paid and emit) else None
+
         ctx = self._open(cfg, skill_id=skill_id, session_id=session_id, title=text[:60],
                          dry_run=dry_run, max_turns=max_turns,
                          allow_fallback=self.allow_fallback, max_jobs=self.max_jobs,
-                         stream=stream, on_event=on_event, on_delta=on_delta)
+                         stream=stream, on_event=on_event, on_delta=on_delta,
+                         paid_confirm=paid_confirm)
+        if paid_confirm is not None:
+            # re-key the gate onto the real session id (a fresh session's id
+            # only exists once the run context created it) so the shell can
+            # answer POST /confirm/<real-id>.
+            gate = self._confirm_gates.pop("", None)
+            if gate is not None:
+                self._confirm_gates[ctx.session.session_id] = gate
         if ctx.preflight is not None and not ctx.preflight.runnable:
             raise NotRunnable("node pre-flight failed -- the skill's required nodes are not runnable "
                               "here", preflight_payload(ctx.preflight))
@@ -557,6 +625,12 @@ def make_handler(api: RuntimeAPI, token: str, allowed_origins: tuple[str, ...],
                 elif path == "/shutdown":
                     self._ok({"stopping": True})
                     threading.Thread(target=self.server.shutdown, daemon=True).start()
+                elif path.startswith("/confirm/"):
+                    # S4 quote UX: resolve (or decline) a session's pending
+                    # paid-confirmation gate.
+                    body = self._parse_json(raw)
+                    session_id = path.split("/", 2)[2]
+                    self._ok(api.resolve_confirm(session_id, bool(body.get("approve"))))
                 else:
                     raise NotFound(f"no route for POST {path}")
             except Exception as exc:                        # noqa: BLE001
@@ -618,8 +692,9 @@ def serve(cfg: RuntimeConfig, options: ServeOptions, *, resolve_kwargs: dict | N
                      max_turns=options.max_turns, max_jobs=options.max_jobs,
                      allow_fallback=options.allow_fallback, client_factory=client_factory,
                      host=options.host, port=options.port)
+    origins = tuple(dict.fromkeys(WEBVIEW_ORIGINS + tuple(options.cors_origins)))
     httpd = server_factory((options.host, options.port),
-                           make_handler(api, token, allowed_origins, log))
+                           make_handler(api, token, origins, log))
     api.port = httpd.server_address[1]
     if options.token_file:
         path = Path(options.token_file).expanduser()

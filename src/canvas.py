@@ -47,7 +47,7 @@ NODE_ID_LIST_LIMIT = 40
 # always f"generate:{provider}").
 IMAGE_MODELS = {"gpt-image-2": "gpt-image-2"}
 
-__all__ = ["CanvasOps", "LockHeldError", "VALID_IMAGE_PORTS", "IMAGE_MODELS"]
+__all__ = ["CanvasOps", "LockHeldError", "PaidConfirmDeclined", "VALID_IMAGE_PORTS", "IMAGE_MODELS"]
 
 
 class LockHeldError(RuntimeError):
@@ -65,6 +65,15 @@ class LockHeldError(RuntimeError):
                   f"kind={holder.get('kind')!r} id={holder.get('id')!r} "
                   f"acquired_at={self.held_by.get('acquired_at')!r}")
         super().__init__(f"画板正被占用 ({detail})")
+
+
+class PaidConfirmDeclined(RuntimeError):
+    """The user (or a confirm timeout) refused a paid submission mid-run.
+
+    Raised inside CanvasOps when the injected `paid_confirm` callback returns
+    False after a quote: nothing was submitted and nothing was charged. The
+    agent loop reports it to the model as a tool error.
+    """
 
 
 # -- pure helpers -------------------------------------------------------------
@@ -174,25 +183,31 @@ def _port_analysis(input_schema: dict) -> dict:
 
 
 class CanvasOps:
-    """The ten canvas tools plus the lock action pair they are wrapped in.
+    """The canvas tools plus the lock action pair they are wrapped in.
 
     `client` is a scope-gated `BeehiveClient` (the canvas routes need the
     workflows:read / workflows:write scopes granted to the skill token).
     `session_id` is the agent session id and doubles as the lock holder id:
     the lock contract's crash recovery checks holder liveness, so the holder
     must be the thing that actually dies when the agent dies.
+    `paid_confirm` (optional, S4 quote UX): called with the quote view after
+    a paid submission is quoted but before it exists; returning False aborts
+    the submission with PaidConfirmDeclined. None = quote-first only (the
+    S3 behaviour: report the quote, submit unconditionally).
     """
 
-    def __init__(self, client, session_id: str):
+    def __init__(self, client, session_id: str,
+                 paid_confirm: Callable[[dict], bool] | None = None):
         self.client = client
         self.session_id = session_id
+        self.paid_confirm = paid_confirm
 
     # -- transport ----------------------------------------------------------
 
     def _call(self, method: str, path: str, body: dict | None = None,
-              ok: tuple[int, ...] = (200, 201)) -> dict:
+              ok: tuple[int, ...] = (200, 201), headers: dict | None = None) -> dict:
         """request + payload unwrap, refusing loudly on unexpected status."""
-        status, resp = self.client.request(method, path, body)
+        status, resp = self.client.request(method, path, body, headers=headers)
         payload = resp.get("payload", resp) if isinstance(resp, dict) else resp
         if status not in ok:
             raise BeehiveError(f"{method.upper()} {path} failed: HTTP {status} "
@@ -283,15 +298,16 @@ class CanvasOps:
             return self._put_mutated(workflow_id, mutate, workflow)
 
     def _put_mutated(self, workflow_id: str, mutate: Callable[[dict], None],
-                     workflow: dict | None = None) -> dict:
+                     workflow: dict | None = None, pool_replace: bool = False) -> dict:
         current = workflow
         for attempt in (0, 1):
             if current is None:
                 current = self.get_workflow(workflow_id)
             mutated = copy.deepcopy(current)
             mutate(mutated)
+            headers = {"X-Beehive-Pool-Replace": "1"} if pool_replace else None
             status, resp = self.client.request(
-                "PUT", f"/api/v1/workflows/{workflow_id}", _put_body(mutated))
+                "PUT", f"/api/v1/workflows/{workflow_id}", _put_body(mutated), headers=headers)
             if status in (200, 201):
                 return resp.get("payload", resp) if isinstance(resp, dict) else resp
             if status == 409 and attempt == 0:
@@ -481,6 +497,17 @@ class CanvasOps:
             quote = self._call("POST", "/api/v1/billing/quote", {"nodes": nodes})
             result["quoted"] = True
             result["quote"] = _quote_view(quote)
+            # S4 quote UX: a paid submission with a material estimate is gated
+            # on the user's explicit go-ahead when a confirm callback is
+            # installed. The quote has already been fetched (free); only the
+            # submission costs money, and only the submission is gated.
+            hold = (quote or {}).get("total_hold") or 0
+            if self.paid_confirm is not None and int(hold) > 0:
+                if not self.paid_confirm(result["quote"]):
+                    raise PaidConfirmDeclined(
+                        f"paid submission declined before submit (quote "
+                        f"hold={_micro_to_usd(hold)} USD, {len(nodes)} node(s)) -- nothing "
+                        f"was charged; ask the user what to change before trying again")
         body = {"nodes": nodes, "workflow_id": workflow_id}
         if execution_mode:
             body["execution_mode"] = execution_mode
@@ -516,12 +543,41 @@ class CanvasOps:
 
     # -- 10/11. media pool -------------------------------------------------------------
 
+    # A pool entry's reference count is the number of blueprint material nodes
+    # pointing at it (config.pool_entry_id). Computed on read from the same
+    # workflow row the entries came from -- no server-side counter exists, and
+    # a derived count can never drift from the blueprint.
+    @staticmethod
+    def _pool_refs(nodes: list[dict]) -> dict[str, list[str]]:
+        refs: dict[str, list[str]] = {}
+        for node in nodes or []:
+            if node.get("type") != "material":
+                continue
+            entry_id = (node.get("config") or {}).get("pool_entry_id")
+            if entry_id:
+                refs.setdefault(str(entry_id), []).append(str(node.get("key") or ""))
+        return refs
+
     def list_media(self, workflow_id: str) -> dict:
-        """The workflow's media pool entries (id, name, kind, url, thumb)."""
+        """The workflow's media pool entries with reference info.
+
+        Each entry carries an `index` (1-based position in the pool, the
+        number "用池里第 3 张" refers to), the fields the UI renders, and
+        `referenced_by` — the material node keys wiring this entry onto the
+        board (the reference count; entries referenced by material nodes are
+        refused by the delete endpoint, so the agent sees the collision
+        BEFORE choosing to delete).
+        """
         workflow = self.get_workflow(workflow_id)
+        refs = self._pool_refs(workflow.get("nodes") or [])
         fields = ("id", "name", "kind", "url", "thumb")
-        return {"entries": [{field: entry.get(field) for field in fields}
-                            for entry in workflow.get("media_pool") or []]}
+        entries = []
+        for position, entry in enumerate(workflow.get("media_pool") or [], start=1):
+            row = {field: entry.get(field) for field in fields}
+            row["index"] = position
+            row["referenced_by"] = refs.get(str(entry.get("id")), [])
+            entries.append(row)
+        return {"entries": entries}
 
     def add_media(self, workflow_id: str, url: str, name: str, kind: str = "image",
                   mime: str = "image/png") -> dict:
@@ -539,3 +595,64 @@ class CanvasOps:
             pool = self.get_workflow(workflow_id).get("media_pool") or []
         return {"added": next((e for e in pool if e.get("url") == url), None),
                 "entries": pool}
+
+    # -- 12/13. media pool lifecycle (S4 FR-5) -----------------------------------
+
+    def rename_media(self, workflow_id: str, entry_id: str, name: str) -> dict:
+        """Rename one pool entry.
+
+        The core exposes no per-entry rename endpoint; the designed pool-aware
+        write path is a wholesale PUT with `X-Beehive-Pool-Replace: 1`
+        (handleUpdateWorkflow). Renaming therefore runs under the board lock,
+        re-reads the pool, patches exactly the one entry's name, and replaces
+        the pool wholesale -- a concurrent auto-capture lost to the write is
+        recovered by the 409 retry path (re-GET re-apply), same as any other
+        blueprint write.
+        """
+        if not str(name).strip():
+            raise ValueError("name must be a non-empty string")
+
+        def mutate(wf: dict) -> None:
+            pool = wf.setdefault("media_pool", [])
+            for entry in pool:
+                if entry.get("id") == entry_id:
+                    entry["name"] = str(name).strip()
+                    return
+            ids = [str(e.get("id")) for e in pool]
+            raise ValueError(f"no media pool entry {entry_id!r} in workflow "
+                             f"{workflow_id!r} (pool ids: {', '.join(ids) or 'none'})")
+
+        # The pool mutation must ride the SAME lock window as the read it is
+        # derived from: lock -> read -> mutate -> PUT(replace) -> unlock. A
+        # 409 from the optimistic-concurrency check surfaces loudly (the lock
+        # does not serialize against the web console's autosave, only against
+        # other lock holders -- the retry decision stays with the caller).
+        with self.locked(workflow_id) as workflow:
+            mutated = copy.deepcopy(workflow)
+            mutate(mutated)
+            body = _put_body(mutated)
+            # _put_body drops media_pool to preserve it; a rename MUST send
+            # the (patched) pool back, so re-attach it here.
+            body["media_pool"] = mutated.get("media_pool")
+            status, resp = self.client.request(
+                "PUT", f"/api/v1/workflows/{workflow_id}", body,
+                headers={"X-Beehive-Pool-Replace": "1"})
+            if status not in (200, 201):
+                raise BeehiveError(f"PUT /api/v1/workflows/{workflow_id} failed: "
+                                   f"HTTP {status} {json.dumps(resp, ensure_ascii=False)[:300]}")
+        return {"renamed": {"id": entry_id, "name": str(name).strip()},
+                "workflow": resp.get("payload", resp) if isinstance(resp, dict) else resp}
+
+    def delete_media(self, workflow_id: str, entry_id: str) -> dict:
+        """Remove one pool entry.
+
+        The server refuses (409) an entry still wired into a material node and
+        names the referencing keys -- surfaced verbatim so the agent can offer
+        to remove or rewire the nodes instead of retrying.
+        """
+        payload = self._call("DELETE", f"/api/v1/workflows/{workflow_id}/media-pool/{entry_id}",
+                             None, ok=(200, 200))
+        pool = payload.get("media_pool") if isinstance(payload, dict) else None
+        return {"deleted": entry_id,
+                "entries": pool if pool is not None
+                else self.get_workflow(workflow_id).get("media_pool") or []}

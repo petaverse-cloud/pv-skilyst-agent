@@ -38,8 +38,10 @@ one, and *say which one you picked* before editing.
 | `canvas_submit_node_job` | submit ONE node as a job, quote-first | workflow_id, node_type, provider, config | running a single node |
 | `canvas_run_workflow` | submit the whole board as one job, quote-first | workflow_id | "跑一下这个流程" |
 | `canvas_generate_image` | submit a PAID gpt-image-2 image job | workflow_id, prompt, size? | "生成一张参考图" |
-| `canvas_list_media` | the board's media pool entries | workflow_id | checking what is available |
+| `canvas_list_media` | the board's media pool entries (with `index` and `referenced_by`) | workflow_id | checking what is available; resolving "第 3 张"; before deleting |
 | `canvas_add_media` | add an upload-origin pool entry by URL | workflow_id, url, name | bringing an external image onto the board |
+| `canvas_rename_media` | rename one pool entry (locked, wholesale pool replace) | workflow_id, entry_id, name | "把参考图改名为钟馗立绘" |
+| `canvas_delete_media` | remove one pool entry (409 if referenced) | workflow_id, entry_id | "删掉池里第 2 张" (check referenced_by first) |
 
 Node types you will meet: `process` (script/LLM nodes, e.g.
 `process:script`), `generate` (minimax-h3, gpt-image-2, ...), `material` (a
@@ -91,6 +93,14 @@ estimate is material, state the USD figure to the user and get the go-ahead
 — the wallet is charged on submit (held at the quote's upper bound, settled
 at measured usage).
 
+When the caller started the run with `confirm_paid` (the desktop and web
+workbenches do), a material quote PAUSES the tool: the shell shows a
+confirmation card (estimate + wallet balance + confirm/cancel) and the tool
+blocks until the user answers. A decline (or a timeout) raises
+`PaidConfirmDeclined` — nothing was charged; ask the user what to change
+instead of resubmitting. In that mode you do NOT need to ask in conversation
+first — the card IS the question.
+
 ## Failure self-correction (失败自修正)
 
 | failure | what to do |
@@ -126,6 +136,34 @@ Material nodes are identified by `config.pool_entry_id`; the runtime wires
 them into the consumer's `material_deps` and `depends_on`, and the server
 compiles that to `images[]` + `image_roles[]` (or `video_refs`/`audio_refs`)
 at submit time.
+
+## Media pool lifecycle (池内资产管理)
+
+The pool is the board's asset shelf — full lifecycle:
+
+- **what is there**: `canvas_list_media` returns every entry with an `index`
+  (its 1-based position), render fields, and `referenced_by` (the material
+  node keys wiring it onto the board).
+- **input references ("用池里第 3 张")**: list the media, resolve the ordinal
+  to `entries[index-1]`, then wire it — create a material node pointing at
+  that entry's `id` and connect it to the consumer:
+
+  ```
+  canvas_list_media(workflow_id)                    -> entries[2] = {id: mp-3, kind: image, ...}
+  canvas_create_node(workflow_id, 'material', '',
+                     config={pool_entry_id: 'mp-3'}) -> material node key
+  canvas_connect_ports(workflow_id, from_key=<material key>,
+                       to_key=<consumer key>, input_port=<port from query_schema>)
+  ```
+
+  Never guess an entry id from a name — names collide; list first, match on
+  index or exact id.
+- **rename**: `canvas_rename_media(workflow_id, entry_id, name)` — locked
+  write, the platform's designed pool-replacement path.
+- **delete**: `canvas_delete_media(workflow_id, entry_id)` — the platform
+  refuses (409) an entry still referenced by a material node and names the
+  referencing keys; offer to remove or rewire those nodes first. Always
+  `canvas_list_media` and check `referenced_by` before deleting.
 
 ## Board delta awareness
 

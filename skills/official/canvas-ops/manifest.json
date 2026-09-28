@@ -4,7 +4,7 @@
   "display_name": "画板操作（节点 / 连线 / 媒体池 / 任务）",
   "description": "Drive the A3 canvas workbench through conversation — create nodes, write configs, wire ports, generate media, run jobs. Use when the user wants to build or edit a workflow board by talking to it. Covers lock discipline, the port-matching iron rule, quote-first submissions, and failure self-correction.",
   "kind": "official-bundle",
-  "content_digest": "sha256:f9cac603776ce8ab7384eda079182742ff4ceb12de18d91d1d165ab60daf518a",
+  "content_digest": "sha256:ac69b2a50ae90c2eb08d4181b82f264eb918644183688b2db4af8a19f588f9fe",
   "upstream": null,
   "fork_depth": 0,
   "supply_chain": {
@@ -23,7 +23,7 @@
         "key_id": "skilyst-platform",
         "algo": "ed25519",
         "sig": "platform-signature-pending",
-        "digest": "sha256:f9cac603776ce8ab7384eda079182742ff4ceb12de18d91d1d165ab60daf518a"
+        "digest": "sha256:ac69b2a50ae90c2eb08d4181b82f264eb918644183688b2db4af8a19f588f9fe"
       }
     ]
   },

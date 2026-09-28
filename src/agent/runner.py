@@ -75,7 +75,8 @@ def open_run(cfg: RuntimeConfig, *, skill_id: str | None = None, session_id: str
              allow_fallback: bool = False, max_jobs: int = 1,
              on_event: Callable[[str], None] | None = None,
              on_delta: Callable[[str], None] | None = None,
-             client_factory: Callable[[LLMConfig], ChatClient] | None = None) -> RunContext:
+             client_factory: Callable[[LLMConfig], ChatClient] | None = None,
+             paid_confirm: Callable[[dict], bool] | None = None) -> RunContext:
     """Build the run for one user turn.
 
     ``max_jobs`` is a spend guard carried over from the tool registry: a run gets
@@ -127,7 +128,8 @@ def open_run(cfg: RuntimeConfig, *, skill_id: str | None = None, session_id: str
     registry = build_registry(store, client, active, gate, cfg.workspace_dir, dry_run=dry_run,
                               on_event=note, max_jobs=max_jobs,
                               node_schemas=preflight.node_schemas if preflight else None,
-                              session_id=session.session_id, on_action=record_action)
+                              session_id=session.session_id, on_action=record_action,
+                              paid_confirm=paid_confirm)
     prompt_ctx = PromptContext(skills=skills, active_skill=active, workspace=str(cfg.workspace_dir),
                                model=cfg.llm.model, platform=cfg.beehive.base_url)
     loop = AgentLoop(ModelRouter(cfg.llm, client_factory=client_factory), registry, session, prompt_ctx,
