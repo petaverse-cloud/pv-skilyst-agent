@@ -1,7 +1,9 @@
 """Issue #8: login credentials (AgentScopes AK/SK from the auth store) take
 precedence over dev env credentials in resolve()."""
 
+import os
 import sys
+import tempfile
 import time
 import unittest
 from pathlib import Path
@@ -22,6 +24,22 @@ class _TmpStore(TokenStore):
 
 
 class LoginCredentialLayerTests(unittest.TestCase):
+    def setUp(self):
+        # dev-env layering is process-env-first: an e2e shell that exports
+        # BEEHIVE_PLATFORM_* would leak into these tests and flip which
+        # credential "wins". Sandbox them so the env file under test is the
+        # only source (same pattern as ConfigTests in test_platform.py).
+        self.saved = {k: os.environ.pop(k, None) for k
+                      in ("BEEHIVE_PLATFORM_AK", "BEEHIVE_PLATFORM_SK", "BEEHIVE_API",
+                          "SKILYST_DEV_PROFILE", "SKILYST_ENV_FILE")}
+        self.addCleanup(self._restore)
+
+    def _restore(self):
+        for key, value in self.saved.items():
+            os.environ.pop(key, None)
+            if value is not None:
+                os.environ[key] = value
+
     def _login(self, tmpdir: Path) -> AuthFlow:
         store = _TmpStore(tmpdir)
         store.save(TokenRecord(
@@ -31,7 +49,6 @@ class LoginCredentialLayerTests(unittest.TestCase):
         return AuthFlow(store=store, mock=True)
 
     def test_logged_in_key_wins_over_dev_env(self):
-        import tempfile, os
         with tempfile.TemporaryDirectory() as d:
             tmp = Path(d)
             self._login(tmp)
@@ -48,7 +65,6 @@ class LoginCredentialLayerTests(unittest.TestCase):
                 os.environ.pop("SKILYST_AUTH_STORE_HOME", None)
 
     def test_not_logged_in_falls_back_to_dev_env(self):
-        import tempfile, os
         with tempfile.TemporaryDirectory() as d:
             tmp = Path(d)
             # no login record — dev env must be used as before
