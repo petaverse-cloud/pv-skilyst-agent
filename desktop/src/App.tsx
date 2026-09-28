@@ -85,6 +85,14 @@ export default function App() {
     void connect();
   }, [connect]);
 
+  // Deep link: ?session=<id> opens that session once the runtime is connected
+  // (openSession needs the runtime's base URL; firing on mount races connect()).
+  useEffect(() => {
+    const target = new URLSearchParams(window.location.search).get("session");
+    if (target && info) void openSession(target);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [info]);
+
   const handleLogout = useCallback(async () => {
     try {
       await postAuthLogout();

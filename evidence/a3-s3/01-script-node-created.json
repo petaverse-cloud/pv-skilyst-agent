@@ -1,0 +1,20 @@
+{
+  "workflow_id": "workflow-1790586733426603373",
+  "name": "a3-s3-e2e-d1fe3a",
+  "nodes": [
+    {
+      "type": "generate",
+      "provider": "script",
+      "key": "script-1",
+      "config": {
+        "instruction": "钟馗夜巡，15 秒短剧，钟馗深夜巡城遇一小鬼，幽默打斗",
+        "max_output_tokens": 2048
+      },
+      "position": {
+        "x": 80,
+        "y": 80
+      }
+    }
+  ],
+  "media_pool_len": 0
+}

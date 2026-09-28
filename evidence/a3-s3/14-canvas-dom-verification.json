@@ -1,0 +1,20 @@
+{
+  "url": "http://localhost:1420/?session=20260928-173117-affe89",
+  "canvas": {
+    "react_flow_nodes": 6,
+    "react_flow_edges": 3,
+    "node_texts": [
+      "generate:script (AI Script/Prompt Writer)",
+      "generate:minimax-h3",
+      "material (image, pool entry job-1790587211012)",
+      "process:mux (title-mux-1)",
+      "process:mux (outro-mux-1)",
+      "preview (minimax-h3)"
+    ]
+  },
+  "conversation": {
+    "action_cards_rendered": 5,
+    "expand_toggle_works": true,
+    "locate_click_switches_to_canvas": true
+  }
+}

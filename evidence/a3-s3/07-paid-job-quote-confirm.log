@@ -1,0 +1,17 @@
+minimax-1 config: {"duration": 15, "prompt": "钟馗夜巡短剧，中国风神话，红袍钟馗夜晚古城巡街，幽默风格", "ratio": "9:16", "resolution": "768P"}
+QUOTE: {
+ "nodes": [
+  {
+   "node_type": "generate",
+   "provider": "minimax-h3",
+   "key": "minimax-1",
+   "priced": true,
+   "model": "per_second",
+   "unit_price_usd": 69000,
+   "qty_estimate": 15,
+   "amount_hold": 1035000
+  }
+ ],
+ "total_hold": 1035000,
+ "total_estimate": 1035000
+}

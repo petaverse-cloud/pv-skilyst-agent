@@ -216,6 +216,14 @@ class AuthFlow:
         the one-time code from the browser redirect."""
         self.state = AuthState.EXCHANGING
         try:
+            # Race guard: the login thread sets state=AWAITING_BROWSER *before*
+            # it reaches _await_exchange (which creates _exchange_event). A
+            # caller that reacts to the state (serve's mock driver does, within
+            # milliseconds) can arrive here first -- wait briefly for the
+            # waiter to exist instead of crashing on a missing attribute.
+            deadline = time.time() + 5
+            while not hasattr(self, "_exchange_event") and time.time() < deadline:
+                time.sleep(0.01)
             if self.mock:
                 _ak = "ak-mock-" + secrets.token_hex(8)
                 _sk = "sk-mock-" + secrets.token_hex(16)

@@ -1,0 +1,13 @@
+SUBMITTED: {"job_id": "job-1790587452701-6dd637d43ee7d1a4", "status": "waiting", "quoted": true}
+QUOTE: {"total_estimate_usd": null, "total_hold": 1035000, "total_estimate_usd_display": null, "total_hold_display": 1.035, "nodes": [{"node_type": "generate", "provider": "minimax-h3", "key": "minimax-1", "priced": true, "model": "per_second", "unit_price_usd": 69000, "qty_estimate": 15, "amount_hold": 1035000}]}
+... running None
+... running None
+... running None
+... running None
+... running None
+... running None
+... running None
+... running None
+... running None
+... running None
+... running None

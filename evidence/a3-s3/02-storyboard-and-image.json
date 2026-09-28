@@ -1,0 +1,17 @@
+{
+  "workflow_id": "workflow-1790586733426603373",
+  "script_instruction_len": 1039,
+  "nodes": [
+    "script-1"
+  ],
+  "jobs": [
+    {
+      "id": "job-1790586997892-1e25c3bd18bc4f8e",
+      "status": "failed",
+      "nodes": [
+        null
+      ]
+    }
+  ],
+  "media_pool": []
+}

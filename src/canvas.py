@@ -447,11 +447,20 @@ class CanvasOps:
     def submit_node_job(self, workflow_id: str, node_type: str, provider: str, config: dict,
                         key: str | None = None, quote_first: bool = True) -> dict:
         """Submit one node as a job (quote first by default: a paid submission
-        is estimated before it exists, never after)."""
+        is estimated before it exists, never after).
+
+        ``execution_mode: "node"`` is load-bearing: with a workflow_id and the
+        default "workflow" mode the server MERGES the blueprint's sibling nodes
+        into the job (mergeConfigs template semantics) -- a single-node run
+        would inherit every sibling's config and the wrong node's provider.
+        The "node" mode executes exactly the caller's node (BEE-151), matched
+        by key against the stored workflow when a key is given.
+        """
         node = {"type": node_type, "provider": provider, "config": config or {}}
         if key:
             node["key"] = key
-        return self._submit_nodes(workflow_id, [node], quote_first=quote_first)
+        return self._submit_nodes(workflow_id, [node], quote_first=quote_first,
+                                  execution_mode="node")
 
     def run_workflow(self, workflow_id: str, quote_first: bool = True) -> dict:
         """Submit every node of the blueprint as one job, verbatim -- the
@@ -465,14 +474,20 @@ class CanvasOps:
         result["node_count"] = len(nodes)
         return result
 
-    def _submit_nodes(self, workflow_id: str, nodes: list[dict], quote_first: bool = True) -> dict:
+    def _submit_nodes(self, workflow_id: str, nodes: list[dict], quote_first: bool = True,
+                      execution_mode: str = "workflow") -> dict:
         result: dict = {"quoted": False}
         if quote_first:
             quote = self._call("POST", "/api/v1/billing/quote", {"nodes": nodes})
             result["quoted"] = True
             result["quote"] = _quote_view(quote)
-        job = self._call("POST", "/api/v1/jobs", {"nodes": nodes, "workflow_id": workflow_id})
-        result["job_id"] = job.get("id")
+        body = {"nodes": nodes, "workflow_id": workflow_id}
+        if execution_mode:
+            body["execution_mode"] = execution_mode
+        job = self._call("POST", "/api/v1/jobs", body)
+        # The create endpoint answers {job_id, status, is_new} (unlike GET
+        # /jobs/{id}, whose rows carry `id`) -- accept both spellings.
+        result["job_id"] = job.get("job_id") or job.get("id")
         result["status"] = job.get("status")
         return result
 

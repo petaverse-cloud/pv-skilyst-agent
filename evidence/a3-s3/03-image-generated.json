@@ -1,0 +1,10 @@
+{
+  "media_pool": [
+    {
+      "id": "mp-job-1790587211012-232af376ed278a74-node-job-1790587211012-232af376ed278a74-0-image",
+      "kind": "image",
+      "origin": "generated",
+      "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790587211012-232af376ed278a74/node-job-1790"
+    }
+  ]
+}

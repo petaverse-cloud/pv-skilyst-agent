@@ -1,0 +1,12 @@
+{
+  "job_id": "job-1790587452701-6dd637d43ee7d1a4",
+  "status": "completed",
+  "workflow_id": "workflow-1790586733426603373",
+  "video_url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790587452701-6dd637d43ee7d1a4/node-job-1790587452701-6dd637d43ee7d1a4-minimax-1-1790587739888.mp4",
+  "quote_total_hold_usd": 1.035,
+  "media_pool_count_after": 2,
+  "media_pool_kinds": [
+    "image",
+    "video"
+  ]
+}

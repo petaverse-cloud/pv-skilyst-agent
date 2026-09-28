@@ -26,7 +26,7 @@ from skills.store import PreflightReport, preflight_nodes
 
 from .loop import AgentLoop, LoopConfig, LoopResult
 from .prompt import PromptContext
-from .tools import build_registry
+from .tools import CANVAS_SKILL_ID, build_registry
 
 
 def skill_store(cfg: RuntimeConfig, verify: bool = True) -> SkillStore:
@@ -93,9 +93,15 @@ def open_run(cfg: RuntimeConfig, *, skill_id: str | None = None, session_id: str
     gate = PermissionGate(active.dir, active.permission, workspace=cfg.workspace_dir) if active else None
     client = None
     preflight: PreflightReport | None = None
-    if active is not None and active.requires_nodes:
+    # A skill gets a platform client when it needs one of two ways: it declares
+    # node requirements (preflight gates them against the live registry), or it
+    # is the canvas skill — methodology-only, no node requirements, but its
+    # board tools need the credential (gated on permission.secrets in the
+    # registry). Without this branch canvas-ops would register zero tools.
+    if active is not None and (active.requires_nodes or active.skill_id == CANVAS_SKILL_ID):
         client = gated_client(cfg)
-        preflight = preflight_nodes(active, client, allow_fallback=allow_fallback)
+        if active.requires_nodes:
+            preflight = preflight_nodes(active, client, allow_fallback=allow_fallback)
 
     cfg.workspace_dir.mkdir(parents=True, exist_ok=True)
     sessions = SessionStore(cfg.session_dir)

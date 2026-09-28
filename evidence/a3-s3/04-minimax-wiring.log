@@ -1,0 +1,29 @@
+STOP: completed ERR: 
+ANSWER: 结构已完成，未提交任何付费任务。报告如下：
+
+## 1. `generate:minimax-h3` — `image_roles` 枚举
+
+`port_analysis.enum_fields` 里 `image_roles`（作用于 items）的枚举值恰好为 3 个：
+
+| 枚举值 | 含义 |
+| --- | --- |
+| `first_frame` | 首帧 |
+| `last_frame` | 尾帧 |
+| `reference_image` | 参考图 |
+
+同一 schema 的另外 3 个枚举字段：`model` = `["MiniMax-H3"]`、`ratio` = `["21:9","16:9","4:3","1:1","3:4","9:16"]`、`resolution` = `["768P","2K"]`；必填仅 `prompt`。
+
+**关键约束（本次决策依据）**：`notes` 明确 `images/image_roles` 与 `video_refs` 为互斥输入模式，且 schema 描述写明「首/尾帧模式不能与参考模式混用（upstream rejects the mix）」。因此 `first_frame` 与 `reference_image` 不能同时存在于一次提交里——接首帧前必须确认没有 reference 类依赖，`minima
+TOOL: read_skill ERR:  ARGS: {"skill_id": "skilyst/canvas-ops"}
+TOOL: canvas_query_schema ERR:  ARGS: {"node_id": "generate:minimax-h3"}
+TOOL: canvas_list_media ERR:  ARGS: {"workflow_id": "workflow-1790586733426603373"}
+TOOL: canvas_read_board ERR:  ARGS: {"workflow_id": "workflow-1790586733426603373"}
+TOOL: canvas_create_node ERR:  ARGS: {"workflow_id": "workflow-1790586733426603373", "node_type": "generate", "provider": "minimax-h3", "key": "minimax-1", "config": {"prompt": "钟馗夜巡短剧，中国风神话，红袍钟馗夜晚
+TOOL: canvas_create_node ERR: TypeError: CanvasOps.create_node() missing 1 required positional argument: 'provider' ARGS: {"workflow_id": "workflow-1790586733426603373", "node_type": "material", "key": "ref-img-1", "config": {"pool_entry_id": "mp-job-1790587211012-232af376ed278a74-
+TOOL: canvas_query_schema ERR: ValueError: query_schema needs either node_id, or both node_type and provider (node id is '{node_type}:{provider}') ARGS: {"node_type": "material"}
+TOOL: canvas_query_schema ERR: ValueError: no node definition 'material:image' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, genera ARGS: {"node_type": "material", "provider": "image"}
+TOOL: list_skill_files ERR:  ARGS: {"skill_id": "skilyst/canvas-ops"}
+TOOL: read_skill_file ERR:  ARGS: {"skill_id": "skilyst/canvas-ops", "path": "references/i18n/glossary.en.json"}
+TOOL: read_skill_file ERR:  ARGS: {"skill_id": "skilyst/canvas-ops", "path": "SKILL.md"}
+TOOL: canvas_create_node ERR:  ARGS: {"workflow_id": "workflow-1790586733426603373", "node_type": "material", "provider": "image", "key": "ref-img-1", "config": {"pool_entry_id": "mp-job-1790587211
+TOOL: canvas_connect_ports ERR:  ARGS: {"from_key": "ref-img-1", "to_key": "minimax-1", "input_port": "first_frame", "workflow_id": "workflow-1790586733426603373"}
