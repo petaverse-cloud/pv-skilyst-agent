@@ -17,7 +17,7 @@
     "@mantine/core": "9.3.1",
     "@mantine/hooks": "9.3.1",
     "@mantine/notifications": "9.3.1",
-    "@petaverse/skilyst-studio": "file:../../../web-enhanced/pv-beehive-web/src/packages/skilyst-studio",
+    "@petaverse/skilyst-studio": "file:../../pv-beehive-web/src/packages/skilyst-studio",
     "@tabler/icons-react": "3.44.0",
     "react": "19.2.7",
     "react-dom": "19.2.7",
