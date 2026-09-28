@@ -103,9 +103,25 @@ def open_run(cfg: RuntimeConfig, *, skill_id: str | None = None, session_id: str
                else sessions.create(title=title, model=cfg.llm.model,
                                     workspace=str(cfg.workspace_dir),
                                     skills=[active.skill_id] if active else []))
+
+    # R3 action stream: canvas tools report board mutations here, and the rows
+    # land on the session transcript (role='action', kept out of history()).
+    # A lock-held refusal arrives with note_kind/note_text instead: it becomes
+    # the human-facing note row (the model already sees the re-raised error
+    # through the loop's tool-error path, and the trace records the failed
+    # call, so no action row is written for a refused write).
+    def record_action(action: dict) -> None:
+        note_kind = action.pop("note_kind", None)
+        if note_kind:
+            session.append_note(action.pop("note_text", ""), origin="system",
+                                note_kind=note_kind, tool=action.get("tool"))
+            return
+        session.append_action(action)
+
     registry = build_registry(store, client, active, gate, cfg.workspace_dir, dry_run=dry_run,
                               on_event=note, max_jobs=max_jobs,
-                              node_schemas=preflight.node_schemas if preflight else None)
+                              node_schemas=preflight.node_schemas if preflight else None,
+                              session_id=session.session_id, on_action=record_action)
     prompt_ctx = PromptContext(skills=skills, active_skill=active, workspace=str(cfg.workspace_dir),
                                model=cfg.llm.model, platform=cfg.beehive.base_url)
     loop = AgentLoop(ModelRouter(cfg.llm, client_factory=client_factory), registry, session, prompt_ctx,

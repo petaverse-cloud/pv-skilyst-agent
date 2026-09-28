@@ -8,6 +8,10 @@ A tool is only registered when the runtime can actually honour it:
     `beehive_list_assets`) are registered only when a skill is active AND that skill
     declares both a node requirement and `permission.secrets` -- the manifest is the
     contract, so a skill that declares it needs no credential never gets one;
+  * canvas tools (`canvas_*`, the A3 workbench: ten FR-3 tools plus two board reads)
+    are registered only when the ACTIVE skill is `skilyst/canvas-ops` and it holds
+    `permission.secrets` -- the board writer belongs to the canvas methodology, not
+    to every skill with a credential;
   * `write_workspace_file` is gated by the skill's declared filesystem permission.
 
 Every executor returns a JSON-serialisable dict; every refusal raises, and the
@@ -15,11 +19,13 @@ loop hands the exception text back to the model instead of hiding it.
 """
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
 from beehive import BeehiveClient, job_handle, verify_artifact
+from canvas import CanvasOps, LockHeldError
 from manifest import BINDING_CONTROL_ARGS, NodeBinding
 from sandbox import PermissionGate, SandboxViolation, list_resources, read_resource
 from skills import SkillPackage, SkillStore
@@ -159,11 +165,26 @@ def _submit_description(active, node_ids: list[str], default_node: str, plan: di
     return " ".join(lines)
 
 
+CANVAS_SKILL_ID = "skilyst/canvas-ops"
+
+# The ten FR-3 canvas tools (docs/a3-canvas-workbench.md) plus the two
+# read-only board reads the workbench needs. `create_workflow` deliberately
+# stays unexposed: the workbench assumes an existing board.
+CANVAS_TOOLS = (
+    "canvas_create_node", "canvas_write_node_config", "canvas_connect_ports",
+    "canvas_query_schema", "canvas_read_node_output", "canvas_submit_node_job",
+    "canvas_run_workflow", "canvas_generate_image", "canvas_list_media",
+    "canvas_add_media", "canvas_list_workflows", "canvas_read_board",
+)
+
+
 def build_registry(store: SkillStore, client: BeehiveClient | None, active: SkillPackage | None,
                    gate: PermissionGate | None, workspace: Path, dry_run: bool = False,
                    on_event: Callable[[str], None] | None = None,
                    artifact_verifier: Callable[[str], object] | None = None,
-                   max_jobs: int = 1, node_schemas: dict | None = None) -> ToolRegistry:
+                   max_jobs: int = 1, node_schemas: dict | None = None,
+                   session_id: str = "",
+                   on_action: Callable[[dict], None] | None = None) -> ToolRegistry:
     """Assemble the tool set for one run.
 
     ``max_jobs`` is a spend guard, not a convenience: a submitted job costs real
@@ -240,6 +261,18 @@ def build_registry(store: SkillStore, client: BeehiveClient | None, active: Skil
         "write_workspace_file", "Write a file inside the run workspace (notes, prompt drafts, manifests).",
         _obj({"path": {"type": "string"}, "content": {"type": "string"}}, ["path", "content"]),
         write_workspace_file, scope="filesystem"))
+
+    # -- canvas tools (only for the canvas-ops skill with a live client) --------
+    # Gated on the ACTIVE skill being skilyst/canvas-ops (canvas-ops is mostly
+    # methodology and declares no node requirements, so this block sits BEFORE
+    # the platform-tools early returns): the canvas routes need the credential,
+    # and a skill that never declared it must not grow a board writer by
+    # accident. `session_id` doubles as the lock holder id (the lock contract's
+    # crash recovery checks holder liveness, so the holder must be the thing
+    # that dies when the agent dies).
+    if client is not None and active is not None and active.skill_id == CANVAS_SKILL_ID \
+            and active.permission.get("secrets"):
+        _register_canvas_tools(registry, client, session_id, events, on_action)
 
     # -- platform tools (only with an active skill that declares them) -------
     if active is None or client is None:
@@ -509,6 +542,277 @@ def build_registry(store: SkillStore, client: BeehiveClient | None, active: Skil
         "List recent assets produced by this account.",
         _obj({"limit": {"type": "integer"}}, []), list_assets, scope="assets:read"))
     return registry
+
+
+# -- canvas tools ---------------------------------------------------------------
+
+
+def _micro_to_usd_cost(quote: dict | None) -> dict | None:
+    """The action-stream cost view of a quote: USD floats for display, raw
+    micro-USD for accounting. None when the call carried no quote."""
+    if not quote:
+        return None
+    estimate = quote.get("total_estimate_usd")
+    hold = quote.get("total_hold")
+    cost: dict = {}
+    if estimate is not None:
+        cost["estimate_usd"] = round(estimate / 1_000_000, 6)
+    if hold is not None:
+        cost["hold_micro_usd"] = int(hold)
+    return cost or None
+
+
+def _register_canvas_tools(registry: ToolRegistry, client, session_id: str,
+                           events: Callable[[str], None],
+                           on_action: Callable[[dict], None] | None) -> None:
+    """Wire the twelve canvas tools (ten FR-3 tools + two board reads).
+
+    Every tool shares one wrapper (`_make`) that provides the R3 action
+    stream contract: timing, board activity events, the action row
+    ({type, tool, params, result_ref, board_delta, origin} + duration/cost when
+    known), and the lock-held note (画板正被占用) when a write hits a live
+    holder -- the loop's error path tells the model; the note tells the human
+    transcript.
+    """
+    ops = CanvasOps(client, session_id)
+    actions = on_action or (lambda _action: None)
+
+    def _make(tool_name: str, method_name: str,
+              delta: Callable[[dict, dict], dict | None] | None = None,
+              event: Callable[[dict, dict], str] | None = None):
+        """Build one canvas tool handler around a CanvasOps method.
+
+        The shared body provides the whole R3 contract: timing (duration_s on
+        the action row), a board-activity progress line on the SSE note stream
+        (`event`), the action row itself ({type, tool, params, board_delta,
+        origin} + result_ref/cost when the call produced one), and the
+        lock-held note -- a LockHeldError becomes BOTH a note row on the
+        transcript (for the human) and the re-raised error the loop reports
+        to the model. A lock-held failure is an action too: the desktop's
+        board replay must show that the write was refused.
+        """
+        method = getattr(ops, method_name)
+
+        def handler(args: dict) -> dict:
+            started = time.time()
+            try:
+                result = method(**args)
+            except LockHeldError as exc:
+                holder = exc.held_by.get("holder") or {}
+                actions({"type": "canvas", "tool": tool_name, "params": args,
+                         "result_ref": None, "board_delta": None, "origin": "agent",
+                         "note_kind": "lock",
+                         "note_text": f"画板正被占用: held by "
+                                      f"{holder.get('kind', '?')}/{holder.get('id', '?')} "
+                                      f"since {exc.held_by.get('acquired_at', '?')}",
+                         "duration_s": round(time.time() - started, 2)})
+                events(f"canvas: {tool_name} refused -- workflow {exc.workflow_id} "
+                       f"is locked by another holder")
+                raise
+            duration_s = round(time.time() - started, 2)
+            action = {"type": "canvas", "tool": tool_name, "params": args,
+                      "board_delta": delta(result, args) if delta else None,
+                      "origin": "agent", "duration_s": duration_s,
+                      "result_ref": _result_ref(result)}
+            quote = result.get("quote") if isinstance(result, dict) else None
+            cost = _micro_to_usd_cost(quote)
+            if cost:
+                action["cost"] = cost
+            if event:
+                events(event(result, args))
+            actions(action)
+            return result
+
+        return handler
+
+    _register_canvas_specs(registry, _make)
+
+
+def _result_ref(result) -> dict | None:
+    """The compact action-row summary of a canvas call's result: ids the
+    desktop can follow up on (job id, node key, pool entry id), never the
+    whole response."""
+    if not isinstance(result, dict):
+        return None
+    ref = {key: result[key] for key in ("job_id", "node_count", "found") if result.get(key) is not None}
+    node = result.get("node")
+    if isinstance(node, dict) and node.get("key") is not None:
+        ref["node"] = node["key"]
+    added = result.get("added")
+    if isinstance(added, dict) and added.get("id") is not None:
+        ref["pool_entry"] = added["id"]
+    return ref or None
+
+
+def _register_canvas_specs(registry: ToolRegistry, make) -> None:
+    """The twelve ToolSpecs: names, teaching descriptions, schemas, handlers."""
+
+    def _node_key(result: dict, _args: dict):
+        node = result.get("node") or {}
+        return {"added_node": node.get("key"), "workflow_id": _args.get("workflow_id")}
+
+    def _wired(result: dict, args: dict):
+        return {"wired": [args.get("from_key"), args.get("to_key"),
+                          args.get("input_port") or ""],
+                "workflow_id": args.get("workflow_id")}
+
+    def _config_written(result: dict, args: dict):
+        return {"updated_config": args.get("key"), "workflow_id": args.get("workflow_id")}
+
+    def _submitted(result: dict, args: dict):
+        return {"submitted_job": result.get("job_id"),
+                "workflow_id": args.get("workflow_id")}
+
+    def _ran(result: dict, args: dict):
+        return {"submitted_job": result.get("job_id"), "node_count": result.get("node_count"),
+                "workflow_id": args.get("workflow_id")}
+
+    def _pool_entry(result: dict, args: dict):
+        added = result.get("added") or {}
+        return {"added_pool_entry": added.get("id"), "workflow_id": args.get("workflow_id")}
+
+    registry.register(ToolSpec(
+        "canvas_create_node",
+        "Add a node to a canvas board (workflow blueprint). Auto-key is '{type}-{provider}-{n}', "
+        "auto-position spreads nodes horizontally. The write is wrapped in the server-side board "
+        "lock (lock -> read -> modify -> PUT -> unlock), so a board someone else is editing fails "
+        "with a lock-held error instead of overwriting.",
+        _obj({"workflow_id": {"type": "string", "description": "the board to edit"},
+              "node_type": {"type": "string", "description": "e.g. 'generate', 'process', 'material'"},
+              "provider": {"type": "string", "description": "node variant, e.g. 'minimax-h3'"},
+              "key": {"type": "string", "description": "explicit node key (default: auto-key)"},
+              "config": {"type": "object", "description": "initial node config"},
+              "position": {"type": "object", "description": "{x, y} board position (default: auto)"},
+              "depends_on": {"type": "array", "items": {"type": "string"},
+                             "description": "keys of nodes this node consumes"}},
+             ["workflow_id", "node_type", "provider"]),
+        make("canvas_create_node", "create_node", _node_key,
+             lambda r, a: f"canvas: node {(r.get('node') or {}).get('key')} added to "
+                          f"{a.get('workflow_id')}"), scope="workflows:write"))
+
+    registry.register(ToolSpec(
+        "canvas_write_node_config",
+        "Deep-merge a config patch into one node of a board (new keys added, scalars "
+        "overwritten, nested dicts merged) -- a partial edit, no need to restate the whole config.",
+        _obj({"workflow_id": {"type": "string"}, "key": {"type": "string",
+                                                          "description": "the node to edit"},
+              "config": {"type": "object"}}, ["workflow_id", "key", "config"]),
+        make("canvas_write_node_config", "write_node_config", _config_written,
+             lambda r, a: f"canvas: config of {a.get('key')} updated on {a.get('workflow_id')}"),
+        scope="workflows:write"))
+
+    registry.register(ToolSpec(
+        "canvas_connect_ports",
+        "WIRE THE SOURCE FIRST: call canvas_query_schema on the target node before connecting "
+        "to check input_schema enum/port constraints (e.g. minimax-h3 image inputs are "
+        "exclusive: first_frame vs reference_image cannot mix). Wires an edge on the board: a "
+        "material node wires as material_deps {key, input_port} on the consumer plus a "
+        "depends_on edge; any other node wires as a plain depends_on edge. Image materials "
+        "only accept the ports reference_image/first_frame/last_frame.",
+        _obj({"workflow_id": {"type": "string"},
+              "from_key": {"type": "string", "description": "source node key"},
+              "to_key": {"type": "string", "description": "consumer node key"},
+              "input_port": {"type": "string",
+                             "description": "material input port (reference_image/first_frame/"
+                                            "last_frame); omit for a plain edge"}},
+             ["workflow_id", "from_key", "to_key"]),
+        make("canvas_connect_ports", "connect_ports", _wired,
+             lambda r, a: f"canvas: wired {a.get('from_key')} -> {a.get('to_key')} "
+                          f"on {a.get('workflow_id')}"), scope="workflows:write"))
+
+    registry.register(ToolSpec(
+        "canvas_query_schema",
+        "Read a node definition (input/output schema, config defaults) plus the derived port "
+        "analysis: enum fields, required fields, and alternative input modes. ALWAYS call this "
+        "before canvas_connect_ports or a submission -- it is how an invalid port or a mixed "
+        "input mode is caught BEFORE the wiring decision instead of as a platform 400 after it.",
+        _obj({"node_type": {"type": "string"}, "provider": {"type": "string"},
+              "node_id": {"type": "string", "description": "exact id, e.g. 'generate:minimax-h3'"}},
+             []),
+        make("canvas_query_schema", "query_schema"), scope="nodes:read"))
+
+    registry.register(ToolSpec(
+        "canvas_read_node_output",
+        "Read the newest job output for one node of a board (poll after submitting: generation "
+        "is async). Returns {found: false} when no job has produced output for that node yet.",
+        _obj({"workflow_id": {"type": "string"}, "key": {"type": "string"}},
+             ["workflow_id", "key"]),
+        make("canvas_read_node_output", "read_node_output"), scope="jobs:read"))
+
+    registry.register(ToolSpec(
+        "canvas_submit_node_job",
+        "Submit ONE node as a job on the board. Quote-first by default: the paid estimate is "
+        "fetched before the submission exists, and the quote (micro-USD + USD display) is "
+        "returned with the job id. Submitting does NOT mutate the blueprint and does not take "
+        "the board lock; poll the result with canvas_read_node_output.",
+        _obj({"workflow_id": {"type": "string"},
+              "node_type": {"type": "string"}, "provider": {"type": "string"},
+              "config": {"type": "object"}, "key": {"type": "string"},
+              "quote_first": {"type": "boolean", "description": "default true"}},
+             ["workflow_id", "node_type", "provider", "config"]),
+        make("canvas_submit_node_job", "submit_node_job", _submitted,
+             lambda r, a: f"canvas: submitted job {r.get('job_id')} on {a.get('workflow_id')}"),
+        scope="jobs:write"))
+
+    registry.register(ToolSpec(
+        "canvas_run_workflow",
+        "Submit every node of a board as ONE job, verbatim -- the workflow is the plan of "
+        "record, so the job is a faithful copy of it. Quote-first by default. Does not take "
+        "the board lock (a job never mutates the blueprint).",
+        _obj({"workflow_id": {"type": "string"}, "quote_first": {"type": "boolean"}},
+             ["workflow_id"]),
+        make("canvas_run_workflow", "run_workflow", _ran,
+             lambda r, a: f"canvas: ran workflow {a.get('workflow_id')} "
+                          f"({r.get('node_count')} nodes, job {r.get('job_id')})"),
+        scope="jobs:write"))
+
+    registry.register(ToolSpec(
+        "canvas_generate_image",
+        "Submit a PAID image generation node on a board (model gpt-image-2). Always "
+        "quote-first. This only submits -- generation is async: poll with canvas_read_node_output "
+        "or beehive_get_job; when the job completes the server auto-captures the image into the "
+        "board's media pool (origin.kind=generated).",
+        _obj({"workflow_id": {"type": "string"}, "prompt": {"type": "string"},
+              "model": {"type": "string", "description": "default 'gpt-image-2'"},
+              "size": {"type": "string", "description": "default '1024x1024'"}},
+             ["workflow_id", "prompt"]),
+        make("canvas_generate_image", "generate_image", _submitted,
+             lambda r, a: f"canvas: image job {r.get('job_id')} submitted on "
+                          f"{a.get('workflow_id')}"), scope="jobs:write"))
+
+    registry.register(ToolSpec(
+        "canvas_list_media",
+        "List a board's media pool entries (id, name, kind, url, thumb).",
+        _obj({"workflow_id": {"type": "string"}}, ["workflow_id"]),
+        make("canvas_list_media", "list_media"), scope="workflows:read"))
+
+    registry.register(ToolSpec(
+        "canvas_add_media",
+        "Add an upload-origin entry to a board's media pool (an image the user supplied by URL). "
+        "The server generates the entry id; the new entry is identified in the result by url.",
+        _obj({"workflow_id": {"type": "string"}, "url": {"type": "string"},
+              "name": {"type": "string"}, "kind": {"type": "string",
+                                                   "description": "default 'image'"},
+              "mime": {"type": "string", "description": "default 'image/png'"}},
+             ["workflow_id", "url", "name"]),
+        make("canvas_add_media", "add_media", _pool_entry,
+             lambda r, a: f"canvas: media {(r.get('added') or {}).get('id')} added to "
+                          f"{a.get('workflow_id')}"), scope="workflows:write"))
+
+    registry.register(ToolSpec(
+        "canvas_list_workflows",
+        "List the canvas boards (workflows) this account can see: id, name, description, "
+        "updated_at. Read-only. Use this to ask which board to operate on before editing.",
+        _obj({"limit": {"type": "integer", "description": "default 50"}}, []),
+        make("canvas_list_workflows", "list_workflows"), scope="workflows:read"))
+
+    registry.register(ToolSpec(
+        "canvas_read_board",
+        "Read one board's full state: nodes, edges (derived from material_deps/depends_on) and "
+        "the media pool. Read-only, no lock. Read this before editing to see what is already "
+        "on the board.",
+        _obj({"workflow_id": {"type": "string"}}, ["workflow_id"]),
+        make("canvas_read_board", "read_board"), scope="workflows:read"))
 
 
 def tool_error_message(exc: Exception) -> str:

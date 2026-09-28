@@ -202,6 +202,33 @@ class CanvasOps:
     def get_workflow(self, workflow_id: str) -> dict:
         return self._call("GET", f"/api/v1/workflows/{workflow_id}")
 
+    # -- board reads (read-only, no lock needed) -------------------------------
+
+    def list_workflows(self, limit: int = 50) -> dict:
+        """The boards this account can see (id, name, description, updated)."""
+        payload = self._call("GET", f"/api/v1/workflows?limit={int(limit)}")
+        workflows = payload.get("workflows") if isinstance(payload, dict) else payload
+        fields = ("id", "name", "description", "updated_at")
+        return {"workflows": [{field: wf.get(field) for field in fields}
+                              for wf in workflows or []]}
+
+    def read_board(self, workflow_id: str) -> dict:
+        """One board's full state: nodes, edges derived from material_deps /
+        depends_on, and the media pool -- the read-side picture the agent (and
+        the desktop canvas) renders."""
+        workflow = self.get_workflow(workflow_id)
+        nodes = workflow.get("nodes") or []
+        edges: list[dict] = []
+        for node in nodes:
+            for dep in node.get("depends_on") or []:
+                edges.append({"from": dep, "to": node.get("key"), "kind": "dep"})
+            for dep in (node.get("config") or {}).get("material_deps") or []:
+                edges.append({"from": dep.get("key"), "to": node.get("key"),
+                              "kind": "material", "input_port": dep.get("input_port", "")})
+        return {"id": workflow.get("id"), "name": workflow.get("name"),
+                "nodes": nodes, "edges": edges,
+                "media_pool": workflow.get("media_pool") or []}
+
     # -- lock discipline ------------------------------------------------------
 
     def lock_workflow(self, workflow_id: str) -> dict:
