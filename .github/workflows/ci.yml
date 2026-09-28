@@ -62,12 +62,17 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       # A3: skilyst-studio 组件包 companion checkout——desktop 以 file: 引用包
-      # （R6 单一真源：包只活在 pv-beehive-web，零拷贝）。路径与本地 planner
-      # 布局同构（desktop/../../pv-beehive-web），file: 依赖两端解析一致。
+      # （R6 单一真源：包只活在 pv-beehive-web，零拷贝）。companion 检出到
+      # 工作区内，再 symlink 到 desktop/../../pv-beehive-web——与本地 planner
+      # 布局同构，file: 依赖两端解析一致零差异。
       - uses: actions/checkout@v5
         with:
           repository: petaverse-cloud/pv-beehive-web
-          path: ../pv-beehive-web
+          path: pv-beehive-web-companion
+      - name: Symlink companion to planner-layout path
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/.."
+          ln -sfn "$GITHUB_WORKSPACE/pv-beehive-web-companion" "$GITHUB_WORKSPACE/../pv-beehive-web"
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
