@@ -9,9 +9,9 @@
 
 import { Alert, Badge, Button, Group, Loader, Stack, Text, TextInput, Title } from "@mantine/core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { HostProvider } from "@petaverse/skilyst-studio/host";
-import WorkflowCanvas from "@petaverse/skilyst-studio/canvas";
+import WorkflowCanvas, { type WorkflowCanvasHandle } from "@petaverse/skilyst-studio/canvas";
 import type { Workflow } from "@petaverse/skilyst-studio/types";
 import { BEEHIVE_TOKEN_KEY, desktopHostAdapter } from "../hostAdapter";
 
@@ -64,15 +64,26 @@ export function CanvasView({ onExit, focus }: { onExit: () => void; focus?: Canv
 
   // A3 S3 action-card locate: when a focus arrives with the workflow list,
   // auto-select that board (straight to the canvas stage, skipping the manual
-  // pick). Node-level highlight needs a focus API on the studio package's
-  // WorkflowCanvas, which it does not expose yet — the board opens, the node
-  // badge in the header names the target.
+  // pick). S4: the package now exposes focusNode(nodeId) — the node-level
+  // highlight + viewport centering fires once the canvas has mounted.
   useEffect(() => {
     if (focus && stage === "list" && workflows?.some((wf) => wf.id === focus.workflow_id)) {
       setActiveId(focus.workflow_id);
       setStage("canvas");
     }
   }, [focus, stage, workflows]);
+
+  const canvasRef = useRef<WorkflowCanvasHandle>(null);
+
+  // focusNode fires after the canvas mounts with the focused board; a short
+  // settle lets the node layout land before the viewport centers on it.
+  useEffect(() => {
+    if (!focus?.node_key || stage !== "canvas") return;
+    const timer = window.setTimeout(() => {
+      canvasRef.current?.focusNode(focus.node_key!);
+    }, 400);
+    return () => window.clearTimeout(timer);
+  }, [focus, stage]);
 
   const login = useCallback(async () => {
     setLoginError(null);
@@ -203,7 +214,7 @@ export function CanvasView({ onExit, focus }: { onExit: () => void; focus?: Canv
       <div style={{ flex: 1, minHeight: 0 }}>
         <QueryClientProvider client={queryClient}>
           <HostProvider adapter={host}>
-            <WorkflowCanvas workflowId={activeId} variant="designer" readOnly />
+            <WorkflowCanvas ref={canvasRef} workflowId={activeId} variant="designer" readOnly />
           </HostProvider>
         </QueryClientProvider>
       </div>

@@ -114,6 +114,8 @@ export type MessageRequest = {
   skill?: string | null;
   model?: string;
   dry_run?: boolean;
+  /** S4 quote UX: gate paid submissions behind a confirm_request / POST /confirm exchange. */
+  confirm_paid?: boolean;
 };
 
 let current: RuntimeInfo | null = null;
@@ -216,6 +218,12 @@ export async function api<T>(path: string, options: ApiOptions = {}): Promise<T>
 export type StreamHandlers = {
   onDelta?: (text: string) => void;
   onNote?: (text: string) => void;
+  /** S4 quote UX: the runtime paused a paid submission at the quote and is
+   *  waiting on POST /confirm/<session_id>. */
+  onConfirmRequest?: (detail: {
+    session_id?: string;
+    quote?: { total_hold?: number; total_hold_display?: number; nodes?: unknown[] };
+  }) => void;
 };
 
 type SseEvent = { name: string; data: Record<string, unknown> };
@@ -240,6 +248,12 @@ function parseEvent(block: string): SseEvent | null {
  * progress line from the loop (tool calls, job polling), and the resolved value is the
  * same summary a non-streaming call returns.
  */
+/** S4 quote UX: answer the runtime's pending paid-confirmation gate. */
+export async function resolveConfirm(sessionId: string, approve: boolean): Promise<void> {
+  if (!current) throw new Error("the local runtime is not connected");
+  await api(`/confirm/${sessionId}`, { method: "POST", body: { approve } });
+}
+
 export async function sendMessage(request: MessageRequest, handlers: StreamHandlers = {}): Promise<RunSummary> {
   if (!current) throw new Error("the local runtime is not connected");
   const response = await fetch(`${current.base_url}/message`, {
@@ -268,6 +282,8 @@ export async function sendMessage(request: MessageRequest, handlers: StreamHandl
       if (event) {
         if (event.name === "delta") handlers.onDelta?.(String(event.data.text ?? ""));
         else if (event.name === "note") handlers.onNote?.(String(event.data.text ?? ""));
+        else if (event.name === "confirm_request") handlers.onConfirmRequest?.(
+          event.data as { session_id?: string; quote?: { total_hold?: number; total_hold_display?: number; nodes?: unknown[] } });
         else if (event.name === "done") {
           summary = (event.data as { data?: RunSummary }).data ?? null;
         } else if (event.name === "error") {

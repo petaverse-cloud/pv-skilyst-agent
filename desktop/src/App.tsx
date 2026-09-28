@@ -17,6 +17,7 @@ import {
   api,
   inShell,
   runtimeStatus,
+  resolveConfirm,
   sendMessage,
   startRuntime,
   stopRuntime,
@@ -25,6 +26,7 @@ import {
   type SessionDetail,
   type SessionRow,
 } from "./api";
+import { QuoteConfirmCard, type QuoteView } from "@petaverse/skilyst-studio/session";
 import Composer from "./components/Composer";
 import ConversationView from "./components/ConversationView";
 import SessionList from "./components/SessionList";
@@ -53,6 +55,13 @@ export default function App() {
   const [model, setModel] = useState(() => window.localStorage.getItem(MODEL_KEY) ?? "");
   // A3 S3: the workflow/node an action card asked to locate on the canvas.
   const [canvasFocus, setCanvasFocus] = useState<{ workflow_id: string; node_key?: string } | null>(null);
+  // S4 quote UX: the runtime paused a paid submission at the quote and is
+  // waiting on POST /confirm — the card below the transcript answers it.
+  const [pendingConfirm, setPendingConfirm] = useState<{ sessionId: string; quote: QuoteView } | null>(null);
+  const [confirmBusy, setConfirmBusy] = useState(false);
+  // D3: the runtime never touches the wallet — the desktop fetches the
+  // balance itself with the canvas login's beehive JWT, for display only.
+  const [balanceUsd, setBalanceUsd] = useState<number | null>(null);
 
   const refreshSessions = useCallback(async () => {
     const payload = await api<{ sessions: SessionRow[] }>("/sessions");
@@ -140,9 +149,10 @@ export default function App() {
       setError(null);
       setNotes([]);
       setStream(emptyStream);
+      setPendingConfirm(null);
       try {
         const summary: RunSummary = await sendMessage(
-          { message: text, session_id: detail?.session_id, model: model || undefined, dry_run: dryRun },
+          { message: text, session_id: detail?.session_id, model: model || undefined, dry_run: dryRun, confirm_paid: true },
           {
             onDelta: (chunk) => setStream((state) => appendDelta(state, chunk)),
             // A progress note is the end of the turn that was streaming: freeze what
@@ -150,6 +160,25 @@ export default function App() {
             onNote: (line) => {
               setStream((state) => freezeTurn(state));
               setNotes((current) => [...current, line]);
+            },
+            // S4 quote UX: the runtime is holding a paid submission at the
+            // quote. Show the card; the user's answer goes to POST /confirm.
+            onConfirmRequest: (detail2) => {
+              const quote = (detail2.quote ?? {}) as QuoteView;
+              setPendingConfirm({ sessionId: detail2.session_id ?? detail?.session_id ?? "", quote });
+              // D3: display-only balance, fetched by the desktop with the
+              // canvas login's beehive JWT — the runtime never sees the wallet.
+              const token = window.localStorage.getItem("skilyst.beehive_token");
+              if (token) {
+                fetch("/api/v1/billing/wallet", { headers: { Authorization: `Bearer ${token}` } })
+                  .then((r) => (r.ok ? r.json() : null))
+                  .then((data) => {
+                    const payload = data?.payload ?? data;
+                    const usd = payload?.balance_usd ?? payload?.balance;
+                    if (typeof usd === "number") setBalanceUsd(usd);
+                  })
+                  .catch(() => setBalanceUsd(null));
+              }
             },
           },
         );
@@ -178,6 +207,25 @@ export default function App() {
     setModel(value);
     window.localStorage.setItem(MODEL_KEY, value);
   }, []);
+
+  // S4 quote UX: answer the runtime's pending gate. Decline leaves the card
+  // up until the run ends (the tool error lands as a note), confirm clears it
+  // as the submission resumes.
+  const answerConfirm = useCallback(
+    async (approve: boolean) => {
+      if (!pendingConfirm) return;
+      setConfirmBusy(true);
+      try {
+        await resolveConfirm(pendingConfirm.sessionId, approve);
+        if (approve) setPendingConfirm(null);
+      } catch (exc) {
+        setError(exc instanceof Error ? exc.message : String(exc));
+      } finally {
+        setConfirmBusy(false);
+      }
+    },
+    [pendingConfirm],
+  );
 
   // Login gate: no credentials and not in dev mode -> the whole app is the login screen.
   if (authStatus && !authStatus.authenticated && !authStatus.dev_mode) {
@@ -307,18 +355,35 @@ export default function App() {
               onLocateBoard={(message) => {
                 // Clicking an action card jumps to the canvas and opens the
                 // board the action touched. The workflow id is in the action's
-                // params (canvas tools carry workflow_id); node highlight lands
-                // with the package's focus API (none yet — see CanvasView).
+                // params (canvas tools carry workflow_id); S4: the node comes
+                // from result_ref (added_node / wired edge / pool entry) and
+                // the package's focusNode() centers + highlights it.
                 const params = (message.params ?? {}) as Record<string, unknown>;
                 const delta = (message.board_delta ?? {}) as Record<string, unknown>;
+                const ref = (message.result_ref ?? {}) as Record<string, unknown>;
                 const workflowId = typeof params.workflow_id === "string" ? params.workflow_id : undefined;
-                const nodeKey = typeof delta.added_node === "string" ? delta.added_node : undefined;
+                const nodeKey =
+                  typeof ref.node === "string" ? ref.node
+                  : Array.isArray(ref.wired) && typeof ref.wired[0] === "string" ? (ref.wired[0] as string)
+                  : typeof delta.added_node === "string" ? delta.added_node
+                  : undefined;
                 if (workflowId) {
                   setCanvasFocus({ workflow_id: workflowId, node_key: nodeKey });
                   setView("canvas");
                 }
               }}
             />
+            {pendingConfirm ? (
+              <Box px="md" pb="sm" data-testid="quote-confirm-wrap">
+                <QuoteConfirmCard
+                  quote={pendingConfirm.quote}
+                  balanceUsd={balanceUsd}
+                  busy={confirmBusy || sending}
+                  onConfirm={() => void answerConfirm(true)}
+                  onCancel={() => void answerConfirm(false)}
+                />
+              </Box>
+            ) : null}
             <Composer
               onSend={(text) => void send(text)}
               busy={sending || !info}
