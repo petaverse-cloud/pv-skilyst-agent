@@ -12,7 +12,8 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "preserveSymlinks": true
   },
   "include": ["src"]
 }
