@@ -64,6 +64,14 @@ class WorkflowStore:
             entry["created_at"] = "2026-09-28T12:00:00Z"
             self.workflows[wid]["media_pool"].append(entry)
             return 201, _wrap(self.row(wid))
+        if method == "DELETE" and "/media-pool/" in path:
+            wid, entry_id = path.split("/api/v1/workflows/")[1].split("/media-pool/")
+            pool = self.workflows[wid]["media_pool"]
+            kept = [e for e in pool if e["id"] != entry_id]
+            if len(kept) == len(pool):
+                return 404, _wrap({"code": 404, "message": "media pool entry not found"})
+            self.workflows[wid]["media_pool"] = kept
+            return 200, _wrap(self.row(wid))
         if method == "POST" and path == "/api/v1/workflows":
             self.counter += 1
             workflow = {"id": f"wf-{self.counter}", "name": body.get("name"),
@@ -463,7 +471,107 @@ class MediaPoolTests(unittest.TestCase):
         media = fx.ops.list_media("wf-1")
         self.assertEqual(media["entries"],
                          [{"id": "mp-1", "name": "cat.png", "kind": "image",
-                           "url": "https://cdn.example/cat.png", "thumb": "t.png"}])
+                           "url": "https://cdn.example/cat.png", "thumb": "t.png",
+                           "index": 1, "referenced_by": ["mat-1"]}])
+
+    def test_list_media_marks_unreferenced_entries(self):
+        fx = CanvasFixture({"wf-1": workflow_with_material()})
+        # a second pool entry no material node points at: reference count 0
+        fx.store.workflows["wf-1"]["media_pool"].append(
+            {"id": "mp-2", "name": "dog.png", "kind": "image",
+             "url": "https://cdn.example/dog.png", "thumb": "d.png"})
+        media = fx.ops.list_media("wf-1")
+        self.assertEqual(media["entries"][1]["index"], 2)
+        self.assertEqual(media["entries"][1]["referenced_by"], [])
+
+
+class MediaPoolLifecycleTests(unittest.TestCase):
+    """S4 FR-5: rename / delete / reference counts on the board's pool."""
+
+    def test_rename_sends_the_whole_pool_under_the_replace_header(self):
+        fx = CanvasFixture({"wf-1": workflow_with_material()})
+        result = fx.ops.rename_media("wf-1", "mp-1", "钟馗参考图")
+        self.assertEqual(result["renamed"], {"id": "mp-1", "name": "钟馗参考图"})
+        # the pool actually changed server-side
+        self.assertEqual(fx.store.workflows["wf-1"]["media_pool"][0]["name"], "钟馗参考图")
+        # the write carried the pool and stayed locked-scoped
+        put = [c for c in fx.transport.calls if c["method"] == "PUT"][0]
+        self.assertEqual(put["body"]["media_pool"][0]["name"], "钟馗参考图")
+        paths = fx.transport.paths()
+        self.assertIn(("POST", "/api/v1/workflows/wf-1/lock"), paths)
+        self.assertIn(("POST", "/api/v1/workflows/wf-1/unlock"), paths)
+
+    def test_rename_sends_pool_replace_header(self):
+        # the transport records headers via the client's request log
+        fx = CanvasFixture({"wf-1": workflow_with_material()})
+        fx.ops.rename_media("wf-1", "mp-1", "new name")
+        put_calls = [r for r in fx.client.requests if r["method"] == "PUT"]
+        self.assertTrue(put_calls)
+        self.assertEqual(put_calls[-1]["headers"].get("X-Beehive-Pool-Replace"), "1")
+
+    def test_rename_unknown_entry_is_a_loud_error(self):
+        fx = CanvasFixture({"wf-1": workflow_with_material()})
+        with self.assertRaises(ValueError) as ctx:
+            fx.ops.rename_media("wf-1", "mp-404", "x")
+        self.assertIn("mp-404", str(ctx.exception))
+
+    def test_rename_empty_name_is_refused(self):
+        fx = CanvasFixture({"wf-1": workflow_with_material()})
+        with self.assertRaises(ValueError):
+            fx.ops.rename_media("wf-1", "mp-1", "   ")
+
+    def test_delete_calls_the_dedicated_endpoint(self):
+        fx = CanvasFixture({"wf-1": workflow_with_material()})
+        fx.store.workflows["wf-1"]["media_pool"].append(
+            {"id": "mp-2", "name": "dog.png", "kind": "image",
+             "url": "https://cdn.example/dog.png", "thumb": "d.png"})
+        result = fx.ops.delete_media("wf-1", "mp-2")
+        self.assertEqual(result["deleted"], "mp-2")
+        self.assertIn(("DELETE", "/api/v1/workflows/wf-1/media-pool/mp-2"),
+                      fx.transport.paths())
+
+
+class PaidConfirmTests(unittest.TestCase):
+    """S4 quote UX: the confirm gate inside the submission path."""
+
+    def _fixture(self, confirm):
+        fx = CanvasFixture({"wf-1": workflow_with_material()})
+        fx.ops.paid_confirm = confirm
+        return fx
+
+    def test_a_declined_confirm_blocks_the_submission(self):
+        from canvas import PaidConfirmDeclined
+        fx = self._fixture(lambda quote: False)
+        with self.assertRaises(PaidConfirmDeclined) as ctx:
+            fx.ops.submit_node_job("wf-1", "generate", "minimax-h3", {"prompt": "a cat"})
+        self.assertIn("declined", str(ctx.exception))
+        # NOTHING was submitted: no POST /api/v1/jobs beyond the quote call
+        self.assertNotIn(("POST", "/api/v1/jobs"),
+                         [(c["method"], c["path"]) for c in fx.transport.calls])
+
+    def test_an_approved_confirm_submits(self):
+        seen: list[dict] = []
+        fx = self._fixture(lambda quote: seen.append(quote) or True)
+        result = fx.ops.submit_node_job("wf-1", "generate", "minimax-h3", {"prompt": "a cat"})
+        self.assertTrue(result["job_id"])
+        self.assertEqual(len(seen), 1)
+        self.assertEqual(seen[0]["total_hold_display"], 0.3)
+
+    def test_no_confirm_callback_keeps_the_s3_behaviour(self):
+        fx = CanvasFixture({"wf-1": workflow_with_material()})
+        result = fx.ops.submit_node_job("wf-1", "generate", "minimax-h3", {"prompt": "a cat"})
+        self.assertTrue(result["quoted"])
+        self.assertTrue(result["job_id"])
+
+    def test_a_zero_hold_quote_is_not_gated(self):
+        calls: list[dict] = []
+        fx = CanvasFixture({"wf-1": workflow_with_material()})
+        fx.transport.quotes = [{"total_estimate_usd": 0, "total_hold": 0, "nodes": []}]
+        fx.ops.paid_confirm = lambda quote: calls.append(quote) or False
+        result = fx.ops.submit_node_job("wf-1", "generate", "minimax-h3", {"prompt": "free"})
+        # free submissions go through without consulting the gate
+        self.assertEqual(calls, [])
+        self.assertTrue(result["job_id"])
 
 
 class ScopeGateCanvasTests(unittest.TestCase):

@@ -10,15 +10,15 @@
     "sig": "platform-signature-pending",
     "digest": "covers every skills[].content_digest (see packer)"
   },
-  "generated_at": "2026-09-28T17:03:42+08:00",
+  "generated_at": "2026-09-28T19:40:41+08:00",
   "skills": [
     {
       "path": "canvas-ops",
       "skill_id": "skilyst/canvas-ops",
       "version": "1.0.0",
       "kind": "official-bundle",
-      "content_digest": "sha256:f9cac603776ce8ab7384eda079182742ff4ceb12de18d91d1d165ab60daf518a",
-      "tree_digest": "sha256:b4fa525a1d2bd7af58115d02746dba04bcbbf961f9d2aa8728c381d29d92acbe"
+      "content_digest": "sha256:e3a411ff2657fc8f5f41caed155100b7a0dd0cddef088b5094a30fa58ab71e6a",
+      "tree_digest": "sha256:21f36f91f146f5c180b04ec6826ac1e57747ea3f6be97e466af7e57be89e6228"
     },
     {
       "path": "doctor",

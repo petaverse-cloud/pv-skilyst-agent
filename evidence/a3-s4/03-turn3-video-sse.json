@@ -1,0 +1,3798 @@
+[
+  {
+    "event": "delta",
+    "data": {
+      "text": "I'll start by loading"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the active skill's"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " instructions, since a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " skill's method governs"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " how I work"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool read_skill \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_list_workflows \"{}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "I"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " have the skill's"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " method loaded"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ". The user"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " didn't name a board,"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " so per"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the skill"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " I need to find"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the right one — specifically"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the board holding"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 钟馗 ("
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Zhong K"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ui) reference image in"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " its pool."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790594121285977414\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790593890805842685\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790593854245737345\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Found"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the board:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " **workflow-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "179059446548126"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "0345** (`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "a3"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-s4-e2"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "e-179059446"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "4`) — it holds"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "钟馗"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " reference image"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " in its pool"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " plus"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " a `generate:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "script` node writing"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the 钟馗"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "夜巡 "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "15s script. Let"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " me query the node schema"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " before deciding"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " any"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " port (iron rule"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "), and check"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the pool."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"minimax-h3\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_list_media \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Schema"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " noted. Now —"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the pool"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'s"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 钟"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "馗"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " image has"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `referenced_by: []"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " and there"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'s no `material` node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " on the board yet, so"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " I need to understand"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " how a pool"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " entry gets"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " wired."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Let me check the material"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " schema"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " and read the rest of the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " skill package"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"material\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema refused: ValueError: query_schema needs either node_id, or both node_type and provider (node id is '{node_type}:{provider}')"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool list_skill_files \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_id\\\": \\\"material:image\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema refused: ValueError: no node definition 'material:image' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_id\\\": \\\"material:media\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema refused: ValueError: no node definition 'material:media' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "No"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `material:*"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "` definition is registered — so"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " let me look"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " at how existing"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " boards actually model"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " a pool"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-image input"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " before I"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " create anything"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790442251788456854\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790588447574612580\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790586733426603373\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Now"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " I have the board"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " pattern (see"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "a3-s"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "3-e2e-d1"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "fe3a`: a `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "material:image"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "` node with"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `pool"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_entry_id` wired to"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " minim"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ax's `first_frame"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`). Let me read the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " rest of the skill's"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " method and check whether"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the script node has already produced"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " prompt."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool read_skill_file \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops\\\", \\\"path\\\": \\\"SKILL.md\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_node_output \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\", \\\"key\\\": \\\"generate-script-1\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Board"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " confirmed"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " and"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " schema"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " read. Key findings"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " before I"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " touch anything"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":\n\n-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " **Target"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " port"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " is"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " legal**: minim"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ax-h3 accepts"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `first_frame"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`, and image"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " inputs are exclusive"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " — with a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " single image (first-frame"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " mode) there"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'s no `reference_image`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " to clash"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " with. ✓"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\n- **The"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node has"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " not produced a prompt"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " yet** (`canvas"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_read_node_output` returns"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " an"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " image artifact"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ", no"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `dest_prompt`)."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " I'll note"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " that for the submit"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " step.\n\nCreating"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the video node first"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " ("
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "15s"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " / 9"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":16 / 768P"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " exactly as specified —"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " no tier changes):"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"minimax-h3\\\", \\\"config\\\": {\\\"duration\\\": 15, \\\"ratio\\\": \\\"9:16"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: node generate-minimax-h3-3 added to workflow-1790594465481260345"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Video"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " created (`generate-minimax"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-h3-3`)."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Now I need"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " a source"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node for the pool image —"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the platform"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'s pattern"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " is"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " a `material:image`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node carrying `pool_entry_id"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`, which"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " is what wires"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the pool"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " entry to the port"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\", \\\"node_type\\\": \\\"material\\\", \\\"provider\\\": \\\"image\\\", \\\"config\\\": {\\\"pool_entry_id\\\": \\\"mp-job-179059459488"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: node material-image-4 added to workflow-1790594465481260345"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Now"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " wire"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the material node into"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the video node's `first"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_frame` port (schema-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "verified:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " legal"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ","
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " and no"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "reference_image` to clash"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " with"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "):"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_connect_ports \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\", \\\"from_key\\\": \\\"material-image-4\\\", \\\"to_key\\\": \\\"generate-minimax-h3-3\\\", \\\"input_port\\\": \\\"first_frame\\\"}"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: wired material-image-4 -> generate-minimax-h3-3 on workflow-1790594465481260345"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Image is wired"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " to `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "first_frame` ✓"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ". Now the script→"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "prompt connection"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_connect_ports \"{\\\"from_key\\\": \\\"generate-script-1\\\", \\\"to_key\\\": \\\"generate-minimax-h3-3\\\", \\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: wired generate-script-1 -> generate-minimax-h3-3 on workflow-1790594465481260345"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Both"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " wires"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " are in:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " image"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "→"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`first_frame` and"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " script→video"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node. Now the paid"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " submission"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ","
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " quote-first"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_submit_node_job \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"minimax-h3\\\", \\\"key\\\": \\\"generate-minimax-h3-3\\\", \\\"config\\\": "
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "paid confirm: waiting for the user (1.035 USD hold)"
+    }
+  },
+  {
+    "event": "confirm_request",
+    "data": {
+      "session_id": "20260928-192357-17c09b",
+      "quote": {
+        "total_estimate_usd": null,
+        "total_hold": 1035000,
+        "total_estimate_usd_display": null,
+        "total_hold_display": 1.035,
+        "nodes": [
+          {
+            "node_type": "generate",
+            "provider": "minimax-h3",
+            "key": "generate-minimax-h3-3",
+            "priced": true,
+            "model": "per_second",
+            "unit_price_usd": 69000,
+            "qty_estimate": 15,
+            "amount_hold": 1035000
+          }
+        ]
+      }
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: submitted job job-1790594824852-3a32f189161e8aa9 on workflow-1790594465481260345"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Submitted"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " and accepted"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ". Quote:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " **$"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1.035**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " hold (1,035"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ",000 µ"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "USD ="
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 15s × $"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "0.069"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "/s at"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 768P) — exactly"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "15s/"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "768P tier you"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " specified, no tier"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " change. Job `job-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1790594824852-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "3a32f189161"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "e8aa9`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " is running"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ". Polling for"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the artifact"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_node_output \"{\\\"key\\\": \\\"generate-minimax-h3-3\\\", \\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "The"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " job came"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " back `failed`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " with a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " null output. Let me pull"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the board state to"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " find"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the platform's error"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " detail rather than guess"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_node_output \"{\\\"key\\\": \\\"generate-minimax-h3-3\\\", \\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "I don"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'t have `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "bee"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "hive_get_job`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " exposed, so I can't"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " fetch"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " a richer"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " error string — the platform"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " reports only"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `status: \""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "failed\"`,"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `output: null`. I"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'ll report that verb"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "atim and diagnose"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " from"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the schema"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ".\n\nThe schema says"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " minim"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ax-h3's only"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " required field is **"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`prompt`**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " (minLength 1),"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " and I submitted"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " without one"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " The script node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " was"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " supposed to supply it — but"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "canvas_read"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_node_output` on `generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-script-1` returned"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the *g"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "pt-image-2 image"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " artifact*, not a `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "dest_prompt`:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " that"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node has never actually"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " produced a prompt, so the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " wire"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " carried"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " nothing.\n\nFix"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " run the script node to"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " get"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " its `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "dest_prompt`, then ret"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ry the video"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " once. Submitting"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the script node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " (quote-first):"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_submit_node_job \"{\\\"config\\\": {\\\"instruction\\\": \\\"钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一小鬼，幽默打斗。\\\", \\\"mode\\\": \\\"storyboard\\\", \\\"max_output_tokens\\\": 2048}, \\\"key\\\": \\\"generate-script-1\\\", \\\"node"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "paid confirm: waiting for the user (0.002293 USD hold)"
+    }
+  },
+  {
+    "event": "confirm_request",
+    "data": {
+      "session_id": "20260928-192357-17c09b",
+      "quote": {
+        "total_estimate_usd": null,
+        "total_hold": 2293,
+        "total_estimate_usd_display": null,
+        "total_hold_display": 0.002293,
+        "nodes": [
+          {
+            "node_type": "generate",
+            "provider": "script",
+            "key": "generate-script-1",
+            "priced": true,
+            "model": "per_token",
+            "qty_estimate": 1,
+            "amount_hold": 2293
+          }
+        ]
+      }
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: submitted job job-1790594868202-9e47ed2289fb1de3 on workflow-1790594465481260345"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Script job submitted ($"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "0.0023 hold"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "). Polling for its"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " prompt"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_node_output \"{\\\"key\\\": \\\"generate-script-1\\\", \\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\""
+    }
+  },
+  {
+    "event": "done",
+    "data": {
+      "ok": true,
+      "data": {
+        "session_id": "20260928-192357-17c09b",
+        "skill": "skilyst/canvas-ops",
+        "stop_reason": "max_turns",
+        "answer": "",
+        "model": "deepseek/deepseek-v4.1-flash",
+        "turns": 16,
+        "wall_clock_s": 237.2,
+        "usage": {
+          "prompt_tokens": 257821,
+          "completion_tokens": 16338,
+          "total_tokens": 274159,
+          "calls": 16,
+          "models_used": [
+            "deepseek/deepseek-v4.1-flash"
+          ]
+        },
+        "artifacts": [],
+        "jobs": {
+          "submitted": 0,
+          "budget": null
+        },
+        "tool_calls": [
+          {
+            "tool": "read_skill",
+            "arguments": {
+              "skill_id": "skilyst/canvas-ops"
+            },
+            "result": {
+              "skill_id": "skilyst/canvas-ops",
+              "version": "1.0.0",
+              "degraded": false,
+              "digest": "sha256:f9cac603776ce8ab7384eda079182742ff4ceb12de18d91d1d165ab60daf518a",
+              "permission": {
+                "egress": [
+                  "beehive-api.verse4.pet"
+                ],
+                "filesystem": "skill-dir",
+                "exec": "none",
+                "secrets": true
+              },
+              "plan": {},
+              "requires_nodes": [],
+              "instructions": "\n# Canvas operations (the conversation-driven board)\n\nThe board is the workflow; you are its writer. Every tool below lands a\nstructured change on the server-side blueprint and an action card in the\nconversation — the user watches the board move as you speak.\n\n## When to use\n\nThe user wants to build or edit a board by conversation: \"add a script node\nthat writes a 15-second ghost-catcher patrol script\", \"wire the reference\nimage to the first frame\", \"generate a reference image\", \"run it\".\n\n**Start every session with `canvas_list_workflows` + `canvas_read_board`.**\nIf the user did not name a board, list them, pick the most recently updated\none, and *say which one you picked* before editing.\n\n## The tools\n\n| tool | what it does | key params | reach for it when |\n| --- | --- | --- | --- |\n| `canvas_list_workflows` | boards this account can see | limit | picking the board to operate on |\n| `canvas_read_board` | full board state: nodes, edges (derived from `material_deps`/`depends_on`), media pool | workflow_id | before any edit; after a conflict |\n| `canvas_create_node` | add a node to the blueprint (auto-key `{type}-{provider}-{n}`, auto-position) | workflow_id, node_type, provider, config? | \"创建一个 script 节点\" |\n| `canvas_write_node_config` | deep-merge a config patch into one node | workflow_id, key, config | \"把时长改成 15 秒\" |\n| `canvas_connect_ports` | wire an edge; a material source wires as `material_deps {key, input_port}` + depends_on | workflow_id, from_key, to_key, input_port? | \"把参考图接到首帧\" |\n| `canvas_query_schema` | node definition + derived port analysis (enums, required, alternative input modes) | node_type+provider or node_id | **before every connect or submission** |\n| `canvas_read_node_output` | newest job output for one node (async poll) | workflow_id, key | after submitting a generation |\n| `canvas_submit_node_job` | submit ONE node as a job, quote-first | workflow_id, node_type, provider, config | running a single node |\n| `canvas_run_workflow` | submit the whole board as one job, quote-first | workflow_id | \"跑一下这个流程\" |\n| `canvas_generate_image` | submit a PAID gpt-image-2 image job | workflow_id, prompt, size? | \"生成一张参考图\" |\n| `canvas_list_media` | the board's media pool entries | workflow_id | checking what is available |\n| `canvas_add_media` | add an upload-origin pool entry by URL | workflow_id, url, name | bringing an external image onto the board |\n\nNode types you will meet: `process` (script/LLM nodes, e.g.\n`process:script`), `generate` (minimax-h3, gpt-image-2, ...), `material` (a\nmedia-pool reference — pure data input, never executed).\n\n## Lock discipline (写锁纪律)\n\nEvery blueprint write (`create_node` / `write_node_config` / `connect_ports`)\nis **already wrapped** by the runtime in the server-side lock protocol:\nlock → read → modify → PUT → unlock, with finally semantics (a failed PUT\nstill unlocks — a crash can never strand a lock; a dead holder's lock is\ntaken over by the next applicant server-side).\n\nIf a write raises `LockHeldError` (画板正被占用):\n\n1. **Stop.** Tell the user the board is busy and *who* holds it (the error\n   carries holder kind/id and since when).\n2. **Do not retry in a loop.** The holder is alive and working; your calls\n   do not preempt it.\n3. Reads (`canvas_read_board`, `canvas_query_schema`) still work — you can\n   keep planning, just not writing.\n\nYour own API calls refresh the lock heartbeat implicitly while you hold it —\nyou never need to think about expiry.\n\n## Port matching iron rule (端口匹配铁律)\n\n**Before `canvas_connect_ports`, ALWAYS `canvas_query_schema` the TARGET\nnode.** The schema is the judge of which ports may receive what:\n\n- **enum fields** — e.g. `image_roles` accepts exactly\n  `reference_image` / `first_frame` / `last_frame`;\n- **required fields** — what a submission will 400 without;\n- **alternative input modes** — arrays that cannot be mixed.\n\n**Canonical case — minimax-h3.** Its image inputs are *exclusive*:\n`first_frame` and `reference_image` cannot coexist in one submission. Wiring\na reference image to `first_frame` when `reference_image` entries already\nexist (or vice versa) is a 400 *at submit time* — expensive to discover\nlate. Query the schema, decide the port deliberately, then connect. Never\nguess a port from the field name alone.\n\n## Quote-first (先报价)\n\nPaid submissions (`canvas_submit_node_job`, `canvas_run_workflow`,\n`canvas_generate_image`) fetch an estimate *before* the submission exists.\nQuote amounts are integer micro-USD plus a USD display figure. When the\nestimate is material, state the USD figure to the user and get the go-ahead\n— the wallet is charged on submit (held at the quote's upper bound, settled\nat measured usage).\n\n## Failure self-correction (失败自修正)\n\n| failure | what to do |\n| --- | --- |\n| schema/validation 400 | read the **structured** error — the platform names the offending field and the allowed values. Fix that field, retry **once**. No blind retries, no fallback wrappers. |\n| 409 workflow-modified | the runtime already retried once; `canvas_read_board` again before your next write — the board moved under you. |\n| `LockHeldError` | report to the user, stop writing (see above). |\n| 402 / 413 quota | report the number, do not retry. |\n\n## Media pool flow (参考图上板)\n\nGeneration is async and the pool is where artifacts land:\n\n1. `canvas_generate_image` **submits only** — a paid gpt-image-2 job.\n2. Poll with `canvas_read_node_output` (or `beehive_get_job`) until\n   `completed`.\n3. On completion the server **auto-captures** the image into the board's\n   media pool (`origin.kind=generated`) — no add needed.\n\nFor an external image the user supplied by URL: `canvas_add_media`, then\nmake it wireable as a material node, then connect:\n\n```\ncanvas_add_media(workflow_id, url, name)          -> pool entry id\ncanvas_create_node(workflow_id, 'material', '',   -> material node\n                   config={pool_entry_id: <id>})\ncanvas_query_schema(node_type='generate', provider='minimax-h3')\ncanvas_connect_ports(workflow_id, from_key=<material key>,\n                     to_key=<consumer key>, input_port='first_frame')\n```\n\nMaterial nodes are identified by `config.pool_entry_id`; the runtime wires\nthem into the consumer's `material_deps` and `depends_on`, and the server\ncompiles that to `images[]` + `image_roles[]` (or `video_refs`/`audio_refs`)\nat submit time.\n\n## Board delta awareness\n\nEvery successful canvas call lands an action row in the conversation with a\n`board_delta` (added node, wired edge, pool entry, submitted job). The UI\nrenders these as cards the user can expand and click to locate on the board.\nKeep your result summaries human-readable — the card's one-liner is what the\nuser reads first.",
+              "files": [
+                "LICENSE",
+                "SKILL.md",
+                "manifest.json",
+                "references/i18n/glossary.en.json",
+                "references/i18n/glossary.zh-CN.json"
+              ],
+              "spec_warnings": []
+            },
+            "error": null,
+            "duration_s": 0.0
+          },
+          {
+            "tool": "canvas_list_workflows",
+            "arguments": {},
+            "result": {
+              "workflows": [
+                {
+                  "id": "workflow-1790594465481260345",
+                  "name": "a3-s4-e2e-1790594464",
+                  "description": "A3 S4 E2E creation story",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790594121285977414",
+                  "name": "a3-s4-e2e-1790594120",
+                  "description": "A3 S4 E2E creation story",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790593890805842685",
+                  "name": "a3-s4-e2e-1790593889",
+                  "description": "A3 S4 E2E creation story",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790593854245737345",
+                  "name": "a3-s4-e2e-1790593853",
+                  "description": "A3 S4 E2E creation story",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790588447574612580",
+                  "name": "Outfit Swap",
+                  "description": "Swap the outfit in your photo. {\"user_inputs\":[{\"key\":\"image\",\"type\":\"image_url\",\"label\":\"Your photo\",\"required\":true},{\"key\":\"prompt\",\"type\":\"text\",\"label\":\"Outfit description\",\"placeholder\":\"a tailored charcoal suit, studio lighting\",\"required\":true}]}",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790586733426603373",
+                  "name": "a3-s3-e2e-d1fe3a",
+                  "description": "A3 S3 canvas skill E2E",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790467226880400695",
+                  "name": "qa-smoke-1790467206-upd",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790442251788456854",
+                  "name": "Live Photo",
+                  "description": "Animate a still photo into a 5s cinematic clip. {\"user_inputs\":[{\"key\":\"motion\",\"type\":\"text\",\"label\":\"Motion hint\",\"placeholder\":\"hair flowing in the wind\",\"required\":false},{\"key\":\"image\",\"type\":\"image_url\",\"label\":\"Source photo\",\"required\":true}]}",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1789887343156623963",
+                  "name": "studio-tts-verify",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1788427371415240901",
+                  "name": "E2E 428 suno pool capture",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1787647374621149360",
+                  "name": "designer-e2e",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1787216304515073454",
+                  "name": "test-canvas",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1785472390994643222",
+                  "name": "demo_template_3",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1785147390724587660",
+                  "name": "demo_template_1",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1785147390129913548",
+                  "name": "demo_template_2",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1785131137787162440",
+                  "name": "wf-test",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-sd-gen-watermark-hls",
+                  "name": "BytePlus Seedance 生成 · 水印+HLS 流程",
+                  "description": "BytePlus Seedance 生成（可通过 Nodes[0].Config.template_id 引用模版）+ 水印 + HLS 切片，跳过前后贴片拼接",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-normalize",
+                  "name": "用户上传视频标准化",
+                  "description": "标准化转码至 1080x1920 + HLS 切片（多码率自适应，由 Mux 输出的 HLS manifest 自动提供，与 quality 档位无关）。不加水印，跳过拼接。调用时需在 Nodes[0].Config 传入 src_video_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-watermark-hls",
+                  "name": "[测试] Mux 打水印输出 HLS",
+                  "description": "单独测试节点 E（process:mux，水印+HLS）。调用时需在 Nodes[0].Config 传入 src_video_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-watermark-mp4",
+                  "name": "[测试] Mux 打水印输出 MP4",
+                  "description": "单独测试节点 D（process:mux，水印+MP4）。调用时需在 Nodes[0].Config 传入 src_video_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-post-roll",
+                  "name": "后贴片处理流程",
+                  "description": "水印 MP4 + 后贴片拼接 + HLS 切片。调用时需在 Nodes[0].Config 传入 src_video_url，Nodes[1].Config 传入 postroll_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-pre-roll",
+                  "name": "前贴片处理流程",
+                  "description": "水印 MP4 + 前贴片拼接 + HLS 切片。调用时需在 Nodes[0].Config 传入 src_video_url，Nodes[1].Config 传入 preroll_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-veo-gen-full",
+                  "name": "Google Veo 生成 · 完整流程",
+                  "description": "Google Veo 生成 + 水印 MP4 + 前后贴片拼接（后贴片默认用品牌 slogan 素材，前贴片需调用方自行传入） + HLS 切片",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-sd-gen-full",
+                  "name": "BytePlus Seedance 生成 · 完整流程",
+                  "description": "BytePlus Seedance 生成 + 水印 MP4 + 前后贴片拼接（后贴片默认用品牌 slogan 素材，前贴片需调用方自行传入） + HLS 切片",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-drawnow-gen-full",
+                  "name": "DrawNow 生成 · 完整流程",
+                  "description": "DrawNow 生成 + 水印 MP4 + 前后贴片拼接（后贴片默认用品牌 slogan 素材，前贴片需调用方自行传入） + HLS 切片",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-normalize",
+                  "name": "[测试] Wigowago 标准化转码",
+                  "description": "单独测试节点 H（stitch:wigowago，单视频标准化转码至 1080x1920）。调用时需在 Nodes[0].Config 传入 src_video_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-stitch-multiple",
+                  "name": "[测试] Wigowago 拼接前后贴片",
+                  "description": "单独测试节点 G（stitch:wigowago，3 段拼接）。调用时需在 Nodes[0].Config 传入 preroll_url、src_video_url（main）与 postroll_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-stitch-pre-roll",
+                  "name": "[测试] Wigowago 拼接前贴片",
+                  "description": "单独测试节点 G（stitch:wigowago，2 段拼接）。调用时需在 Nodes[0].Config 传入 preroll_url 与 src_video_url（main）",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-hls-only",
+                  "name": "[测试] Mux 只输出 HLS 切片",
+                  "description": "单独测试节点 F（process:mux，无水印仅 HLS）。调用时需在 Nodes[0].Config 传入 src_video_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-veo",
+                  "name": "[测试] Google Veo 生成",
+                  "description": "单独测试节点 C（generate:google-veo）。调用时需在 Nodes[0].Config 传入 prompt",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-sd",
+                  "name": "[测试] BytePlus Seedance 生成",
+                  "description": "单独测试节点 B（generate:byteplus-seedance-2.0）。调用时需在 Nodes[0].Config 传入 prompt",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-drawnow",
+                  "name": "[测试] DrawNow 生成",
+                  "description": "单独测试节点 A（generate:drawnow）。调用时需在 Nodes[0].Config 传入 prompt",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-veo-gen-vip",
+                  "name": "Google Veo 生成 · VIP 流程",
+                  "description": "Google Veo 生成 + HLS 切片，跳过水印与贴片拼接",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-sd-gen-vip",
+                  "name": "BytePlus Seedance 生成 · VIP 流程",
+                  "description": "BytePlus Seedance 生成 + HLS 切片，跳过水印与贴片拼接",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-drawnow-gen-vip",
+                  "name": "DrawNow 生成 · VIP 流程",
+                  "description": "DrawNow 生成 + HLS 切片，跳过水印与贴片拼接",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "error": null,
+            "duration_s": 1.71
+          },
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790594465481260345"
+            },
+            "result": {
+              "id": "workflow-1790594465481260345",
+              "name": "a3-s4-e2e-1790594464",
+              "nodes": [
+                {
+                  "type": "generate",
+                  "provider": "script",
+                  "key": "generate-script-1",
+                  "config": {
+                    "instruction": "钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一小鬼，幽默打斗。"
+                  },
+                  "position": {
+                    "x": 80,
+                    "y": 80
+                  }
+                },
+                {
+                  "type": "generate",
+                  "provider": "gpt-image-2",
+                  "key": "generate-gpt-image-2-2",
+                  "config": {
+                    "aspect_ratio": "1:1",
+                    "prompt": "中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。"
+                  },
+                  "depends_on": [
+                    "generate-script-1"
+                  ],
+                  "position": {
+                    "x": 320,
+                    "y": 80
+                  }
+                }
+              ],
+              "edges": [
+                {
+                  "from": "generate-script-1",
+                  "to": "generate-gpt-image-2-2",
+                  "kind": "dep"
+                }
+              ],
+              "media_pool": [
+                {
+                  "id": "mp-job-1790594594880-6481924a946c5027-node-job-1790594594880-6481924a946c5027-0-image",
+                  "name": "node-job-1790594594880-6481924a946c5027-0-1790594619112",
+                  "kind": "image",
+                  "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790594594880-6481924a946c5027/node-job-1790594594880-6481924a946c5027-0-1790594619112.png",
+                  "mime_type": "image/png",
+                  "file_size": 1395933,
+                  "width": 1024,
+                  "height": 1024,
+                  "origin": {
+                    "kind": "generated",
+                    "workflow_id": "workflow-1790594465481260345",
+                    "job_id": "job-1790594594880-6481924a946c5027",
+                    "node_id": "node-job-1790594594880-6481924a946c5027-0",
+                    "provider": "gpt-image-2",
+                    "prompt": "中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。"
+                  },
+                  "created_at": "2026-09-28T11:23:39.217378839Z"
+                }
+              ]
+            },
+            "error": null,
+            "duration_s": 1.31
+          },
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790594121285977414"
+            },
+            "result": {
+              "id": "workflow-1790594121285977414",
+              "name": "a3-s4-e2e-1790594120",
+              "nodes": [],
+              "edges": [],
+              "media_pool": []
+            },
+            "error": null,
+            "duration_s": 1.14
+          },
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790593890805842685"
+            },
+            "result": {
+              "id": "workflow-1790593890805842685",
+              "name": "a3-s4-e2e-1790593889",
+              "nodes": [],
+              "edges": [],
+              "media_pool": []
+            },
+            "error": null,
+            "duration_s": 1.13
+          },
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790593854245737345"
+            },
+            "result": {
+              "id": "workflow-1790593854245737345",
+              "name": "a3-s4-e2e-1790593853",
+              "nodes": [],
+              "edges": [],
+              "media_pool": []
+            },
+            "error": null,
+            "duration_s": 1.16
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "generate",
+              "provider": "minimax-h3"
+            },
+            "result": {
+              "node_id": "generate:minimax-h3",
+              "name": "MiniMax-H3 Video Generation",
+              "description": null,
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "properties": {
+                  "audio_refs": {
+                    "description": "Reference audio (max 3, each 2-15s, total ≤15s)",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "duration": {
+                    "default": 4,
+                    "description": "Duration in seconds (4-15)",
+                    "maximum": 15,
+                    "minimum": 4,
+                    "type": "integer"
+                  },
+                  "image_roles": {
+                    "description": "Per-image roles (parallel to images). Omit for auto-derivation",
+                    "items": {
+                      "enum": [
+                        "first_frame",
+                        "last_frame",
+                        "reference_image"
+                      ],
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "images": {
+                    "description": "Input images. 1 image = first frame; multiple images default to reference mode. First/last-frame mode cannot mix with reference mode (upstream rejects the mix)",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "model": {
+                    "default": "MiniMax-H3",
+                    "description": "Model. Currently only MiniMax-H3; a value outside this set is rejected at submit time",
+                    "enum": [
+                      "MiniMax-H3"
+                    ],
+                    "type": "string"
+                  },
+                  "prompt": {
+                    "description": "Text prompt (mandatory, max 7000 chars)",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "ratio": {
+                    "default": "9:16",
+                    "description": "Aspect ratio. Defaults to 9:16 (portrait, Wesley 2026-08-28); required for text-to-video ('adaptive' not allowed); image-to-video is always adaptive regardless",
+                    "enum": [
+                      "21:9",
+                      "16:9",
+                      "4:3",
+                      "1:1",
+                      "3:4",
+                      "9:16"
+                    ],
+                    "type": "string"
+                  },
+                  "resolution": {
+                    "default": "768P",
+                    "description": "Output resolution tier (different pricing per tier)",
+                    "enum": [
+                      "768P",
+                      "2K"
+                    ],
+                    "type": "string"
+                  },
+                  "video_refs": {
+                    "description": "Reference videos (max 3, each 2-15s, total ≤15s)",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "prompt"
+                ],
+                "type": "object",
+                "x-input-ports": [
+                  {
+                    "accepts": [
+                      "image"
+                    ],
+                    "field": "src_image_url"
+                  },
+                  {
+                    "accepts": [
+                      "text"
+                    ],
+                    "field": "prompt"
+                  }
+                ]
+              },
+              "output_schema": {
+                "dest_video_url": "string — SAS-authenticated URL of the generated video",
+                "duration": "integer — output duration in seconds",
+                "ratio": "string — actual output aspect ratio",
+                "resolution": "string — output resolution tier (768P/2K)",
+                "status": "string",
+                "task_id": "string",
+                "usage": "object — {output_seconds, input_seconds, input_image_count} billing metering"
+              },
+              "config_defaults": {
+                "pricing": {
+                  "dim_ratios": {
+                    "resolution": {
+                      "2K": 1.6,
+                      "768P": 1
+                    }
+                  },
+                  "model": "per_second",
+                  "qty_max": 15,
+                  "qty_min": 4,
+                  "unit_price_usd": 69000
+                }
+              },
+              "enabled": true,
+              "port_analysis": {
+                "enum_fields": [
+                  {
+                    "field": "image_roles",
+                    "enum": [
+                      "first_frame",
+                      "last_frame",
+                      "reference_image"
+                    ],
+                    "on": "items"
+                  },
+                  {
+                    "field": "model",
+                    "enum": [
+                      "MiniMax-H3"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "ratio",
+                    "enum": [
+                      "21:9",
+                      "16:9",
+                      "4:3",
+                      "1:1",
+                      "3:4",
+                      "9:16"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "resolution",
+                    "enum": [
+                      "768P",
+                      "2K"
+                    ],
+                    "on": "field"
+                  }
+                ],
+                "required": [
+                  "prompt"
+                ],
+                "notes": [
+                  "images/image_roles and video_refs are alternative input modes"
+                ]
+              }
+            },
+            "error": null,
+            "duration_s": 1.32
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "generate",
+              "provider": "script"
+            },
+            "result": {
+              "node_id": "generate:script",
+              "name": "AI Script (Prompt Writer)",
+              "description": null,
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "properties": {
+                  "context_urls": {
+                    "description": "Optional reference media URLs appended to the instruction as context",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "maxItems": 8,
+                    "type": "array"
+                  },
+                  "goal": {
+                    "description": "compose mode: the original goal (defaults to instruction when empty)",
+                    "type": "string"
+                  },
+                  "instruction": {
+                    "description": "What you want the video/audio/image to be, in plain language — the script node rewrites it into a generation-ready prompt",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "material_refs": {
+                    "description": "#504: material references — resolved at submit, woven into the instruction, passed through to downstream nodes via dest_refs",
+                    "items": {
+                      "properties": {
+                        "entry_id": {
+                          "description": "Media-pool entry id (mp-...)",
+                          "type": "string"
+                        },
+                        "note": {
+                          "description": "Free-text usage note — woven into the prompt's referenced-materials section",
+                          "type": "string"
+                        },
+                        "role": {
+                          "enum": [
+                            "first_frame",
+                            "last_frame",
+                            "reference_image",
+                            "reference_video",
+                            "reference_audio"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "entry_id",
+                        "role"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "max_output_tokens": {
+                    "default": 2048,
+                    "description": "Upper bound on the generated prompt length; also the billing hold bound",
+                    "maximum": 8192,
+                    "minimum": 64,
+                    "type": "integer"
+                  },
+                  "mode": {
+                    "description": "decompose = instruction is a goal, output is the questionnaire JSON (#432); compose = synthesize the final prompt + ir from goal/selections (#432); storyboard = instruction is a narrative brief, output is a template-v2 sequence JSON with shots/transitions/elements/continuity locks (#381). Absent = single-phase instruction→prompt",
+                    "enum": [
+                      "decompose",
+                      "compose",
+                      "storyboard"
+                    ],
+                    "type": "string"
+                  },
+                  "model": {
+                    "default": "deepseek-v4-flash-0731",
+                    "description": "Model. Currently only deepseek-v4-flash-0731; a value outside this set is rejected at submit time",
+                    "enum": [
+                      "deepseek-v4-flash-0731"
+                    ],
+                    "type": "string"
+                  },
+                  "selections": {
+                    "description": "compose mode: the user's picks + custom values keyed by dimension (subject/action/camera/mood/sound)",
+                    "type": "object"
+                  },
+                  "system_prompt": {
+                    "description": "Optional — overrides the built-in prompt-engineering system prompt (advanced)",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "instruction"
+                ],
+                "type": "object",
+                "x-input-ports": [
+                  {
+                    "accepts": [
+                      "text"
+                    ],
+                    "field": "instruction"
+                  }
+                ]
+              },
+              "output_schema": {
+                "completion_tokens": "integer",
+                "dest_prompt": "string — the generation-ready prompt, flows into downstream nodes' prompt field",
+                "ir": "string (JSON) — compose mode only: IR-lite axes the model applied (flat snake_case object)",
+                "prompt_tokens": "integer"
+              },
+              "config_defaults": {
+                "pricing": {
+                  "input_price_usd": 140,
+                  "model": "per_token",
+                  "output_price_usd": 280,
+                  "qty_max": 8192
+                }
+              },
+              "enabled": true,
+              "port_analysis": {
+                "enum_fields": [
+                  {
+                    "field": "mode",
+                    "enum": [
+                      "decompose",
+                      "compose",
+                      "storyboard"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "model",
+                    "enum": [
+                      "deepseek-v4-flash-0731"
+                    ],
+                    "on": "field"
+                  }
+                ],
+                "required": [
+                  "instruction"
+                ],
+                "notes": []
+              }
+            },
+            "error": null,
+            "duration_s": 1.35
+          },
+          {
+            "tool": "canvas_list_media",
+            "arguments": {
+              "workflow_id": "workflow-1790594465481260345"
+            },
+            "result": {
+              "entries": [
+                {
+                  "id": "mp-job-1790594594880-6481924a946c5027-node-job-1790594594880-6481924a946c5027-0-image",
+                  "name": "node-job-1790594594880-6481924a946c5027-0-1790594619112",
+                  "kind": "image",
+                  "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790594594880-6481924a946c5027/node-job-1790594594880-6481924a946c5027-0-1790594619112.png",
+                  "thumb": null,
+                  "index": 1,
+                  "referenced_by": []
+                }
+              ]
+            },
+            "error": null,
+            "duration_s": 1.26
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "material"
+            },
+            "result": null,
+            "error": "ValueError: query_schema needs either node_id, or both node_type and provider (node id is '{node_type}:{provider}')",
+            "duration_s": 0.0
+          },
+          {
+            "tool": "list_skill_files",
+            "arguments": {
+              "skill_id": "skilyst/canvas-ops"
+            },
+            "result": {
+              "skill_id": "skilyst/canvas-ops",
+              "files": [
+                "LICENSE",
+                "SKILL.md",
+                "manifest.json",
+                "references/i18n/glossary.en.json",
+                "references/i18n/glossary.zh-CN.json"
+              ]
+            },
+            "error": null,
+            "duration_s": 0.0
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_id": "material:image"
+            },
+            "result": null,
+            "error": "ValueError: no node definition 'material:image' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)",
+            "duration_s": 1.58
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_id": "material:media"
+            },
+            "result": null,
+            "error": "ValueError: no node definition 'material:media' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)",
+            "duration_s": 1.46
+          },
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790442251788456854"
+            },
+            "result": {
+              "id": "workflow-1790442251788456854",
+              "name": "Live Photo",
+              "nodes": [
+                {
+                  "type": "generate",
+                  "provider": "minimax-h3",
+                  "key": "living-photo",
+                  "config": {
+                    "duration": 5,
+                    "prompt": "subtle cinematic motion, breathing life into the photo",
+                    "resolution": "768P"
+                  }
+                }
+              ],
+              "edges": [],
+              "media_pool": [
+                {
+                  "id": "mp-job-1790585538113-2fa3075157027cad-node-job-1790585538113-2fa3075157027cad-living-photo-video",
+                  "name": "node-job-1790585538113-2fa3075157027cad-living-photo-1790585743404",
+                  "kind": "video",
+                  "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790585538113-2fa3075157027cad/node-job-1790585538113-2fa3075157027cad-living-photo-1790585743404.mp4",
+                  "mime_type": "video/mp4",
+                  "file_size": 1501871,
+                  "duration": 5,
+                  "width": 768,
+                  "height": 1024,
+                  "origin": {
+                    "kind": "generated",
+                    "workflow_id": "workflow-1790442251788456854",
+                    "job_id": "job-1790585538113-2fa3075157027cad",
+                    "node_id": "node-job-1790585538113-2fa3075157027cad-living-photo",
+                    "provider": "minimax-h3",
+                    "prompt": "hair flowing in the wind"
+                  },
+                  "created_at": "2026-09-28T08:55:44.293566857Z"
+                },
+                {
+                  "id": "mp-job-1790588042041-5eb0efe54cfcbe5d-node-job-1790588042041-5eb0efe54cfcbe5d-living-photo-video",
+                  "name": "node-job-1790588042041-5eb0efe54cfcbe5d-living-photo-1790588370298",
+                  "kind": "video",
+                  "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790588042041-5eb0efe54cfcbe5d/node-job-1790588042041-5eb0efe54cfcbe5d-living-photo-1790588370298.mp4",
+                  "mime_type": "video/mp4",
+                  "file_size": 834749,
+                  "duration": 5,
+                  "width": 768,
+                  "height": 768,
+                  "origin": {
+                    "kind": "generated",
+                    "workflow_id": "workflow-1790442251788456854",
+                    "job_id": "job-1790588042041-5eb0efe54cfcbe5d",
+                    "node_id": "node-job-1790588042041-5eb0efe54cfcbe5d-living-photo",
+                    "provider": "minimax-h3",
+                    "prompt": "The cat is kneading the blanket."
+                  },
+                  "created_at": "2026-09-28T09:39:30.952879278Z"
+                }
+              ]
+            },
+            "error": null,
+            "duration_s": 1.38
+          },
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790588447574612580"
+            },
+            "result": {
+              "id": "workflow-1790588447574612580",
+              "name": "Outfit Swap",
+              "nodes": [
+                {
+                  "type": "generate",
+                  "provider": "nb2-image",
+                  "key": "outfit-swap",
+                  "config": {
+                    "prompt": "Change the outfit of the person in the reference image as described, keep identity, face, pose and background unchanged, photorealistic.",
+                    "thinking_level": "minimal"
+                  }
+                }
+              ],
+              "edges": [],
+              "media_pool": [
+                {
+                  "id": "mp-job-1790591739292-4d46f1dcc489d4a6-node-job-1790591739292-4d46f1dcc489d4a6-outfit-swap-image",
+                  "name": "node-job-1790591739292-4d46f1dcc489d4a6-outfit-swap-1790591750061",
+                  "kind": "image",
+                  "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790591739292-4d46f1dcc489d4a6/node-job-1790591739292-4d46f1dcc489d4a6-outfit-swap-1790591750061.png",
+                  "mime_type": "image/png",
+                  "file_size": 2049365,
+                  "width": 1045,
+                  "height": 1024,
+                  "origin": {
+                    "kind": "generated",
+                    "workflow_id": "workflow-1790588447574612580",
+                    "job_id": "job-1790591739292-4d46f1dcc489d4a6",
+                    "node_id": "node-job-1790591739292-4d46f1dcc489d4a6-outfit-swap",
+                    "provider": "nb2-image",
+                    "prompt": "cyberpunk outfit in a cyberpunk city"
+                  },
+                  "created_at": "2026-09-28T10:35:50.166620708Z"
+                }
+              ]
+            },
+            "error": null,
+            "duration_s": 1.28
+          },
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790586733426603373"
+            },
+            "result": {
+              "id": "workflow-1790586733426603373",
+              "name": "a3-s3-e2e-d1fe3a",
+              "nodes": [
+                {
+                  "type": "generate",
+                  "provider": "script",
+                  "key": "script-1",
+                  "config": {
+                    "instruction": "钟馗夜巡，15 秒竖屏短剧（幽默风格）。总时长 15s，四个镜头，节奏紧凑，每拍都要有清晰的画面动作与情绪落点。\n\n【拍 1｜夜巡开场｜0-3s】\n景：古城夜景，月光冷白，青石板长街、灯笼高挂、屋檐层叠，远处薄雾。\n人：钟馗（红袍、虬髯怒目、头戴官帽、手持斩鬼剑）大步巡街，脚步沉稳，红袍下摆随夜风翻动。\n动作与运镜：低角度跟拍钟馗前行，随后镜头缓缓上移，月光下拖出长长的影子；他停步、抬剑、鼻息凝成白气。\n台词/音效：风声、远处更鼓三响；钟馗低声一句“今夜，也该太平”。\n情绪落点：威严压场，夜巡的静。\n\n【拍 2｜遇小鬼｜3-7s】\n景：巷口灯笼下一只小鬼（青灰皮肤、头顶小角、破布小袄）正偷吃供品，嘴里塞满糕点。\n事件：钟馗的目光落过来，小鬼僵住，慢慢回头，与钟馗四目相对。\n动作与运镜：镜头在钟馗背影与小鬼之间切换，小鬼把糕点从嘴里一点点抽出来，尴尬地藏到背后；再给钟馗一个挑眉的特写。\n台词/音效：鼓点顿住一秒的静音，然后拔高的笛声；小鬼挤出一句“我、我路过”。\n情绪落点：喜剧张力的静默对峙。\n\n【拍 3｜幽默打斗｜7-13s】\n景：同一条长街，灯笼在打斗中左右摇晃。\n事件：钟馗挥剑捉鬼，小鬼连滚带爬地闪躲，动作快却不凶——是追逐式的闹剧而非血腥厮杀。\n动作与运镜：短促碎切 + 一镜到底的横向追拍交替；小鬼绕柱、钻摊、跳上酒坛再滑下来，钟馗一剑劈空砍在灯笼上、灯笼晃得厉害，他抬手按住帽子的狼狈瞬间给特写。\n台词/音效：急促锣鼓、木鱼敲击、铃铛乱响；小鬼连声讨饶“别砍别砍，我错了”，钟馗一声“站住！”。\n情绪落点：打斗的滑稽感，喜感高于杀气。\n\n【拍 4｜收尾｜13-15s】\n景：巷口恢复安静，月光重新铺满长街。\n事件：小鬼被钟馗拎着后领提起来，垂着四肢认命；钟馗把它放到供桌边，小鬼自觉地跪坐好、拱手。\n动作与运镜：镜头拉回中景，两人并排入画，月光下一大一小两个剪影；最后定格在钟馗收剑入鞘、略显得意的一个小动作。\n台词/音效：更鼓再响，声效收敛为悠长尾音；钟馗淡淡一句“下不为例”。\n情绪落点：幽默收束，余味温和。\n\n【整体要求】\n- 竖屏 9:16，电影感构图，中国风神话美术；夜色为主，月光与灯笼暖光是唯二光源，明暗对比强。\n- 钟馗形象前后严格一致：红袍、官帽、虬髯、斩鬼剑，缺一不可。\n- 全程无血腥、无恐怖渲染，喜剧节奏靠动作与音效，不靠台词堆砌。\n- 输出按四拍拆分为可独立生成的镜头段落，每拍注明时长、景别、运镜、动作、台词音效与情绪落点。",
+                    "max_output_tokens": 2048
+                  },
+                  "position": {
+                    "x": 80,
+                    "y": 80
+                  }
+                },
+                {
+                  "type": "generate",
+                  "provider": "minimax-h3",
+                  "key": "minimax-1",
+                  "config": {
+                    "duration": 15,
+                    "material_deps": [
+                      {
+                        "input_port": "first_frame",
+                        "key": "ref-img-1"
+                      }
+                    ],
+                    "prompt": "钟馗夜巡短剧，中国风神话，红袍钟馗夜晚古城巡街，幽默风格",
+                    "ratio": "9:16",
+                    "resolution": "768P"
+                  },
+                  "depends_on": [
+                    "ref-img-1"
+                  ],
+                  "position": {
+                    "x": 320,
+                    "y": 80
+                  }
+                },
+                {
+                  "type": "material",
+                  "provider": "image",
+                  "key": "ref-img-1",
+                  "config": {
+                    "pool_entry_id": "mp-job-1790587211012-232af376ed278a74-node-job-1790587211012-232af376ed278a74-0-image"
+                  },
+                  "position": {
+                    "x": 560,
+                    "y": 80
+                  }
+                },
+                {
+                  "type": "process",
+                  "provider": "mux",
+                  "key": "outro-mux-1",
+                  "config": {},
+                  "position": {
+                    "x": 800,
+                    "y": 80
+                  }
+                },
+                {
+                  "type": "process",
+                  "provider": "mux",
+                  "key": "title-mux-1",
+                  "config": {},
+                  "depends_on": [
+                    "script-1"
+                  ],
+                  "position": {
+                    "x": 1040,
+                    "y": 80
+                  }
+                }
+              ],
+              "edges": [
+                {
+                  "from": "ref-img-1",
+                  "to": "minimax-1",
+                  "kind": "dep"
+                },
+                {
+                  "from": "ref-img-1",
+                  "to": "minimax-1",
+                  "kind": "material",
+                  "input_port": "first_frame"
+                },
+                {
+                  "from": "script-1",
+                  "to": "title-mux-1",
+                  "kind": "dep"
+                }
+              ],
+              "media_pool": [
+                {
+                  "id": "mp-job-1790587211012-232af376ed278a74-node-job-1790587211012-232af376ed278a74-0-image",
+                  "name": "node-job-1790587211012-232af376ed278a74-0-1790587236715",
+                  "kind": "image",
+                  "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790587211012-232af376ed278a74/node-job-1790587211012-232af376ed278a74-0-1790587236715.png",
+                  "mime_type": "image/png",
+                  "file_size": 1515196,
+                  "width": 1024,
+                  "height": 1024,
+                  "origin": {
+                    "kind": "generated",
+                    "workflow_id": "workflow-1790586733426603373",
+                    "job_id": "job-1790587211012-232af376ed278a74",
+                    "node_id": "node-job-1790587211012-232af376ed278a74-0",
+                    "provider": "gpt-image-2",
+                    "prompt": "钟馗夜巡概念参考图，中国风神话人物钟馗持剑夜巡古城，月光，幽默风格，电影感构图"
+                  },
+                  "created_at": "2026-09-28T09:20:36.793439266Z"
+                },
+                {
+                  "id": "mp-job-1790587452701-6dd637d43ee7d1a4-node-job-1790587452701-6dd637d43ee7d1a4-minimax-1-video",
+                  "name": "node-job-1790587452701-6dd637d43ee7d1a4-minimax-1-1790587739888",
+                  "kind": "video",
+                  "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790587452701-6dd637d43ee7d1a4/node-job-1790587452701-6dd637d43ee7d1a4-minimax-1-1790587739888.mp4",
+                  "mime_type": "video/mp4",
+                  "file_size": 4276903,
+                  "duration": 15,
+                  "width": 768,
+                  "height": 1344,
+                  "origin": {
+                    "kind": "generated",
+                    "workflow_id": "workflow-1790586733426603373",
+                    "job_id": "job-1790587452701-6dd637d43ee7d1a4",
+                    "node_id": "node-job-1790587452701-6dd637d43ee7d1a4-minimax-1",
+                    "provider": "minimax-h3",
+                    "prompt": "钟馗夜巡短剧，中国风神话，红袍钟馗夜晚古城巡街，幽默风格"
+                  },
+                  "created_at": "2026-09-28T09:29:00.5394223Z"
+                }
+              ]
+            },
+            "error": null,
+            "duration_s": 1.41
+          },
+          {
+            "tool": "read_skill_file",
+            "arguments": {
+              "skill_id": "skilyst/canvas-ops",
+              "path": "SKILL.md"
+            },
+            "result": {
+              "skill_id": "skilyst/canvas-ops",
+              "path": "SKILL.md",
+              "content": "---\nname: canvas-ops\ndescription: Drive the A3 canvas workbench through conversation — create nodes, write configs, wire ports, generate media, run jobs. Use when the user wants to build or edit a workflow board by talking to it. Covers lock discipline, the port-matching iron rule, quote-first submissions, and failure self-correction.\nlicense: MIT\ncompatibility: Requires the skilyst runtime (>=0.1.0) with a Beehive credential (AK/SK or user/password), network access to beehive-api.verse4.pet, and an existing workflow board. The twelve canvas tools register only when this skill is active.\nmetadata:\n  skilyst.skill_id: skilyst/canvas-ops\n  skilyst.version: \"1.0.0\"\n---\n\n# Canvas operations (the conversation-driven board)\n\nThe board is the workflow; you are its writer. Every tool below lands a\nstructured change on the server-side blueprint and an action card in the\nconversation — the user watches the board move as you speak.\n\n## When to use\n\nThe user wants to build or edit a board by conversation: \"add a script node\nthat writes a 15-second ghost-catcher patrol script\", \"wire the reference\nimage to the first frame\", \"generate a reference image\", \"run it\".\n\n**Start every session with `canvas_list_workflows` + `canvas_read_board`.**\nIf the user did not name a board, list them, pick the most recently updated\none, and *say which one you picked* before editing.\n\n## The tools\n\n| tool | what it does | key params | reach for it when |\n| --- | --- | --- | --- |\n| `canvas_list_workflows` | boards this account can see | limit | picking the board to operate on |\n| `canvas_read_board` | full board state: nodes, edges (derived from `material_deps`/`depends_on`), media pool | workflow_id | before any edit; after a conflict |\n| `canvas_create_node` | add a node to the blueprint (auto-key `{type}-{provider}-{n}`, auto-position) | workflow_id, node_type, provider, config? | \"创建一个 script 节点\" |\n| `canvas_write_node_config` | deep-merge a config patch into one node | workflow_id, key, config | \"把时长改成 15 秒\" |\n| `canvas_connect_ports` | wire an edge; a material source wires as `material_deps {key, input_port}` + depends_on | workflow_id, from_key, to_key, input_port? | \"把参考图接到首帧\" |\n| `canvas_query_schema` | node definition + derived port analysis (enums, required, alternative input modes) | node_type+provider or node_id | **before every connect or submission** |\n| `canvas_read_node_output` | newest job output for one node (async poll) | workflow_id, key | after submitting a generation |\n| `canvas_submit_node_job` | submit ONE node as a job, quote-first | workflow_id, node_type, provider, config | running a single node |\n| `canvas_run_workflow` | submit the whole board as one job, quote-first | workflow_id | \"跑一下这个流程\" |\n| `canvas_generate_image` | submit a PAID gpt-image-2 image job | workflow_id, prompt, size? | \"生成一张参考图\" |\n| `canvas_list_media` | the board's media pool entries | workflow_id | checking what is available |\n| `canvas_add_media` | add an upload-origin pool entry by URL | workflow_id, url, name | bringing an external image onto the board |\n\nNode types you will meet: `process` (script/LLM nodes, e.g.\n`process:script`), `generate` (minimax-h3, gpt-image-2, ...), `material` (a\nmedia-pool reference — pure data input, never executed).\n\n## Lock discipline (写锁纪律)\n\nEvery blueprint write (`create_node` / `write_node_config` / `connect_ports`)\nis **already wrapped** by the runtime in the server-side lock protocol:\nlock → read → modify → PUT → unlock, with finally semantics (a failed PUT\nstill unlocks — a crash can never strand a lock; a dead holder's lock is\ntaken over by the next applicant server-side).\n\nIf a write raises `LockHeldError` (画板正被占用):\n\n1. **Stop.** Tell the user the board is busy and *who* holds it (the error\n   carries holder kind/id and since when).\n2. **Do not retry in a loop.** The holder is alive and working; your calls\n   do not preempt it.\n3. Reads (`canvas_read_board`, `canvas_query_schema`) still work — you can\n   keep planning, just not writing.\n\nYour own API calls refresh the lock heartbeat implicitly while you hold it —\nyou never need to think about expiry.\n\n## Port matching iron rule (端口匹配铁律)\n\n**Before `canvas_connect_ports`, ALWAYS `canvas_query_schema` the TARGET\nnode.** The schema is the judge of which ports may receive what:\n\n- **enum fields** — e.g. `image_roles` accepts exactly\n  `reference_image` / `first_frame` / `last_frame`;\n- **required fields** — what a submission will 400 without;\n- **alternative input modes** — arrays that cannot be mixed.\n\n**Canonical case — minimax-h3.** Its image inputs are *exclusive*:\n`first_frame` and `reference_image` cannot coexist in one submission. Wiring\na reference image to `first_frame` when `reference_image` entries already\nexist (or vice versa) is a 400 *at submit time* — expensive to discover\nlate. Query the schema, decide the port deliberately, then connect. Never\nguess a port from the field name alone.\n\n## Quote-first (先报价)\n\nPaid submissions (`canvas_submit_node_job`, `canvas_run_workflow`,\n`canvas_generate_image`) fetch an estimate *before* the submission exists.\nQuote amounts are integer micro-USD plus a USD display figure. When the\nestimate is material, state the USD figure to the user and get the go-ahead\n— the wallet is charged on submit (held at the quote's upper bound, settled\nat measured usage).\n\n## Failure self-correction (失败自修正)\n\n| failure | what to do |\n| --- | --- |\n| schema/validation 400 | read the **structured** error — the platform names the offending field and the allowed values. Fix that field, retry **once**. No blind retries, no fallback wrappers. |\n| 409 workflow-modified | the runtime already retried once; `canvas_read_board` again before your next write — the board moved under you. |\n| `LockHeldError` | report to the user, stop writing (see above). |\n| 402 / 413 quota | report the number, do not retry. |\n\n## Media pool flow (参考图上板)\n\nGeneration is async and the pool is where artifacts land:\n\n1. `canvas_generate_image` **submits only** — a paid gpt-image-2 job.\n2. Poll with `canvas_read_node_output` (or `beehive_get_job`) until\n   `completed`.\n3. On completion the server **auto-captures** the image into the board's\n   media pool (`origin.kind=generated`) — no add needed.\n\nFor an external image the user supplied by URL: `canvas_add_media`, then\nmake it wireable as a material node, then connect:\n\n```\ncanvas_add_media(workflow_id, url, name)          -> pool entry id\ncanvas_create_node(workflow_id, 'material', '',   -> material node\n                   config={pool_entry_id: <id>})\ncanvas_query_schema(node_type='generate', provider='minimax-h3')\ncanvas_connect_ports(workflow_id, from_key=<material key>,\n                     to_key=<consumer key>, input_port='first_frame')\n```\n\nMaterial nodes are identified by `config.pool_entry_id`; the runtime wires\nthem into the consumer's `material_deps` and `depends_on`, and the server\ncompiles that to `images[]` + `image_roles[]` (or `video_refs`/`audio_refs`)\nat submit time.\n\n## Board delta awareness\n\nEvery successful canvas call lands an action row in the conversation with a\n`board_delta` (added node, wired edge, pool entry, submitted job). The UI\nrenders these as cards the user can expand and click to locate on the board.\nKeep your result summaries human-readable — the card's one-liner is what the\nuser reads first.\n"
+            },
+            "error": null,
+            "duration_s": 0.0
+          },
+          {
+            "tool": "canvas_read_node_output",
+            "arguments": {
+              "workflow_id": "workflow-1790594465481260345",
+              "key": "generate-script-1"
+            },
+            "result": {
+              "found": true,
+              "job_id": "job-1790594594880-6481924a946c5027",
+              "status": "completed",
+              "node": {
+                "key": "generate-script-1",
+                "status": "completed",
+                "output": {
+                  "dest_image_url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790594594880-6481924a946c5027/node-job-1790594594880-6481924a946c5027-0-1790594619112.png",
+                  "status": "completed"
+                }
+              }
+            },
+            "error": null,
+            "duration_s": 1.71
+          },
+          {
+            "tool": "canvas_create_node",
+            "arguments": {
+              "workflow_id": "workflow-1790594465481260345",
+              "node_type": "generate",
+              "provider": "minimax-h3",
+              "config": {
+                "duration": 15,
+                "ratio": "9:16",
+                "resolution": "768P"
+              }
+            },
+            "result": {
+              "node": {
+                "type": "generate",
+                "provider": "minimax-h3",
+                "key": "generate-minimax-h3-3",
+                "config": {
+                  "duration": 15,
+                  "ratio": "9:16",
+                  "resolution": "768P"
+                },
+                "position": {
+                  "x": 560,
+                  "y": 80
+                }
+              },
+              "workflow": {
+                "id": "workflow-1790594465481260345",
+                "name": "a3-s4-e2e-1790594464",
+                "description": "A3 S4 E2E creation story",
+                "nodes": [
+                  {
+                    "type": "generate",
+                    "provider": "script",
+                    "key": "generate-script-1",
+                    "config": {
+                      "instruction": "钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一小鬼，幽默打斗。"
+                    },
+                    "position": {
+                      "x": 80,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "generate",
+                    "provider": "gpt-image-2",
+                    "key": "generate-gpt-image-2-2",
+                    "config": {
+                      "aspect_ratio": "1:1",
+                      "prompt": "中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。"
+                    },
+                    "depends_on": [
+                      "generate-script-1"
+                    ],
+                    "position": {
+                      "x": 320,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "generate",
+                    "provider": "minimax-h3",
+                    "key": "generate-minimax-h3-3",
+                    "config": {
+                      "duration": 15,
+                      "ratio": "9:16",
+                      "resolution": "768P"
+                    },
+                    "position": {
+                      "x": 560,
+                      "y": 80
+                    }
+                  }
+                ],
+                "owner_id": "usr-1787815793337170547",
+                "schema_version": 0,
+                "media_pool": [
+                  {
+                    "id": "mp-job-1790594594880-6481924a946c5027-node-job-1790594594880-6481924a946c5027-0-image",
+                    "name": "node-job-1790594594880-6481924a946c5027-0-1790594619112",
+                    "kind": "image",
+                    "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790594594880-6481924a946c5027/node-job-1790594594880-6481924a946c5027-0-1790594619112.png",
+                    "mime_type": "image/png",
+                    "file_size": 1395933,
+                    "width": 1024,
+                    "height": 1024,
+                    "origin": {
+                      "kind": "generated",
+                      "workflow_id": "workflow-1790594465481260345",
+                      "job_id": "job-1790594594880-6481924a946c5027",
+                      "node_id": "node-job-1790594594880-6481924a946c5027-0",
+                      "provider": "gpt-image-2",
+                      "prompt": "中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。"
+                    },
+                    "created_at": "2026-09-28T11:23:39.217378839Z"
+                  }
+                ],
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z"
+              }
+            },
+            "error": null,
+            "duration_s": 5.18
+          },
+          {
+            "tool": "canvas_create_node",
+            "arguments": {
+              "workflow_id": "workflow-1790594465481260345",
+              "node_type": "material",
+              "provider": "image",
+              "config": {
+                "pool_entry_id": "mp-job-1790594594880-6481924a946c5027-node-job-1790594594880-6481924a946c5027-0-image",
+                "name": "钟馗参考图"
+              }
+            },
+            "result": {
+              "node": {
+                "type": "material",
+                "provider": "image",
+                "key": "material-image-4",
+                "config": {
+                  "pool_entry_id": "mp-job-1790594594880-6481924a946c5027-node-job-1790594594880-6481924a946c5027-0-image",
+                  "name": "钟馗参考图"
+                },
+                "position": {
+                  "x": 800,
+                  "y": 80
+                }
+              },
+              "workflow": {
+                "id": "workflow-1790594465481260345",
+                "name": "a3-s4-e2e-1790594464",
+                "description": "A3 S4 E2E creation story",
+                "nodes": [
+                  {
+                    "type": "generate",
+                    "provider": "script",
+                    "key": "generate-script-1",
+                    "config": {
+                      "instruction": "钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一小鬼，幽默打斗。"
+                    },
+                    "position": {
+                      "x": 80,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "generate",
+                    "provider": "gpt-image-2",
+                    "key": "generate-gpt-image-2-2",
+                    "config": {
+                      "aspect_ratio": "1:1",
+                      "prompt": "中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。"
+                    },
+                    "depends_on": [
+                      "generate-script-1"
+                    ],
+                    "position": {
+                      "x": 320,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "generate",
+                    "provider": "minimax-h3",
+                    "key": "generate-minimax-h3-3",
+                    "config": {
+                      "duration": 15,
+                      "ratio": "9:16",
+                      "resolution": "768P"
+                    },
+                    "position": {
+                      "x": 560,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "material",
+                    "provider": "image",
+                    "key": "material-image-4",
+                    "config": {
+                      "name": "钟馗参考图",
+                      "pool_entry_id": "mp-job-1790594594880-6481924a946c5027-node-job-1790594594880-6481924a946c5027-0-image"
+                    },
+                    "position": {
+                      "x": 800,
+                      "y": 80
+                    }
+                  }
+                ],
+                "owner_id": "usr-1787815793337170547",
+                "schema_version": 0,
+                "media_pool": [
+                  {
+                    "id": "mp-job-1790594594880-6481924a946c5027-node-job-1790594594880-6481924a946c5027-0-image",
+                    "name": "node-job-1790594594880-6481924a946c5027-0-1790594619112",
+                    "kind": "image",
+                    "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790594594880-6481924a946c5027/node-job-1790594594880-6481924a946c5027-0-1790594619112.png",
+                    "mime_type": "image/png",
+                    "file_size": 1395933,
+                    "width": 1024,
+                    "height": 1024,
+                    "origin": {
+                      "kind": "generated",
+                      "workflow_id": "workflow-1790594465481260345",
+                      "job_id": "job-1790594594880-6481924a946c5027",
+                      "node_id": "node-job-1790594594880-6481924a946c5027-0",
+                      "provider": "gpt-image-2",
+                      "prompt": "中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。"
+                    },
+                    "created_at": "2026-09-28T11:23:39.217378839Z"
+                  }
+                ],
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z"
+              }
+            },
+            "error": null,
+            "duration_s": 5.72
+          },
+          {
+            "tool": "canvas_connect_ports",
+            "arguments": {
+              "workflow_id": "workflow-1790594465481260345",
+              "from_key": "material-image-4",
+              "to_key": "generate-minimax-h3-3",
+              "input_port": "first_frame"
+            },
+            "result": {
+              "from": "material-image-4",
+              "to": "generate-minimax-h3-3",
+              "workflow": {
+                "id": "workflow-1790594465481260345",
+                "name": "a3-s4-e2e-1790594464",
+                "description": "A3 S4 E2E creation story",
+                "nodes": [
+                  {
+                    "type": "generate",
+                    "provider": "script",
+                    "key": "generate-script-1",
+                    "config": {
+                      "instruction": "钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一小鬼，幽默打斗。"
+                    },
+                    "position": {
+                      "x": 80,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "generate",
+                    "provider": "gpt-image-2",
+                    "key": "generate-gpt-image-2-2",
+                    "config": {
+                      "aspect_ratio": "1:1",
+                      "prompt": "中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。"
+                    },
+                    "depends_on": [
+                      "generate-script-1"
+                    ],
+                    "position": {
+                      "x": 320,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "generate",
+                    "provider": "minimax-h3",
+                    "key": "generate-minimax-h3-3",
+                    "config": {
+                      "duration": 15,
+                      "material_deps": [
+                        {
+                          "input_port": "first_frame",
+                          "key": "material-image-4"
+                        }
+                      ],
+                      "ratio": "9:16",
+                      "resolution": "768P"
+                    },
+                    "depends_on": [
+                      "material-image-4"
+                    ],
+                    "position": {
+                      "x": 560,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "material",
+                    "provider": "image",
+                    "key": "material-image-4",
+                    "config": {
+                      "name": "钟馗参考图",
+                      "pool_entry_id": "mp-job-1790594594880-6481924a946c5027-node-job-1790594594880-6481924a946c5027-0-image"
+                    },
+                    "position": {
+                      "x": 800,
+                      "y": 80
+                    }
+                  }
+                ],
+                "owner_id": "usr-1787815793337170547",
+                "schema_version": 0,
+                "media_pool": [
+                  {
+                    "id": "mp-job-1790594594880-6481924a946c5027-node-job-1790594594880-6481924a946c5027-0-image",
+                    "name": "node-job-1790594594880-6481924a946c5027-0-1790594619112",
+                    "kind": "image",
+                    "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790594594880-6481924a946c5027/node-job-1790594594880-6481924a946c5027-0-1790594619112.png",
+                    "mime_type": "image/png",
+                    "file_size": 1395933,
+                    "width": 1024,
+                    "height": 1024,
+                    "origin": {
+                      "kind": "generated",
+                      "workflow_id": "workflow-1790594465481260345",
+                      "job_id": "job-1790594594880-6481924a946c5027",
+                      "node_id": "node-job-1790594594880-6481924a946c5027-0",
+                      "provider": "gpt-image-2",
+                      "prompt": "中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。"
+                    },
+                    "created_at": "2026-09-28T11:23:39.217378839Z"
+                  }
+                ],
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z"
+              }
+            },
+            "error": null,
+            "duration_s": 4.9
+          },
+          {
+            "tool": "canvas_connect_ports",
+            "arguments": {
+              "from_key": "generate-script-1",
+              "to_key": "generate-minimax-h3-3",
+              "workflow_id": "workflow-1790594465481260345"
+            },
+            "result": {
+              "from": "generate-script-1",
+              "to": "generate-minimax-h3-3",
+              "workflow": {
+                "id": "workflow-1790594465481260345",
+                "name": "a3-s4-e2e-1790594464",
+                "description": "A3 S4 E2E creation story",
+                "nodes": [
+                  {
+                    "type": "generate",
+                    "provider": "script",
+                    "key": "generate-script-1",
+                    "config": {
+                      "instruction": "钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一小鬼，幽默打斗。"
+                    },
+                    "position": {
+                      "x": 80,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "generate",
+                    "provider": "gpt-image-2",
+                    "key": "generate-gpt-image-2-2",
+                    "config": {
+                      "aspect_ratio": "1:1",
+                      "prompt": "中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。"
+                    },
+                    "depends_on": [
+                      "generate-script-1"
+                    ],
+                    "position": {
+                      "x": 320,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "generate",
+                    "provider": "minimax-h3",
+                    "key": "generate-minimax-h3-3",
+                    "config": {
+                      "duration": 15,
+                      "material_deps": [
+                        {
+                          "input_port": "first_frame",
+                          "key": "material-image-4"
+                        }
+                      ],
+                      "ratio": "9:16",
+                      "resolution": "768P"
+                    },
+                    "depends_on": [
+                      "material-image-4",
+                      "generate-script-1"
+                    ],
+                    "position": {
+                      "x": 560,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "material",
+                    "provider": "image",
+                    "key": "material-image-4",
+                    "config": {
+                      "name": "钟馗参考图",
+                      "pool_entry_id": "mp-job-1790594594880-6481924a946c5027-node-job-1790594594880-6481924a946c5027-0-image"
+                    },
+                    "position": {
+                      "x": 800,
+                      "y": 80
+                    }
+                  }
+                ],
+                "owner_id": "usr-1787815793337170547",
+                "schema_version": 0,
+                "media_pool": [
+                  {
+                    "id": "mp-job-1790594594880-6481924a946c5027-node-job-1790594594880-6481924a946c5027-0-image",
+                    "name": "node-job-1790594594880-6481924a946c5027-0-1790594619112",
+                    "kind": "image",
+                    "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790594594880-6481924a946c5027/node-job-1790594594880-6481924a946c5027-0-1790594619112.png",
+                    "mime_type": "image/png",
+                    "file_size": 1395933,
+                    "width": 1024,
+                    "height": 1024,
+                    "origin": {
+                      "kind": "generated",
+                      "workflow_id": "workflow-1790594465481260345",
+                      "job_id": "job-1790594594880-6481924a946c5027",
+                      "node_id": "node-job-1790594594880-6481924a946c5027-0",
+                      "provider": "gpt-image-2",
+                      "prompt": "中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。"
+                    },
+                    "created_at": "2026-09-28T11:23:39.217378839Z"
+                  }
+                ],
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z"
+              }
+            },
+            "error": null,
+            "duration_s": 4.57
+          },
+          {
+            "tool": "canvas_submit_node_job",
+            "arguments": {
+              "workflow_id": "workflow-1790594465481260345",
+              "node_type": "generate",
+              "provider": "minimax-h3",
+              "key": "generate-minimax-h3-3",
+              "config": {
+                "duration": 15,
+                "ratio": "9:16",
+                "resolution": "768P"
+              },
+              "quote_first": true
+            },
+            "result": {
+              "quoted": true,
+              "quote": {
+                "total_estimate_usd": null,
+                "total_hold": 1035000,
+                "total_estimate_usd_display": null,
+                "total_hold_display": 1.035,
+                "nodes": [
+                  {
+                    "node_type": "generate",
+                    "provider": "minimax-h3",
+                    "key": "generate-minimax-h3-3",
+                    "priced": true,
+                    "model": "per_second",
+                    "unit_price_usd": 69000,
+                    "qty_estimate": 15,
+                    "amount_hold": 1035000
+                  }
+                ]
+              },
+              "job_id": "job-1790594824852-3a32f189161e8aa9",
+              "status": "waiting"
+            },
+            "error": null,
+            "duration_s": 2.69
+          },
+          {
+            "tool": "canvas_read_node_output",
+            "arguments": {
+              "key": "generate-minimax-h3-3",
+              "workflow_id": "workflow-1790594465481260345"
+            },
+            "result": {
+              "found": true,
+              "job_id": "job-1790594824852-3a32f189161e8aa9",
+              "status": "failed",
+              "node": {
+                "key": "generate-minimax-h3-3",
+                "status": "failed",
+                "output": null
+              }
+            },
+            "error": null,
+            "duration_s": 1.65
+          },
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790594465481260345"
+            },
+            "result": {
+              "id": "workflow-1790594465481260345",
+              "name": "a3-s4-e2e-1790594464",
+              "nodes": [
+                {
+                  "type": "generate",
+                  "provider": "script",
+                  "key": "generate-script-1",
+                  "config": {
+                    "instruction": "钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一小鬼，幽默打斗。"
+                  },
+                  "position": {
+                    "x": 80,
+                    "y": 80
+                  }
+                },
+                {
+                  "type": "generate",
+                  "provider": "gpt-image-2",
+                  "key": "generate-gpt-image-2-2",
+                  "config": {
+                    "aspect_ratio": "1:1",
+                    "prompt": "中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。"
+                  },
+                  "depends_on": [
+                    "generate-script-1"
+                  ],
+                  "position": {
+                    "x": 320,
+                    "y": 80
+                  }
+                },
+                {
+                  "type": "generate",
+                  "provider": "minimax-h3",
+                  "key": "generate-minimax-h3-3",
+                  "config": {
+                    "duration": 15,
+                    "material_deps": [
+                      {
+                        "input_port": "first_frame",
+                        "key": "material-image-4"
+                      }
+                    ],
+                    "ratio": "9:16",
+                    "resolution": "768P"
+                  },
+                  "depends_on": [
+                    "material-image-4",
+                    "generate-script-1"
+                  ],
+                  "position": {
+                    "x": 560,
+                    "y": 80
+                  }
+                },
+                {
+                  "type": "material",
+                  "provider": "image",
+                  "key": "material-image-4",
+                  "config": {
+                    "name": "钟馗参考图",
+                    "pool_entry_id": "mp-job-1790594594880-6481924a946c5027-node-job-1790594594880-6481924a946c5027-0-image"
+                  },
+                  "position": {
+                    "x": 800,
+                    "y": 80
+                  }
+                }
+              ],
+              "edges": [
+                {
+                  "from": "generate-script-1",
+                  "to": "generate-gpt-image-2-2",
+                  "kind": "dep"
+                },
+                {
+                  "from": "material-image-4",
+                  "to": "generate-minimax-h3-3",
+                  "kind": "dep"
+                },
+                {
+                  "from": "generate-script-1",
+                  "to": "generate-minimax-h3-3",
+                  "kind": "dep"
+                },
+                {
+                  "from": "material-image-4",
+                  "to": "generate-minimax-h3-3",
+                  "kind": "material",
+                  "input_port": "first_frame"
+                }
+              ],
+              "media_pool": [
+                {
+                  "id": "mp-job-1790594594880-6481924a946c5027-node-job-1790594594880-6481924a946c5027-0-image",
+                  "name": "node-job-1790594594880-6481924a946c5027-0-1790594619112",
+                  "kind": "image",
+                  "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790594594880-6481924a946c5027/node-job-1790594594880-6481924a946c5027-0-1790594619112.png",
+                  "mime_type": "image/png",
+                  "file_size": 1395933,
+                  "width": 1024,
+                  "height": 1024,
+                  "origin": {
+                    "kind": "generated",
+                    "workflow_id": "workflow-1790594465481260345",
+                    "job_id": "job-1790594594880-6481924a946c5027",
+                    "node_id": "node-job-1790594594880-6481924a946c5027-0",
+                    "provider": "gpt-image-2",
+                    "prompt": "中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。"
+                  },
+                  "created_at": "2026-09-28T11:23:39.217378839Z"
+                }
+              ]
+            },
+            "error": null,
+            "duration_s": 1.07
+          },
+          {
+            "tool": "canvas_read_node_output",
+            "arguments": {
+              "key": "generate-minimax-h3-3",
+              "workflow_id": "workflow-1790594465481260345"
+            },
+            "result": {
+              "found": true,
+              "job_id": "job-1790594824852-3a32f189161e8aa9",
+              "status": "failed",
+              "node": {
+                "key": "generate-minimax-h3-3",
+                "status": "failed",
+                "output": null
+              }
+            },
+            "error": null,
+            "duration_s": 1.88
+          },
+          {
+            "tool": "canvas_submit_node_job",
+            "arguments": {
+              "config": {
+                "instruction": "钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一小鬼，幽默打斗。",
+                "mode": "storyboard",
+                "max_output_tokens": 2048
+              },
+              "key": "generate-script-1",
+              "node_type": "generate",
+              "provider": "script",
+              "quote_first": true,
+              "workflow_id": "workflow-1790594465481260345"
+            },
+            "result": {
+              "quoted": true,
+              "quote": {
+                "total_estimate_usd": null,
+                "total_hold": 2293,
+                "total_estimate_usd_display": null,
+                "total_hold_display": 0.002293,
+                "nodes": [
+                  {
+                    "node_type": "generate",
+                    "provider": "script",
+                    "key": "generate-script-1",
+                    "priced": true,
+                    "model": "per_token",
+                    "qty_estimate": 1,
+                    "amount_hold": 2293
+                  }
+                ]
+              },
+              "job_id": "job-1790594868202-9e47ed2289fb1de3",
+              "status": "waiting"
+            },
+            "error": null,
+            "duration_s": 2.35
+          },
+          {
+            "tool": "canvas_read_node_output",
+            "arguments": {
+              "key": "generate-script-1",
+              "workflow_id": "workflow-1790594465481260345"
+            },
+            "result": {
+              "found": true,
+              "job_id": "job-1790594868202-9e47ed2289fb1de3",
+              "status": "running",
+              "node": {
+                "key": "generate-script-1",
+                "status": "running",
+                "output": null
+              }
+            },
+            "error": null,
+            "duration_s": 1.56
+          }
+        ],
+        "preflight": null,
+        "error": "stopped after 16 turns without a final answer -- raise --max-turns or narrow the request",
+        "ok": false,
+        "dry_run": false,
+        "notes": [
+          "tool read_skill \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops\\\"}\"",
+          "tool canvas_list_workflows \"{}\"",
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\"",
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790594121285977414\\\"}\"",
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790593890805842685\\\"}\"",
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790593854245737345\\\"}\"",
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"minimax-h3\\\"}\"",
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\"}\"",
+          "tool canvas_list_media \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\"",
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"material\\\"}\"",
+          "tool canvas_query_schema refused: ValueError: query_schema needs either node_id, or both node_type and provider (node id is '{node_type}:{provider}')",
+          "tool list_skill_files \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops\\\"}\"",
+          "tool canvas_query_schema \"{\\\"node_id\\\": \\\"material:image\\\"}\"",
+          "tool canvas_query_schema refused: ValueError: no node definition 'material:image' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)",
+          "tool canvas_query_schema \"{\\\"node_id\\\": \\\"material:media\\\"}\"",
+          "tool canvas_query_schema refused: ValueError: no node definition 'material:media' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)",
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790442251788456854\\\"}\"",
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790588447574612580\\\"}\"",
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790586733426603373\\\"}\"",
+          "tool read_skill_file \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops\\\", \\\"path\\\": \\\"SKILL.md\\\"}\"",
+          "tool canvas_read_node_output \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\", \\\"key\\\": \\\"generate-script-1\\\"}\"",
+          "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"minimax-h3\\\", \\\"config\\\": {\\\"duration\\\": 15, \\\"ratio\\\": \\\"9:16",
+          "canvas: node generate-minimax-h3-3 added to workflow-1790594465481260345",
+          "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\", \\\"node_type\\\": \\\"material\\\", \\\"provider\\\": \\\"image\\\", \\\"config\\\": {\\\"pool_entry_id\\\": \\\"mp-job-179059459488",
+          "canvas: node material-image-4 added to workflow-1790594465481260345",
+          "tool canvas_connect_ports \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\", \\\"from_key\\\": \\\"material-image-4\\\", \\\"to_key\\\": \\\"generate-minimax-h3-3\\\", \\\"input_port\\\": \\\"first_frame\\\"}",
+          "canvas: wired material-image-4 -> generate-minimax-h3-3 on workflow-1790594465481260345",
+          "tool canvas_connect_ports \"{\\\"from_key\\\": \\\"generate-script-1\\\", \\\"to_key\\\": \\\"generate-minimax-h3-3\\\", \\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\"",
+          "canvas: wired generate-script-1 -> generate-minimax-h3-3 on workflow-1790594465481260345",
+          "tool canvas_submit_node_job \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"minimax-h3\\\", \\\"key\\\": \\\"generate-minimax-h3-3\\\", \\\"config\\\": ",
+          "paid confirm: waiting for the user (1.035 USD hold)",
+          "canvas: submitted job job-1790594824852-3a32f189161e8aa9 on workflow-1790594465481260345",
+          "tool canvas_read_node_output \"{\\\"key\\\": \\\"generate-minimax-h3-3\\\", \\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\"",
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\"",
+          "tool canvas_read_node_output \"{\\\"key\\\": \\\"generate-minimax-h3-3\\\", \\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\"",
+          "tool canvas_submit_node_job \"{\\\"config\\\": {\\\"instruction\\\": \\\"钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一小鬼，幽默打斗。\\\", \\\"mode\\\": \\\"storyboard\\\", \\\"max_output_tokens\\\": 2048}, \\\"key\\\": \\\"generate-script-1\\\", \\\"node",
+          "paid confirm: waiting for the user (0.002293 USD hold)",
+          "canvas: submitted job job-1790594868202-9e47ed2289fb1de3 on workflow-1790594465481260345",
+          "tool canvas_read_node_output \"{\\\"key\\\": \\\"generate-script-1\\\", \\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\""
+        ]
+      }
+    }
+  }
+]

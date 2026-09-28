@@ -1,0 +1,21 @@
+{
+  "session_id": "20260928-192357-17c09b",
+  "quote": {
+    "total_estimate_usd": null,
+    "total_hold": 1035000,
+    "total_estimate_usd_display": null,
+    "total_hold_display": 1.035,
+    "nodes": [
+      {
+        "node_type": "generate",
+        "provider": "minimax-h3",
+        "key": "generate-minimax-h3-3",
+        "priced": true,
+        "model": "per_second",
+        "unit_price_usd": 69000,
+        "qty_estimate": 15,
+        "amount_hold": 1035000
+      }
+    ]
+  }
+}

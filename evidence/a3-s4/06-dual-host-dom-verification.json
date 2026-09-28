@@ -1,0 +1,25 @@
+{
+  "web": {
+    "nodes": 5,
+    "edges": 4,
+    "texts": [
+      "",
+      "",
+      "",
+      "IMAGE | node-job-1790594594880-6481924a946c5027-0-1790594619112",
+      ""
+    ]
+  },
+  "desktop": {
+    "nodes": 5,
+    "edges": 4,
+    "texts": [
+      "V | I | GENERATE | script | AI Script (Prompt Writer) | Run | V",
+      "V | I | GENERATE | gpt-image-2 | GPT Image 2 (OpenAI-compatible) | Run | I",
+      "V | I | GENERATE | done | minimax-h3 | MiniMax-H3 Video Generation | Re-run | V",
+      "IMAGE | node-job-1790594594880-6481924a946c5027-0-1790594619112",
+      "Preview | minimax-h3 | Click to browse generated history"
+    ]
+  },
+  "same_workflow": "workflow-1790594465481260345"
+}

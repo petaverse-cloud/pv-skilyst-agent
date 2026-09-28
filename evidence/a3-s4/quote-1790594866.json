@@ -1,0 +1,20 @@
+{
+  "session_id": "20260928-192357-17c09b",
+  "quote": {
+    "total_estimate_usd": null,
+    "total_hold": 2293,
+    "total_estimate_usd_display": null,
+    "total_hold_display": 0.002293,
+    "nodes": [
+      {
+        "node_type": "generate",
+        "provider": "script",
+        "key": "generate-script-1",
+        "priced": true,
+        "model": "per_token",
+        "qty_estimate": 1,
+        "amount_hold": 2293
+      }
+    ]
+  }
+}

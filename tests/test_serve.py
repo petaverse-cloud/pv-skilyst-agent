@@ -17,6 +17,7 @@ import os
 import sys
 import tempfile
 import threading
+import time
 import unittest
 import urllib.error
 import urllib.request
@@ -118,6 +119,7 @@ class ServeFixture:
         api = RuntimeAPI(cfg, resolve_kwargs=kwargs, dry_run=dry_run,
                          client_factory=lambda c: ChatClient(c, post=self.chat.post,
                                                              post_stream=self.chat.post_stream))
+        self.api = api
         self.httpd = RuntimeHTTPServer(("127.0.0.1", 0),
                                        make_handler(api, TOKEN, WEBVIEW_ORIGINS, lambda _m: None))
         self.port = self.httpd.server_address[1]
@@ -673,3 +675,65 @@ class LifecycleTests(EnvIsolation):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class PaidConfirmGateTests(EnvIsolation):
+    """S4 quote UX: the confirm gate on the server.
+
+    The gate itself (not the canvas tool wiring -- that is test_canvas.py's
+    job): a `confirm_paid` message installs a blocking callback, the SSE
+    stream carries a `confirm_request` with the quote, POST /confirm resolves
+    it, and a lapsed gate declines.
+    """
+
+    def test_resolve_confirm_answers_a_pending_gate(self):
+        fx = ServeFixture()
+        self.addCleanup(fx.cleanup)
+        events: list[tuple[str, dict]] = []
+
+        def emit(name: str, data: dict) -> None:
+            events.append((name, data))
+
+        confirm = fx.api._make_paid_confirm("sess-1", emit, lambda _m: None)
+        # answer from another thread while the gate blocks
+        threading.Timer(0.05, lambda: fx.api.resolve_confirm("sess-1", True)).start()
+        self.assertTrue(confirm({"total_hold": 1035000, "total_hold_display": 1.035}))
+        self.assertEqual(events[-1][0], "confirm_request")
+        self.assertEqual(events[-1][1]["quote"]["total_hold_display"], 1.035)
+
+    def test_a_declined_gate_returns_false(self):
+        fx = ServeFixture()
+        self.addCleanup(fx.cleanup)
+        confirm = fx.api._make_paid_confirm("sess-2", lambda _n, _d: None, lambda _m: None)
+        threading.Timer(0.05, lambda: fx.api.resolve_confirm("sess-2", False)).start()
+        self.assertFalse(confirm({"total_hold": 500000, "total_hold_display": 0.5}))
+
+    def test_a_timeout_declines_and_cleans_up(self):
+        fx = ServeFixture()
+        self.addCleanup(fx.cleanup)
+        fx.api.CONFIRM_TIMEOUT_S = 0.1
+        confirm = fx.api._make_paid_confirm("sess-3", lambda _n, _d: None, lambda _m: None)
+        started = time.time()
+        self.assertFalse(confirm({"total_hold": 1, "total_hold_display": 0.000001}))
+        self.assertLess(time.time() - started, 5)
+        # the gate is gone: a late answer is a 404, not a stuck slot
+        status, _headers, body = fx.request("POST", "/confirm/sess-3", {"approve": True})
+        self.assertEqual(status, 404)
+        self.assertFalse(body["ok"])
+
+    def test_the_confirm_route_resolves_a_live_gate(self):
+        fx = ServeFixture()
+        self.addCleanup(fx.cleanup)
+        confirm = fx.api._make_paid_confirm("sess-4", lambda _n, _d: None, lambda _m: None)
+        result: dict = {}
+        t = threading.Thread(target=lambda: result.setdefault(
+            "approved", confirm({"total_hold": 1, "total_hold_display": 0.000001})))
+        t.start()
+        deadline = time.time() + 2
+        while "sess-4" not in fx.api.pending_confirms() and time.time() < deadline:
+            time.sleep(0.01)
+        status, _headers, body = fx.request("POST", "/confirm/sess-4", {"approve": True})
+        self.assertEqual(status, 200)
+        self.assertTrue(body["data"]["approved"])
+        t.join(timeout=5)
+        self.assertTrue(result["approved"])

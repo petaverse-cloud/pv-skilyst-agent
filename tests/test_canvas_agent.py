@@ -179,15 +179,17 @@ class CanvasRegistryTests(unittest.TestCase):
         self.fx = CanvasAgentFixture({"wf-1": board()})
         self.addCleanup(self.fx.cleanup)
 
-    def test_canvas_skill_gets_all_twelve_tools(self):
+    def test_canvas_skill_gets_all_canvas_tools(self):
         registry = self.fx.registry(self.fx.canvas_pkg)
         for name in CANVAS_TOOLS:
             self.assertIn(name, registry.names, name)
         self.assertEqual(sorted(n for n in registry.names if n.startswith("canvas_")),
                          sorted(CANVAS_TOOLS))
-        # the FR-3 ten are all present
+        # the FR-3 ten are all present (plus the two board reads and the S4
+        # media-pool lifecycle pair)
         self.assertEqual(len([n for n in CANVAS_TOOLS if n != "canvas_list_workflows"
-                              and n != "canvas_read_board"]), 10)
+                              and n != "canvas_read_board"
+                              and n not in ("canvas_rename_media", "canvas_delete_media")]), 10)
 
     def test_a_non_canvas_skill_gets_no_canvas_tools(self):
         registry = self.fx.registry(self.fx.other_pkg)

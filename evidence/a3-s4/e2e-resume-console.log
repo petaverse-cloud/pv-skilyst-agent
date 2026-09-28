@@ -1,0 +1,11 @@
+[confirm_request] hold=1.035 USD
+[evidence] quote-resume-1790595768.json
+[confirm] approved: {'ok': True, 'data': {'session_id': '20260928-192357-17c09b', 'resolved': True, 'approved': True}}
+[evidence] 03b-turn3b-resume-sse.json
+[turn 3b] ok= True
+[poll] waiting for the video to land in the media pool…
+[evidence] 05-final-board.json
+[board] nodes=4 pool=2
+  pool: image node-job-1790594594880-6481924a946c5027-0-1790594619112 -> https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790594594880-6481924a946c5027/nod
+  pool: video node-job-1790595769457-37a19c4de64761f6-generate-minimax-h3-3-1790596101132 -> https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790595769457-37a19c4de64761f6/nod
+[done]

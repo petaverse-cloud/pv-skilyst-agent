@@ -1,0 +1,1796 @@
+[
+  {
+    "event": "delta",
+    "data": {
+      "text": "I"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'ll"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " load"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the canvas-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ops method"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " first, and"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " read the board state"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " in parallel."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool read_skill \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Board"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " read"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "a3"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-s4-e"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "2e-179059"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "4464` currently"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " has a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " single `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "generate:script`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node (`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "generate-s"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "cript-1`) and nothing"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " else. Per the port"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " iron rule, I"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'ll query the target schema before"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " creating/w"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "iring the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " image node."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"gpt-image-2\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Schema"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " confirms"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " two ports"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " I need: `generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":script` emits `dest"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_prompt` → flows"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " into a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " downstream node's `prompt"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " field, and `generate:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "gpt-image-2`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " exposes"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " a **text"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "** input port on"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `prompt`. Creating the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " image node now."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"gpt-image-2\\\", \\\"config\\\": {\\\"prompt\\\": \\\"中国风神话角色参考图：钟馗全身立绘，红袍"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: node generate-gpt-image-2-2 added to workflow-1790594465481260345"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " created as"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `generate-g"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "pt-image-2-2"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`. Now wiring the script node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " to it — a text"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " dependency"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " ("
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "not a material"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "),"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " so it wires"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " as a plain edge"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " onto"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the image node's"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `prompt` input"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_connect_ports \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\", \\\"from_key\\\": \\\"generate-script-1\\\", \\\"to_key\\\": \\\"generate-gpt-image-2-2\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: wired generate-script-1 -> generate-gpt-image-2-2 on workflow-1790594465481260345"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "完成"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "画"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "板"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "3-s"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "4-e2"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "e-179059"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "4464`（work"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "flow-179059446548"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "126034"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "5）现在的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "状态：\n\n**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "新增节点**\n- `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "generate-g"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "pt-image-2-2"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`（generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " / gpt-image-2"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "），"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "config"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "："
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`prompt` ="
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " \""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "中国风神话"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "角色参考图"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "：钟馗"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "全身立绘，红袍"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "官服、怒"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "目浓髯"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "、乌纱帽"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，手持宝剑"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，3D "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "渲染风格，PBR "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "材质，电影级"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "布光，正面"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "全身，纯净背景，角色"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "设定图。\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，`aspect_ratio`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " = "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1:1。\n\n**连线"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**\n- `generate-script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-1` → `generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-gpt-image-2-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "2`，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "落"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "为 `depends_on:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " [\"generate-script-1"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\"]` "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "的普通边。\n\n**为什么"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "这么连**：先"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "查了两个"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点的 schema"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。`generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":script` 的输出"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "是 `dest"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_prompt`（gener"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ation-ready prompt，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "流向下游节点的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `prompt`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 字段），而"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `generate:gpt-image"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-2` 的输入"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "端口正是 `prompt`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（text）。脚本"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点不是"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " material"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 节点，所以按"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "规则"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "走普通"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "依赖边，不占"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `reference"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_image`/"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`first_frame` 这类"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "图片"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "端口——"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "也没有"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "误用端口模式"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "的风险"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "gpt-image-2 "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "的图片输入"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "是 `images` 数组"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，走 /"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "v1/images/"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "edits，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "与文字"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "提示"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "不"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "冲突）。\n\n**两点提示"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**\n1. 这只是"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "建"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " + 连线，**没有"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "提交任何付费"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "任务**，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "钱包"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "未"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "扣费"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。需要出"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "图的话我再"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "走报价"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "流程"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（g"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "pt-image-2 单价"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 0.96"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " USD/张"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）。\n2. 脚本节点现有"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " instruction"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 写"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "的是\"钟"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "馗夜巡，15"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 秒短剧…"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\"，属于分"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "镜/"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "剧情 brief"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，不是角色"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "参考图的提示词。连线"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "跑通"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "后，下游"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "收到"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "的是脚本"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "改写"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "出的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "提示"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "词，风格"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "可能偏向"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "剧情"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "分"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "镜而非\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "角色设定图\"。如果你想让"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "参考"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "图更贴"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "设定图"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "风格"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，建议"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "把脚本节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "改成 image"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 取向"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " instruction（或给"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "该脚本"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点加 `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "mode`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "——要改的话告诉我"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "我来写"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " config"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。"
+    }
+  },
+  {
+    "event": "done",
+    "data": {
+      "ok": true,
+      "data": {
+        "session_id": "20260928-192137-bd6f48",
+        "skill": "skilyst/canvas-ops",
+        "stop_reason": "completed",
+        "answer": "完成。画板 `a3-s4-e2e-1790594464`（workflow-1790594465481260345）现在的状态：\n\n**新增节点**\n- `generate-gpt-image-2-2`（generate / gpt-image-2），config：`prompt` = \"中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。\"，`aspect_ratio` = 1:1。\n\n**连线**\n- `generate-script-1` → `generate-gpt-image-2-2`，落为 `depends_on: [\"generate-script-1\"]` 的普通边。\n\n**为什么这么连**：先查了两个节点的 schema。`generate:script` 的输出是 `dest_prompt`（generation-ready prompt，流向下游节点的 `prompt` 字段），而 `generate:gpt-image-2` 的输入端口正是 `prompt`（text）。脚本节点不是 material 节点，所以按规则走普通依赖边，不占 `reference_image`/`first_frame` 这类图片端口——也没有误用端口模式的风险（gpt-image-2 的图片输入是 `images` 数组，走 /v1/images/edits，与文字提示不冲突）。\n\n**两点提示**\n1. 这只是建节点 + 连线，**没有提交任何付费任务**，钱包未扣费。需要出图的话我再走报价流程（gpt-image-2 单价 0.96 USD/张）。\n2. 脚本节点现有 instruction 写的是\"钟馗夜巡，15 秒短剧…\"，属于分镜/剧情 brief，不是角色参考图的提示词。连线跑通后，下游收到的是脚本改写出的提示词，风格可能偏向剧情分镜而非\"角色设定图\"。如果你想让参考图更贴设定图风格，建议把脚本节点改成 image 取向的 instruction（或给该脚本节点加 `mode`）——要改的话告诉我，我来写 config。",
+        "model": "deepseek/deepseek-v4.1-flash",
+        "turns": 5,
+        "wall_clock_s": 53.0,
+        "usage": {
+          "prompt_tokens": 32815,
+          "completion_tokens": 2491,
+          "total_tokens": 35306,
+          "calls": 5,
+          "models_used": [
+            "deepseek/deepseek-v4.1-flash"
+          ]
+        },
+        "artifacts": [],
+        "jobs": {
+          "submitted": 0,
+          "budget": null
+        },
+        "tool_calls": [
+          {
+            "tool": "read_skill",
+            "arguments": {
+              "skill_id": "skilyst/canvas-ops"
+            },
+            "result": {
+              "skill_id": "skilyst/canvas-ops",
+              "version": "1.0.0",
+              "degraded": false,
+              "digest": "sha256:f9cac603776ce8ab7384eda079182742ff4ceb12de18d91d1d165ab60daf518a",
+              "permission": {
+                "egress": [
+                  "beehive-api.verse4.pet"
+                ],
+                "filesystem": "skill-dir",
+                "exec": "none",
+                "secrets": true
+              },
+              "plan": {},
+              "requires_nodes": [],
+              "instructions": "\n# Canvas operations (the conversation-driven board)\n\nThe board is the workflow; you are its writer. Every tool below lands a\nstructured change on the server-side blueprint and an action card in the\nconversation — the user watches the board move as you speak.\n\n## When to use\n\nThe user wants to build or edit a board by conversation: \"add a script node\nthat writes a 15-second ghost-catcher patrol script\", \"wire the reference\nimage to the first frame\", \"generate a reference image\", \"run it\".\n\n**Start every session with `canvas_list_workflows` + `canvas_read_board`.**\nIf the user did not name a board, list them, pick the most recently updated\none, and *say which one you picked* before editing.\n\n## The tools\n\n| tool | what it does | key params | reach for it when |\n| --- | --- | --- | --- |\n| `canvas_list_workflows` | boards this account can see | limit | picking the board to operate on |\n| `canvas_read_board` | full board state: nodes, edges (derived from `material_deps`/`depends_on`), media pool | workflow_id | before any edit; after a conflict |\n| `canvas_create_node` | add a node to the blueprint (auto-key `{type}-{provider}-{n}`, auto-position) | workflow_id, node_type, provider, config? | \"创建一个 script 节点\" |\n| `canvas_write_node_config` | deep-merge a config patch into one node | workflow_id, key, config | \"把时长改成 15 秒\" |\n| `canvas_connect_ports` | wire an edge; a material source wires as `material_deps {key, input_port}` + depends_on | workflow_id, from_key, to_key, input_port? | \"把参考图接到首帧\" |\n| `canvas_query_schema` | node definition + derived port analysis (enums, required, alternative input modes) | node_type+provider or node_id | **before every connect or submission** |\n| `canvas_read_node_output` | newest job output for one node (async poll) | workflow_id, key | after submitting a generation |\n| `canvas_submit_node_job` | submit ONE node as a job, quote-first | workflow_id, node_type, provider, config | running a single node |\n| `canvas_run_workflow` | submit the whole board as one job, quote-first | workflow_id | \"跑一下这个流程\" |\n| `canvas_generate_image` | submit a PAID gpt-image-2 image job | workflow_id, prompt, size? | \"生成一张参考图\" |\n| `canvas_list_media` | the board's media pool entries | workflow_id | checking what is available |\n| `canvas_add_media` | add an upload-origin pool entry by URL | workflow_id, url, name | bringing an external image onto the board |\n\nNode types you will meet: `process` (script/LLM nodes, e.g.\n`process:script`), `generate` (minimax-h3, gpt-image-2, ...), `material` (a\nmedia-pool reference — pure data input, never executed).\n\n## Lock discipline (写锁纪律)\n\nEvery blueprint write (`create_node` / `write_node_config` / `connect_ports`)\nis **already wrapped** by the runtime in the server-side lock protocol:\nlock → read → modify → PUT → unlock, with finally semantics (a failed PUT\nstill unlocks — a crash can never strand a lock; a dead holder's lock is\ntaken over by the next applicant server-side).\n\nIf a write raises `LockHeldError` (画板正被占用):\n\n1. **Stop.** Tell the user the board is busy and *who* holds it (the error\n   carries holder kind/id and since when).\n2. **Do not retry in a loop.** The holder is alive and working; your calls\n   do not preempt it.\n3. Reads (`canvas_read_board`, `canvas_query_schema`) still work — you can\n   keep planning, just not writing.\n\nYour own API calls refresh the lock heartbeat implicitly while you hold it —\nyou never need to think about expiry.\n\n## Port matching iron rule (端口匹配铁律)\n\n**Before `canvas_connect_ports`, ALWAYS `canvas_query_schema` the TARGET\nnode.** The schema is the judge of which ports may receive what:\n\n- **enum fields** — e.g. `image_roles` accepts exactly\n  `reference_image` / `first_frame` / `last_frame`;\n- **required fields** — what a submission will 400 without;\n- **alternative input modes** — arrays that cannot be mixed.\n\n**Canonical case — minimax-h3.** Its image inputs are *exclusive*:\n`first_frame` and `reference_image` cannot coexist in one submission. Wiring\na reference image to `first_frame` when `reference_image` entries already\nexist (or vice versa) is a 400 *at submit time* — expensive to discover\nlate. Query the schema, decide the port deliberately, then connect. Never\nguess a port from the field name alone.\n\n## Quote-first (先报价)\n\nPaid submissions (`canvas_submit_node_job`, `canvas_run_workflow`,\n`canvas_generate_image`) fetch an estimate *before* the submission exists.\nQuote amounts are integer micro-USD plus a USD display figure. When the\nestimate is material, state the USD figure to the user and get the go-ahead\n— the wallet is charged on submit (held at the quote's upper bound, settled\nat measured usage).\n\n## Failure self-correction (失败自修正)\n\n| failure | what to do |\n| --- | --- |\n| schema/validation 400 | read the **structured** error — the platform names the offending field and the allowed values. Fix that field, retry **once**. No blind retries, no fallback wrappers. |\n| 409 workflow-modified | the runtime already retried once; `canvas_read_board` again before your next write — the board moved under you. |\n| `LockHeldError` | report to the user, stop writing (see above). |\n| 402 / 413 quota | report the number, do not retry. |\n\n## Media pool flow (参考图上板)\n\nGeneration is async and the pool is where artifacts land:\n\n1. `canvas_generate_image` **submits only** — a paid gpt-image-2 job.\n2. Poll with `canvas_read_node_output` (or `beehive_get_job`) until\n   `completed`.\n3. On completion the server **auto-captures** the image into the board's\n   media pool (`origin.kind=generated`) — no add needed.\n\nFor an external image the user supplied by URL: `canvas_add_media`, then\nmake it wireable as a material node, then connect:\n\n```\ncanvas_add_media(workflow_id, url, name)          -> pool entry id\ncanvas_create_node(workflow_id, 'material', '',   -> material node\n                   config={pool_entry_id: <id>})\ncanvas_query_schema(node_type='generate', provider='minimax-h3')\ncanvas_connect_ports(workflow_id, from_key=<material key>,\n                     to_key=<consumer key>, input_port='first_frame')\n```\n\nMaterial nodes are identified by `config.pool_entry_id`; the runtime wires\nthem into the consumer's `material_deps` and `depends_on`, and the server\ncompiles that to `images[]` + `image_roles[]` (or `video_refs`/`audio_refs`)\nat submit time.\n\n## Board delta awareness\n\nEvery successful canvas call lands an action row in the conversation with a\n`board_delta` (added node, wired edge, pool entry, submitted job). The UI\nrenders these as cards the user can expand and click to locate on the board.\nKeep your result summaries human-readable — the card's one-liner is what the\nuser reads first.",
+              "files": [
+                "LICENSE",
+                "SKILL.md",
+                "manifest.json",
+                "references/i18n/glossary.en.json",
+                "references/i18n/glossary.zh-CN.json"
+              ],
+              "spec_warnings": []
+            },
+            "error": null,
+            "duration_s": 0.0
+          },
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790594465481260345"
+            },
+            "result": {
+              "id": "workflow-1790594465481260345",
+              "name": "a3-s4-e2e-1790594464",
+              "nodes": [
+                {
+                  "type": "generate",
+                  "provider": "script",
+                  "key": "generate-script-1",
+                  "config": {
+                    "instruction": "钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一小鬼，幽默打斗。"
+                  },
+                  "position": {
+                    "x": 80,
+                    "y": 80
+                  }
+                }
+              ],
+              "edges": [],
+              "media_pool": []
+            },
+            "error": null,
+            "duration_s": 1.29
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "generate",
+              "provider": "gpt-image-2"
+            },
+            "result": {
+              "node_id": "generate:gpt-image-2",
+              "name": "GPT Image 2 (OpenAI-compatible)",
+              "description": null,
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "properties": {
+                  "aspect_ratio": {
+                    "default": "1:1",
+                    "description": "1:1 (default), 9:16, 16:9, 4:3, 3:4, or a direct WxH like 1024x1024",
+                    "type": "string"
+                  },
+                  "images": {
+                    "description": "Reference image URLs -- when provided, uses the /v1/images/edits endpoint (image-to-image with reference images)",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "model": {
+                    "default": "gpt-image-2-t",
+                    "description": "Model. Currently only gpt-image-2-t; a value outside this set is rejected at submit time",
+                    "enum": [
+                      "gpt-image-2-t"
+                    ],
+                    "type": "string"
+                  },
+                  "prompt": {
+                    "description": "Text description of the image to generate",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "quality": {
+                    "default": "auto",
+                    "description": "low, medium, high, or auto (default)",
+                    "enum": [
+                      "low",
+                      "medium",
+                      "high",
+                      "auto"
+                    ],
+                    "type": "string"
+                  },
+                  "size": {
+                    "description": "Direct size override e.g. 1024x1024, 1536x1024 -- overrides aspect_ratio",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "prompt"
+                ],
+                "type": "object",
+                "x-input-ports": [
+                  {
+                    "accepts": [
+                      "image"
+                    ],
+                    "field": "src_image_url"
+                  },
+                  {
+                    "accepts": [
+                      "text"
+                    ],
+                    "field": "prompt"
+                  }
+                ]
+              },
+              "output_schema": {
+                "dest_image_url": "string — SAS-authenticated URL of the generated image",
+                "revised_prompt": "string, optional — the model's revised version of the prompt, if it modified it",
+                "status": "string"
+              },
+              "config_defaults": {
+                "pricing": {
+                  "model": "per_piece",
+                  "qty_max": 1,
+                  "qty_min": 1,
+                  "unit_price_usd": 960000
+                }
+              },
+              "enabled": true,
+              "port_analysis": {
+                "enum_fields": [
+                  {
+                    "field": "model",
+                    "enum": [
+                      "gpt-image-2-t"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "quality",
+                    "enum": [
+                      "low",
+                      "medium",
+                      "high",
+                      "auto"
+                    ],
+                    "on": "field"
+                  }
+                ],
+                "required": [
+                  "prompt"
+                ],
+                "notes": []
+              }
+            },
+            "error": null,
+            "duration_s": 2.0
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "generate",
+              "provider": "script"
+            },
+            "result": {
+              "node_id": "generate:script",
+              "name": "AI Script (Prompt Writer)",
+              "description": null,
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "properties": {
+                  "context_urls": {
+                    "description": "Optional reference media URLs appended to the instruction as context",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "maxItems": 8,
+                    "type": "array"
+                  },
+                  "goal": {
+                    "description": "compose mode: the original goal (defaults to instruction when empty)",
+                    "type": "string"
+                  },
+                  "instruction": {
+                    "description": "What you want the video/audio/image to be, in plain language — the script node rewrites it into a generation-ready prompt",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "material_refs": {
+                    "description": "#504: material references — resolved at submit, woven into the instruction, passed through to downstream nodes via dest_refs",
+                    "items": {
+                      "properties": {
+                        "entry_id": {
+                          "description": "Media-pool entry id (mp-...)",
+                          "type": "string"
+                        },
+                        "note": {
+                          "description": "Free-text usage note — woven into the prompt's referenced-materials section",
+                          "type": "string"
+                        },
+                        "role": {
+                          "enum": [
+                            "first_frame",
+                            "last_frame",
+                            "reference_image",
+                            "reference_video",
+                            "reference_audio"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "entry_id",
+                        "role"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "max_output_tokens": {
+                    "default": 2048,
+                    "description": "Upper bound on the generated prompt length; also the billing hold bound",
+                    "maximum": 8192,
+                    "minimum": 64,
+                    "type": "integer"
+                  },
+                  "mode": {
+                    "description": "decompose = instruction is a goal, output is the questionnaire JSON (#432); compose = synthesize the final prompt + ir from goal/selections (#432); storyboard = instruction is a narrative brief, output is a template-v2 sequence JSON with shots/transitions/elements/continuity locks (#381). Absent = single-phase instruction→prompt",
+                    "enum": [
+                      "decompose",
+                      "compose",
+                      "storyboard"
+                    ],
+                    "type": "string"
+                  },
+                  "model": {
+                    "default": "deepseek-v4-flash-0731",
+                    "description": "Model. Currently only deepseek-v4-flash-0731; a value outside this set is rejected at submit time",
+                    "enum": [
+                      "deepseek-v4-flash-0731"
+                    ],
+                    "type": "string"
+                  },
+                  "selections": {
+                    "description": "compose mode: the user's picks + custom values keyed by dimension (subject/action/camera/mood/sound)",
+                    "type": "object"
+                  },
+                  "system_prompt": {
+                    "description": "Optional — overrides the built-in prompt-engineering system prompt (advanced)",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "instruction"
+                ],
+                "type": "object",
+                "x-input-ports": [
+                  {
+                    "accepts": [
+                      "text"
+                    ],
+                    "field": "instruction"
+                  }
+                ]
+              },
+              "output_schema": {
+                "completion_tokens": "integer",
+                "dest_prompt": "string — the generation-ready prompt, flows into downstream nodes' prompt field",
+                "ir": "string (JSON) — compose mode only: IR-lite axes the model applied (flat snake_case object)",
+                "prompt_tokens": "integer"
+              },
+              "config_defaults": {
+                "pricing": {
+                  "input_price_usd": 140,
+                  "model": "per_token",
+                  "output_price_usd": 280,
+                  "qty_max": 8192
+                }
+              },
+              "enabled": true,
+              "port_analysis": {
+                "enum_fields": [
+                  {
+                    "field": "mode",
+                    "enum": [
+                      "decompose",
+                      "compose",
+                      "storyboard"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "model",
+                    "enum": [
+                      "deepseek-v4-flash-0731"
+                    ],
+                    "on": "field"
+                  }
+                ],
+                "required": [
+                  "instruction"
+                ],
+                "notes": []
+              }
+            },
+            "error": null,
+            "duration_s": 2.2
+          },
+          {
+            "tool": "canvas_create_node",
+            "arguments": {
+              "workflow_id": "workflow-1790594465481260345",
+              "node_type": "generate",
+              "provider": "gpt-image-2",
+              "config": {
+                "prompt": "中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。",
+                "aspect_ratio": "1:1"
+              }
+            },
+            "result": {
+              "node": {
+                "type": "generate",
+                "provider": "gpt-image-2",
+                "key": "generate-gpt-image-2-2",
+                "config": {
+                  "prompt": "中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。",
+                  "aspect_ratio": "1:1"
+                },
+                "position": {
+                  "x": 320,
+                  "y": 80
+                }
+              },
+              "workflow": {
+                "id": "workflow-1790594465481260345",
+                "name": "a3-s4-e2e-1790594464",
+                "description": "A3 S4 E2E creation story",
+                "nodes": [
+                  {
+                    "type": "generate",
+                    "provider": "script",
+                    "key": "generate-script-1",
+                    "config": {
+                      "instruction": "钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一小鬼，幽默打斗。"
+                    },
+                    "position": {
+                      "x": 80,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "generate",
+                    "provider": "gpt-image-2",
+                    "key": "generate-gpt-image-2-2",
+                    "config": {
+                      "aspect_ratio": "1:1",
+                      "prompt": "中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。"
+                    },
+                    "position": {
+                      "x": 320,
+                      "y": 80
+                    }
+                  }
+                ],
+                "owner_id": "usr-1787815793337170547",
+                "schema_version": 0,
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z"
+              }
+            },
+            "error": null,
+            "duration_s": 5.57
+          },
+          {
+            "tool": "canvas_connect_ports",
+            "arguments": {
+              "workflow_id": "workflow-1790594465481260345",
+              "from_key": "generate-script-1",
+              "to_key": "generate-gpt-image-2-2"
+            },
+            "result": {
+              "from": "generate-script-1",
+              "to": "generate-gpt-image-2-2",
+              "workflow": {
+                "id": "workflow-1790594465481260345",
+                "name": "a3-s4-e2e-1790594464",
+                "description": "A3 S4 E2E creation story",
+                "nodes": [
+                  {
+                    "type": "generate",
+                    "provider": "script",
+                    "key": "generate-script-1",
+                    "config": {
+                      "instruction": "钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一小鬼，幽默打斗。"
+                    },
+                    "position": {
+                      "x": 80,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "generate",
+                    "provider": "gpt-image-2",
+                    "key": "generate-gpt-image-2-2",
+                    "config": {
+                      "aspect_ratio": "1:1",
+                      "prompt": "中国风神话角色参考图：钟馗全身立绘，红袍官服、怒目浓髯、乌纱帽，手持宝剑，3D 渲染风格，PBR 材质，电影级布光，正面全身，纯净背景，角色设定图。"
+                    },
+                    "depends_on": [
+                      "generate-script-1"
+                    ],
+                    "position": {
+                      "x": 320,
+                      "y": 80
+                    }
+                  }
+                ],
+                "owner_id": "usr-1787815793337170547",
+                "schema_version": 0,
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z"
+              }
+            },
+            "error": null,
+            "duration_s": 5.68
+          }
+        ],
+        "preflight": null,
+        "error": null,
+        "ok": true,
+        "dry_run": false,
+        "notes": [
+          "tool read_skill \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops\\\"}\"",
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\"",
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"gpt-image-2\\\"}\"",
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\"}\"",
+          "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"gpt-image-2\\\", \\\"config\\\": {\\\"prompt\\\": \\\"中国风神话角色参考图：钟馗全身立绘，红袍",
+          "canvas: node generate-gpt-image-2-2 added to workflow-1790594465481260345",
+          "tool canvas_connect_ports \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\", \\\"from_key\\\": \\\"generate-script-1\\\", \\\"to_key\\\": \\\"generate-gpt-image-2-2\\\"}\"",
+          "canvas: wired generate-script-1 -> generate-gpt-image-2-2 on workflow-1790594465481260345"
+        ]
+      }
+    }
+  }
+]

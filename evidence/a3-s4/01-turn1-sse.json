@@ -1,0 +1,3538 @@
+[
+  {
+    "event": "delta",
+    "data": {
+      "text": "I"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'ll"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " load"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " skill"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'s"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " method"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " and"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " read"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " board"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " before"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " touching"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " anything"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool read_skill \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops@1.0.0\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool read_skill refused: KeyError: \"skill 'skilyst/canvas-ops@1.0.0' is not installed (installed: ['skilyst/canvas-ops', 'skilyst/doctor', 'skilyst/embed-video', 'skilyst/lipsync-audio-refs', 'skilyst/prompt-craft', 'skilyst/video-15s'])\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Version"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " suffix"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " isn"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'t"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " accepted"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " —"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " ret"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "rying"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " with"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " bare"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " skill"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " id"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool read_skill \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Board"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " is"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " empty"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Now"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " query"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ing"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'s"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " schema"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " so"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " I"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " write"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " config"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " keys"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " platform"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " actually"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " accepts"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"process\\\", \\\"provider\\\": \\\"script\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema refused: ValueError: no node definition 'process:script' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "The"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " is"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " ("
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "not"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "process"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ")."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Query"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ing"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " its"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " definition"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Schema"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " clear"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " is"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`,"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " required"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " field"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " is"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "instruction"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Creating"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " with"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " short"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-d"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "rama"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " brief"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\", \\\"config\\\": {\\\"instruction\\\": \\\"钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: node generate-script-1 added to workflow-1790594465481260345"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "已"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "创建"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "任务"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "完成"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。\n\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "##"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "状态"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\n\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "画"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "板"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "："
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "3"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-s"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "4"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-e"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "2"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "e"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "179"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "059"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "446"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "4"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "work"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "flow"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "179"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "059"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "446"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "548"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "126"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "034"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "5"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "—"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "原本"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "是"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "空"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "板"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "0"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " /"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "0"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "边"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " /"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "空"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "素材"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "池"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）。\n\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "新"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**\n\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "|"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "项"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "值"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "|"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " ---"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " ---"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "|"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " key"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-s"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "cript"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "|"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "类型"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " /"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " provider"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "AI"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " ·"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Prompt"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Writer"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "|"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "位置"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " {"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "x"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "80"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ","
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " y"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "80"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "}"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "|"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "依赖"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "无"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "dep"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ends"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_on"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "为空"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "是"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "流程"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "起点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "|"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "状态"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " **"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "已"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "创建"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "未"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "提交"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "无"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " job"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "、"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "无"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "输出"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "、"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "未"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "产生"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "费用"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "已"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "写入"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "脚本"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "指令"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "config"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "instruction"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）：\n\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ">"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "钟"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "馗"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "夜"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "巡"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "15"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "秒"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "短"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "剧"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "："
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "钟"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "馗"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "深夜"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "巡"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "城"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "遇"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "一小"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "鬼"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "幽默"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "打"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "斗"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。\n\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "一处"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "工程"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "性"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "修正"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "："
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "技能"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "文档"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "里"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "把"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "脚本"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "写作"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "process"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "但"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "该"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " provider"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "在本"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "运行时"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "实际"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "未"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "注册"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "；"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "查"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " schema"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "后"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "确认"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "可用"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "定义"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "是"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " **"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "已"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "按"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "后者"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "创建"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "相关"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "约束"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "："
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "instruction"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "为"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "唯一"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "必"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "填"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "字段"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "model"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "只"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "接受"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "deep"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "seek"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-v"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "4"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-fl"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ash"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "073"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "输出"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "为"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "dest"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_p"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "rompt"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "可直接"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "流入"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "下游"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " prompt"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "字段"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）。\n\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "尚未"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "做的事"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "："
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "没有"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "提交"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "任何"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "付费"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "作业"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "你没有"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "要求"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "跑"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "且"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "它"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "需要"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "先"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "报价"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）。"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "下一步"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "若"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "你要"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "可选"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "：\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "直接"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "canvas"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_sub"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "mit"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_j"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ob"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "跑"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "这个"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "quote"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-first"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "会"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "先把"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "估价"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "报"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "给你"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "再"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "确认"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）；\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "2"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "或"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "先"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "调"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "mode"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "："
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "story"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "board"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "可"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "让"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "该"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "直接"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "产出"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "15"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "秒"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "分"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "镜"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "序列"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " JSON"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "shots"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "/"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "trans"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "itions"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "/"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "continu"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ity"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " locks"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "），"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "对"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "15"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "秒"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "短"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "剧"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "更"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "对口"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "；"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "不"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "设"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "则"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "走"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "单"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "阶段"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " instruction"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "→"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "prom"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "pt"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。\n\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "要"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "哪个"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "方向"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "继续"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "？"
+    }
+  },
+  {
+    "event": "done",
+    "data": {
+      "ok": true,
+      "data": {
+        "session_id": "20260928-192105-0a7752",
+        "skill": "skilyst/canvas-ops",
+        "stop_reason": "completed",
+        "answer": "节点已创建，任务完成。\n\n## 节点状态\n\n**画板**：`a3-s4-e2e-1790594464`（workflow-1790594465481260345）— 原本是空板（0 节点 / 0 边 / 空素材池）。\n\n**新节点**\n\n| 项 | 值 |\n| --- | --- |\n| key | `generate-script-1` |\n| 类型 | `generate` / provider `script`（AI Script · Prompt Writer） |\n| 位置 | {x: 80, y: 80} |\n| 依赖 | 无（`depends_on` 为空，是流程起点） |\n| 状态 | **已创建，未提交**（无 job、无输出、未产生费用） |\n\n**已写入的脚本指令**（config.instruction）：\n\n> 钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一小鬼，幽默打斗。\n\n**一处工程性修正**：技能文档里把脚本节点写作 `process:script`，但该 provider 在本运行时实际未注册；查 schema 后确认可用定义是 **`generate:script`**，已按后者创建。相关约束：`instruction` 为唯一必填字段，`model` 只接受 `deepseek-v4-flash-0731`，输出为 `dest_prompt`（可直接流入下游节点的 prompt 字段）。\n\n**尚未做的事**：没有提交任何付费作业（你没有要求跑，且它需要先报价）。下一步若你要，可选：\n1. 直接 `canvas_submit_node_job` 跑这个 script 节点（quote-first，会先把估价报给你再确认）；\n2. 或先调 `mode`：`storyboard` 可让该节点直接产出 15 秒分镜序列 JSON（shots/transitions/continuity locks），对\"15 秒短剧\"更对口；不设则走单阶段 instruction→prompt。\n\n要哪个方向继续？",
+        "model": "deepseek/deepseek-v4.1-flash",
+        "turns": 6,
+        "wall_clock_s": 31.7,
+        "usage": {
+          "prompt_tokens": 35054,
+          "completion_tokens": 1498,
+          "total_tokens": 36552,
+          "calls": 6,
+          "models_used": [
+            "deepseek/deepseek-v4.1-flash"
+          ]
+        },
+        "artifacts": [],
+        "jobs": {
+          "submitted": 0,
+          "budget": null
+        },
+        "tool_calls": [
+          {
+            "tool": "read_skill",
+            "arguments": {
+              "skill_id": "skilyst/canvas-ops@1.0.0"
+            },
+            "result": null,
+            "error": "KeyError: \"skill 'skilyst/canvas-ops@1.0.0' is not installed (installed: ['skilyst/canvas-ops', 'skilyst/doctor', 'skilyst/embed-video', 'skilyst/lipsync-audio-refs', 'skilyst/prompt-craft', 'skilyst/video-15s'])\"",
+            "duration_s": 0.0
+          },
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790594465481260345"
+            },
+            "result": {
+              "id": "workflow-1790594465481260345",
+              "name": "a3-s4-e2e-1790594464",
+              "nodes": [],
+              "edges": [],
+              "media_pool": []
+            },
+            "error": null,
+            "duration_s": 1.45
+          },
+          {
+            "tool": "read_skill",
+            "arguments": {
+              "skill_id": "skilyst/canvas-ops"
+            },
+            "result": {
+              "skill_id": "skilyst/canvas-ops",
+              "version": "1.0.0",
+              "degraded": false,
+              "digest": "sha256:f9cac603776ce8ab7384eda079182742ff4ceb12de18d91d1d165ab60daf518a",
+              "permission": {
+                "egress": [
+                  "beehive-api.verse4.pet"
+                ],
+                "filesystem": "skill-dir",
+                "exec": "none",
+                "secrets": true
+              },
+              "plan": {},
+              "requires_nodes": [],
+              "instructions": "\n# Canvas operations (the conversation-driven board)\n\nThe board is the workflow; you are its writer. Every tool below lands a\nstructured change on the server-side blueprint and an action card in the\nconversation — the user watches the board move as you speak.\n\n## When to use\n\nThe user wants to build or edit a board by conversation: \"add a script node\nthat writes a 15-second ghost-catcher patrol script\", \"wire the reference\nimage to the first frame\", \"generate a reference image\", \"run it\".\n\n**Start every session with `canvas_list_workflows` + `canvas_read_board`.**\nIf the user did not name a board, list them, pick the most recently updated\none, and *say which one you picked* before editing.\n\n## The tools\n\n| tool | what it does | key params | reach for it when |\n| --- | --- | --- | --- |\n| `canvas_list_workflows` | boards this account can see | limit | picking the board to operate on |\n| `canvas_read_board` | full board state: nodes, edges (derived from `material_deps`/`depends_on`), media pool | workflow_id | before any edit; after a conflict |\n| `canvas_create_node` | add a node to the blueprint (auto-key `{type}-{provider}-{n}`, auto-position) | workflow_id, node_type, provider, config? | \"创建一个 script 节点\" |\n| `canvas_write_node_config` | deep-merge a config patch into one node | workflow_id, key, config | \"把时长改成 15 秒\" |\n| `canvas_connect_ports` | wire an edge; a material source wires as `material_deps {key, input_port}` + depends_on | workflow_id, from_key, to_key, input_port? | \"把参考图接到首帧\" |\n| `canvas_query_schema` | node definition + derived port analysis (enums, required, alternative input modes) | node_type+provider or node_id | **before every connect or submission** |\n| `canvas_read_node_output` | newest job output for one node (async poll) | workflow_id, key | after submitting a generation |\n| `canvas_submit_node_job` | submit ONE node as a job, quote-first | workflow_id, node_type, provider, config | running a single node |\n| `canvas_run_workflow` | submit the whole board as one job, quote-first | workflow_id | \"跑一下这个流程\" |\n| `canvas_generate_image` | submit a PAID gpt-image-2 image job | workflow_id, prompt, size? | \"生成一张参考图\" |\n| `canvas_list_media` | the board's media pool entries | workflow_id | checking what is available |\n| `canvas_add_media` | add an upload-origin pool entry by URL | workflow_id, url, name | bringing an external image onto the board |\n\nNode types you will meet: `process` (script/LLM nodes, e.g.\n`process:script`), `generate` (minimax-h3, gpt-image-2, ...), `material` (a\nmedia-pool reference — pure data input, never executed).\n\n## Lock discipline (写锁纪律)\n\nEvery blueprint write (`create_node` / `write_node_config` / `connect_ports`)\nis **already wrapped** by the runtime in the server-side lock protocol:\nlock → read → modify → PUT → unlock, with finally semantics (a failed PUT\nstill unlocks — a crash can never strand a lock; a dead holder's lock is\ntaken over by the next applicant server-side).\n\nIf a write raises `LockHeldError` (画板正被占用):\n\n1. **Stop.** Tell the user the board is busy and *who* holds it (the error\n   carries holder kind/id and since when).\n2. **Do not retry in a loop.** The holder is alive and working; your calls\n   do not preempt it.\n3. Reads (`canvas_read_board`, `canvas_query_schema`) still work — you can\n   keep planning, just not writing.\n\nYour own API calls refresh the lock heartbeat implicitly while you hold it —\nyou never need to think about expiry.\n\n## Port matching iron rule (端口匹配铁律)\n\n**Before `canvas_connect_ports`, ALWAYS `canvas_query_schema` the TARGET\nnode.** The schema is the judge of which ports may receive what:\n\n- **enum fields** — e.g. `image_roles` accepts exactly\n  `reference_image` / `first_frame` / `last_frame`;\n- **required fields** — what a submission will 400 without;\n- **alternative input modes** — arrays that cannot be mixed.\n\n**Canonical case — minimax-h3.** Its image inputs are *exclusive*:\n`first_frame` and `reference_image` cannot coexist in one submission. Wiring\na reference image to `first_frame` when `reference_image` entries already\nexist (or vice versa) is a 400 *at submit time* — expensive to discover\nlate. Query the schema, decide the port deliberately, then connect. Never\nguess a port from the field name alone.\n\n## Quote-first (先报价)\n\nPaid submissions (`canvas_submit_node_job`, `canvas_run_workflow`,\n`canvas_generate_image`) fetch an estimate *before* the submission exists.\nQuote amounts are integer micro-USD plus a USD display figure. When the\nestimate is material, state the USD figure to the user and get the go-ahead\n— the wallet is charged on submit (held at the quote's upper bound, settled\nat measured usage).\n\n## Failure self-correction (失败自修正)\n\n| failure | what to do |\n| --- | --- |\n| schema/validation 400 | read the **structured** error — the platform names the offending field and the allowed values. Fix that field, retry **once**. No blind retries, no fallback wrappers. |\n| 409 workflow-modified | the runtime already retried once; `canvas_read_board` again before your next write — the board moved under you. |\n| `LockHeldError` | report to the user, stop writing (see above). |\n| 402 / 413 quota | report the number, do not retry. |\n\n## Media pool flow (参考图上板)\n\nGeneration is async and the pool is where artifacts land:\n\n1. `canvas_generate_image` **submits only** — a paid gpt-image-2 job.\n2. Poll with `canvas_read_node_output` (or `beehive_get_job`) until\n   `completed`.\n3. On completion the server **auto-captures** the image into the board's\n   media pool (`origin.kind=generated`) — no add needed.\n\nFor an external image the user supplied by URL: `canvas_add_media`, then\nmake it wireable as a material node, then connect:\n\n```\ncanvas_add_media(workflow_id, url, name)          -> pool entry id\ncanvas_create_node(workflow_id, 'material', '',   -> material node\n                   config={pool_entry_id: <id>})\ncanvas_query_schema(node_type='generate', provider='minimax-h3')\ncanvas_connect_ports(workflow_id, from_key=<material key>,\n                     to_key=<consumer key>, input_port='first_frame')\n```\n\nMaterial nodes are identified by `config.pool_entry_id`; the runtime wires\nthem into the consumer's `material_deps` and `depends_on`, and the server\ncompiles that to `images[]` + `image_roles[]` (or `video_refs`/`audio_refs`)\nat submit time.\n\n## Board delta awareness\n\nEvery successful canvas call lands an action row in the conversation with a\n`board_delta` (added node, wired edge, pool entry, submitted job). The UI\nrenders these as cards the user can expand and click to locate on the board.\nKeep your result summaries human-readable — the card's one-liner is what the\nuser reads first.",
+              "files": [
+                "LICENSE",
+                "SKILL.md",
+                "manifest.json",
+                "references/i18n/glossary.en.json",
+                "references/i18n/glossary.zh-CN.json"
+              ],
+              "spec_warnings": []
+            },
+            "error": null,
+            "duration_s": 0.0
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "process",
+              "provider": "script"
+            },
+            "result": null,
+            "error": "ValueError: no node definition 'process:script' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)",
+            "duration_s": 1.54
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "generate",
+              "provider": "script"
+            },
+            "result": {
+              "node_id": "generate:script",
+              "name": "AI Script (Prompt Writer)",
+              "description": null,
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "properties": {
+                  "context_urls": {
+                    "description": "Optional reference media URLs appended to the instruction as context",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "maxItems": 8,
+                    "type": "array"
+                  },
+                  "goal": {
+                    "description": "compose mode: the original goal (defaults to instruction when empty)",
+                    "type": "string"
+                  },
+                  "instruction": {
+                    "description": "What you want the video/audio/image to be, in plain language — the script node rewrites it into a generation-ready prompt",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "material_refs": {
+                    "description": "#504: material references — resolved at submit, woven into the instruction, passed through to downstream nodes via dest_refs",
+                    "items": {
+                      "properties": {
+                        "entry_id": {
+                          "description": "Media-pool entry id (mp-...)",
+                          "type": "string"
+                        },
+                        "note": {
+                          "description": "Free-text usage note — woven into the prompt's referenced-materials section",
+                          "type": "string"
+                        },
+                        "role": {
+                          "enum": [
+                            "first_frame",
+                            "last_frame",
+                            "reference_image",
+                            "reference_video",
+                            "reference_audio"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "entry_id",
+                        "role"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "max_output_tokens": {
+                    "default": 2048,
+                    "description": "Upper bound on the generated prompt length; also the billing hold bound",
+                    "maximum": 8192,
+                    "minimum": 64,
+                    "type": "integer"
+                  },
+                  "mode": {
+                    "description": "decompose = instruction is a goal, output is the questionnaire JSON (#432); compose = synthesize the final prompt + ir from goal/selections (#432); storyboard = instruction is a narrative brief, output is a template-v2 sequence JSON with shots/transitions/elements/continuity locks (#381). Absent = single-phase instruction→prompt",
+                    "enum": [
+                      "decompose",
+                      "compose",
+                      "storyboard"
+                    ],
+                    "type": "string"
+                  },
+                  "model": {
+                    "default": "deepseek-v4-flash-0731",
+                    "description": "Model. Currently only deepseek-v4-flash-0731; a value outside this set is rejected at submit time",
+                    "enum": [
+                      "deepseek-v4-flash-0731"
+                    ],
+                    "type": "string"
+                  },
+                  "selections": {
+                    "description": "compose mode: the user's picks + custom values keyed by dimension (subject/action/camera/mood/sound)",
+                    "type": "object"
+                  },
+                  "system_prompt": {
+                    "description": "Optional — overrides the built-in prompt-engineering system prompt (advanced)",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "instruction"
+                ],
+                "type": "object",
+                "x-input-ports": [
+                  {
+                    "accepts": [
+                      "text"
+                    ],
+                    "field": "instruction"
+                  }
+                ]
+              },
+              "output_schema": {
+                "completion_tokens": "integer",
+                "dest_prompt": "string — the generation-ready prompt, flows into downstream nodes' prompt field",
+                "ir": "string (JSON) — compose mode only: IR-lite axes the model applied (flat snake_case object)",
+                "prompt_tokens": "integer"
+              },
+              "config_defaults": {
+                "pricing": {
+                  "input_price_usd": 140,
+                  "model": "per_token",
+                  "output_price_usd": 280,
+                  "qty_max": 8192
+                }
+              },
+              "enabled": true,
+              "port_analysis": {
+                "enum_fields": [
+                  {
+                    "field": "mode",
+                    "enum": [
+                      "decompose",
+                      "compose",
+                      "storyboard"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "model",
+                    "enum": [
+                      "deepseek-v4-flash-0731"
+                    ],
+                    "on": "field"
+                  }
+                ],
+                "required": [
+                  "instruction"
+                ],
+                "notes": []
+              }
+            },
+            "error": null,
+            "duration_s": 1.37
+          },
+          {
+            "tool": "canvas_create_node",
+            "arguments": {
+              "workflow_id": "workflow-1790594465481260345",
+              "node_type": "generate",
+              "provider": "script",
+              "config": {
+                "instruction": "钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一小鬼，幽默打斗。"
+              }
+            },
+            "result": {
+              "node": {
+                "type": "generate",
+                "provider": "script",
+                "key": "generate-script-1",
+                "config": {
+                  "instruction": "钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一小鬼，幽默打斗。"
+                },
+                "position": {
+                  "x": 80,
+                  "y": 80
+                }
+              },
+              "workflow": {
+                "id": "workflow-1790594465481260345",
+                "name": "a3-s4-e2e-1790594464",
+                "description": "A3 S4 E2E creation story",
+                "nodes": [
+                  {
+                    "type": "generate",
+                    "provider": "script",
+                    "key": "generate-script-1",
+                    "config": {
+                      "instruction": "钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一小鬼，幽默打斗。"
+                    },
+                    "position": {
+                      "x": 80,
+                      "y": 80
+                    }
+                  }
+                ],
+                "owner_id": "usr-1787815793337170547",
+                "schema_version": 0,
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z"
+              }
+            },
+            "error": null,
+            "duration_s": 5.85
+          }
+        ],
+        "preflight": null,
+        "error": null,
+        "ok": true,
+        "dry_run": false,
+        "notes": [
+          "tool read_skill \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops@1.0.0\\\"}\"",
+          "tool read_skill refused: KeyError: \"skill 'skilyst/canvas-ops@1.0.0' is not installed (installed: ['skilyst/canvas-ops', 'skilyst/doctor', 'skilyst/embed-video', 'skilyst/lipsync-audio-refs', 'skilyst/prompt-craft', 'skilyst/video-15s'])\"",
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\"}\"",
+          "tool read_skill \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops\\\"}\"",
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"process\\\", \\\"provider\\\": \\\"script\\\"}\"",
+          "tool canvas_query_schema refused: ValueError: no node definition 'process:script' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)",
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\"}\"",
+          "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790594465481260345\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\", \\\"config\\\": {\\\"instruction\\\": \\\"钟馗夜巡，15 秒短剧：钟馗深夜巡城遇一",
+          "canvas: node generate-script-1 added to workflow-1790594465481260345"
+        ]
+      }
+    }
+  }
+]

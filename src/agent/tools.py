@@ -25,7 +25,7 @@ from pathlib import Path
 from typing import Callable
 
 from beehive import BeehiveClient, job_handle, verify_artifact
-from canvas import CanvasOps, LockHeldError
+from canvas import CanvasOps, LockHeldError, PaidConfirmDeclined  # noqa: F401 -- re-exported for tests
 from manifest import BINDING_CONTROL_ARGS, NodeBinding
 from sandbox import PermissionGate, SandboxViolation, list_resources, read_resource
 from skills import SkillPackage, SkillStore
@@ -167,14 +167,15 @@ def _submit_description(active, node_ids: list[str], default_node: str, plan: di
 
 CANVAS_SKILL_ID = "skilyst/canvas-ops"
 
-# The ten FR-3 canvas tools (docs/a3-canvas-workbench.md) plus the two
-# read-only board reads the workbench needs. `create_workflow` deliberately
-# stays unexposed: the workbench assumes an existing board.
+# The FR-3 canvas tools (docs/a3-canvas-workbench.md) plus the board reads and
+# the S4 media-pool lifecycle pair. `create_workflow` deliberately stays
+# unexposed: the workbench assumes an existing board.
 CANVAS_TOOLS = (
     "canvas_create_node", "canvas_write_node_config", "canvas_connect_ports",
     "canvas_query_schema", "canvas_read_node_output", "canvas_submit_node_job",
     "canvas_run_workflow", "canvas_generate_image", "canvas_list_media",
-    "canvas_add_media", "canvas_list_workflows", "canvas_read_board",
+    "canvas_add_media", "canvas_rename_media", "canvas_delete_media",
+    "canvas_list_workflows", "canvas_read_board",
 )
 
 
@@ -184,7 +185,8 @@ def build_registry(store: SkillStore, client: BeehiveClient | None, active: Skil
                    artifact_verifier: Callable[[str], object] | None = None,
                    max_jobs: int = 1, node_schemas: dict | None = None,
                    session_id: str = "",
-                   on_action: Callable[[dict], None] | None = None) -> ToolRegistry:
+                   on_action: Callable[[dict], None] | None = None,
+                   paid_confirm: Callable[[dict], bool] | None = None) -> ToolRegistry:
     """Assemble the tool set for one run.
 
     ``max_jobs`` is a spend guard, not a convenience: a submitted job costs real
@@ -272,7 +274,7 @@ def build_registry(store: SkillStore, client: BeehiveClient | None, active: Skil
     # that dies when the agent dies).
     if client is not None and active is not None and active.skill_id == CANVAS_SKILL_ID \
             and active.permission.get("secrets"):
-        _register_canvas_tools(registry, client, session_id, events, on_action)
+        _register_canvas_tools(registry, client, session_id, events, on_action, paid_confirm)
 
     # -- platform tools (only with an active skill that declares them) -------
     if active is None or client is None:
@@ -564,8 +566,9 @@ def _micro_to_usd_cost(quote: dict | None) -> dict | None:
 
 def _register_canvas_tools(registry: ToolRegistry, client, session_id: str,
                            events: Callable[[str], None],
-                           on_action: Callable[[dict], None] | None) -> None:
-    """Wire the twelve canvas tools (ten FR-3 tools + two board reads).
+                           on_action: Callable[[dict], None] | None,
+                           paid_confirm: Callable[[dict], bool] | None = None) -> None:
+    """Wire the canvas tools (FR-3 + S4 media-pool lifecycle).
 
     Every tool shares one wrapper (`_make`) that provides the R3 action
     stream contract: timing, board activity events, the action row
@@ -573,8 +576,13 @@ def _register_canvas_tools(registry: ToolRegistry, client, session_id: str,
     known), and the lock-held note (画板正被占用) when a write hits a live
     holder -- the loop's error path tells the model; the note tells the human
     transcript.
+
+    `paid_confirm` (S4 quote UX): when set, the three paid submission tools
+    consult it AFTER quoting and BEFORE submitting -- the callback receives
+    the quote view and returns True to proceed. A declined/timeout refusal
+    raises PaidConfirmDeclined (the model is told; nothing is charged).
     """
-    ops = CanvasOps(client, session_id)
+    ops = CanvasOps(client, session_id, paid_confirm=paid_confirm)
     actions = on_action or (lambda _action: None)
 
     def _make(tool_name: str, method_name: str,
@@ -630,8 +638,8 @@ def _register_canvas_tools(registry: ToolRegistry, client, session_id: str,
 
 def _result_ref(result) -> dict | None:
     """The compact action-row summary of a canvas call's result: ids the
-    desktop can follow up on (job id, node key, pool entry id), never the
-    whole response."""
+    desktop can follow up on (job id, node key, pool entry id, wired edge),
+    never the whole response."""
     if not isinstance(result, dict):
         return None
     ref = {key: result[key] for key in ("job_id", "node_count", "found") if result.get(key) is not None}
@@ -641,6 +649,16 @@ def _result_ref(result) -> dict | None:
     added = result.get("added")
     if isinstance(added, dict) and added.get("id") is not None:
         ref["pool_entry"] = added["id"]
+    renamed = result.get("renamed")
+    if isinstance(renamed, dict) and renamed.get("id") is not None:
+        ref["pool_entry"] = renamed["id"]
+        ref["renamed_to"] = renamed.get("name")
+    if result.get("deleted") is not None:
+        ref["deleted_pool_entry"] = result["deleted"]
+    # connect_ports: the wired edge's endpoints, so an action card can focus
+    # EITHER node on the board (S3 leftover: the card only knew the board).
+    if result.get("from") is not None and result.get("to") is not None:
+        ref["wired"] = [result["from"], result["to"]]
     return ref or None
 
 
@@ -670,6 +688,15 @@ def _register_canvas_specs(registry: ToolRegistry, make) -> None:
     def _pool_entry(result: dict, args: dict):
         added = result.get("added") or {}
         return {"added_pool_entry": added.get("id"), "workflow_id": args.get("workflow_id")}
+
+    def _renamed_entry(result: dict, args: dict):
+        renamed = result.get("renamed") or {}
+        return {"renamed_pool_entry": renamed.get("id"), "new_name": renamed.get("name"),
+                "workflow_id": args.get("workflow_id")}
+
+    def _deleted_entry(result: dict, args: dict):
+        return {"deleted_pool_entry": result.get("deleted"),
+                "workflow_id": args.get("workflow_id")}
 
     registry.register(ToolSpec(
         "canvas_create_node",
@@ -782,9 +809,38 @@ def _register_canvas_specs(registry: ToolRegistry, make) -> None:
 
     registry.register(ToolSpec(
         "canvas_list_media",
-        "List a board's media pool entries (id, name, kind, url, thumb).",
+        "List a board's media pool entries. Each entry carries an `index` (its 1-based position — "
+        "the number in '用池里第 3 张'), the render fields (id, name, kind, url, thumb) and "
+        "`referenced_by` (the material node keys wiring it onto the board — the reference count; "
+        "the delete endpoint refuses entries with references, so check this list before deleting).",
         _obj({"workflow_id": {"type": "string"}}, ["workflow_id"]),
         make("canvas_list_media", "list_media"), scope="workflows:read"))
+
+    registry.register(ToolSpec(
+        "canvas_rename_media",
+        "Rename one media pool entry on a board. Runs under the board lock and rewrites the pool "
+        "wholesale (the platform's designed pool-replacement path), so a concurrent writer "
+        "surfaces as a conflict instead of being overwritten.",
+        _obj({"workflow_id": {"type": "string"},
+              "entry_id": {"type": "string", "description": "the pool entry to rename"},
+              "name": {"type": "string", "description": "the new name (non-empty)"}},
+             ["workflow_id", "entry_id", "name"]),
+        make("canvas_rename_media", "rename_media", _renamed_entry,
+             lambda r, a: f"canvas: media {a.get('entry_id')} renamed to "
+                          f"{(r.get('renamed') or {}).get('name')!r} on {a.get('workflow_id')}"),
+        scope="workflows:write"))
+
+    registry.register(ToolSpec(
+        "canvas_delete_media",
+        "Remove one media pool entry. The platform refuses (409) an entry still wired into a "
+        "material node and names the referencing keys — offer to remove or rewire those nodes "
+        "instead of retrying. Unreferenced entries delete outright.",
+        _obj({"workflow_id": {"type": "string"},
+              "entry_id": {"type": "string", "description": "the pool entry to remove"}},
+             ["workflow_id", "entry_id"]),
+        make("canvas_delete_media", "delete_media", _deleted_entry,
+             lambda r, a: f"canvas: media {a.get('entry_id')} deleted from {a.get('workflow_id')}"),
+        scope="workflows:write"))
 
     registry.register(ToolSpec(
         "canvas_add_media",

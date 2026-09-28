@@ -304,7 +304,8 @@ def cmd_serve(args) -> int:
                            token_file=args.token_file, skill=args.skill, dry_run=args.dry_run,
                            max_turns=args.max_turns, max_jobs=args.max_jobs,
                            allow_fallback=args.allow_fallback,
-                           orphan_guard=args.orphan_guard)
+                           orphan_guard=args.orphan_guard,
+                           cors_origins=tuple(args.cors_origin or ()))
     return serve(cfg, options, resolve_kwargs=resolve_kwargs(args), on_ready=emit_line, note=note)
 
 
@@ -472,6 +473,10 @@ def build_parser() -> argparse.ArgumentParser:
                    help="stop when the parent that started us is gone (stdin EOF or a parent pid "
                         "change) -- the desktop shell uses this so a killed shell cannot leave an "
                         "orphaned runtime behind")
+    p.add_argument("--cors-origin", action="append", default=[],
+                   help="an extra origin allowed by CORS (repeatable) -- e.g. the web console "
+                        "dev server when it drives this runtime directly "
+                        "(http://localhost:1421)")
     p.set_defaults(func=cmd_serve, needs_llm=False, needs_beehive=False)
     p = sub.add_parser("doctor"); p.add_argument("skill_id", nargs="?")
     p.add_argument("--allow-fallback", action="store_true")
