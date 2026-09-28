@@ -50,18 +50,18 @@ def api_login() -> tuple[str, dict]:
 token, user = api_login()
 
 with sync_playwright() as pw:
-    browser = pw.chromium.launch()
+    browser = pw.chromium.launch(args=["--no-proxy-server"])
 
     # ---- web console workbench --------------------------------------------
     ctx = browser.new_context(viewport={"width": 1600, "height": 1000})
     page = ctx.new_page()
-    page.goto("http://localhost:3457/login", wait_until="networkidle")
+    page.goto("http://localhost:3457/login", wait_until="domcontentloaded")
     # inject the web console's auth localStorage (beehive_token/beehive_user)
     page.evaluate(f"""(() => {{
         localStorage.setItem('beehive_token', {json.dumps(token)});
         localStorage.setItem('beehive_user', {json.dumps(json.dumps(user))});
     }})()""")
-    page.goto(f"http://localhost:3457/studio/agent", wait_until="networkidle")
+    page.goto(f"http://localhost:3457/studio/agent", wait_until="domcontentloaded")
     page.wait_for_timeout(2500)
     # pick the E2E board in the board selector
     try:
@@ -76,7 +76,7 @@ with sync_playwright() as pw:
     # ---- desktop app ------------------------------------------------------
     ctx2 = browser.new_context(viewport={"width": 1600, "height": 1000})
     dp = ctx2.new_page()
-    dp.goto("http://localhost:5199/", wait_until="networkidle")
+    dp.goto("http://localhost:1420/", wait_until="domcontentloaded")
     dp.wait_for_timeout(1500)
     # the desktop canvas login form (beehive data source)
     try:
