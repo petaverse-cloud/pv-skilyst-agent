@@ -29,6 +29,7 @@ import Composer from "./components/Composer";
 import ConversationView from "./components/ConversationView";
 import SessionList from "./components/SessionList";
 import SettingsPage from "./components/SettingsPage";
+import { CanvasView } from "./components/CanvasView";
 import { appendDelta, emptyStream, freezeTurn, type StreamState } from "./stream";
 
 const MODEL_KEY = "skilyst.model";
@@ -43,7 +44,7 @@ export default function App() {
   const [connecting, setConnecting] = useState(true);
   const [sessions, setSessions] = useState<SessionRow[]>([]);
   const [detail, setDetail] = useState<SessionDetail | null>(null);
-  const [view, setView] = useState<"chat" | "settings">("chat");
+  const [view, setView] = useState<"chat" | "settings" | "canvas">("chat");
   const [sending, setSending] = useState(false);
   const [stream, setStream] = useState<StreamState>(emptyStream);
   const [notes, setNotes] = useState<string[]>([]);
@@ -206,6 +207,13 @@ export default function App() {
             )}
             <Button
               size="xs"
+              variant={view === "canvas" ? "filled" : "subtle"}
+              onClick={() => setView(view === "canvas" ? "chat" : "canvas")}
+            >
+              画板
+            </Button>
+            <Button
+              size="xs"
               variant="subtle"
               leftSection={view === "settings" ? <IconMessage size={14} /> : <IconSettings size={14} />}
               onClick={() => setView(view === "settings" ? "chat" : "settings")}
@@ -266,7 +274,9 @@ export default function App() {
             </Text>
           </Alert>
         ) : null}
-        {view === "settings" ? (
+        {view === "canvas" ? (
+          <CanvasView onExit={() => setView("chat")} />
+        ) : view === "settings" ? (
           <Box style={{ flex: 1, overflow: "auto" }}>
             <SettingsPage info={info} model={model} onModelChange={chooseModel} />
           </Box>
