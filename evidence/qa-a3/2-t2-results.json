@@ -1,0 +1,54 @@
+{
+  "checks": [
+    {
+      "check": "web runtime connect",
+      "pass": false,
+      "detail": "runtime bound on web host"
+    },
+    {
+      "check": "web action cards visible",
+      "pass": false,
+      "detail": "action-ish=0 message-ish=0"
+    },
+    {
+      "check": "web board picked",
+      "pass": true,
+      "detail": "wf=workflow-1790601427457590393"
+    },
+    {
+      "check": "web action locate (focusNode)",
+      "pass": false,
+      "detail": "no locate button found"
+    },
+    {
+      "check": "desktop session select",
+      "pass": false,
+      "detail": "found=False"
+    },
+    {
+      "check": "desktop board picked",
+      "pass": false,
+      "detail": "wf=workflow-1790601427457590393"
+    },
+    {
+      "check": "item1 双端节点数一致",
+      "pass": false,
+      "detail": "web=6 desktop=0"
+    },
+    {
+      "check": "item1 双端连线数一致",
+      "pass": false,
+      "detail": "web=5 desktop=0"
+    },
+    {
+      "check": "item4 mediapool 双端一致",
+      "pass": false,
+      "detail": "web=1 desktop=0"
+    },
+    {
+      "check": "item6 会话流+action 卡片 双端可见",
+      "pass": false,
+      "detail": "web actions=0 desktop actions=0"
+    }
+  ]
+}

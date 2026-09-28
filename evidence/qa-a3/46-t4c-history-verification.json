@@ -1,0 +1,61 @@
+{
+  "history_roles": [
+    "user",
+    "assistant",
+    "user",
+    "assistant",
+    "tool",
+    "assistant",
+    "tool",
+    "tool",
+    "assistant",
+    "tool",
+    "assistant",
+    "tool",
+    "assistant",
+    "tool",
+    "assistant"
+  ],
+  "history_polluted_rows": 0,
+  "history_filters_action_note": true,
+  "followup_turn_ok": true,
+  "followup_roles_tail": [
+    "assistant",
+    "action",
+    "tool",
+    "assistant",
+    "user",
+    "assistant"
+  ],
+  "followup_new_action_rows": 0,
+  "followup_answer": "我在画板 `workflow-1790601269708463301` 上创建了一个脚本节点 `generate-script-1`（类型 `generate:script`），其指令为「一只猫在月光下散步，10 秒」，未连线、未运行。",
+  "sse_done": {
+    "session_id": "20260928-211422-b0e11a",
+    "skill": "skilyst/canvas-ops",
+    "stop_reason": "completed",
+    "answer": "我在画板 `workflow-1790601269708463301` 上创建了一个脚本节点 `generate-script-1`（类型 `generate:script`），其指令为「一只猫在月光下散步，10 秒」，未连线、未运行。",
+    "model": "deepseek/deepseek-v4.1-flash",
+    "turns": 1,
+    "wall_clock_s": 3.7,
+    "usage": {
+      "prompt_tokens": 10017,
+      "completion_tokens": 58,
+      "total_tokens": 10075,
+      "calls": 1,
+      "models_used": [
+        "deepseek/deepseek-v4.1-flash"
+      ]
+    },
+    "artifacts": [],
+    "jobs": {
+      "submitted": 0,
+      "budget": null
+    },
+    "tool_calls": [],
+    "preflight": null,
+    "error": null,
+    "ok": true,
+    "dry_run": false,
+    "notes": []
+  }
+}

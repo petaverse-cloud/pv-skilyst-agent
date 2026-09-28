@@ -1,0 +1,1230 @@
+[
+  {
+    "event": "delta",
+    "data": {
+      "text": "I"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'ll load"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the canvas-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ops method"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " first, then look"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " at the board."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool read_skill \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790602514078143757\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"process\\\", \\\"provider\\\": \\\"script\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema refused: ValueError: no node definition 'process:script' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"minimax-h3\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Board"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " read"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "workflow-179"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "060251407814"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "3757` (\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "qa-a3-t"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1b-179"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "0602513\")"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " is currently empty. Note"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": the script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node's real"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " id"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " is `generate:script`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " (\"AI Script ("
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Prompt Writer)\"), so"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `node_type"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "="
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "generate` + `provider"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "=script`."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790602514078143757\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"minimax-h3\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: node generate-minimax-h3-1 added to workflow-1790602514078143757"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_create_node \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\", \\\"config\\\": {\\\"instruction\\\": \\\"夜景测试\\\"}, \\\"workflow_id\\\": \\\"workflow-1790602514078143757\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: node generate-script-2 added to workflow-1790602514078143757"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Done — two"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " nodes created"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ", no edges"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ", nothing submitted"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ".\n\nBoard"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": `workflow-179"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "060251407814"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "3757` (\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "qa-a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "3-t1b"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-179060"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "2513"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\")\n\n| key"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " | node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " | config"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n|"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " --- | --- | ---"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n| `generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-minimax-h3-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1` | `generate:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "minimax-h3`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " (MiniMax-H3 Video"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Generation) | empty"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " — prompt deliberately left un"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "set |\n| `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "generate-script-2`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " | `generate:script`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " (AI Script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " /"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Prompt Writer) | `instruction"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": \"夜景"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "测试\"` |\n\nTwo things"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " worth flagging for when"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " you do"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " decide"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " to"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " wire/sub"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "mit:\n\n1. **"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "The script node is `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "generate:script`, not `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "process:script`.** `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "process:script`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " isn"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'t a registered definition"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " on"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " this runtime, so"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " I created it as `node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_type=generate,"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " provider=script`. ("
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " types on"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " this platform"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " don"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'t map to the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `process"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "` type the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " way one"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " might expect.)\n2. **"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "minimax-h3 has"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " no prompt yet"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " and"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "prompt` is required**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " (min length"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 1) — it"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " will "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "400 if"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " submitted as"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-is. That's consistent"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " with your"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " \""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "先不配置提示"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "词\" instruction, just"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " noting"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " it so the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " empty config"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " isn't a surprise later"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "done",
+    "data": {
+      "ok": true,
+      "data": {
+        "session_id": "20260928-213514-baf690",
+        "skill": "skilyst/canvas-ops",
+        "stop_reason": "completed",
+        "answer": "Done — two nodes created, no edges, nothing submitted.\n\nBoard: `workflow-1790602514078143757` (\"qa-a3-t1b-1790602513\")\n\n| key | node | config |\n| --- | --- | --- |\n| `generate-minimax-h3-1` | `generate:minimax-h3` (MiniMax-H3 Video Generation) | empty — prompt deliberately left unset |\n| `generate-script-2` | `generate:script` (AI Script / Prompt Writer) | `instruction: \"夜景测试\"` |\n\nTwo things worth flagging for when you do decide to wire/submit:\n\n1. **The script node is `generate:script`, not `process:script`.** `process:script` isn't a registered definition on this runtime, so I created it as `node_type=generate, provider=script`. (Node types on this platform don't map to the `process` type the way one might expect.)\n2. **minimax-h3 has no prompt yet and `prompt` is required** (min length 1) — it will 400 if submitted as-is. That's consistent with your \"先不配置提示词\" instruction, just noting it so the empty config isn't a surprise later.",
+        "model": "deepseek/deepseek-v4.1-flash",
+        "turns": 6,
+        "wall_clock_s": 49.1,
+        "usage": {
+          "prompt_tokens": 40155,
+          "completion_tokens": 1107,
+          "total_tokens": 41262,
+          "calls": 6,
+          "models_used": [
+            "deepseek/deepseek-v4.1-flash"
+          ]
+        },
+        "artifacts": [],
+        "jobs": {
+          "submitted": 0,
+          "budget": null
+        },
+        "tool_calls": [
+          {
+            "tool": "read_skill",
+            "arguments": {
+              "skill_id": "skilyst/canvas-ops"
+            },
+            "result": {
+              "skill_id": "skilyst/canvas-ops",
+              "version": "1.0.0",
+              "degraded": false,
+              "digest": "sha256:f9cac603776ce8ab7384eda079182742ff4ceb12de18d91d1d165ab60daf518a",
+              "permission": {
+                "egress": [
+                  "beehive-api.verse4.pet"
+                ],
+                "filesystem": "skill-dir",
+                "exec": "none",
+                "secrets": true
+              },
+              "plan": {},
+              "requires_nodes": [],
+              "instructions": "\n# Canvas operations (the conversation-driven board)\n\nThe board is the workflow; you are its writer. Every tool below lands a\nstructured change on the server-side blueprint and an action card in the\nconversation — the user watches the board move as you speak.\n\n## When to use\n\nThe user wants to build or edit a board by conversation: \"add a script node\nthat writes a 15-second ghost-catcher patrol script\", \"wire the reference\nimage to the first frame\", \"generate a reference image\", \"run it\".\n\n**Start every session with `canvas_list_workflows` + `canvas_read_board`.**\nIf the user did not name a board, list them, pick the most recently updated\none, and *say which one you picked* before editing.\n\n## The tools\n\n| tool | what it does | key params | reach for it when |\n| --- | --- | --- | --- |\n| `canvas_list_workflows` | boards this account can see | limit | picking the board to operate on |\n| `canvas_read_board` | full board state: nodes, edges (derived from `material_deps`/`depends_on`), media pool | workflow_id | before any edit; after a conflict |\n| `canvas_create_node` | add a node to the blueprint (auto-key `{type}-{provider}-{n}`, auto-position) | workflow_id, node_type, provider, config? | \"创建一个 script 节点\" |\n| `canvas_write_node_config` | deep-merge a config patch into one node | workflow_id, key, config | \"把时长改成 15 秒\" |\n| `canvas_connect_ports` | wire an edge; a material source wires as `material_deps {key, input_port}` + depends_on | workflow_id, from_key, to_key, input_port? | \"把参考图接到首帧\" |\n| `canvas_query_schema` | node definition + derived port analysis (enums, required, alternative input modes) | node_type+provider or node_id | **before every connect or submission** |\n| `canvas_read_node_output` | newest job output for one node (async poll) | workflow_id, key | after submitting a generation |\n| `canvas_submit_node_job` | submit ONE node as a job, quote-first | workflow_id, node_type, provider, config | running a single node |\n| `canvas_run_workflow` | submit the whole board as one job, quote-first | workflow_id | \"跑一下这个流程\" |\n| `canvas_generate_image` | submit a PAID gpt-image-2 image job | workflow_id, prompt, size? | \"生成一张参考图\" |\n| `canvas_list_media` | the board's media pool entries | workflow_id | checking what is available |\n| `canvas_add_media` | add an upload-origin pool entry by URL | workflow_id, url, name | bringing an external image onto the board |\n\nNode types you will meet: `process` (script/LLM nodes, e.g.\n`process:script`), `generate` (minimax-h3, gpt-image-2, ...), `material` (a\nmedia-pool reference — pure data input, never executed).\n\n## Lock discipline (写锁纪律)\n\nEvery blueprint write (`create_node` / `write_node_config` / `connect_ports`)\nis **already wrapped** by the runtime in the server-side lock protocol:\nlock → read → modify → PUT → unlock, with finally semantics (a failed PUT\nstill unlocks — a crash can never strand a lock; a dead holder's lock is\ntaken over by the next applicant server-side).\n\nIf a write raises `LockHeldError` (画板正被占用):\n\n1. **Stop.** Tell the user the board is busy and *who* holds it (the error\n   carries holder kind/id and since when).\n2. **Do not retry in a loop.** The holder is alive and working; your calls\n   do not preempt it.\n3. Reads (`canvas_read_board`, `canvas_query_schema`) still work — you can\n   keep planning, just not writing.\n\nYour own API calls refresh the lock heartbeat implicitly while you hold it —\nyou never need to think about expiry.\n\n## Port matching iron rule (端口匹配铁律)\n\n**Before `canvas_connect_ports`, ALWAYS `canvas_query_schema` the TARGET\nnode.** The schema is the judge of which ports may receive what:\n\n- **enum fields** — e.g. `image_roles` accepts exactly\n  `reference_image` / `first_frame` / `last_frame`;\n- **required fields** — what a submission will 400 without;\n- **alternative input modes** — arrays that cannot be mixed.\n\n**Canonical case — minimax-h3.** Its image inputs are *exclusive*:\n`first_frame` and `reference_image` cannot coexist in one submission. Wiring\na reference image to `first_frame` when `reference_image` entries already\nexist (or vice versa) is a 400 *at submit time* — expensive to discover\nlate. Query the schema, decide the port deliberately, then connect. Never\nguess a port from the field name alone.\n\n## Quote-first (先报价)\n\nPaid submissions (`canvas_submit_node_job`, `canvas_run_workflow`,\n`canvas_generate_image`) fetch an estimate *before* the submission exists.\nQuote amounts are integer micro-USD plus a USD display figure. When the\nestimate is material, state the USD figure to the user and get the go-ahead\n— the wallet is charged on submit (held at the quote's upper bound, settled\nat measured usage).\n\n## Failure self-correction (失败自修正)\n\n| failure | what to do |\n| --- | --- |\n| schema/validation 400 | read the **structured** error — the platform names the offending field and the allowed values. Fix that field, retry **once**. No blind retries, no fallback wrappers. |\n| 409 workflow-modified | the runtime already retried once; `canvas_read_board` again before your next write — the board moved under you. |\n| `LockHeldError` | report to the user, stop writing (see above). |\n| 402 / 413 quota | report the number, do not retry. |\n\n## Media pool flow (参考图上板)\n\nGeneration is async and the pool is where artifacts land:\n\n1. `canvas_generate_image` **submits only** — a paid gpt-image-2 job.\n2. Poll with `canvas_read_node_output` (or `beehive_get_job`) until\n   `completed`.\n3. On completion the server **auto-captures** the image into the board's\n   media pool (`origin.kind=generated`) — no add needed.\n\nFor an external image the user supplied by URL: `canvas_add_media`, then\nmake it wireable as a material node, then connect:\n\n```\ncanvas_add_media(workflow_id, url, name)          -> pool entry id\ncanvas_create_node(workflow_id, 'material', '',   -> material node\n                   config={pool_entry_id: <id>})\ncanvas_query_schema(node_type='generate', provider='minimax-h3')\ncanvas_connect_ports(workflow_id, from_key=<material key>,\n                     to_key=<consumer key>, input_port='first_frame')\n```\n\nMaterial nodes are identified by `config.pool_entry_id`; the runtime wires\nthem into the consumer's `material_deps` and `depends_on`, and the server\ncompiles that to `images[]` + `image_roles[]` (or `video_refs`/`audio_refs`)\nat submit time.\n\n## Board delta awareness\n\nEvery successful canvas call lands an action row in the conversation with a\n`board_delta` (added node, wired edge, pool entry, submitted job). The UI\nrenders these as cards the user can expand and click to locate on the board.\nKeep your result summaries human-readable — the card's one-liner is what the\nuser reads first.",
+              "files": [
+                "LICENSE",
+                "SKILL.md",
+                "manifest.json",
+                "references/i18n/glossary.en.json",
+                "references/i18n/glossary.zh-CN.json"
+              ],
+              "spec_warnings": []
+            },
+            "error": null,
+            "duration_s": 0.0
+          },
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790602514078143757"
+            },
+            "result": {
+              "id": "workflow-1790602514078143757",
+              "name": "qa-a3-t1b-1790602513",
+              "nodes": [],
+              "edges": [],
+              "media_pool": []
+            },
+            "error": null,
+            "duration_s": 1.3
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "process",
+              "provider": "script"
+            },
+            "result": null,
+            "error": "ValueError: no node definition 'process:script' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)",
+            "duration_s": 1.72
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "generate",
+              "provider": "minimax-h3"
+            },
+            "result": {
+              "node_id": "generate:minimax-h3",
+              "name": "MiniMax-H3 Video Generation",
+              "description": null,
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "properties": {
+                  "audio_refs": {
+                    "description": "Reference audio (max 3, each 2-15s, total ≤15s)",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "duration": {
+                    "default": 4,
+                    "description": "Duration in seconds (4-15)",
+                    "maximum": 15,
+                    "minimum": 4,
+                    "type": "integer"
+                  },
+                  "image_roles": {
+                    "description": "Per-image roles (parallel to images). Omit for auto-derivation",
+                    "items": {
+                      "enum": [
+                        "first_frame",
+                        "last_frame",
+                        "reference_image"
+                      ],
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "images": {
+                    "description": "Input images. 1 image = first frame; multiple images default to reference mode. First/last-frame mode cannot mix with reference mode (upstream rejects the mix)",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "model": {
+                    "default": "MiniMax-H3",
+                    "description": "Model. Currently only MiniMax-H3; a value outside this set is rejected at submit time",
+                    "enum": [
+                      "MiniMax-H3"
+                    ],
+                    "type": "string"
+                  },
+                  "prompt": {
+                    "description": "Text prompt (mandatory, max 7000 chars)",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "ratio": {
+                    "default": "9:16",
+                    "description": "Aspect ratio. Defaults to 9:16 (portrait, Wesley 2026-08-28); required for text-to-video ('adaptive' not allowed); image-to-video is always adaptive regardless",
+                    "enum": [
+                      "21:9",
+                      "16:9",
+                      "4:3",
+                      "1:1",
+                      "3:4",
+                      "9:16"
+                    ],
+                    "type": "string"
+                  },
+                  "resolution": {
+                    "default": "768P",
+                    "description": "Output resolution tier (different pricing per tier)",
+                    "enum": [
+                      "768P",
+                      "2K"
+                    ],
+                    "type": "string"
+                  },
+                  "video_refs": {
+                    "description": "Reference videos (max 3, each 2-15s, total ≤15s)",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "prompt"
+                ],
+                "type": "object",
+                "x-input-ports": [
+                  {
+                    "accepts": [
+                      "image"
+                    ],
+                    "field": "src_image_url"
+                  },
+                  {
+                    "accepts": [
+                      "text"
+                    ],
+                    "field": "prompt"
+                  }
+                ]
+              },
+              "output_schema": {
+                "dest_video_url": "string — SAS-authenticated URL of the generated video",
+                "duration": "integer — output duration in seconds",
+                "ratio": "string — actual output aspect ratio",
+                "resolution": "string — output resolution tier (768P/2K)",
+                "status": "string",
+                "task_id": "string",
+                "usage": "object — {output_seconds, input_seconds, input_image_count} billing metering"
+              },
+              "config_defaults": {
+                "pricing": {
+                  "dim_ratios": {
+                    "resolution": {
+                      "2K": 1.6,
+                      "768P": 1
+                    }
+                  },
+                  "model": "per_second",
+                  "qty_max": 15,
+                  "qty_min": 4,
+                  "unit_price_usd": 69000
+                }
+              },
+              "enabled": true,
+              "port_analysis": {
+                "enum_fields": [
+                  {
+                    "field": "image_roles",
+                    "enum": [
+                      "first_frame",
+                      "last_frame",
+                      "reference_image"
+                    ],
+                    "on": "items"
+                  },
+                  {
+                    "field": "model",
+                    "enum": [
+                      "MiniMax-H3"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "ratio",
+                    "enum": [
+                      "21:9",
+                      "16:9",
+                      "4:3",
+                      "1:1",
+                      "3:4",
+                      "9:16"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "resolution",
+                    "enum": [
+                      "768P",
+                      "2K"
+                    ],
+                    "on": "field"
+                  }
+                ],
+                "required": [
+                  "prompt"
+                ],
+                "notes": [
+                  "images/image_roles and video_refs are alternative input modes"
+                ]
+              }
+            },
+            "error": null,
+            "duration_s": 2.59
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "generate",
+              "provider": "script"
+            },
+            "result": {
+              "node_id": "generate:script",
+              "name": "AI Script (Prompt Writer)",
+              "description": null,
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "properties": {
+                  "context_urls": {
+                    "description": "Optional reference media URLs appended to the instruction as context",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "maxItems": 8,
+                    "type": "array"
+                  },
+                  "goal": {
+                    "description": "compose mode: the original goal (defaults to instruction when empty)",
+                    "type": "string"
+                  },
+                  "instruction": {
+                    "description": "What you want the video/audio/image to be, in plain language — the script node rewrites it into a generation-ready prompt",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "material_refs": {
+                    "description": "#504: material references — resolved at submit, woven into the instruction, passed through to downstream nodes via dest_refs",
+                    "items": {
+                      "properties": {
+                        "entry_id": {
+                          "description": "Media-pool entry id (mp-...)",
+                          "type": "string"
+                        },
+                        "note": {
+                          "description": "Free-text usage note — woven into the prompt's referenced-materials section",
+                          "type": "string"
+                        },
+                        "role": {
+                          "enum": [
+                            "first_frame",
+                            "last_frame",
+                            "reference_image",
+                            "reference_video",
+                            "reference_audio"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "entry_id",
+                        "role"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "max_output_tokens": {
+                    "default": 2048,
+                    "description": "Upper bound on the generated prompt length; also the billing hold bound",
+                    "maximum": 8192,
+                    "minimum": 64,
+                    "type": "integer"
+                  },
+                  "mode": {
+                    "description": "decompose = instruction is a goal, output is the questionnaire JSON (#432); compose = synthesize the final prompt + ir from goal/selections (#432); storyboard = instruction is a narrative brief, output is a template-v2 sequence JSON with shots/transitions/elements/continuity locks (#381). Absent = single-phase instruction→prompt",
+                    "enum": [
+                      "decompose",
+                      "compose",
+                      "storyboard"
+                    ],
+                    "type": "string"
+                  },
+                  "model": {
+                    "default": "deepseek-v4-flash-0731",
+                    "description": "Model. Currently only deepseek-v4-flash-0731; a value outside this set is rejected at submit time",
+                    "enum": [
+                      "deepseek-v4-flash-0731"
+                    ],
+                    "type": "string"
+                  },
+                  "selections": {
+                    "description": "compose mode: the user's picks + custom values keyed by dimension (subject/action/camera/mood/sound)",
+                    "type": "object"
+                  },
+                  "system_prompt": {
+                    "description": "Optional — overrides the built-in prompt-engineering system prompt (advanced)",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "instruction"
+                ],
+                "type": "object",
+                "x-input-ports": [
+                  {
+                    "accepts": [
+                      "text"
+                    ],
+                    "field": "instruction"
+                  }
+                ]
+              },
+              "output_schema": {
+                "completion_tokens": "integer",
+                "dest_prompt": "string — the generation-ready prompt, flows into downstream nodes' prompt field",
+                "ir": "string (JSON) — compose mode only: IR-lite axes the model applied (flat snake_case object)",
+                "prompt_tokens": "integer"
+              },
+              "config_defaults": {
+                "pricing": {
+                  "input_price_usd": 140,
+                  "model": "per_token",
+                  "output_price_usd": 280,
+                  "qty_max": 8192
+                }
+              },
+              "enabled": true,
+              "port_analysis": {
+                "enum_fields": [
+                  {
+                    "field": "mode",
+                    "enum": [
+                      "decompose",
+                      "compose",
+                      "storyboard"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "model",
+                    "enum": [
+                      "deepseek-v4-flash-0731"
+                    ],
+                    "on": "field"
+                  }
+                ],
+                "required": [
+                  "instruction"
+                ],
+                "notes": []
+              }
+            },
+            "error": null,
+            "duration_s": 2.97
+          },
+          {
+            "tool": "canvas_create_node",
+            "arguments": {
+              "workflow_id": "workflow-1790602514078143757",
+              "node_type": "generate",
+              "provider": "minimax-h3"
+            },
+            "result": {
+              "node": {
+                "type": "generate",
+                "provider": "minimax-h3",
+                "key": "generate-minimax-h3-1",
+                "config": {},
+                "position": {
+                  "x": 80,
+                  "y": 80
+                }
+              },
+              "workflow": {
+                "id": "workflow-1790602514078143757",
+                "name": "qa-a3-t1b-1790602513",
+                "description": "QA T1b port mutex negative path",
+                "nodes": [
+                  {
+                    "type": "generate",
+                    "provider": "minimax-h3",
+                    "key": "generate-minimax-h3-1",
+                    "config": {},
+                    "position": {
+                      "x": 80,
+                      "y": 80
+                    }
+                  }
+                ],
+                "owner_id": "usr-1787815793337170547",
+                "schema_version": 0,
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z"
+              }
+            },
+            "error": null,
+            "duration_s": 6.03
+          },
+          {
+            "tool": "canvas_create_node",
+            "arguments": {
+              "node_type": "generate",
+              "provider": "script",
+              "config": {
+                "instruction": "夜景测试"
+              },
+              "workflow_id": "workflow-1790602514078143757"
+            },
+            "result": {
+              "node": {
+                "type": "generate",
+                "provider": "script",
+                "key": "generate-script-2",
+                "config": {
+                  "instruction": "夜景测试"
+                },
+                "position": {
+                  "x": 320,
+                  "y": 80
+                }
+              },
+              "workflow": {
+                "id": "workflow-1790602514078143757",
+                "name": "qa-a3-t1b-1790602513",
+                "description": "QA T1b port mutex negative path",
+                "nodes": [
+                  {
+                    "type": "generate",
+                    "provider": "minimax-h3",
+                    "key": "generate-minimax-h3-1",
+                    "config": {},
+                    "position": {
+                      "x": 80,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "generate",
+                    "provider": "script",
+                    "key": "generate-script-2",
+                    "config": {
+                      "instruction": "夜景测试"
+                    },
+                    "position": {
+                      "x": 320,
+                      "y": 80
+                    }
+                  }
+                ],
+                "owner_id": "usr-1787815793337170547",
+                "schema_version": 0,
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z"
+              }
+            },
+            "error": null,
+            "duration_s": 4.88
+          }
+        ],
+        "preflight": null,
+        "error": null,
+        "ok": true,
+        "dry_run": false,
+        "notes": [
+          "tool read_skill \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops\\\"}\"",
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790602514078143757\\\"}\"",
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"process\\\", \\\"provider\\\": \\\"script\\\"}\"",
+          "tool canvas_query_schema refused: ValueError: no node definition 'process:script' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)",
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"minimax-h3\\\"}\"",
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\"}\"",
+          "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790602514078143757\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"minimax-h3\\\"}\"",
+          "canvas: node generate-minimax-h3-1 added to workflow-1790602514078143757",
+          "tool canvas_create_node \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\", \\\"config\\\": {\\\"instruction\\\": \\\"夜景测试\\\"}, \\\"workflow_id\\\": \\\"workflow-1790602514078143757\\\"}\"",
+          "canvas: node generate-script-2 added to workflow-1790602514078143757"
+        ]
+      }
+    }
+  }
+]

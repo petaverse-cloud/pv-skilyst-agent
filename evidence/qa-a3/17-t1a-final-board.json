@@ -1,0 +1,116 @@
+{
+  "id": "workflow-1790601427457590393",
+  "name": "qa-a3-t1a-1790601426",
+  "description": "QA #13 T1a full creation story",
+  "nodes": [
+    {
+      "type": "generate",
+      "provider": "script",
+      "key": "generate-script-1",
+      "config": {
+        "instruction": "白猫道士月下除妖，15 秒短剧：白猫道士深夜巡山遇一小狐妖，诙谐斗法。",
+        "model": "deepseek-v4-flash-0731"
+      },
+      "position": {
+        "x": 80,
+        "y": 80
+      }
+    },
+    {
+      "type": "generate",
+      "provider": "gpt-image-2",
+      "key": "generate-gpt-image-2-2",
+      "config": {
+        "aspect_ratio": "9:16",
+        "prompt": "角色设定参考图：中国风神话风格，白袍猫道士——一只拟人化的白猫，身穿白色道袍，手持桃木剑，正面全身站姿，3D 渲染风格（电影级 3D 质感，干净造型，精致毛发与布料细节），柔和月光氛围，中性纯色背景，无文字。"
+      },
+      "depends_on": [
+        "generate-script-1"
+      ],
+      "position": {
+        "x": 320,
+        "y": 80
+      }
+    },
+    {
+      "type": "material",
+      "provider": "image",
+      "key": "material-image-3",
+      "config": {
+        "entry_id": "mp-job-1790601545790-53c28591cf336fa8-node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2-image",
+        "kind": "image",
+        "name": "白猫道士参考图",
+        "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790601545790-53c28591cf336fa8/node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2-1790601569956.png"
+      },
+      "position": {
+        "x": 560,
+        "y": 80
+      }
+    },
+    {
+      "type": "generate",
+      "provider": "minimax-h3",
+      "key": "generate-minimax-h3-4",
+      "config": {
+        "duration": 15,
+        "model": "MiniMax-H3",
+        "prompt": "固定机位轻微左移，白猫道士执桃木剑向前踏出一步，挥剑划出一道月光弧光；夜雾与衣袍下摆缓缓流动。随后剑势收住，身形定立。",
+        "ratio": "9:16",
+        "resolution": "768P"
+      },
+      "depends_on": [
+        "material-image-3",
+        "generate-script-1"
+      ],
+      "position": {
+        "x": 800,
+        "y": 80
+      }
+    }
+  ],
+  "owner_id": "usr-1787815793337170547",
+  "schema_version": 0,
+  "media_pool": [
+    {
+      "id": "mp-job-1790601545790-53c28591cf336fa8-node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2-image",
+      "name": "node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2-1790601569956",
+      "kind": "image",
+      "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790601545790-53c28591cf336fa8/node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2-1790601569956.png",
+      "mime_type": "image/png",
+      "file_size": 2031420,
+      "width": 1024,
+      "height": 1536,
+      "origin": {
+        "kind": "generated",
+        "workflow_id": "workflow-1790601427457590393",
+        "job_id": "job-1790601545790-53c28591cf336fa8",
+        "node_id": "node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2",
+        "provider": "gpt-image-2",
+        "prompt": "角色设定参考图：中国风神话风格，白袍猫道士——一只拟人化的白猫，身穿白色道袍，手持桃木剑，正面全身站姿，3D 渲染风格（电影级 3D 质感，干净造型，精致毛发与布料细节），柔和月光氛围，中性纯色背景，无文字。"
+      },
+      "created_at": "2026-09-28T13:19:30.158033032Z"
+    },
+    {
+      "id": "mp-job-1790601716186-423e0a9970c16522-node-job-1790601716186-423e0a9970c16522-generate-minimax-h3-4-video",
+      "name": "node-job-1790601716186-423e0a9970c16522-generate-minimax-h3-4-1790601988732",
+      "kind": "video",
+      "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790601716186-423e0a9970c16522/node-job-1790601716186-423e0a9970c16522-generate-minimax-h3-4-1790601988732.mp4",
+      "mime_type": "video/mp4",
+      "file_size": 2805718,
+      "duration": 15,
+      "width": 768,
+      "height": 1152,
+      "origin": {
+        "kind": "generated",
+        "workflow_id": "workflow-1790601427457590393",
+        "job_id": "job-1790601716186-423e0a9970c16522",
+        "node_id": "node-job-1790601716186-423e0a9970c16522-generate-minimax-h3-4",
+        "provider": "minimax-h3",
+        "prompt": "固定机位轻微左移，白猫道士执桃木剑向前踏出一步，挥剑划出一道月光弧光；夜雾与衣袍下摆缓缓流动。随后剑势收住，身形定立。"
+      },
+      "created_at": "2026-09-28T13:26:29.336778466Z"
+    }
+  ],
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
+}

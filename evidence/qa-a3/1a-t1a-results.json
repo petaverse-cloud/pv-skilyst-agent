@@ -1,0 +1,128 @@
+{
+  "checks": [
+    {
+      "check": "timeline seq monotonic",
+      "pass": true,
+      "detail": "seqs=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106]"
+    },
+    {
+      "check": "4 user turns recorded",
+      "pass": true,
+      "detail": "user rows=4"
+    },
+    {
+      "check": "actions exist",
+      "pass": true,
+      "detail": "action rows=30"
+    },
+    {
+      "check": "each turn's actions attach under its input",
+      "pass": true,
+      "detail": "4 turns, 30 actions"
+    },
+    {
+      "check": "script node present",
+      "pass": true,
+      "detail": "{'generate:script': 1, 'generate:gpt-image-2': 1, 'material:image': 1, 'generate:minimax-h3': 1}"
+    },
+    {
+      "check": "image node present",
+      "pass": true,
+      "detail": "{'generate:script': 1, 'generate:gpt-image-2': 1, 'material:image': 1, 'generate:minimax-h3': 1}"
+    },
+    {
+      "check": "minimax node present",
+      "pass": true,
+      "detail": "{'generate:script': 1, 'generate:gpt-image-2': 1, 'material:image': 1, 'generate:minimax-h3': 1}"
+    },
+    {
+      "check": "material node present",
+      "pass": true,
+      "detail": "{'generate:script': 1, 'generate:gpt-image-2': 1, 'material:image': 1, 'generate:minimax-h3': 1}"
+    },
+    {
+      "check": "first_frame material wiring",
+      "pass": false,
+      "detail": "material_deps=null"
+    },
+    {
+      "check": "2 confirm gates (image + video)",
+      "pass": true,
+      "detail": "confirms=2"
+    },
+    {
+      "check": "video job quoted+gated",
+      "pass": true,
+      "detail": "video quotes=1"
+    },
+    {
+      "check": "video artifact in pool",
+      "pass": true,
+      "detail": "videos=['https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790']"
+    },
+    {
+      "check": "image artifact in pool",
+      "pass": true,
+      "detail": "images=1"
+    },
+    {
+      "check": "wallet delta within quoted holds",
+      "pass": true,
+      "detail": "delta=1995000 uUSD, holds=[960000, 1035000]"
+    }
+  ],
+  "session_id": "20260928-211707-46b134",
+  "workflow_id": "workflow-1790601427457590393",
+  "board_name": "qa-a3-t1a-1790601426",
+  "wallet_start": 9992259486,
+  "wallet_end": 9990264486,
+  "wallet_delta": 1995000,
+  "confirms": [
+    {
+      "turn_text": "现在把白猫道士参考图生成出来（付费任务），完成后告诉我。",
+      "quote": {
+        "total_estimate_usd": null,
+        "total_hold": 960000,
+        "total_estimate_usd_display": null,
+        "total_hold_display": 0.96,
+        "nodes": [
+          {
+            "node_type": "generate",
+            "provider": "gpt-image-2",
+            "key": "generate-gpt-image-2-2",
+            "priced": true,
+            "model": "per_piece",
+            "unit_price_usd": 960000,
+            "qty_estimate": 1,
+            "amount_hold": 960000
+          }
+        ]
+      },
+      "session_id": "20260928-211707-46b134",
+      "ts": 1790601544.5687401
+    },
+    {
+      "turn_text": "创建 minimax-h3 视频生成节点（15 秒、9:16、768P，白猫道士",
+      "quote": {
+        "total_estimate_usd": null,
+        "total_hold": 1035000,
+        "total_estimate_usd_display": null,
+        "total_hold_display": 1.035,
+        "nodes": [
+          {
+            "node_type": "generate",
+            "provider": "minimax-h3",
+            "key": "generate-minimax-h3-4",
+            "priced": true,
+            "model": "per_second",
+            "unit_price_usd": 69000,
+            "qty_estimate": 15,
+            "amount_hold": 1035000
+          }
+        ]
+      },
+      "session_id": "20260928-211707-46b134",
+      "ts": 1790601713.9518888
+    }
+  ]
+}

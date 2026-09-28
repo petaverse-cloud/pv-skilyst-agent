@@ -1,0 +1,1338 @@
+[
+  {
+    "event": "delta",
+    "data": {
+      "text": "Let"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " me re-read"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the pool — you"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " may"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " have added it since"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " my last check"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_list_media \"{\\\"workflow_id\\\": \\\"workflow-1790602514078143757\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790602514078143757\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"minimax-h3\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "图"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "确实在池里了"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " — 第 1 "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "张是 `mp-179"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "0602623856165359"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`「白猫道士"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "参考图」（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "kind"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": image，目前"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `referenced_by: []"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`，还没"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "接"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "任何地方"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）。所以\"图"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "不存在"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\"这个理由"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "已经消失"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。\n\n但"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "第二个阻断"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "原因"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "依然成立，而且"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "我重新查"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "了一遍"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " schema 确认它不是"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "可以"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "商"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "量的：**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`first"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_frame"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "` 和 `reference"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_image` 在"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":minimax-h3"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "` 上是互斥的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "输入模式，不能同时接"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。**\n\n复核"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "结果（`canvas"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_query_s"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "chema generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":minimax-h3"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "与之前一致"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）：\n\n- `images` "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "字段说明原文"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "：*"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\"First/l"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ast-frame mode cannot mix"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " with reference mode (**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "upstream rejects"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " mix**)\"*\n- `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "image_roles` 枚举"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "：`first"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_frame` / `last_frame"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "` / `reference_image"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`\n- `port_analysis."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "notes`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "：*\"images/image"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_roles and video_ref"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "s are alternative input"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " modes\"*\n\n这条"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "边我现在"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "能写"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "出来，但它"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "会是一条"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "注定"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "失败的边"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "：两个"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "端口同时"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "带素材"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "时，上游"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "在"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "提交时**直接"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "拒（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "400），错误"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "落在"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "混"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "用的 image roles 上，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "而不是落在"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "连"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "线的当下。canvas"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-ops 的端口"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "匹配铁律存在的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "意义就是把这个"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "失败"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "提前到接线决策"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "这一刻"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，所以我不会为了"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\"照"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "做\"而"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "写一条明知"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "会坏"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "掉的状态。\n\n顺带一提"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，这个板的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " description 是"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `QA"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " T1b port mut"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ex negative path`——按"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "命名看"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，预期"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "行为正是**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "拒绝**这条混"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "接"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "请求"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。\n\n**要"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "哪一个端口"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，你说"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "一声我"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "立刻接（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "单"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "接"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "一个"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "都是"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "合法的，只"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "接线"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "、"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "不提交）：**\n\n- **"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`first_frame`** ——"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " \""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "锁定这一帧作为起点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，从"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "它动"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "起来\"的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "用法"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。这一张"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "图正好"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "符合"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " schema"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 里"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\"1 image ="
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " first frame\"的默认"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "语义。\n- **`reference"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_image`** —— \"把这"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "图"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "当"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "身份/风格参考\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "的用法，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "可与其他"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "参考"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "图并存。\n\n如果"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "两个"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "效果"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "你都"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "想要，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "正确做法不是"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "混"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "接，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "而是**先接"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `reference"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_image` 生成"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "一段，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "再把"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "满意的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "输出"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "作为后续"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `first_frame`**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " —— 这是两次"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "独立的渲染"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "各自"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "合法"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。\n\n要接"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "哪个？"
+    }
+  },
+  {
+    "event": "done",
+    "data": {
+      "ok": true,
+      "data": {
+        "session_id": "20260928-213514-baf690",
+        "skill": "skilyst/canvas-ops",
+        "stop_reason": "completed",
+        "answer": "图确实在池里了 — 第 1 张是 `mp-1790602623856165359`「白猫道士参考图」（kind: image，目前 `referenced_by: []`，还没接任何地方）。所以\"图不存在\"这个理由已经消失。\n\n但第二个阻断原因依然成立，而且我重新查了一遍 schema 确认它不是可以商量的：**`first_frame` 和 `reference_image` 在 `generate:minimax-h3` 上是互斥的输入模式，不能同时接。**\n\n复核结果（`canvas_query_schema generate:minimax-h3`，与之前一致）：\n\n- `images` 字段说明原文：*\"First/last-frame mode cannot mix with reference mode (**upstream rejects the mix**)\"*\n- `image_roles` 枚举：`first_frame` / `last_frame` / `reference_image`\n- `port_analysis.notes`：*\"images/image_roles and video_refs are alternative input modes\"*\n\n这条边我现在能写出来，但它会是一条注定失败的边：两个端口同时带素材时，上游在**提交时**直接拒（400），错误落在混用的 image roles 上，而不是落在连线的当下。canvas-ops 的端口匹配铁律存在的意义就是把这个失败提前到接线决策这一刻，所以我不会为了\"照做\"而写一条明知会坏掉的状态。\n\n顺带一提，这个板的 description 是 `QA T1b port mutex negative path`——按命名看，预期行为正是**拒绝**这条混接请求。\n\n**要哪一个端口，你说一声我立刻接（单接一个都是合法的，只接线、不提交）：**\n\n- **`first_frame`** —— \"锁定这一帧作为起点，从它动起来\"的用法。这一张图正好符合 schema 里\"1 image = first frame\"的默认语义。\n- **`reference_image`** —— \"把这图当身份/风格参考\"的用法，可与其他参考图并存。\n\n如果两个效果你都想要，正确做法不是混接，而是**先接 `reference_image` 生成一段，再把满意的输出作为后续 `first_frame`** —— 这是两次独立的渲染，各自合法。\n\n要接哪个？",
+        "model": "deepseek/deepseek-v4.1-flash",
+        "turns": 3,
+        "wall_clock_s": 25.7,
+        "usage": {
+          "prompt_tokens": 38277,
+          "completion_tokens": 1071,
+          "total_tokens": 39348,
+          "calls": 3,
+          "models_used": [
+            "deepseek/deepseek-v4.1-flash"
+          ]
+        },
+        "artifacts": [],
+        "jobs": {
+          "submitted": 0,
+          "budget": null
+        },
+        "tool_calls": [
+          {
+            "tool": "canvas_list_media",
+            "arguments": {
+              "workflow_id": "workflow-1790602514078143757"
+            },
+            "result": {
+              "entries": [
+                {
+                  "id": "mp-1790602623856165359",
+                  "name": "白猫道士参考图",
+                  "kind": "image",
+                  "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790601545790-53c28591cf336fa8/node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2-1790601569956.png",
+                  "thumb": null,
+                  "index": 1,
+                  "referenced_by": []
+                }
+              ]
+            },
+            "error": null,
+            "duration_s": 1.32
+          },
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790602514078143757"
+            },
+            "result": {
+              "id": "workflow-1790602514078143757",
+              "name": "qa-a3-t1b-1790602513",
+              "nodes": [
+                {
+                  "type": "generate",
+                  "provider": "minimax-h3",
+                  "key": "generate-minimax-h3-1",
+                  "config": {},
+                  "position": {
+                    "x": 80,
+                    "y": 80
+                  }
+                },
+                {
+                  "type": "generate",
+                  "provider": "script",
+                  "key": "generate-script-2",
+                  "config": {
+                    "instruction": "夜景测试"
+                  },
+                  "position": {
+                    "x": 320,
+                    "y": 80
+                  }
+                }
+              ],
+              "edges": [],
+              "media_pool": [
+                {
+                  "id": "mp-1790602623856165359",
+                  "name": "白猫道士参考图",
+                  "kind": "image",
+                  "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790601545790-53c28591cf336fa8/node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2-1790601569956.png",
+                  "created_at": "2026-09-28T13:37:03.85616635Z"
+                }
+              ]
+            },
+            "error": null,
+            "duration_s": 1.09
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "generate",
+              "provider": "minimax-h3"
+            },
+            "result": {
+              "node_id": "generate:minimax-h3",
+              "name": "MiniMax-H3 Video Generation",
+              "description": null,
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "properties": {
+                  "audio_refs": {
+                    "description": "Reference audio (max 3, each 2-15s, total ≤15s)",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "duration": {
+                    "default": 4,
+                    "description": "Duration in seconds (4-15)",
+                    "maximum": 15,
+                    "minimum": 4,
+                    "type": "integer"
+                  },
+                  "image_roles": {
+                    "description": "Per-image roles (parallel to images). Omit for auto-derivation",
+                    "items": {
+                      "enum": [
+                        "first_frame",
+                        "last_frame",
+                        "reference_image"
+                      ],
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "images": {
+                    "description": "Input images. 1 image = first frame; multiple images default to reference mode. First/last-frame mode cannot mix with reference mode (upstream rejects the mix)",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "model": {
+                    "default": "MiniMax-H3",
+                    "description": "Model. Currently only MiniMax-H3; a value outside this set is rejected at submit time",
+                    "enum": [
+                      "MiniMax-H3"
+                    ],
+                    "type": "string"
+                  },
+                  "prompt": {
+                    "description": "Text prompt (mandatory, max 7000 chars)",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "ratio": {
+                    "default": "9:16",
+                    "description": "Aspect ratio. Defaults to 9:16 (portrait, Wesley 2026-08-28); required for text-to-video ('adaptive' not allowed); image-to-video is always adaptive regardless",
+                    "enum": [
+                      "21:9",
+                      "16:9",
+                      "4:3",
+                      "1:1",
+                      "3:4",
+                      "9:16"
+                    ],
+                    "type": "string"
+                  },
+                  "resolution": {
+                    "default": "768P",
+                    "description": "Output resolution tier (different pricing per tier)",
+                    "enum": [
+                      "768P",
+                      "2K"
+                    ],
+                    "type": "string"
+                  },
+                  "video_refs": {
+                    "description": "Reference videos (max 3, each 2-15s, total ≤15s)",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "prompt"
+                ],
+                "type": "object",
+                "x-input-ports": [
+                  {
+                    "accepts": [
+                      "image"
+                    ],
+                    "field": "src_image_url"
+                  },
+                  {
+                    "accepts": [
+                      "text"
+                    ],
+                    "field": "prompt"
+                  }
+                ]
+              },
+              "output_schema": {
+                "dest_video_url": "string — SAS-authenticated URL of the generated video",
+                "duration": "integer — output duration in seconds",
+                "ratio": "string — actual output aspect ratio",
+                "resolution": "string — output resolution tier (768P/2K)",
+                "status": "string",
+                "task_id": "string",
+                "usage": "object — {output_seconds, input_seconds, input_image_count} billing metering"
+              },
+              "config_defaults": {
+                "pricing": {
+                  "dim_ratios": {
+                    "resolution": {
+                      "2K": 1.6,
+                      "768P": 1
+                    }
+                  },
+                  "model": "per_second",
+                  "qty_max": 15,
+                  "qty_min": 4,
+                  "unit_price_usd": 69000
+                }
+              },
+              "enabled": true,
+              "port_analysis": {
+                "enum_fields": [
+                  {
+                    "field": "image_roles",
+                    "enum": [
+                      "first_frame",
+                      "last_frame",
+                      "reference_image"
+                    ],
+                    "on": "items"
+                  },
+                  {
+                    "field": "model",
+                    "enum": [
+                      "MiniMax-H3"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "ratio",
+                    "enum": [
+                      "21:9",
+                      "16:9",
+                      "4:3",
+                      "1:1",
+                      "3:4",
+                      "9:16"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "resolution",
+                    "enum": [
+                      "768P",
+                      "2K"
+                    ],
+                    "on": "field"
+                  }
+                ],
+                "required": [
+                  "prompt"
+                ],
+                "notes": [
+                  "images/image_roles and video_refs are alternative input modes"
+                ]
+              }
+            },
+            "error": null,
+            "duration_s": 1.82
+          }
+        ],
+        "preflight": null,
+        "error": null,
+        "ok": true,
+        "dry_run": false,
+        "notes": [
+          "tool canvas_list_media \"{\\\"workflow_id\\\": \\\"workflow-1790602514078143757\\\"}\"",
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790602514078143757\\\"}\"",
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"minimax-h3\\\"}\""
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,60 @@
+{
+  "checks": [
+    {
+      "check": "A1 probe acquires lock",
+      "pass": true,
+      "detail": "HTTP 200 {\"code\": 200, \"message\": \"OK\", \"payload\": {\"lock\": {\"holder\": {\"kind\": \"user-session\", \"id\": \"qa-probe-holder\"}, \"acquir"
+    },
+    {
+      "check": "A2 lock-held note row (画板正被占用)",
+      "pass": true,
+      "detail": "lock notes=1 first=画板正被占用: held by user-session/qa-probe-holder since 2026-09-28T13:40:07.889521786Z"
+    },
+    {
+      "check": "A2 note carries holder detail",
+      "pass": true,
+      "detail": "画板正被占用: held by user-session/qa-probe-holder since 2026-09-28T13:40:07.889521786Z"
+    },
+    {
+      "check": "A2 agent tells the user (no silent failure)",
+      "pass": true,
+      "detail": "我按流程先读了技能与画板，然后在创建 script 节点时被平台挡住了 —— 写锁被占用，我没有重试。\n\n**发生了什么**\n\n- 目标板：`workflow-1790602746185338407`（`qa-a3-t1c-shared-1790602745`，共享板）\n- 操作：`canvas_create_node` → `generate:script`，config `{instructi"
+    },
+    {
+      "check": "A2 no write landed while locked",
+      "pass": true,
+      "detail": "nodes=0"
+    },
+    {
+      "check": "A3 reads allowed under lock",
+      "pass": true,
+      "detail": "canvas_read_board in notes"
+    },
+    {
+      "check": "A4 probe unlock",
+      "pass": true,
+      "detail": "HTTP 200 {\"code\": 200, \"message\": \"OK\", \"payload\": {\"released\": true}}"
+    },
+    {
+      "check": "A4 write lands after unlock",
+      "pass": false,
+      "detail": "nodes=[]"
+    },
+    {
+      "check": "B2 fresh-dead holder: immediate applicant gets 409 (not yet stale)",
+      "pass": true,
+      "detail": "HTTP 409 at +1.2s {\"code\": 409, \"message\": \"Conflict\", \"payload\": {\"error\": \"workflow is locked by another holder\", \"held_by\": {\"acquired_at\": \"2026-09-28T13:41:50.9046"
+    },
+    {
+      "check": "B3 dead holder's lock taken over by next applicant",
+      "pass": true,
+      "detail": "granted after 92s (kill->grant) HTTP 200"
+    },
+    {
+      "check": "B3 takeover within 90s+liveness margin",
+      "pass": true,
+      "detail": "elapsed=91.91727209091187"
+    }
+  ],
+  "workflow_id": "workflow-1790602746185338407"
+}

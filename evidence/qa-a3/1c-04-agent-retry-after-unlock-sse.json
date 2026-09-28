@@ -1,0 +1,1628 @@
+[
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790602746185338407\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790602746185338407\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\", \\\"config\\\": {\\\"instruction\\\": \\\"锁竞争测试\\\"}}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_create_node refused: BeehiveError: PUT /api/v1/workflows/workflow-1790602746185338407 failed: HTTP 404 {\"code\": 404, \"message\": \"Not Found\", \"payload\": {\"error\": \"workflow not found\"}}"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790602746185338407\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_list_workflows \"{}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "我"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "重"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "试了，但这次"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**不是"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**锁的问题"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " —— 平台返回"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "了"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "另一个错误，节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "依然没有创建成功"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。如实"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "汇报"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "：\n\n**这次"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "的操作"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "与"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "结果**\n\n- 操作："
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "在同一"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "画"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "板"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `work"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "flow-179"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "060274618533"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "8407` 上创建"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":script` "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点（`instruction"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "=\"锁"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "竞争测试\"`）\n-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 平台原"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "样返回：\n\n```\nBee"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "hiveError: PUT /"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "api/v1/workflows/work"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "flow-179060274618"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "5338407 failed:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " HTTP 404"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\n{\"code\": 404,"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " \"message\": \"Not Found"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\", \"payload\": {\"error"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\": \"workflow not found"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\"}}\n```\n\n**两次尝试"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "的对比**\n\n| 尝试"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " | 错误"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 含义"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n|"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " --- | --- | ---"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n| 第"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 1 次 | `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "LockHeldError`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "holder"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `user-session"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "` / `qa-pro"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "be-holder`，acqu"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ired 13:40"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":07Z） | "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "写锁被"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "一个"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "活"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "着的会话占用"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n| 第 2"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 次 |"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `HTTP 404 workflow"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " not found`（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "on PUT"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "） | 写接口"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "认为"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "这个"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "板"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "不存在 |\n\n**诊断"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**\n\n- 锁**已经"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "释放"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "了"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "** —— 这次"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "没有再"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "报 `LockHeldError"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`；你的判断"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "没错"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。\n- 但写"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "路径"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（PUT）"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "现在"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "回"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 404。"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "奇怪"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "的是读路径"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "不认"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "这个结论"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "：`canvas_read"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_board"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "` 仍然"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "能读到这张"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "板（`nodes"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": []`, `edges"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": []`, `media_p"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ool: []`），"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`canvas_list_"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "workflows` 也把它"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "列在里面"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（名 `qa-a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "3-t1c-sh"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ared-179"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "0602745`，描述"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " \""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "QA T"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1c lock competition"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " shared board\"）。\n- "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "也就是说：这张"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**共享"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "板**对我的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "账号是"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "「"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "可读不可"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "写」—— "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "列表和读看"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "得到"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，改"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "蓝图"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "时"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "服务"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "端找不到"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "可"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "写的 workflow"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 记录"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "很可能是我"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "不是"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "这张"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "板的 owner/写入"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "方，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "共享入口只"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "给了读视图"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）。\n- 按规则我"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**不会"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**反复重试同一个写入"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "调用，也不会换成"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "别的节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "类型"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "/别的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "板来\"凑"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\"一个成功"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "结果冒充"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "你要"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点。\n\n**当前真实"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "状态**\n\n- 节点**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "未"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "创建**，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "画板仍是空的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（`nodes: []"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`、`edges"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": []`、`media"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_pool: []`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）。\n- （"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "附带更正一点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "：平台上"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "没有"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `process:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "script` 这个定义；"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 节点只有"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":script`("
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "AI Script / Prompt"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Writer)，我两次"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "尝试用的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "都是它。）\n\n**你可以"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "选"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**\n\n1. 让这张"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "板的所有者/持有"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "qa-pro"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "be-holder` 的那个"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "会话把写入"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "权"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "或被"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "锁"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "定的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "那份 blueprint"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 记录"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）放"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "出来，确认"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "它是"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "可写的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "共享"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "板，我再落"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。\n2. 或者指定"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "另一"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "张我有"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "写权限的板（例如"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "你自己创建的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "板"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "），我"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "立刻把 `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "generate:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "script` 节点建上去"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。\n3. 如果你"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "要我"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "继续查，我可以"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "再做"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "只读排查"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（读板"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "/"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "查 schema "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "不受"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "影响"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "），但我不会再去"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "撞同一个 PUT"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。\n\n要走"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "哪条？"
+    }
+  },
+  {
+    "event": "done",
+    "data": {
+      "ok": true,
+      "data": {
+        "session_id": "20260928-214008-a800c0",
+        "skill": "skilyst/canvas-ops",
+        "stop_reason": "completed",
+        "answer": "我重试了，但这次**不是**锁的问题 —— 平台返回了另一个错误，节点依然没有创建成功。如实汇报：\n\n**这次的操作与结果**\n\n- 操作：在同一画板 `workflow-1790602746185338407` 上创建 `generate:script` 节点（`instruction=\"锁竞争测试\"`）\n- 平台原样返回：\n\n```\nBeehiveError: PUT /api/v1/workflows/workflow-1790602746185338407 failed: HTTP 404\n{\"code\": 404, \"message\": \"Not Found\", \"payload\": {\"error\": \"workflow not found\"}}\n```\n\n**两次尝试的对比**\n\n| 尝试 | 错误 | 含义 |\n| --- | --- | --- |\n| 第 1 次 | `LockHeldError`（holder `user-session` / `qa-probe-holder`，acquired 13:40:07Z） | 写锁被一个活着的会话占用 |\n| 第 2 次 | `HTTP 404 workflow not found`（on PUT） | 写接口认为这个板不存在 |\n\n**诊断**\n\n- 锁**已经释放了** —— 这次没有再报 `LockHeldError`；你的判断没错。\n- 但写路径（PUT）现在回 404。奇怪的是读路径不认这个结论：`canvas_read_board` 仍然能读到这张板（`nodes: []`, `edges: []`, `media_pool: []`），`canvas_list_workflows` 也把它列在里面（名 `qa-a3-t1c-shared-1790602745`，描述 \"QA T1c lock competition shared board\"）。\n- 也就是说：这张**共享板**对我的账号是「可读不可写」—— 列表和读看得到，改蓝图时服务端找不到可写的 workflow 记录（很可能是我不是这张板的 owner/写入方，共享入口只给了读视图）。\n- 按规则我**不会**反复重试同一个写入调用，也不会换成别的节点类型/别的板来\"凑\"一个成功结果冒充你要的节点。\n\n**当前真实状态**\n\n- 节点**未创建**，画板仍是空的（`nodes: []`、`edges: []`、`media_pool: []`）。\n- （附带更正一点：平台上没有 `process:script` 这个定义；script 节点只有 `generate:script`(AI Script / Prompt Writer)，我两次尝试用的都是它。）\n\n**你可以选**\n\n1. 让这张板的所有者/持有 `qa-probe-holder` 的那个会话把写入权（或被锁定的那份 blueprint 记录）放出来，确认它是可写的共享板，我再落节点。\n2. 或者指定另一张我有写权限的板（例如你自己创建的板），我立刻把 `generate:script` 节点建上去。\n3. 如果你要我继续查，我可以再做只读排查（读板/查 schema 不受影响），但我不会再去撞同一个 PUT。\n\n要走哪条？",
+        "model": "deepseek/deepseek-v4.1-flash",
+        "turns": 4,
+        "wall_clock_s": 38.9,
+        "usage": {
+          "prompt_tokens": 32733,
+          "completion_tokens": 1693,
+          "total_tokens": 34426,
+          "calls": 4,
+          "models_used": [
+            "deepseek/deepseek-v4.1-flash"
+          ]
+        },
+        "artifacts": [],
+        "jobs": {
+          "submitted": 0,
+          "budget": null
+        },
+        "tool_calls": [
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790602746185338407"
+            },
+            "result": {
+              "id": "workflow-1790602746185338407",
+              "name": "qa-a3-t1c-shared-1790602745",
+              "nodes": [],
+              "edges": [],
+              "media_pool": []
+            },
+            "error": null,
+            "duration_s": 1.57
+          },
+          {
+            "tool": "canvas_create_node",
+            "arguments": {
+              "workflow_id": "workflow-1790602746185338407",
+              "node_type": "generate",
+              "provider": "script",
+              "config": {
+                "instruction": "锁竞争测试"
+              }
+            },
+            "result": null,
+            "error": "BeehiveError: PUT /api/v1/workflows/workflow-1790602746185338407 failed: HTTP 404 {\"code\": 404, \"message\": \"Not Found\", \"payload\": {\"error\": \"workflow not found\"}}",
+            "duration_s": 5.47
+          },
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790602746185338407"
+            },
+            "result": {
+              "id": "workflow-1790602746185338407",
+              "name": "qa-a3-t1c-shared-1790602745",
+              "nodes": [],
+              "edges": [],
+              "media_pool": []
+            },
+            "error": null,
+            "duration_s": 1.92
+          },
+          {
+            "tool": "canvas_list_workflows",
+            "arguments": {},
+            "result": {
+              "workflows": [
+                {
+                  "id": "workflow-1790602746185338407",
+                  "name": "qa-a3-t1c-shared-1790602745",
+                  "description": "QA T1c lock competition shared board",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790602514078143757",
+                  "name": "qa-a3-t1b-1790602513",
+                  "description": "QA T1b port mutex negative path",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790601427457590393",
+                  "name": "qa-a3-t1a-1790601426",
+                  "description": "QA #13 T1a full creation story",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790601269708463301",
+                  "name": "qa-a3-t4-1790601268",
+                  "description": "QA T4 session boundary scratch board",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790594465481260345",
+                  "name": "a3-s4-e2e-1790594464",
+                  "description": "A3 S4 E2E creation story",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790594121285977414",
+                  "name": "a3-s4-e2e-1790594120",
+                  "description": "A3 S4 E2E creation story",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790593890805842685",
+                  "name": "a3-s4-e2e-1790593889",
+                  "description": "A3 S4 E2E creation story",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790593854245737345",
+                  "name": "a3-s4-e2e-1790593853",
+                  "description": "A3 S4 E2E creation story",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790588447574612580",
+                  "name": "Outfit Swap",
+                  "description": "Swap the outfit in your photo. {\"user_inputs\":[{\"key\":\"image\",\"type\":\"image_url\",\"label\":\"Your photo\",\"required\":true},{\"key\":\"prompt\",\"type\":\"text\",\"label\":\"Outfit description\",\"placeholder\":\"a tailored charcoal suit, studio lighting\",\"required\":true}]}",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790586733426603373",
+                  "name": "a3-s3-e2e-d1fe3a",
+                  "description": "A3 S3 canvas skill E2E",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790467226880400695",
+                  "name": "qa-smoke-1790467206-upd",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790442251788456854",
+                  "name": "Live Photo",
+                  "description": "Animate a still photo into a 5s cinematic clip. {\"user_inputs\":[{\"key\":\"motion\",\"type\":\"text\",\"label\":\"Motion hint\",\"placeholder\":\"hair flowing in the wind\",\"required\":false},{\"key\":\"image\",\"type\":\"image_url\",\"label\":\"Source photo\",\"required\":true}]}",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1789887343156623963",
+                  "name": "studio-tts-verify",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1788427371415240901",
+                  "name": "E2E 428 suno pool capture",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1787647374621149360",
+                  "name": "designer-e2e",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1787216304515073454",
+                  "name": "test-canvas",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1785472390994643222",
+                  "name": "demo_template_3",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1785147390724587660",
+                  "name": "demo_template_1",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1785147390129913548",
+                  "name": "demo_template_2",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1785131137787162440",
+                  "name": "wf-test",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-sd-gen-watermark-hls",
+                  "name": "BytePlus Seedance 生成 · 水印+HLS 流程",
+                  "description": "BytePlus Seedance 生成（可通过 Nodes[0].Config.template_id 引用模版）+ 水印 + HLS 切片，跳过前后贴片拼接",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-normalize",
+                  "name": "用户上传视频标准化",
+                  "description": "标准化转码至 1080x1920 + HLS 切片（多码率自适应，由 Mux 输出的 HLS manifest 自动提供，与 quality 档位无关）。不加水印，跳过拼接。调用时需在 Nodes[0].Config 传入 src_video_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-watermark-hls",
+                  "name": "[测试] Mux 打水印输出 HLS",
+                  "description": "单独测试节点 E（process:mux，水印+HLS）。调用时需在 Nodes[0].Config 传入 src_video_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-watermark-mp4",
+                  "name": "[测试] Mux 打水印输出 MP4",
+                  "description": "单独测试节点 D（process:mux，水印+MP4）。调用时需在 Nodes[0].Config 传入 src_video_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-post-roll",
+                  "name": "后贴片处理流程",
+                  "description": "水印 MP4 + 后贴片拼接 + HLS 切片。调用时需在 Nodes[0].Config 传入 src_video_url，Nodes[1].Config 传入 postroll_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-pre-roll",
+                  "name": "前贴片处理流程",
+                  "description": "水印 MP4 + 前贴片拼接 + HLS 切片。调用时需在 Nodes[0].Config 传入 src_video_url，Nodes[1].Config 传入 preroll_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-veo-gen-full",
+                  "name": "Google Veo 生成 · 完整流程",
+                  "description": "Google Veo 生成 + 水印 MP4 + 前后贴片拼接（后贴片默认用品牌 slogan 素材，前贴片需调用方自行传入） + HLS 切片",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-sd-gen-full",
+                  "name": "BytePlus Seedance 生成 · 完整流程",
+                  "description": "BytePlus Seedance 生成 + 水印 MP4 + 前后贴片拼接（后贴片默认用品牌 slogan 素材，前贴片需调用方自行传入） + HLS 切片",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-drawnow-gen-full",
+                  "name": "DrawNow 生成 · 完整流程",
+                  "description": "DrawNow 生成 + 水印 MP4 + 前后贴片拼接（后贴片默认用品牌 slogan 素材，前贴片需调用方自行传入） + HLS 切片",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-normalize",
+                  "name": "[测试] Wigowago 标准化转码",
+                  "description": "单独测试节点 H（stitch:wigowago，单视频标准化转码至 1080x1920）。调用时需在 Nodes[0].Config 传入 src_video_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-stitch-multiple",
+                  "name": "[测试] Wigowago 拼接前后贴片",
+                  "description": "单独测试节点 G（stitch:wigowago，3 段拼接）。调用时需在 Nodes[0].Config 传入 preroll_url、src_video_url（main）与 postroll_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-stitch-pre-roll",
+                  "name": "[测试] Wigowago 拼接前贴片",
+                  "description": "单独测试节点 G（stitch:wigowago，2 段拼接）。调用时需在 Nodes[0].Config 传入 preroll_url 与 src_video_url（main）",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-hls-only",
+                  "name": "[测试] Mux 只输出 HLS 切片",
+                  "description": "单独测试节点 F（process:mux，无水印仅 HLS）。调用时需在 Nodes[0].Config 传入 src_video_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-veo",
+                  "name": "[测试] Google Veo 生成",
+                  "description": "单独测试节点 C（generate:google-veo）。调用时需在 Nodes[0].Config 传入 prompt",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-sd",
+                  "name": "[测试] BytePlus Seedance 生成",
+                  "description": "单独测试节点 B（generate:byteplus-seedance-2.0）。调用时需在 Nodes[0].Config 传入 prompt",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-drawnow",
+                  "name": "[测试] DrawNow 生成",
+                  "description": "单独测试节点 A（generate:drawnow）。调用时需在 Nodes[0].Config 传入 prompt",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-veo-gen-vip",
+                  "name": "Google Veo 生成 · VIP 流程",
+                  "description": "Google Veo 生成 + HLS 切片，跳过水印与贴片拼接",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-sd-gen-vip",
+                  "name": "BytePlus Seedance 生成 · VIP 流程",
+                  "description": "BytePlus Seedance 生成 + HLS 切片，跳过水印与贴片拼接",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-drawnow-gen-vip",
+                  "name": "DrawNow 生成 · VIP 流程",
+                  "description": "DrawNow 生成 + HLS 切片，跳过水印与贴片拼接",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "error": null,
+            "duration_s": 2.1
+          }
+        ],
+        "preflight": null,
+        "error": null,
+        "ok": true,
+        "dry_run": false,
+        "notes": [
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790602746185338407\\\"}\"",
+          "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790602746185338407\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\", \\\"config\\\": {\\\"instruction\\\": \\\"锁竞争测试\\\"}}\"",
+          "tool canvas_create_node refused: BeehiveError: PUT /api/v1/workflows/workflow-1790602746185338407 failed: HTTP 404 {\"code\": 404, \"message\": \"Not Found\", \"payload\": {\"error\": \"workflow not found\"}}",
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790602746185338407\\\"}\"",
+          "tool canvas_list_workflows \"{}\""
+        ]
+      }
+    }
+  }
+]

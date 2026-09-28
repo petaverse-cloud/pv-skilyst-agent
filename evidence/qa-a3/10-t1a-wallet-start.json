@@ -1,0 +1,10 @@
+{
+  "code": 200,
+  "message": "OK",
+  "payload": {
+    "balance": 9992259486,
+    "frozen_usd": 0,
+    "spendable": 9992259486,
+    "user_uid": 213508887911264
+  }
+}

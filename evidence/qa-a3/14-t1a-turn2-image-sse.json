@@ -1,0 +1,1092 @@
+[
+  {
+    "event": "delta",
+    "data": {
+      "text": "Under"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "stood — that"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'s your go-ahead to"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " spend. Sub"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "mitting the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " image node quote"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-first"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_submit_node_job \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"gpt-image-2\\\", \\\"key\\\": \\\"generate-gpt-image-2-2\\\", \\\"config\\\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "paid confirm: waiting for the user (0.96 USD hold)"
+    }
+  },
+  {
+    "event": "confirm_request",
+    "data": {
+      "session_id": "20260928-211707-46b134",
+      "quote": {
+        "total_estimate_usd": null,
+        "total_hold": 960000,
+        "total_estimate_usd_display": null,
+        "total_hold_display": 0.96,
+        "nodes": [
+          {
+            "node_type": "generate",
+            "provider": "gpt-image-2",
+            "key": "generate-gpt-image-2-2",
+            "priced": true,
+            "model": "per_piece",
+            "unit_price_usd": 960000,
+            "qty_estimate": 1,
+            "amount_hold": 960000
+          }
+        ]
+      }
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: submitted job job-1790601545790-53c28591cf336fa8 on workflow-1790601427457590393"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Quote fetched and"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " job submitted"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": hold"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " **$0"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ".96** (960000"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " micro-USD,"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " qty 1)."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Job `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "job-179060"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1545790-53c"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "28591cf336fa8"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`, status `waiting`."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Polling for"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the artifact"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_node_output \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\", \\\"key\\\": \\\"generate-gpt-image-2-2\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Job"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " is"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " running. Polling again"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_node_output \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\", \\\"key\\\": \\\"generate-gpt-image-2-2\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_node_output \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\", \\\"key\\\": \\\"generate-gpt-image-2-2\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_node_output \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\", \\\"key\\\": \\\"generate-gpt-image-2-2\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Completed"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ". Checking that"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the artifact landed"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " in the board"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'s media pool."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_list_media \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "白猫"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "道士参考图已生成完成"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。\n\n**任务"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**：`job-1790601545790"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-53c285"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "91cf336fa8`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " — 状态 `completed"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`\n**节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**：`generate-g"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "pt-image-2-2"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`（generate:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "gpt-image-2，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "9"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":16"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）\n\n**产物 URL"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**（平台"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "原样返回"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，未做任何改写"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）：\n"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "```\nhttps://bee"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "hive-cdn.verse"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "4.pet/bee"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "hive-temp/bee"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "hive/job-179"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "0601545790-53"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "c28591cf336fa"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "8/node-job"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-1790601545790"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-53c28591cf"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "336fa8-generate-g"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "pt-image-2-2"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-179060156"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "9956.png\n```\n\n**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "媒体池**：服务"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "端在完成"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "时自动捕获入库"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，现有"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 1 条：\n-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " index"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `1`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，id `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "mp-job"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-1790601545790"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-53c28591cf"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "336fa8-node-job-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "179060"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1545790-53c"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "28591cf336fa8"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-generate-gpt-image-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "2-2-image`，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "kind `image`，`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "referenced_by:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " []`（尚未被任何"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " material 节点引用）\n\n**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "费用**：报价"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " hold"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " **$0.96"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**（960000"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " micro-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "USD，q"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ty 1，`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "gpt-image-2-t"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "` per_p"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "iece），提交时按报价"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "上限冻结"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "、按"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "实测结算"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。\n\n**画"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "板** `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "qa"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "3-t1a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-179060"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "142745"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "759039"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "3`：2"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "、1 条"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "边（`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "generate-script-1 →"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " generate-gpt-image-2"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-2`）、"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "媒体"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "池 1 张图"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。\n\n下一步的自然"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "接"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "续是把"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "这张图"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "作为 material"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 上"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "板，接到"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "视频节点的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "首"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "帧/参考图"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "端口——"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "需要的话告诉我"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "目标"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "我会"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "先查它的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " schema 再决定"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "端口（min"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "imax-h3 的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `first_frame`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 与 `reference_image`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 互斥，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "不能混用）。"
+    }
+  },
+  {
+    "event": "done",
+    "data": {
+      "ok": true,
+      "data": {
+        "session_id": "20260928-211707-46b134",
+        "skill": "skilyst/canvas-ops",
+        "stop_reason": "completed",
+        "answer": "白猫道士参考图已生成完成。\n\n**任务**：`job-1790601545790-53c28591cf336fa8` — 状态 `completed`\n**节点**：`generate-gpt-image-2-2`（generate:gpt-image-2，9:16）\n\n**产物 URL**（平台原样返回，未做任何改写）：\n```\nhttps://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790601545790-53c28591cf336fa8/node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2-1790601569956.png\n```\n\n**媒体池**：服务端在完成时自动捕获入库，现有 1 条：\n- index `1`，id `mp-job-1790601545790-53c28591cf336fa8-node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2-image`，kind `image`，`referenced_by: []`（尚未被任何 material 节点引用）\n\n**费用**：报价 hold **$0.96**（960000 micro-USD，qty 1，`gpt-image-2-t` per_piece），提交时按报价上限冻结、按实测结算。\n\n**画板** `qa-a3-t1a-1790601427457590393`：2 节点、1 条边（`generate-script-1 → generate-gpt-image-2-2`）、媒体池 1 张图。\n\n下一步的自然接续是把这张图作为 material 上板，接到视频节点的首帧/参考图端口——需要的话告诉我目标节点，我会先查它的 schema 再决定端口（minimax-h3 的 `first_frame` 与 `reference_image` 互斥，不能混用）。",
+        "model": "deepseek/deepseek-v4.1-flash",
+        "turns": 7,
+        "wall_clock_s": 49.6,
+        "usage": {
+          "prompt_tokens": 81445,
+          "completion_tokens": 1665,
+          "total_tokens": 83110,
+          "calls": 7,
+          "models_used": [
+            "deepseek/deepseek-v4.1-flash"
+          ]
+        },
+        "artifacts": [],
+        "jobs": {
+          "submitted": 0,
+          "budget": null
+        },
+        "tool_calls": [
+          {
+            "tool": "canvas_submit_node_job",
+            "arguments": {
+              "workflow_id": "workflow-1790601427457590393",
+              "node_type": "generate",
+              "provider": "gpt-image-2",
+              "key": "generate-gpt-image-2-2",
+              "config": {
+                "prompt": "角色设定参考图：中国风神话风格，白袍猫道士——一只拟人化的白猫，身穿白色道袍，手持桃木剑，正面全身站姿，3D 渲染风格（电影级 3D 质感，干净造型，精致毛发与布料细节），柔和月光氛围，中性纯色背景，无文字。",
+                "aspect_ratio": "9:16"
+              },
+              "quote_first": true
+            },
+            "result": {
+              "quoted": true,
+              "quote": {
+                "total_estimate_usd": null,
+                "total_hold": 960000,
+                "total_estimate_usd_display": null,
+                "total_hold_display": 0.96,
+                "nodes": [
+                  {
+                    "node_type": "generate",
+                    "provider": "gpt-image-2",
+                    "key": "generate-gpt-image-2-2",
+                    "priced": true,
+                    "model": "per_piece",
+                    "unit_price_usd": 960000,
+                    "qty_estimate": 1,
+                    "amount_hold": 960000
+                  }
+                ]
+              },
+              "job_id": "job-1790601545790-53c28591cf336fa8",
+              "status": "waiting"
+            },
+            "error": null,
+            "duration_s": 2.81
+          },
+          {
+            "tool": "canvas_read_node_output",
+            "arguments": {
+              "workflow_id": "workflow-1790601427457590393",
+              "key": "generate-gpt-image-2-2"
+            },
+            "result": {
+              "found": true,
+              "job_id": "job-1790601545790-53c28591cf336fa8",
+              "status": "running",
+              "node": {
+                "key": "generate-gpt-image-2-2",
+                "status": "running",
+                "output": null
+              }
+            },
+            "error": null,
+            "duration_s": 1.94
+          },
+          {
+            "tool": "canvas_read_node_output",
+            "arguments": {
+              "workflow_id": "workflow-1790601427457590393",
+              "key": "generate-gpt-image-2-2"
+            },
+            "result": {
+              "found": true,
+              "job_id": "job-1790601545790-53c28591cf336fa8",
+              "status": "running",
+              "node": {
+                "key": "generate-gpt-image-2-2",
+                "status": "running",
+                "output": null
+              }
+            },
+            "error": null,
+            "duration_s": 2.0
+          },
+          {
+            "tool": "canvas_read_node_output",
+            "arguments": {
+              "workflow_id": "workflow-1790601427457590393",
+              "key": "generate-gpt-image-2-2"
+            },
+            "result": {
+              "found": true,
+              "job_id": "job-1790601545790-53c28591cf336fa8",
+              "status": "running",
+              "node": {
+                "key": "generate-gpt-image-2-2",
+                "status": "running",
+                "output": null
+              }
+            },
+            "error": null,
+            "duration_s": 1.8
+          },
+          {
+            "tool": "canvas_read_node_output",
+            "arguments": {
+              "workflow_id": "workflow-1790601427457590393",
+              "key": "generate-gpt-image-2-2"
+            },
+            "result": {
+              "found": true,
+              "job_id": "job-1790601545790-53c28591cf336fa8",
+              "status": "running",
+              "node": {
+                "key": "generate-gpt-image-2-2",
+                "status": "completed",
+                "output": {
+                  "dest_image_url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790601545790-53c28591cf336fa8/node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2-1790601569956.png",
+                  "status": "completed"
+                }
+              }
+            },
+            "error": null,
+            "duration_s": 1.98
+          },
+          {
+            "tool": "canvas_list_media",
+            "arguments": {
+              "workflow_id": "workflow-1790601427457590393"
+            },
+            "result": {
+              "entries": [
+                {
+                  "id": "mp-job-1790601545790-53c28591cf336fa8-node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2-image",
+                  "name": "node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2-1790601569956",
+                  "kind": "image",
+                  "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790601545790-53c28591cf336fa8/node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2-1790601569956.png",
+                  "thumb": null,
+                  "index": 1,
+                  "referenced_by": []
+                }
+              ]
+            },
+            "error": null,
+            "duration_s": 1.2
+          }
+        ],
+        "preflight": null,
+        "error": null,
+        "ok": true,
+        "dry_run": false,
+        "notes": [
+          "tool canvas_submit_node_job \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"gpt-image-2\\\", \\\"key\\\": \\\"generate-gpt-image-2-2\\\", \\\"config\\\"",
+          "paid confirm: waiting for the user (0.96 USD hold)",
+          "canvas: submitted job job-1790601545790-53c28591cf336fa8 on workflow-1790601427457590393",
+          "tool canvas_read_node_output \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\", \\\"key\\\": \\\"generate-gpt-image-2-2\\\"}\"",
+          "tool canvas_read_node_output \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\", \\\"key\\\": \\\"generate-gpt-image-2-2\\\"}\"",
+          "tool canvas_read_node_output \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\", \\\"key\\\": \\\"generate-gpt-image-2-2\\\"}\"",
+          "tool canvas_read_node_output \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\", \\\"key\\\": \\\"generate-gpt-image-2-2\\\"}\"",
+          "tool canvas_list_media \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\"}\""
+        ]
+      }
+    }
+  }
+]

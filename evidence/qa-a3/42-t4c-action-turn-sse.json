@@ -1,0 +1,1342 @@
+[
+  {
+    "event": "delta",
+    "data": {
+      "text": "I'll load"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the canvas"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-ops method"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " first, then act"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " on the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " board."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool read_skill \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Method"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " loaded. Per the skill"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ", I"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " start with"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " listing"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " boards"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " + reading the target"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " board before editing."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_list_workflows \"{}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790601269708463301\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Board `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "qa"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-a3-t4-179"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "0601268` is empty"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " (no nodes). Let"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " me check the `process:script` schema so"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the config uses"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the right field name"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"process\\\", \\\"provider\\\": \\\"script\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema refused: ValueError: no node definition 'process:script' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "No"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `process:script` on"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " this platform"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " — the script node is `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "generate:script`. Checking"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " its schema"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Schema confirmed"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":script`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " takes `instruction` ("
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "required). Creating the node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790601269708463301\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\", \\\"config\\\": {\\\"instruction\\\": \\\"一只猫在月光下散步，10 秒\\\"}}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: node generate-script-1 added to workflow-1790601269708463301"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "已创建完成"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。\n\n**节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "状态"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**\n\n| 项"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " | 值 |\n|---|---"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "|\n| 画板 | `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "workflow-179"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "060126970846"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "3301`（qa-a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "3-t4-179"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "0601268，之前是"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "空板） |\n| "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点 key | `generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-script-1`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n| 类型"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " | `generate:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "script`（AI"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Script /"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " Prompt Writer） |\n| "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "位置"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " | {"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "x: 80, y"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": 80} |\n|"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " config"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " | `instruction:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " \"一只"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "猫在月光下散步，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "10 秒\"`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n| 依赖"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " /"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 连线 | 无（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "当前"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "无"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "上游输入"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，也没有"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "下游消费者"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "） |\n| 运行状态"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " | **"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "未运行** ——"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 只创建"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "了蓝图"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点，没有提交"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "任何作业，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "未"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "产生费用"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n\n两点说明"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "：\n\n1. 这个"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "平台上没有 `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "process:script` 这个"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点定义"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "；脚本节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "实际是 `generate:script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`（模型固定"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "为 `deepseek-v4"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-flash-0731`，`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "instruction` 为必填"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "字段）。我按此"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "创建，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "指令原文"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "写入"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "instruction`。\n2. "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "该节点处于"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "「单"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "相"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "指令"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "→提示"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "词」模式（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "未设"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `mode`），运行时"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "会把你这"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "句中文指令改"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "写成可直接投"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "喂给下游"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "视频"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点的生成"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "提示"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "词，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "通过 `dest_prompt`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 输出。如需把它"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "接到视频节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "、"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "或直接"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "跑一次看"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "输出"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，告诉我即可（付费"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "提交"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "会先返回"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "报价）。"
+    }
+  },
+  {
+    "event": "done",
+    "data": {
+      "ok": true,
+      "data": {
+        "session_id": "20260928-211422-b0e11a",
+        "skill": "skilyst/canvas-ops",
+        "stop_reason": "completed",
+        "answer": "节点已创建完成。\n\n**节点状态**\n\n| 项 | 值 |\n|---|---|\n| 画板 | `workflow-1790601269708463301`（qa-a3-t4-1790601268，之前是空板） |\n| 节点 key | `generate-script-1` |\n| 类型 | `generate:script`（AI Script / Prompt Writer） |\n| 位置 | {x: 80, y: 80} |\n| config | `instruction: \"一只猫在月光下散步，10 秒\"` |\n| 依赖 / 连线 | 无（当前无上游输入，也没有下游消费者） |\n| 运行状态 | **未运行** —— 只创建了蓝图节点，没有提交任何作业，未产生费用 |\n\n两点说明：\n\n1. 这个平台上没有 `process:script` 这个节点定义；脚本节点实际是 `generate:script`（模型固定为 `deepseek-v4-flash-0731`，`instruction` 为必填字段）。我按此创建，指令原文写入 `instruction`。\n2. 该节点处于「单相指令→提示词」模式（未设 `mode`），运行时会把你这句中文指令改写成可直接投喂给下游视频节点的生成提示词，通过 `dest_prompt` 输出。如需把它接到视频节点、或直接跑一次看输出，告诉我即可（付费提交会先返回报价）。",
+        "model": "deepseek/deepseek-v4.1-flash",
+        "turns": 6,
+        "wall_clock_s": 39.5,
+        "usage": {
+          "prompt_tokens": 44836,
+          "completion_tokens": 1138,
+          "total_tokens": 45974,
+          "calls": 6,
+          "models_used": [
+            "deepseek/deepseek-v4.1-flash"
+          ]
+        },
+        "artifacts": [],
+        "jobs": {
+          "submitted": 0,
+          "budget": null
+        },
+        "tool_calls": [
+          {
+            "tool": "read_skill",
+            "arguments": {
+              "skill_id": "skilyst/canvas-ops"
+            },
+            "result": {
+              "skill_id": "skilyst/canvas-ops",
+              "version": "1.0.0",
+              "degraded": false,
+              "digest": "sha256:f9cac603776ce8ab7384eda079182742ff4ceb12de18d91d1d165ab60daf518a",
+              "permission": {
+                "egress": [
+                  "beehive-api.verse4.pet"
+                ],
+                "filesystem": "skill-dir",
+                "exec": "none",
+                "secrets": true
+              },
+              "plan": {},
+              "requires_nodes": [],
+              "instructions": "\n# Canvas operations (the conversation-driven board)\n\nThe board is the workflow; you are its writer. Every tool below lands a\nstructured change on the server-side blueprint and an action card in the\nconversation — the user watches the board move as you speak.\n\n## When to use\n\nThe user wants to build or edit a board by conversation: \"add a script node\nthat writes a 15-second ghost-catcher patrol script\", \"wire the reference\nimage to the first frame\", \"generate a reference image\", \"run it\".\n\n**Start every session with `canvas_list_workflows` + `canvas_read_board`.**\nIf the user did not name a board, list them, pick the most recently updated\none, and *say which one you picked* before editing.\n\n## The tools\n\n| tool | what it does | key params | reach for it when |\n| --- | --- | --- | --- |\n| `canvas_list_workflows` | boards this account can see | limit | picking the board to operate on |\n| `canvas_read_board` | full board state: nodes, edges (derived from `material_deps`/`depends_on`), media pool | workflow_id | before any edit; after a conflict |\n| `canvas_create_node` | add a node to the blueprint (auto-key `{type}-{provider}-{n}`, auto-position) | workflow_id, node_type, provider, config? | \"创建一个 script 节点\" |\n| `canvas_write_node_config` | deep-merge a config patch into one node | workflow_id, key, config | \"把时长改成 15 秒\" |\n| `canvas_connect_ports` | wire an edge; a material source wires as `material_deps {key, input_port}` + depends_on | workflow_id, from_key, to_key, input_port? | \"把参考图接到首帧\" |\n| `canvas_query_schema` | node definition + derived port analysis (enums, required, alternative input modes) | node_type+provider or node_id | **before every connect or submission** |\n| `canvas_read_node_output` | newest job output for one node (async poll) | workflow_id, key | after submitting a generation |\n| `canvas_submit_node_job` | submit ONE node as a job, quote-first | workflow_id, node_type, provider, config | running a single node |\n| `canvas_run_workflow` | submit the whole board as one job, quote-first | workflow_id | \"跑一下这个流程\" |\n| `canvas_generate_image` | submit a PAID gpt-image-2 image job | workflow_id, prompt, size? | \"生成一张参考图\" |\n| `canvas_list_media` | the board's media pool entries | workflow_id | checking what is available |\n| `canvas_add_media` | add an upload-origin pool entry by URL | workflow_id, url, name | bringing an external image onto the board |\n\nNode types you will meet: `process` (script/LLM nodes, e.g.\n`process:script`), `generate` (minimax-h3, gpt-image-2, ...), `material` (a\nmedia-pool reference — pure data input, never executed).\n\n## Lock discipline (写锁纪律)\n\nEvery blueprint write (`create_node` / `write_node_config` / `connect_ports`)\nis **already wrapped** by the runtime in the server-side lock protocol:\nlock → read → modify → PUT → unlock, with finally semantics (a failed PUT\nstill unlocks — a crash can never strand a lock; a dead holder's lock is\ntaken over by the next applicant server-side).\n\nIf a write raises `LockHeldError` (画板正被占用):\n\n1. **Stop.** Tell the user the board is busy and *who* holds it (the error\n   carries holder kind/id and since when).\n2. **Do not retry in a loop.** The holder is alive and working; your calls\n   do not preempt it.\n3. Reads (`canvas_read_board`, `canvas_query_schema`) still work — you can\n   keep planning, just not writing.\n\nYour own API calls refresh the lock heartbeat implicitly while you hold it —\nyou never need to think about expiry.\n\n## Port matching iron rule (端口匹配铁律)\n\n**Before `canvas_connect_ports`, ALWAYS `canvas_query_schema` the TARGET\nnode.** The schema is the judge of which ports may receive what:\n\n- **enum fields** — e.g. `image_roles` accepts exactly\n  `reference_image` / `first_frame` / `last_frame`;\n- **required fields** — what a submission will 400 without;\n- **alternative input modes** — arrays that cannot be mixed.\n\n**Canonical case — minimax-h3.** Its image inputs are *exclusive*:\n`first_frame` and `reference_image` cannot coexist in one submission. Wiring\na reference image to `first_frame` when `reference_image` entries already\nexist (or vice versa) is a 400 *at submit time* — expensive to discover\nlate. Query the schema, decide the port deliberately, then connect. Never\nguess a port from the field name alone.\n\n## Quote-first (先报价)\n\nPaid submissions (`canvas_submit_node_job`, `canvas_run_workflow`,\n`canvas_generate_image`) fetch an estimate *before* the submission exists.\nQuote amounts are integer micro-USD plus a USD display figure. When the\nestimate is material, state the USD figure to the user and get the go-ahead\n— the wallet is charged on submit (held at the quote's upper bound, settled\nat measured usage).\n\n## Failure self-correction (失败自修正)\n\n| failure | what to do |\n| --- | --- |\n| schema/validation 400 | read the **structured** error — the platform names the offending field and the allowed values. Fix that field, retry **once**. No blind retries, no fallback wrappers. |\n| 409 workflow-modified | the runtime already retried once; `canvas_read_board` again before your next write — the board moved under you. |\n| `LockHeldError` | report to the user, stop writing (see above). |\n| 402 / 413 quota | report the number, do not retry. |\n\n## Media pool flow (参考图上板)\n\nGeneration is async and the pool is where artifacts land:\n\n1. `canvas_generate_image` **submits only** — a paid gpt-image-2 job.\n2. Poll with `canvas_read_node_output` (or `beehive_get_job`) until\n   `completed`.\n3. On completion the server **auto-captures** the image into the board's\n   media pool (`origin.kind=generated`) — no add needed.\n\nFor an external image the user supplied by URL: `canvas_add_media`, then\nmake it wireable as a material node, then connect:\n\n```\ncanvas_add_media(workflow_id, url, name)          -> pool entry id\ncanvas_create_node(workflow_id, 'material', '',   -> material node\n                   config={pool_entry_id: <id>})\ncanvas_query_schema(node_type='generate', provider='minimax-h3')\ncanvas_connect_ports(workflow_id, from_key=<material key>,\n                     to_key=<consumer key>, input_port='first_frame')\n```\n\nMaterial nodes are identified by `config.pool_entry_id`; the runtime wires\nthem into the consumer's `material_deps` and `depends_on`, and the server\ncompiles that to `images[]` + `image_roles[]` (or `video_refs`/`audio_refs`)\nat submit time.\n\n## Board delta awareness\n\nEvery successful canvas call lands an action row in the conversation with a\n`board_delta` (added node, wired edge, pool entry, submitted job). The UI\nrenders these as cards the user can expand and click to locate on the board.\nKeep your result summaries human-readable — the card's one-liner is what the\nuser reads first.",
+              "files": [
+                "LICENSE",
+                "SKILL.md",
+                "manifest.json",
+                "references/i18n/glossary.en.json",
+                "references/i18n/glossary.zh-CN.json"
+              ],
+              "spec_warnings": []
+            },
+            "error": null,
+            "duration_s": 0.0
+          },
+          {
+            "tool": "canvas_list_workflows",
+            "arguments": {},
+            "result": {
+              "workflows": [
+                {
+                  "id": "workflow-1790601269708463301",
+                  "name": "qa-a3-t4-1790601268",
+                  "description": "QA T4 session boundary scratch board",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790594465481260345",
+                  "name": "a3-s4-e2e-1790594464",
+                  "description": "A3 S4 E2E creation story",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790594121285977414",
+                  "name": "a3-s4-e2e-1790594120",
+                  "description": "A3 S4 E2E creation story",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790593890805842685",
+                  "name": "a3-s4-e2e-1790593889",
+                  "description": "A3 S4 E2E creation story",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790593854245737345",
+                  "name": "a3-s4-e2e-1790593853",
+                  "description": "A3 S4 E2E creation story",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790588447574612580",
+                  "name": "Outfit Swap",
+                  "description": "Swap the outfit in your photo. {\"user_inputs\":[{\"key\":\"image\",\"type\":\"image_url\",\"label\":\"Your photo\",\"required\":true},{\"key\":\"prompt\",\"type\":\"text\",\"label\":\"Outfit description\",\"placeholder\":\"a tailored charcoal suit, studio lighting\",\"required\":true}]}",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790586733426603373",
+                  "name": "a3-s3-e2e-d1fe3a",
+                  "description": "A3 S3 canvas skill E2E",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790467226880400695",
+                  "name": "qa-smoke-1790467206-upd",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1790442251788456854",
+                  "name": "Live Photo",
+                  "description": "Animate a still photo into a 5s cinematic clip. {\"user_inputs\":[{\"key\":\"motion\",\"type\":\"text\",\"label\":\"Motion hint\",\"placeholder\":\"hair flowing in the wind\",\"required\":false},{\"key\":\"image\",\"type\":\"image_url\",\"label\":\"Source photo\",\"required\":true}]}",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1789887343156623963",
+                  "name": "studio-tts-verify",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1788427371415240901",
+                  "name": "E2E 428 suno pool capture",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1787647374621149360",
+                  "name": "designer-e2e",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1787216304515073454",
+                  "name": "test-canvas",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1785472390994643222",
+                  "name": "demo_template_3",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1785147390724587660",
+                  "name": "demo_template_1",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1785147390129913548",
+                  "name": "demo_template_2",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "workflow-1785131137787162440",
+                  "name": "wf-test",
+                  "description": null,
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-sd-gen-watermark-hls",
+                  "name": "BytePlus Seedance 生成 · 水印+HLS 流程",
+                  "description": "BytePlus Seedance 生成（可通过 Nodes[0].Config.template_id 引用模版）+ 水印 + HLS 切片，跳过前后贴片拼接",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-normalize",
+                  "name": "用户上传视频标准化",
+                  "description": "标准化转码至 1080x1920 + HLS 切片（多码率自适应，由 Mux 输出的 HLS manifest 自动提供，与 quality 档位无关）。不加水印，跳过拼接。调用时需在 Nodes[0].Config 传入 src_video_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-watermark-hls",
+                  "name": "[测试] Mux 打水印输出 HLS",
+                  "description": "单独测试节点 E（process:mux，水印+HLS）。调用时需在 Nodes[0].Config 传入 src_video_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-watermark-mp4",
+                  "name": "[测试] Mux 打水印输出 MP4",
+                  "description": "单独测试节点 D（process:mux，水印+MP4）。调用时需在 Nodes[0].Config 传入 src_video_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-post-roll",
+                  "name": "后贴片处理流程",
+                  "description": "水印 MP4 + 后贴片拼接 + HLS 切片。调用时需在 Nodes[0].Config 传入 src_video_url，Nodes[1].Config 传入 postroll_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-pre-roll",
+                  "name": "前贴片处理流程",
+                  "description": "水印 MP4 + 前贴片拼接 + HLS 切片。调用时需在 Nodes[0].Config 传入 src_video_url，Nodes[1].Config 传入 preroll_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-veo-gen-full",
+                  "name": "Google Veo 生成 · 完整流程",
+                  "description": "Google Veo 生成 + 水印 MP4 + 前后贴片拼接（后贴片默认用品牌 slogan 素材，前贴片需调用方自行传入） + HLS 切片",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-sd-gen-full",
+                  "name": "BytePlus Seedance 生成 · 完整流程",
+                  "description": "BytePlus Seedance 生成 + 水印 MP4 + 前后贴片拼接（后贴片默认用品牌 slogan 素材，前贴片需调用方自行传入） + HLS 切片",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-drawnow-gen-full",
+                  "name": "DrawNow 生成 · 完整流程",
+                  "description": "DrawNow 生成 + 水印 MP4 + 前后贴片拼接（后贴片默认用品牌 slogan 素材，前贴片需调用方自行传入） + HLS 切片",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-normalize",
+                  "name": "[测试] Wigowago 标准化转码",
+                  "description": "单独测试节点 H（stitch:wigowago，单视频标准化转码至 1080x1920）。调用时需在 Nodes[0].Config 传入 src_video_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-stitch-multiple",
+                  "name": "[测试] Wigowago 拼接前后贴片",
+                  "description": "单独测试节点 G（stitch:wigowago，3 段拼接）。调用时需在 Nodes[0].Config 传入 preroll_url、src_video_url（main）与 postroll_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-stitch-pre-roll",
+                  "name": "[测试] Wigowago 拼接前贴片",
+                  "description": "单独测试节点 G（stitch:wigowago，2 段拼接）。调用时需在 Nodes[0].Config 传入 preroll_url 与 src_video_url（main）",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-hls-only",
+                  "name": "[测试] Mux 只输出 HLS 切片",
+                  "description": "单独测试节点 F（process:mux，无水印仅 HLS）。调用时需在 Nodes[0].Config 传入 src_video_url",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-veo",
+                  "name": "[测试] Google Veo 生成",
+                  "description": "单独测试节点 C（generate:google-veo）。调用时需在 Nodes[0].Config 传入 prompt",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-sd",
+                  "name": "[测试] BytePlus Seedance 生成",
+                  "description": "单独测试节点 B（generate:byteplus-seedance-2.0）。调用时需在 Nodes[0].Config 传入 prompt",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-test-drawnow",
+                  "name": "[测试] DrawNow 生成",
+                  "description": "单独测试节点 A（generate:drawnow）。调用时需在 Nodes[0].Config 传入 prompt",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-veo-gen-vip",
+                  "name": "Google Veo 生成 · VIP 流程",
+                  "description": "Google Veo 生成 + HLS 切片，跳过水印与贴片拼接",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-sd-gen-vip",
+                  "name": "BytePlus Seedance 生成 · VIP 流程",
+                  "description": "BytePlus Seedance 生成 + HLS 切片，跳过水印与贴片拼接",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                },
+                {
+                  "id": "wf-drawnow-gen-vip",
+                  "name": "DrawNow 生成 · VIP 流程",
+                  "description": "DrawNow 生成 + HLS 切片，跳过水印与贴片拼接",
+                  "updated_at": "0001-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "error": null,
+            "duration_s": 1.55
+          },
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790601269708463301"
+            },
+            "result": {
+              "id": "workflow-1790601269708463301",
+              "name": "qa-a3-t4-1790601268",
+              "nodes": [],
+              "edges": [],
+              "media_pool": []
+            },
+            "error": null,
+            "duration_s": 1.42
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "process",
+              "provider": "script"
+            },
+            "result": null,
+            "error": "ValueError: no node definition 'process:script' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)",
+            "duration_s": 1.48
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "generate",
+              "provider": "script"
+            },
+            "result": {
+              "node_id": "generate:script",
+              "name": "AI Script (Prompt Writer)",
+              "description": null,
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "properties": {
+                  "context_urls": {
+                    "description": "Optional reference media URLs appended to the instruction as context",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "maxItems": 8,
+                    "type": "array"
+                  },
+                  "goal": {
+                    "description": "compose mode: the original goal (defaults to instruction when empty)",
+                    "type": "string"
+                  },
+                  "instruction": {
+                    "description": "What you want the video/audio/image to be, in plain language — the script node rewrites it into a generation-ready prompt",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "material_refs": {
+                    "description": "#504: material references — resolved at submit, woven into the instruction, passed through to downstream nodes via dest_refs",
+                    "items": {
+                      "properties": {
+                        "entry_id": {
+                          "description": "Media-pool entry id (mp-...)",
+                          "type": "string"
+                        },
+                        "note": {
+                          "description": "Free-text usage note — woven into the prompt's referenced-materials section",
+                          "type": "string"
+                        },
+                        "role": {
+                          "enum": [
+                            "first_frame",
+                            "last_frame",
+                            "reference_image",
+                            "reference_video",
+                            "reference_audio"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "entry_id",
+                        "role"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "max_output_tokens": {
+                    "default": 2048,
+                    "description": "Upper bound on the generated prompt length; also the billing hold bound",
+                    "maximum": 8192,
+                    "minimum": 64,
+                    "type": "integer"
+                  },
+                  "mode": {
+                    "description": "decompose = instruction is a goal, output is the questionnaire JSON (#432); compose = synthesize the final prompt + ir from goal/selections (#432); storyboard = instruction is a narrative brief, output is a template-v2 sequence JSON with shots/transitions/elements/continuity locks (#381). Absent = single-phase instruction→prompt",
+                    "enum": [
+                      "decompose",
+                      "compose",
+                      "storyboard"
+                    ],
+                    "type": "string"
+                  },
+                  "model": {
+                    "default": "deepseek-v4-flash-0731",
+                    "description": "Model. Currently only deepseek-v4-flash-0731; a value outside this set is rejected at submit time",
+                    "enum": [
+                      "deepseek-v4-flash-0731"
+                    ],
+                    "type": "string"
+                  },
+                  "selections": {
+                    "description": "compose mode: the user's picks + custom values keyed by dimension (subject/action/camera/mood/sound)",
+                    "type": "object"
+                  },
+                  "system_prompt": {
+                    "description": "Optional — overrides the built-in prompt-engineering system prompt (advanced)",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "instruction"
+                ],
+                "type": "object",
+                "x-input-ports": [
+                  {
+                    "accepts": [
+                      "text"
+                    ],
+                    "field": "instruction"
+                  }
+                ]
+              },
+              "output_schema": {
+                "completion_tokens": "integer",
+                "dest_prompt": "string — the generation-ready prompt, flows into downstream nodes' prompt field",
+                "ir": "string (JSON) — compose mode only: IR-lite axes the model applied (flat snake_case object)",
+                "prompt_tokens": "integer"
+              },
+              "config_defaults": {
+                "pricing": {
+                  "input_price_usd": 140,
+                  "model": "per_token",
+                  "output_price_usd": 280,
+                  "qty_max": 8192
+                }
+              },
+              "enabled": true,
+              "port_analysis": {
+                "enum_fields": [
+                  {
+                    "field": "mode",
+                    "enum": [
+                      "decompose",
+                      "compose",
+                      "storyboard"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "model",
+                    "enum": [
+                      "deepseek-v4-flash-0731"
+                    ],
+                    "on": "field"
+                  }
+                ],
+                "required": [
+                  "instruction"
+                ],
+                "notes": []
+              }
+            },
+            "error": null,
+            "duration_s": 1.64
+          },
+          {
+            "tool": "canvas_create_node",
+            "arguments": {
+              "workflow_id": "workflow-1790601269708463301",
+              "node_type": "generate",
+              "provider": "script",
+              "config": {
+                "instruction": "一只猫在月光下散步，10 秒"
+              }
+            },
+            "result": {
+              "node": {
+                "type": "generate",
+                "provider": "script",
+                "key": "generate-script-1",
+                "config": {
+                  "instruction": "一只猫在月光下散步，10 秒"
+                },
+                "position": {
+                  "x": 80,
+                  "y": 80
+                }
+              },
+              "workflow": {
+                "id": "workflow-1790601269708463301",
+                "name": "qa-a3-t4-1790601268",
+                "description": "QA T4 session boundary scratch board",
+                "nodes": [
+                  {
+                    "type": "generate",
+                    "provider": "script",
+                    "key": "generate-script-1",
+                    "config": {
+                      "instruction": "一只猫在月光下散步，10 秒"
+                    },
+                    "position": {
+                      "x": 80,
+                      "y": 80
+                    }
+                  }
+                ],
+                "owner_id": "usr-1787815793337170547",
+                "schema_version": 0,
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z"
+              }
+            },
+            "error": null,
+            "duration_s": 5.04
+          }
+        ],
+        "preflight": null,
+        "error": null,
+        "ok": true,
+        "dry_run": false,
+        "notes": [
+          "tool read_skill \"{\\\"skill_id\\\": \\\"skilyst/canvas-ops\\\"}\"",
+          "tool canvas_list_workflows \"{}\"",
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790601269708463301\\\"}\"",
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"process\\\", \\\"provider\\\": \\\"script\\\"}\"",
+          "tool canvas_query_schema refused: ValueError: no node definition 'process:script' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)",
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\"}\"",
+          "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790601269708463301\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\", \\\"config\\\": {\\\"instruction\\\": \\\"一只猫在月光下散步，10 秒\\\"}}\"",
+          "canvas: node generate-script-1 added to workflow-1790601269708463301"
+        ]
+      }
+    }
+  }
+]

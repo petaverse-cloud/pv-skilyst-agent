@@ -1,0 +1,2 @@
+{"event": "ready", "api_version": 1, "host": "127.0.0.1", "port": 8802, "token": "<redacted-local-token>", "pid": 49195, "dry_run": false, "skill": "skilyst/canvas-ops", "sessions_dir": "/Users/wesley/.skilyst/sessions", "store_dir": "/Users/wesley/.skilyst/store", "workspace_dir": "/Users/wesley/.skilyst/workspace", "started_at": 1790602884.5078511, "orphan_guard": false}
+http 127.0.0.1 "POST /message HTTP/1.1" 200 -

@@ -1,0 +1,1539 @@
+[
+  {
+    "event": "delta",
+    "data": {
+      "text": "On"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " it. First reading"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the board's"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " current state and the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " image node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'s schema ("
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "iron"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " rule: query"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the target before any connect"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ")."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"gpt-image-2\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Board"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " state"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " confirmed (1"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node: `generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-script-1`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "). Schema for"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":gpt-image-2"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "` shows it takes"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " text on"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " its **"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`prompt`**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " port — that's where"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the script node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'s `dest"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_prompt` belongs"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ". Creating the image"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " node now."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"gpt-image-2\\\", \\\"config\\\": {\\\"prompt\\\": \\\"角色设定参考图：中国风神话风格，白袍猫道"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: node generate-gpt-image-2-2 added to workflow-1790601427457590393"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "Now"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " wiring the script node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " into the image node's"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " text"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " port."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_connect_ports \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\", \\\"from_key\\\": \\\"generate-script-1\\\", \\\"to_key\\\": \\\"generate-gpt-image-2-2\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: wired generate-script-1 -> generate-gpt-image-2-2 on workflow-1790601427457590393"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "分镜扩展"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "完成。"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "简述：\n\n**画"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "板** `work"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "flow-179"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "060142745759"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "0393`（qa"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-a3-t"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1a-179"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "0601426）—— "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "现有"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 2 个节点、"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1 条边、媒体"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "池仍为空。\n\n**新"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点 `generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-gpt-image-2-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "2`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**\n- 类型：`generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":gpt-image-2"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`（GPT Image 2"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ", OpenAI-com"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "patible）\n- 位置：("
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "320, 80)\n-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 配置"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "：\n  - `prompt`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "：`角色"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "设定参考图：中国风"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "神话风格"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，白袍猫"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "道士——一只"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "拟人化的白猫，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "身穿白色道袍，手持"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "桃木剑，正面"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "全身站姿，3D"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 渲染风格（电影级"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 3D 质感，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "干净造型，精致毛发与"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "布料细节），柔和"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "月光氛围，中性"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "纯色背景，无文字"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。`\n  - `aspect"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_ratio`：`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "9:16`（竖"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "屏"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，与 "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "15 秒短剧的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "成"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "片比例"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "一致）\n\n**连线"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "** `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "generate-s"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "cript-1 → generate-g"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "pt-image-2-2"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`\n- 按"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "铁"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "律"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "先"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "查了目标"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点 schema：`g"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "pt-image-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "2` 的文本"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "输入端口是 **"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`prompt`**（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`x-input"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-ports:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " accepts text"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " → prompt`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "），脚本节点的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `dest"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_prompt` 正是"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "喂"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "这里"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，因此"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "没有"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "走"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `images"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`（"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "那是图"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "生图的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "参考"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "图数组"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "端口"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）。连接"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "后板"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "上的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "边为 `kind"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": \"dep"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\"`。\n- 一个"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "如实提醒"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "：这条"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "边在"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "蓝图"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "里记录"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "为普通依赖边。脚本"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点的输出要"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "真正写进图片"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点 `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "prompt` 的位置"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，取决于提交"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "时"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "平台的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "解析行为——"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "图片节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "自己"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "已经写了一版"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " prompt"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，这个叠加"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "效果"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "我只能在"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "提交后才能"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "确认"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，目前不下"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "结论。\n\n**运行状态**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "：两个节点都"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**未提交"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**，无输出"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "产物、**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "未产生任何"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "费用**。图片节点属"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "付费提交"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "（`gpt-image-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "2-t"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "per_p"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "iece，单价 960000"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " micro-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "USD ≈ **$0."
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "96/张**，q"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ty 固定"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 1），按报价"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "优先规则"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "我没擅自"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "跑"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。\n\n要我提交"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "吗？两种"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "跑"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "法：只"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "跑图片节点，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "或 `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "canvas"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_run_workflow` "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "整板"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "跑（脚本 →"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 图片）。"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "任一种"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "我都会先把"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "报价 USD"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 数字报给你再"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "执行——"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "尤其整"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "板跑会"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "同时"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "触发脚本节点的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " token"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 计"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "费。"
+    }
+  },
+  {
+    "event": "done",
+    "data": {
+      "ok": true,
+      "data": {
+        "session_id": "20260928-211707-46b134",
+        "skill": "skilyst/canvas-ops",
+        "stop_reason": "completed",
+        "answer": "分镜扩展完成。简述：\n\n**画板** `workflow-1790601427457590393`（qa-a3-t1a-1790601426）—— 现有 2 个节点、1 条边、媒体池仍为空。\n\n**新节点 `generate-gpt-image-2-2`**\n- 类型：`generate:gpt-image-2`（GPT Image 2, OpenAI-compatible）\n- 位置：(320, 80)\n- 配置：\n  - `prompt`：`角色设定参考图：中国风神话风格，白袍猫道士——一只拟人化的白猫，身穿白色道袍，手持桃木剑，正面全身站姿，3D 渲染风格（电影级 3D 质感，干净造型，精致毛发与布料细节），柔和月光氛围，中性纯色背景，无文字。`\n  - `aspect_ratio`：`9:16`（竖屏，与 15 秒短剧的成片比例一致）\n\n**连线** `generate-script-1 → generate-gpt-image-2-2`\n- 按铁律先查了目标节点 schema：`gpt-image-2` 的文本输入端口是 **`prompt`**（`x-input-ports: accepts text → prompt`），脚本节点的 `dest_prompt` 正是喂这里，因此没有走 `images`（那是图生图的参考图数组端口）。连接后板上的边为 `kind: \"dep\"`。\n- 一个如实提醒：这条边在蓝图里记录为普通依赖边。脚本节点的输出要真正写进图片节点 `prompt` 的位置，取决于提交时平台的解析行为——图片节点自己已经写了一版 prompt，这个叠加效果我只能在提交后才能确认，目前不下结论。\n\n**运行状态**：两个节点都**未提交**，无输出产物、**未产生任何费用**。图片节点属付费提交（`gpt-image-2-t`，per_piece，单价 960000 micro-USD ≈ **$0.96/张**，qty 固定 1），按报价优先规则我没擅自跑。\n\n要我提交吗？两种跑法：只跑图片节点，或 `canvas_run_workflow` 整板跑（脚本 → 图片）。任一种我都会先把报价 USD 数字报给你再执行——尤其整板跑会同时触发脚本节点的 token 计费。",
+        "model": "deepseek/deepseek-v4.1-flash",
+        "turns": 5,
+        "wall_clock_s": 62.6,
+        "usage": {
+          "prompt_tokens": 46402,
+          "completion_tokens": 3741,
+          "total_tokens": 50143,
+          "calls": 5,
+          "models_used": [
+            "deepseek/deepseek-v4.1-flash"
+          ]
+        },
+        "artifacts": [],
+        "jobs": {
+          "submitted": 0,
+          "budget": null
+        },
+        "tool_calls": [
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790601427457590393"
+            },
+            "result": {
+              "id": "workflow-1790601427457590393",
+              "name": "qa-a3-t1a-1790601426",
+              "nodes": [
+                {
+                  "type": "generate",
+                  "provider": "script",
+                  "key": "generate-script-1",
+                  "config": {
+                    "instruction": "白猫道士月下除妖，15 秒短剧：白猫道士深夜巡山遇一小狐妖，诙谐斗法。",
+                    "model": "deepseek-v4-flash-0731"
+                  },
+                  "position": {
+                    "x": 80,
+                    "y": 80
+                  }
+                }
+              ],
+              "edges": [],
+              "media_pool": []
+            },
+            "error": null,
+            "duration_s": 1.36
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "generate",
+              "provider": "gpt-image-2"
+            },
+            "result": {
+              "node_id": "generate:gpt-image-2",
+              "name": "GPT Image 2 (OpenAI-compatible)",
+              "description": null,
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "properties": {
+                  "aspect_ratio": {
+                    "default": "1:1",
+                    "description": "1:1 (default), 9:16, 16:9, 4:3, 3:4, or a direct WxH like 1024x1024",
+                    "type": "string"
+                  },
+                  "images": {
+                    "description": "Reference image URLs -- when provided, uses the /v1/images/edits endpoint (image-to-image with reference images)",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "model": {
+                    "default": "gpt-image-2-t",
+                    "description": "Model. Currently only gpt-image-2-t; a value outside this set is rejected at submit time",
+                    "enum": [
+                      "gpt-image-2-t"
+                    ],
+                    "type": "string"
+                  },
+                  "prompt": {
+                    "description": "Text description of the image to generate",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "quality": {
+                    "default": "auto",
+                    "description": "low, medium, high, or auto (default)",
+                    "enum": [
+                      "low",
+                      "medium",
+                      "high",
+                      "auto"
+                    ],
+                    "type": "string"
+                  },
+                  "size": {
+                    "description": "Direct size override e.g. 1024x1024, 1536x1024 -- overrides aspect_ratio",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "prompt"
+                ],
+                "type": "object",
+                "x-input-ports": [
+                  {
+                    "accepts": [
+                      "image"
+                    ],
+                    "field": "src_image_url"
+                  },
+                  {
+                    "accepts": [
+                      "text"
+                    ],
+                    "field": "prompt"
+                  }
+                ]
+              },
+              "output_schema": {
+                "dest_image_url": "string — SAS-authenticated URL of the generated image",
+                "revised_prompt": "string, optional — the model's revised version of the prompt, if it modified it",
+                "status": "string"
+              },
+              "config_defaults": {
+                "pricing": {
+                  "model": "per_piece",
+                  "qty_max": 1,
+                  "qty_min": 1,
+                  "unit_price_usd": 960000
+                }
+              },
+              "enabled": true,
+              "port_analysis": {
+                "enum_fields": [
+                  {
+                    "field": "model",
+                    "enum": [
+                      "gpt-image-2-t"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "quality",
+                    "enum": [
+                      "low",
+                      "medium",
+                      "high",
+                      "auto"
+                    ],
+                    "on": "field"
+                  }
+                ],
+                "required": [
+                  "prompt"
+                ],
+                "notes": []
+              }
+            },
+            "error": null,
+            "duration_s": 1.79
+          },
+          {
+            "tool": "canvas_create_node",
+            "arguments": {
+              "workflow_id": "workflow-1790601427457590393",
+              "node_type": "generate",
+              "provider": "gpt-image-2",
+              "config": {
+                "prompt": "角色设定参考图：中国风神话风格，白袍猫道士——一只拟人化的白猫，身穿白色道袍，手持桃木剑，正面全身站姿，3D 渲染风格（电影级 3D 质感，干净造型，精致毛发与布料细节），柔和月光氛围，中性纯色背景，无文字。",
+                "aspect_ratio": "9:16"
+              }
+            },
+            "result": {
+              "node": {
+                "type": "generate",
+                "provider": "gpt-image-2",
+                "key": "generate-gpt-image-2-2",
+                "config": {
+                  "prompt": "角色设定参考图：中国风神话风格，白袍猫道士——一只拟人化的白猫，身穿白色道袍，手持桃木剑，正面全身站姿，3D 渲染风格（电影级 3D 质感，干净造型，精致毛发与布料细节），柔和月光氛围，中性纯色背景，无文字。",
+                  "aspect_ratio": "9:16"
+                },
+                "position": {
+                  "x": 320,
+                  "y": 80
+                }
+              },
+              "workflow": {
+                "id": "workflow-1790601427457590393",
+                "name": "qa-a3-t1a-1790601426",
+                "description": "QA #13 T1a full creation story",
+                "nodes": [
+                  {
+                    "type": "generate",
+                    "provider": "script",
+                    "key": "generate-script-1",
+                    "config": {
+                      "instruction": "白猫道士月下除妖，15 秒短剧：白猫道士深夜巡山遇一小狐妖，诙谐斗法。",
+                      "model": "deepseek-v4-flash-0731"
+                    },
+                    "position": {
+                      "x": 80,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "generate",
+                    "provider": "gpt-image-2",
+                    "key": "generate-gpt-image-2-2",
+                    "config": {
+                      "aspect_ratio": "9:16",
+                      "prompt": "角色设定参考图：中国风神话风格，白袍猫道士——一只拟人化的白猫，身穿白色道袍，手持桃木剑，正面全身站姿，3D 渲染风格（电影级 3D 质感，干净造型，精致毛发与布料细节），柔和月光氛围，中性纯色背景，无文字。"
+                    },
+                    "position": {
+                      "x": 320,
+                      "y": 80
+                    }
+                  }
+                ],
+                "owner_id": "usr-1787815793337170547",
+                "schema_version": 0,
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z"
+              }
+            },
+            "error": null,
+            "duration_s": 4.9
+          },
+          {
+            "tool": "canvas_connect_ports",
+            "arguments": {
+              "workflow_id": "workflow-1790601427457590393",
+              "from_key": "generate-script-1",
+              "to_key": "generate-gpt-image-2-2"
+            },
+            "result": {
+              "from": "generate-script-1",
+              "to": "generate-gpt-image-2-2",
+              "workflow": {
+                "id": "workflow-1790601427457590393",
+                "name": "qa-a3-t1a-1790601426",
+                "description": "QA #13 T1a full creation story",
+                "nodes": [
+                  {
+                    "type": "generate",
+                    "provider": "script",
+                    "key": "generate-script-1",
+                    "config": {
+                      "instruction": "白猫道士月下除妖，15 秒短剧：白猫道士深夜巡山遇一小狐妖，诙谐斗法。",
+                      "model": "deepseek-v4-flash-0731"
+                    },
+                    "position": {
+                      "x": 80,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "generate",
+                    "provider": "gpt-image-2",
+                    "key": "generate-gpt-image-2-2",
+                    "config": {
+                      "aspect_ratio": "9:16",
+                      "prompt": "角色设定参考图：中国风神话风格，白袍猫道士——一只拟人化的白猫，身穿白色道袍，手持桃木剑，正面全身站姿，3D 渲染风格（电影级 3D 质感，干净造型，精致毛发与布料细节），柔和月光氛围，中性纯色背景，无文字。"
+                    },
+                    "depends_on": [
+                      "generate-script-1"
+                    ],
+                    "position": {
+                      "x": 320,
+                      "y": 80
+                    }
+                  }
+                ],
+                "owner_id": "usr-1787815793337170547",
+                "schema_version": 0,
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z"
+              }
+            },
+            "error": null,
+            "duration_s": 5.59
+          },
+          {
+            "tool": "canvas_read_board",
+            "arguments": {
+              "workflow_id": "workflow-1790601427457590393"
+            },
+            "result": {
+              "id": "workflow-1790601427457590393",
+              "name": "qa-a3-t1a-1790601426",
+              "nodes": [
+                {
+                  "type": "generate",
+                  "provider": "script",
+                  "key": "generate-script-1",
+                  "config": {
+                    "instruction": "白猫道士月下除妖，15 秒短剧：白猫道士深夜巡山遇一小狐妖，诙谐斗法。",
+                    "model": "deepseek-v4-flash-0731"
+                  },
+                  "position": {
+                    "x": 80,
+                    "y": 80
+                  }
+                },
+                {
+                  "type": "generate",
+                  "provider": "gpt-image-2",
+                  "key": "generate-gpt-image-2-2",
+                  "config": {
+                    "aspect_ratio": "9:16",
+                    "prompt": "角色设定参考图：中国风神话风格，白袍猫道士——一只拟人化的白猫，身穿白色道袍，手持桃木剑，正面全身站姿，3D 渲染风格（电影级 3D 质感，干净造型，精致毛发与布料细节），柔和月光氛围，中性纯色背景，无文字。"
+                  },
+                  "depends_on": [
+                    "generate-script-1"
+                  ],
+                  "position": {
+                    "x": 320,
+                    "y": 80
+                  }
+                }
+              ],
+              "edges": [
+                {
+                  "from": "generate-script-1",
+                  "to": "generate-gpt-image-2-2",
+                  "kind": "dep"
+                }
+              ],
+              "media_pool": []
+            },
+            "error": null,
+            "duration_s": 1.94
+          }
+        ],
+        "preflight": null,
+        "error": null,
+        "ok": true,
+        "dry_run": false,
+        "notes": [
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\"}\"",
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"gpt-image-2\\\"}\"",
+          "tool canvas_create_node \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\", \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"gpt-image-2\\\", \\\"config\\\": {\\\"prompt\\\": \\\"角色设定参考图：中国风神话风格，白袍猫道",
+          "canvas: node generate-gpt-image-2-2 added to workflow-1790601427457590393",
+          "tool canvas_connect_ports \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\", \\\"from_key\\\": \\\"generate-script-1\\\", \\\"to_key\\\": \\\"generate-gpt-image-2-2\\\"}\"",
+          "canvas: wired generate-script-1 -> generate-gpt-image-2-2 on workflow-1790601427457590393",
+          "tool canvas_read_board \"{\\\"workflow_id\\\": \\\"workflow-1790601427457590393\\\"}\""
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "code": 201,
+  "message": "Created",
+  "payload": {
+    "id": "workflow-1790601427457590393",
+    "name": "qa-a3-t1a-1790601426",
+    "description": "QA #13 T1a full creation story",
+    "nodes": null,
+    "owner_id": "usr-1787815793337170547",
+    "schema_version": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z"
+  }
+}

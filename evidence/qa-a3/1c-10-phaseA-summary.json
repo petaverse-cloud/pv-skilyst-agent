@@ -1,0 +1,18 @@
+{
+  "workflow_id": "workflow-1790603067997635889",
+  "lock_notes": [
+    {
+      "seq": 11,
+      "ts": 1790603093.7133372,
+      "role": "note",
+      "note_kind": "lock",
+      "text": "画板正被占用: held by manual-client/qa-manual-1 since 2026-09-28T13:44:29.099283097Z",
+      "origin": "system",
+      "tool": "canvas_create_node"
+    }
+  ],
+  "answer": "I couldn't create the node — the board is locked. Reporting as-is, and I'm not retrying.\n\n**Result: failed (no change made).**\n\nPlatform error, verbatim:\n\n```\nLockHeldError: 画板正被占用 (workflow workflow-1790603067997635889 is locked by holder kind='manual-client' id='qa-manual-1' acquired_at='2026-09-28T13:44:29.099283097Z')\n```\n\n**What this means, per the canvas-ops lock discipline:**\n\n- The board `workflow-1790603067997635889` (`qa-a3-t1c-owned-1790603066`) is currently held by another writer — a **manual client** session with holder id `qa-manual-1`, holding the lock since **2026-09-28T13:44:29Z** (i.e. ~13:44 UTC / 21:44 CST, just about now).\n- That holder is alive and working. My calls do not preempt it, so retrying in a loop would only produce the same refusal — I've stopped after this single attempt, as you asked.\n\n**What I did get done:**\n\n1. Read the board's current state (reads aren't blocked by the lock): it is empty — **0 nodes, 0 edges, no media pool entries**.\n2. Confirmed the node type before writing: there is **no `process:script`** on this platform; the script node is **`generate:script`** (\"AI Script (Prompt Writer)\"), whose single required field is `instruction` (plain-language brief the node rewrites into a generation-ready prompt; default model `deepseek-v4-flash-0731`, `max_output_tokens` default 2048).\n\nSo the node I was about to add is fully specified:\n\n- **node_type:** `generate`, **provider:** `script`\n- **config:** `{\"instruction\": \"锁竞争测试\"}`\n\n**How to proceed — your call, no action taken:**\n- Ask the other writer (`qa-manual-1`, the manual client) to release the board, then tell me and I'll create the node immediately; or\n- Wait for that session to finish — the lock is taken over server-side once the holder is gone, and the next write will just succeed.\n\nI have not created, modified, or deleted anything on this board.",
+  "nodes_after": [
+    "generate-script-1"
+  ]
+}

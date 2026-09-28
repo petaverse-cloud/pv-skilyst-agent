@@ -1,0 +1,31 @@
+{
+  "checks": [
+    {
+      "check": "T4a no action rows after pure chat",
+      "pass": true,
+      "detail": "roles=['user', 'assistant']"
+    },
+    {
+      "check": "T4c action row exists after canvas turn",
+      "pass": true,
+      "detail": "action rows=4"
+    },
+    {
+      "check": "T4c action row origin=agent",
+      "pass": true,
+      "detail": "origin=agent"
+    },
+    {
+      "check": "T4c action row has board_delta",
+      "pass": false,
+      "detail": "board_delta=null"
+    },
+    {
+      "check": "T4c history endpoint",
+      "pass": false,
+      "detail": "GET /session/20260928-211422-b0e11a/history: HTTP Error 400: Bad Request"
+    }
+  ],
+  "session_id": "20260928-211422-b0e11a",
+  "workflow_id": "workflow-1790601269708463301"
+}

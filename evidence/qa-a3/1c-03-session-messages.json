@@ -1,0 +1,594 @@
+{
+  "ok": true,
+  "data": {
+    "session_id": "20260928-214008-a800c0",
+    "meta": {
+      "session_id": "20260928-214008-a800c0",
+      "title": "在画板 workflow-1790602746185338407（workflow id workflow-179060",
+      "created_at": 1790602808.085859,
+      "updated_at": 1790602840.824901,
+      "model": "deepseek/deepseek-v4.1-flash",
+      "workspace": "/Users/wesley/.skilyst/workspace",
+      "skills": [
+        "skilyst/canvas-ops"
+      ],
+      "status": "open",
+      "message_count": 14,
+      "usage": {
+        "prompt_tokens": 28509,
+        "completion_tokens": 1231,
+        "total_tokens": 29740,
+        "calls": 5,
+        "models_used": [
+          "deepseek/deepseek-v4.1-flash"
+        ]
+      }
+    },
+    "messages": [
+      {
+        "seq": 0,
+        "ts": 1790602808.086493,
+        "role": "user",
+        "content": "在画板 workflow-1790602746185338407（workflow id workflow-1790602746185338407，共享板）上创建一个 script 节点，指令写'锁竞争测试'。如果遇到锁冲突请如实告知用户。"
+      },
+      {
+        "seq": 1,
+        "ts": 1790602812.3286452,
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "id": "call_00_se5hzzei1ss4g5jq8hp030gz",
+            "type": "function",
+            "function": {
+              "name": "read_skill",
+              "arguments": "{\"skill_id\": \"skilyst/canvas-ops\"}"
+            }
+          },
+          {
+            "id": "call_01_5ihe6u082lc2gr3fiuhsc4bj",
+            "type": "function",
+            "function": {
+              "name": "canvas_read_board",
+              "arguments": "{\"workflow_id\": \"workflow-1790602746185338407\"}"
+            }
+          }
+        ]
+      },
+      {
+        "seq": 2,
+        "ts": 1790602812.33457,
+        "role": "tool",
+        "content": "{\"skill_id\": \"skilyst/canvas-ops\", \"version\": \"1.0.0\", \"degraded\": false, \"digest\": \"sha256:f9cac603776ce8ab7384eda079182742ff4ceb12de18d91d1d165ab60daf518a\", \"permission\": {\"egress\": [\"beehive-api.verse4.pet\"], \"filesystem\": \"skill-dir\", \"exec\": \"none\", \"secrets\": true}, \"plan\": {}, \"requires_nodes\": [], \"instructions\": \"\\n# Canvas operations (the conversation-driven board)\\n\\nThe board is the workflow; you are its writer. Every tool below lands a\\nstructured change on the server-side blueprint and an action card in the\\nconversation — the user watches the board move as you speak.\\n\\n## When to use\\n\\nThe user wants to build or edit a board by conversation: \\\"add a script node\\nthat writes a 15-second ghost-catcher patrol script\\\", \\\"wire the reference\\nimage to the first frame\\\", \\\"generate a reference image\\\", \\\"run it\\\".\\n\\n**Start every session with `canvas_list_workflows` + `canvas_read_board`.**\\nIf the user did not name a board, list them, pick the most recently updated\\none, and *say which one you picked* before editing.\\n\\n## The tools\\n\\n| tool | what it does | key params | reach for it when |\\n| --- | --- | --- | --- |\\n| `canvas_list_workflows` | boards this account can see | limit | picking the board to operate on |\\n| `canvas_read_board` | full board state: nodes, edges (derived from `material_deps`/`depends_on`), media pool | workflow_id | before any edit; after a conflict |\\n| `canvas_create_node` | add a node to the blueprint (auto-key `{type}-{provider}-{n}`, auto-position) | workflow_id, node_type, provider, config? | \\\"创建一个 script 节点\\\" |\\n| `canvas_write_node_config` | deep-merge a config patch into one node | workflow_id, key, config | \\\"把时长改成 15 秒\\\" |\\n| `canvas_connect_ports` | wire an edge; a material source wires as `material_deps {key, input_port}` + depends_on | workflow_id, from_key, to_key, input_port? | \\\"把参考图接到首帧\\\" |\\n| `canvas_query_schema` | node definition + derived port analysis (enums, required, alternative input modes) | node_type+provider or node_id | **before every connect or submission** |\\n| `canvas_read_node_output` | newest job output for one node (async poll) | workflow_id, key | after submitting a generation |\\n| `canvas_submit_node_job` | submit ONE node as a job, quote-first | workflow_id, node_type, provider, config | running a single node |\\n| `canvas_run_workflow` | submit the whole board as one job, quote-first | workflow_id | \\\"跑一下这个流程\\\" |\\n| `canvas_generate_image` | submit a PAID gpt-image-2 image job | workflow_id, prompt, size? | \\\"生成一张参考图\\\" |\\n| `canvas_list_media` | the board's media pool entries | workflow_id | checking what is available |\\n| `canvas_add_media` | add an upload-origin pool entry by URL | workflow_id, url, name | bringing an external image onto the board |\\n\\nNode types you will meet: `process` (script/LLM nodes, e.g.\\n`process:script`), `generate` (minimax-h3, gpt-image-2, ...), `material` (a\\nmedia-pool reference — pure data input, never executed).\\n\\n## Lock discipline (写锁纪律)\\n\\nEvery blueprint write (`create_node` / `write_node_config` / `connect_ports`)\\nis **already wrapped** by the runtime in the server-side lock protocol:\\nlock → read → modify → PUT → unlock, with finally semantics (a failed PUT\\nstill unlocks — a crash can never strand a lock; a dead holder's lock is\\ntaken over by the next applicant server-side).\\n\\nIf a write raises `LockHeldError` (画板正被占用):\\n\\n1. **Stop.** Tell the user the board is busy and *who* holds it (the error\\n   carries holder kind/id and since when).\\n2. **Do not retry in a loop.** The holder is alive and working; your calls\\n   do not preempt it.\\n3. Reads (`canvas_read_board`, `canvas_query_schema`) still work — you can\\n   keep planning, just not writing.\\n\\nYour own API calls refresh the lock heartbeat implicitly while you hold it —\\nyou never need to think about expiry.\\n\\n## Port matching iron rule (端口匹配铁律)\\n\\n**Before `canvas_connect_ports`, ALWAYS `canvas_query_schema` the TARGET\\nnode.** The schema is the judge of which ports may receive what:\\n\\n- **enum fields** — e.g. `image_roles` accepts exactly\\n  `reference_image` / `first_frame` / `last_frame`;\\n- **required fields** — what a submission will 400 without;\\n- **alternative input modes** — arrays that cannot be mixed.\\n\\n**Canonical case — minimax-h3.** Its image inputs are *exclusive*:\\n`first_frame` and `reference_image` cannot coexist in one submission. Wiring\\na reference image to `first_frame` when `reference_image` entries already\\nexist (or vice versa) is a 400 *at submit time* — expensive to discover\\nlate. Query the schema, decide the port deliberately, then connect. Never\\nguess a port from the field name alone.\\n\\n## Quote-first (先报价)\\n\\nPaid submissions (`canvas_submit_node_job`, `canvas_run_workflow`,\\n`canvas_generate_image`) fetch an estimate *before* the submission exists.\\nQuote amounts are integer micro-USD plus a USD display figure. When the\\nestimate is material, state the USD figure to the user and get the go-ahead\\n— the wallet is charged on submit (held at the quote's upper bound, settled\\nat measured usage).\\n\\n## Failure self-correction (失败自修正)\\n\\n| failure | what to do |\\n| --- | --- |\\n| schema/validation 400 | read the **structured** error — the platform names the offending field and the allowed values. Fix that field, retry **once**. No blind retries, no fallback wrappers. |\\n| 409 workflow-modified | the runtime already retried once; `canvas_read_board` again before your next write — the board moved under you. |\\n| `LockHeldError` | report to the user, stop writing (see above). |\\n| 402 / 413 quota | report the number, do not retry. |\\n\\n## Media pool flow (参考图上板)\\n\\nGeneration is async and the pool is where artifacts land:\\n\\n1. `canvas_generate_image` **submits only** — a paid gpt-image-2 job.\\n2. Poll with `canvas_read_node_output` (or `beehive_get_job`) until\\n   `completed`.\\n3. On completion the server **auto-captures** the image into the board's\\n   media pool (`origin.kind=g",
+        "tool_call_id": "call_00_se5hzzei1ss4g5jq8hp030gz",
+        "name": "read_skill"
+      },
+      {
+        "seq": 3,
+        "ts": 1790602813.679283,
+        "role": "action",
+        "type": "canvas",
+        "tool": "canvas_read_board",
+        "params": {
+          "workflow_id": "workflow-1790602746185338407"
+        },
+        "origin": "agent",
+        "duration_s": 1.34
+      },
+      {
+        "seq": 4,
+        "ts": 1790602813.682546,
+        "role": "tool",
+        "content": "{\"id\": \"workflow-1790602746185338407\", \"name\": \"qa-a3-t1c-shared-1790602745\", \"nodes\": [], \"edges\": [], \"media_pool\": []}",
+        "tool_call_id": "call_01_5ihe6u082lc2gr3fiuhsc4bj",
+        "name": "canvas_read_board"
+      },
+      {
+        "seq": 5,
+        "ts": 1790602818.333528,
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "id": "call_00_kpkpxvxurdqjw7nvpats8ra1",
+            "type": "function",
+            "function": {
+              "name": "canvas_query_schema",
+              "arguments": "{\"node_type\": \"process\", \"provider\": \"script\"}"
+            }
+          }
+        ]
+      },
+      {
+        "seq": 6,
+        "ts": 1790602820.167681,
+        "role": "tool",
+        "content": "{\"error\": \"ValueError: no node definition 'process:script' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)\"}",
+        "tool_call_id": "call_00_kpkpxvxurdqjw7nvpats8ra1",
+        "name": "canvas_query_schema"
+      },
+      {
+        "seq": 7,
+        "ts": 1790602824.166288,
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "id": "call_00_rcctkmx75wy15xrr3skzk1km",
+            "type": "function",
+            "function": {
+              "name": "canvas_query_schema",
+              "arguments": "{\"node_type\": \"generate\", \"provider\": \"script\"}"
+            }
+          }
+        ]
+      },
+      {
+        "seq": 8,
+        "ts": 1790602826.033481,
+        "role": "action",
+        "type": "canvas",
+        "tool": "canvas_query_schema",
+        "params": {
+          "node_type": "generate",
+          "provider": "script"
+        },
+        "origin": "agent",
+        "duration_s": 1.87
+      },
+      {
+        "seq": 9,
+        "ts": 1790602826.03841,
+        "role": "tool",
+        "content": "{\"node_id\": \"generate:script\", \"name\": \"AI Script (Prompt Writer)\", \"description\": null, \"input_schema\": {\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"properties\": {\"context_urls\": {\"description\": \"Optional reference media URLs appended to the instruction as context\", \"items\": {\"format\": \"uri\", \"type\": \"string\"}, \"maxItems\": 8, \"type\": \"array\"}, \"goal\": {\"description\": \"compose mode: the original goal (defaults to instruction when empty)\", \"type\": \"string\"}, \"instruction\": {\"description\": \"What you want the video/audio/image to be, in plain language — the script node rewrites it into a generation-ready prompt\", \"minLength\": 1, \"type\": \"string\"}, \"material_refs\": {\"description\": \"#504: material references — resolved at submit, woven into the instruction, passed through to downstream nodes via dest_refs\", \"items\": {\"properties\": {\"entry_id\": {\"description\": \"Media-pool entry id (mp-...)\", \"type\": \"string\"}, \"note\": {\"description\": \"Free-text usage note — woven into the prompt's referenced-materials section\", \"type\": \"string\"}, \"role\": {\"enum\": [\"first_frame\", \"last_frame\", \"reference_image\", \"reference_video\", \"reference_audio\"], \"type\": \"string\"}}, \"required\": [\"entry_id\", \"role\"], \"type\": \"object\"}, \"type\": \"array\"}, \"max_output_tokens\": {\"default\": 2048, \"description\": \"Upper bound on the generated prompt length; also the billing hold bound\", \"maximum\": 8192, \"minimum\": 64, \"type\": \"integer\"}, \"mode\": {\"description\": \"decompose = instruction is a goal, output is the questionnaire JSON (#432); compose = synthesize the final prompt + ir from goal/selections (#432); storyboard = instruction is a narrative brief, output is a template-v2 sequence JSON with shots/transitions/elements/continuity locks (#381). Absent = single-phase instruction→prompt\", \"enum\": [\"decompose\", \"compose\", \"storyboard\"], \"type\": \"string\"}, \"model\": {\"default\": \"deepseek-v4-flash-0731\", \"description\": \"Model. Currently only deepseek-v4-flash-0731; a value outside this set is rejected at submit time\", \"enum\": [\"deepseek-v4-flash-0731\"], \"type\": \"string\"}, \"selections\": {\"description\": \"compose mode: the user's picks + custom values keyed by dimension (subject/action/camera/mood/sound)\", \"type\": \"object\"}, \"system_prompt\": {\"description\": \"Optional — overrides the built-in prompt-engineering system prompt (advanced)\", \"type\": \"string\"}}, \"required\": [\"instruction\"], \"type\": \"object\", \"x-input-ports\": [{\"accepts\": [\"text\"], \"field\": \"instruction\"}]}, \"output_schema\": {\"completion_tokens\": \"integer\", \"dest_prompt\": \"string — the generation-ready prompt, flows into downstream nodes' prompt field\", \"ir\": \"string (JSON) — compose mode only: IR-lite axes the model applied (flat snake_case object)\", \"prompt_tokens\": \"integer\"}, \"config_defaults\": {\"pricing\": {\"input_price_usd\": 140, \"model\": \"per_token\", \"output_price_usd\": 280, \"qty_max\": 8192}}, \"enabled\": true, \"port_analysis\": {\"enum_fields\": [{\"field\": \"mode\", \"enum\": [\"decompose\", \"compose\", \"storyboard\"], \"on\": \"field\"}, {\"field\": \"model\", \"enum\": [\"deepseek-v4-flash-0731\"], \"on\": \"field\"}], \"required\": [\"instruction\"], \"notes\": []}}",
+        "tool_call_id": "call_00_rcctkmx75wy15xrr3skzk1km",
+        "name": "canvas_query_schema"
+      },
+      {
+        "seq": 10,
+        "ts": 1790602830.882304,
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "id": "call_00_iuqh628xb5ruw9erwcjy9enc",
+            "type": "function",
+            "function": {
+              "name": "canvas_create_node",
+              "arguments": "{\"workflow_id\": \"workflow-1790602746185338407\", \"node_type\": \"generate\", \"provider\": \"script\", \"config\": {\"instruction\": \"锁竞争测试\"}}"
+            }
+          }
+        ]
+      },
+      {
+        "seq": 11,
+        "ts": 1790602832.2069519,
+        "role": "note",
+        "note_kind": "lock",
+        "text": "画板正被占用: held by user-session/qa-probe-holder since 2026-09-28T13:40:07.889521786Z",
+        "origin": "system",
+        "tool": "canvas_create_node"
+      },
+      {
+        "seq": 12,
+        "ts": 1790602832.209858,
+        "role": "tool",
+        "content": "{\"error\": \"LockHeldError: 画板正被占用 (workflow workflow-1790602746185338407 is locked by holder kind='user-session' id='qa-probe-holder' acquired_at='2026-09-28T13:40:07.889521786Z')\"}",
+        "tool_call_id": "call_00_iuqh628xb5ruw9erwcjy9enc",
+        "name": "canvas_create_node"
+      },
+      {
+        "seq": 13,
+        "ts": 1790602840.823383,
+        "role": "assistant",
+        "content": "我按流程先读了技能与画板，然后在创建 script 节点时被平台挡住了 —— 写锁被占用，我没有重试。\n\n**发生了什么**\n\n- 目标板：`workflow-1790602746185338407`（`qa-a3-t1c-shared-1790602745`，共享板）\n- 操作：`canvas_create_node` → `generate:script`，config `{instruction: \"锁竞争测试\"}`\n- 结果（平台原样返回）：\n\n```\nLockHeldError: 画板正被占用 (workflow workflow-1790602746185338407 is locked by holder\nkind='user-session' id='qa-probe-holder' acquired_at='2026-09-28T13:40:07.889521786Z')\n```\n\n**解读**\n\n- 持锁方：`kind='user-session'`，`id='qa-probe-holder'`\n- 获锁时间：`2026-09-28T13:40:07.889521786Z`（UTC）= **2026-09-28 21:40:07 CST**，也就是刚刚。\n- 这是一个**活着的会话持有者**，我的写入不会抢占它。按写锁纪律，我停在这里，不做循环重试。\n- 顺带说明节点形态：这张板上目前没有 `process:script` 这个定义，可用的 script 节点是 `generate:script`（AI Script / Prompt Writer），所以我把节点按 `node_type=generate, provider=script` 创建，指令字段用 `instruction=\"锁竞争测试\"`。\n\n**当前状态**\n\n- 节点**没有**创建成功，画板仍是空的（我最后一次读取时 `nodes: []`，`edges: []`，`media_pool: []`）。\n- 读操作不受锁影响，所以我仍可以随时 `canvas_read_board` / `canvas_query_schema` 帮你继续规划。\n\n**建议**\n\n等 `qa-probe-holder` 这个会话释放锁后（或者你确认那边已经退出），跟我说一声，我就重新创建这个 script 节点。需要的话我也可以先把节点配置和后续接线方案写好，等锁一放开就直接落板。"
+      }
+    ],
+    "artifacts": [],
+    "trace": [
+      {
+        "ts": 1790602812.330123,
+        "kind": "llm_turn",
+        "turn": 0,
+        "model": "deepseek/deepseek-v4.1-flash",
+        "finish_reason": "tool_calls",
+        "tool_calls": [
+          "read_skill",
+          "canvas_read_board"
+        ],
+        "usage": {
+          "prompt_tokens": 3702,
+          "completion_tokens": 217,
+          "total_tokens": 3919,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "text_tokens": 0,
+            "image_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 130,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0,
+            "text_tokens": 0,
+            "image_tokens": 0,
+            "video_tokens": 0
+          }
+        }
+      },
+      {
+        "ts": 1790602812.334272,
+        "kind": "tool_call",
+        "tool": "read_skill",
+        "arguments": {
+          "skill_id": "skilyst/canvas-ops"
+        },
+        "result": {
+          "skill_id": "skilyst/canvas-ops",
+          "version": "1.0.0",
+          "degraded": false,
+          "digest": "sha256:f9cac603776ce8ab7384eda079182742ff4ceb12de18d91d1d165ab60daf518a",
+          "permission": {
+            "egress": [
+              "beehive-api.verse4.pet"
+            ],
+            "filesystem": "skill-dir",
+            "exec": "none",
+            "secrets": true
+          },
+          "plan": {},
+          "requires_nodes": [],
+          "instructions": "\n# Canvas operations (the conversation-driven board)\n\nThe board is the workflow; you are its writer. Every tool below lands a\nstructured change on the server-side blueprint and an action card in the\nconversation — the user watches the board move as you speak.\n\n## When to use\n\nThe user wants to build or edit a board by conversation: \"add a script node\nthat writes a 15-second ghost-catcher patrol script\", \"wire the reference\nimage to the first frame\", \"generate a reference image\", \"run it\".\n\n**Start every session with `canvas_list_workflows` + `canvas_read_board`.**\nIf the user did not name a board, list them, pick the most recently updated\none, and *say which one you picked* before editing.\n\n## The tools\n\n| tool | what it does | key params | reach for it when |\n| --- | --- | --- | --- |\n| `canvas_list_workflows` | boards this account can see | limit | picking the board to operate on |\n| `canvas_read_board` | full board state: nodes, edges (derived from `material_deps`/`depends_on`), media pool | workflow_id | before any edit; after a conflict |\n| `canvas_create_node` | add a node to the blueprint (auto-key `{type}-{provider}-{n}`, auto-position) | workflow_id, node_type, provider, config? | \"创建一个 script 节点\" |\n| `canvas_write_node_config` | deep-merge a config patch into one node | workflow_id, key, config | \"把时长改成 15 秒\" |\n| `canvas_connect_ports` | wire an edge; a material source wires as `material_deps {key, input_port}` + depends_on | workflow_id, from_key, to_key, input_port? | \"把参考图接到首帧\" |\n| `canvas_query_schema` | node definition + derived port analysis (enums, required, alternative input modes) | node_type+provider or node_id | **before every connect or submission** |\n| `canvas_read_node_output` | newest job output for one node (async poll) | workflow_id, key | after submitting a generation |\n| `canvas_submit_node_job` | submit ONE node as a job, quote-first | workflow_id, node_type, provider, config | running a single node |\n| `canvas_run_workflow` | submit the whole board as one job, quote-first | workflow_id | \"跑一下这个流程\" |\n| `canvas_generate_image` | submit a PAID gpt-image-2 image job | workflow_id, prompt, size? | \"生成一张参考图\" |\n| `canvas_list_media` | the board's media pool entries | workflow_id | checking what is available |\n| `canvas_add_media` | add an upload-origin pool entry by URL | workflow_id, url, name | bringing an external image onto the board |\n\nNode types you will meet: `process` (script/LLM nodes, e.g.\n`process:script`), `generate` (minimax-h3, gpt-image-2, ...), `material` (a\nmedia-pool reference — pure data input, never executed).\n\n## Lock discipline (写锁纪律)\n\nEvery blueprint write (`create_node` / `write_node_config` / `connect_ports`)\nis **already wrapped** by the runtime in the server-side lock protocol:\nlock → read → modify → PUT → unlock, with finally semantics (a failed PUT\nstill unlocks — a crash can never strand a lock; a dead holder's lock is\ntaken over by the next applicant server-side).\n\nIf a write raises `LockHeldError` (画板正被占用):\n\n1. **Stop.** Tell the user the board is busy and *who* holds it (the error\n   carries holder kind/id and since when).\n2. **Do not retry in a loop.** The holder is alive and working; your calls\n   do not preempt it.\n3. Reads (`canvas_read_board`, `canvas_query_schema`) still work — you can\n   keep planning, just not writing.\n\nYour own API calls refresh the lock heartbeat implicitly while you hold it —\nyou never need to think about expiry.\n\n## Port matching iron rule (端口匹配铁律)\n\n**Before `canvas_connect_ports`, ALWAYS `canvas_query_schema` the TARGET\nnode.** The schema is the judge of which ports may receive what:\n\n- **enum fields** — e.g. `image_roles` accepts exactly\n  `reference_image` / `first_frame` / `last_frame`;\n- **required fields** — what a submission will 400 without;\n- **alternative input modes** — arrays that cannot be mixed.\n\n**Canonical case — minimax-h3.** Its image inputs are *exclusive*:\n`first_frame` and `reference_image` cannot coexist in one submission. Wiring\na reference image to `first_frame` when `reference_image` entries already\nexist (or vice versa) is a 400 *at submit time* — expensive to discover\nlate. Query the schema, decide the port deliberately, then connect. Never\nguess a port from the field name alone.\n\n## Quote-first (先报价)\n\nPaid submissions (`canvas_submit_node_job`, `canvas_run_workflow`,\n`canvas_generate_image`) fetch an estimate *before* the submission exists.\nQuote amounts are integer micro-USD plus a USD display figure. When the\nestimate is material, state the USD figure to the user and get the go-ahead\n— the wallet is charged on submit (held at the quote's upper bound, settled\nat measured usage).\n\n## Failure self-correction (失败自修正)\n\n| failure | what to do |\n| --- | --- |\n| schema/validation 400 | read the **structured** error — the platform names the offending field and the allowed values. Fix that field, retry **once**. No blind retries, no fallback wrappers. |\n| 409 workflow-modified | the runtime already retried once; `canvas_read_board` again before your next write — the board moved under you. |\n| `LockHeldError` | report to the user, stop writing (see above). |\n| 402 / 413 quota | report the number, do not retry. |\n\n## Media pool flow (参考图上板)\n\nGeneration is async and the pool is where artifacts land:\n\n1. `canvas_generate_image` **submits only** — a paid gpt-image-2 job.\n2. Poll with `canvas_read_node_output` (or `beehive_get_job`) until\n   `completed`.\n3. On completion the server **auto-captures** the image into the board's\n   media pool (`origin.kind=generated`) — no add needed.\n\nFor an external image the user supplied by URL: `canvas_add_media`, then\nmake it wireable as a material node, then connect:\n\n```\ncanvas_add_media(workflow_id, url, name)          -> pool entry id\ncanvas_create_node(workflow_id, 'material', '',   -> material node\n                   config={pool_entry_id: <id>})\ncanvas_query_schema(node_type='generate', provider='minimax-h3')\ncanvas_connect_ports(workflow_id, from_key=<material key>,\n                     to_key=<consumer key>, input_port='first_frame')\n```\n\nMaterial nodes are identified by `config.pool_entry_id`; the runtime wires\nthem into the consumer's `material_deps` and `depends_on`, and the server\ncompiles that to `images[]` + `image_roles[]` (or `video_refs`/`audio_refs`)\nat submit time.\n\n## Board delta awareness\n\nEvery successful canvas call lands an action row in the conversation with a\n`board_delta` (added node, wired edge, pool entry, submitted job). The UI\nrenders these as cards the user can expand and click to locate on the board.\nKeep your result summaries human-readable — the card's one-liner is what the\nuser reads first.",
+          "files": [
+            "LICENSE",
+            "SKILL.md",
+            "manifest.json",
+            "references/i18n/glossary.en.json",
+            "references/i18n/glossary.zh-CN.json"
+          ],
+          "spec_warnings": []
+        },
+        "error": null,
+        "duration_s": 0.0
+      },
+      {
+        "ts": 1790602813.6819808,
+        "kind": "tool_call",
+        "tool": "canvas_read_board",
+        "arguments": {
+          "workflow_id": "workflow-1790602746185338407"
+        },
+        "result": {
+          "id": "workflow-1790602746185338407",
+          "name": "qa-a3-t1c-shared-1790602745",
+          "nodes": [],
+          "edges": [],
+          "media_pool": []
+        },
+        "error": null,
+        "duration_s": 1.35
+      },
+      {
+        "ts": 1790602818.3359392,
+        "kind": "llm_turn",
+        "turn": 1,
+        "model": "deepseek/deepseek-v4.1-flash",
+        "finish_reason": "tool_calls",
+        "tool_calls": [
+          "canvas_query_schema"
+        ],
+        "usage": {
+          "prompt_tokens": 5522,
+          "completion_tokens": 153,
+          "total_tokens": 5675,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 3584,
+            "cache_write_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "text_tokens": 0,
+            "image_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 96,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0,
+            "text_tokens": 0,
+            "image_tokens": 0,
+            "video_tokens": 0
+          }
+        }
+      },
+      {
+        "ts": 1790602820.163658,
+        "kind": "tool_call",
+        "tool": "canvas_query_schema",
+        "arguments": {
+          "node_type": "process",
+          "provider": "script"
+        },
+        "result": null,
+        "error": "ValueError: no node definition 'process:script' (available: generate:drawnow, generate:google-veo, generate:byteplus-seedance-2.0, process:mux, generate:drawnow-template, generate:gpt-image-2, process:imagemagick, analyze:gemini-flash, generate:suno-music, generate:suno-lyrics, process:stylize, generate:minimax-h3, generate:gemini-omni, generate:script, edit:wigowago, generate:nb2-image, generate:nb2-lite-image, generate:tts-deepgram, generate:stt-deepgram, generate:tts-minimax-hd, generate:tts-minimax-turbo)",
+        "duration_s": 1.83
+      },
+      {
+        "ts": 1790602824.167082,
+        "kind": "llm_turn",
+        "turn": 2,
+        "model": "deepseek/deepseek-v4.1-flash",
+        "finish_reason": "tool_calls",
+        "tool_calls": [
+          "canvas_query_schema"
+        ],
+        "usage": {
+          "prompt_tokens": 5760,
+          "completion_tokens": 89,
+          "total_tokens": 5849,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 5504,
+            "cache_write_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "text_tokens": 0,
+            "image_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 32,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0,
+            "text_tokens": 0,
+            "image_tokens": 0,
+            "video_tokens": 0
+          }
+        }
+      },
+      {
+        "ts": 1790602826.037929,
+        "kind": "tool_call",
+        "tool": "canvas_query_schema",
+        "arguments": {
+          "node_type": "generate",
+          "provider": "script"
+        },
+        "result": {
+          "node_id": "generate:script",
+          "name": "AI Script (Prompt Writer)",
+          "description": null,
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "properties": {
+              "context_urls": {
+                "description": "Optional reference media URLs appended to the instruction as context",
+                "items": {
+                  "format": "uri",
+                  "type": "string"
+                },
+                "maxItems": 8,
+                "type": "array"
+              },
+              "goal": {
+                "description": "compose mode: the original goal (defaults to instruction when empty)",
+                "type": "string"
+              },
+              "instruction": {
+                "description": "What you want the video/audio/image to be, in plain language — the script node rewrites it into a generation-ready prompt",
+                "minLength": 1,
+                "type": "string"
+              },
+              "material_refs": {
+                "description": "#504: material references — resolved at submit, woven into the instruction, passed through to downstream nodes via dest_refs",
+                "items": {
+                  "properties": {
+                    "entry_id": {
+                      "description": "Media-pool entry id (mp-...)",
+                      "type": "string"
+                    },
+                    "note": {
+                      "description": "Free-text usage note — woven into the prompt's referenced-materials section",
+                      "type": "string"
+                    },
+                    "role": {
+                      "enum": [
+                        "first_frame",
+                        "last_frame",
+                        "reference_image",
+                        "reference_video",
+                        "reference_audio"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "entry_id",
+                    "role"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "max_output_tokens": {
+                "default": 2048,
+                "description": "Upper bound on the generated prompt length; also the billing hold bound",
+                "maximum": 8192,
+                "minimum": 64,
+                "type": "integer"
+              },
+              "mode": {
+                "description": "decompose = instruction is a goal, output is the questionnaire JSON (#432); compose = synthesize the final prompt + ir from goal/selections (#432); storyboard = instruction is a narrative brief, output is a template-v2 sequence JSON with shots/transitions/elements/continuity locks (#381). Absent = single-phase instruction→prompt",
+                "enum": [
+                  "decompose",
+                  "compose",
+                  "storyboard"
+                ],
+                "type": "string"
+              },
+              "model": {
+                "default": "deepseek-v4-flash-0731",
+                "description": "Model. Currently only deepseek-v4-flash-0731; a value outside this set is rejected at submit time",
+                "enum": [
+                  "deepseek-v4-flash-0731"
+                ],
+                "type": "string"
+              },
+              "selections": {
+                "description": "compose mode: the user's picks + custom values keyed by dimension (subject/action/camera/mood/sound)",
+                "type": "object"
+              },
+              "system_prompt": {
+                "description": "Optional — overrides the built-in prompt-engineering system prompt (advanced)",
+                "type": "string"
+              }
+            },
+            "required": [
+              "instruction"
+            ],
+            "type": "object",
+            "x-input-ports": [
+              {
+                "accepts": [
+                  "text"
+                ],
+                "field": "instruction"
+              }
+            ]
+          },
+          "output_schema": {
+            "completion_tokens": "integer",
+            "dest_prompt": "string — the generation-ready prompt, flows into downstream nodes' prompt field",
+            "ir": "string (JSON) — compose mode only: IR-lite axes the model applied (flat snake_case object)",
+            "prompt_tokens": "integer"
+          },
+          "config_defaults": {
+            "pricing": {
+              "input_price_usd": 140,
+              "model": "per_token",
+              "output_price_usd": 280,
+              "qty_max": 8192
+            }
+          },
+          "enabled": true,
+          "port_analysis": {
+            "enum_fields": [
+              {
+                "field": "mode",
+                "enum": [
+                  "decompose",
+                  "compose",
+                  "storyboard"
+                ],
+                "on": "field"
+              },
+              {
+                "field": "model",
+                "enum": [
+                  "deepseek-v4-flash-0731"
+                ],
+                "on": "field"
+              }
+            ],
+            "required": [
+              "instruction"
+            ],
+            "notes": []
+          }
+        },
+        "error": null,
+        "duration_s": 1.87
+      },
+      {
+        "ts": 1790602830.8842502,
+        "kind": "llm_turn",
+        "turn": 3,
+        "model": "deepseek/deepseek-v4.1-flash",
+        "finish_reason": "tool_calls",
+        "tool_calls": [
+          "canvas_create_node"
+        ],
+        "usage": {
+          "prompt_tokens": 6670,
+          "completion_tokens": 150,
+          "total_tokens": 6820,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 5760,
+            "cache_write_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "text_tokens": 0,
+            "image_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 44,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0,
+            "text_tokens": 0,
+            "image_tokens": 0,
+            "video_tokens": 0
+          }
+        }
+      },
+      {
+        "ts": 1790602832.209582,
+        "kind": "tool_call",
+        "tool": "canvas_create_node",
+        "arguments": {
+          "workflow_id": "workflow-1790602746185338407",
+          "node_type": "generate",
+          "provider": "script",
+          "config": {
+            "instruction": "锁竞争测试"
+          }
+        },
+        "result": null,
+        "error": "LockHeldError: 画板正被占用 (workflow workflow-1790602746185338407 is locked by holder kind='user-session' id='qa-probe-holder' acquired_at='2026-09-28T13:40:07.889521786Z')",
+        "duration_s": 1.32
+      },
+      {
+        "ts": 1790602840.824567,
+        "kind": "llm_turn",
+        "turn": 4,
+        "model": "deepseek/deepseek-v4.1-flash",
+        "finish_reason": "stop",
+        "tool_calls": [],
+        "usage": {
+          "prompt_tokens": 6855,
+          "completion_tokens": 622,
+          "total_tokens": 7477,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 6656,
+            "cache_write_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "text_tokens": 0,
+            "image_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 148,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0,
+            "text_tokens": 0,
+            "image_tokens": 0,
+            "video_tokens": 0
+          }
+        }
+      }
+    ],
+    "path": "/Users/wesley/.skilyst/sessions/20260928-214008-a800c0"
+  }
+}
