@@ -1,0 +1,20 @@
+{
+  "session_id": "20260928-192230-8ad43d",
+  "quote": {
+    "total_estimate_usd": null,
+    "total_hold": 960000,
+    "total_estimate_usd_display": null,
+    "total_hold_display": 0.96,
+    "nodes": [
+      {
+        "node_type": "generate",
+        "provider": "gpt-image-2",
+        "priced": true,
+        "model": "per_piece",
+        "unit_price_usd": 960000,
+        "qty_estimate": 1,
+        "amount_hold": 960000
+      }
+    ]
+  }
+}

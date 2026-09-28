@@ -1,6 +1,24 @@
-[board] created a3-s4-e2e-1790593889 -> workflow-1790593890805842685
+[board] created a3-s4-e2e-1790594464 -> workflow-1790594465481260345
 [evidence] 00-board-created.json
-[turn 1] create script + storyboard
+[turn 1] script node
 [evidence] 01-turn1-sse.json
-[turn 1] session= ok=None
+[turn 1] session= ok=True
+[turn 1b] storyboard: image node + wiring
+[evidence] 01b-turn1b-sse.json
+[turn 1b] ok=True
 [turn 2] paid reference image (confirm gate)
+[confirm_request] hold=0.96 USD
+[evidence] quote-1790594593.json
+[confirm] approved: {'ok': True, 'data': {'session_id': '20260928-192230-8ad43d', 'resolved': True, 'approved': True}}
+[evidence] 02-turn2-image-sse.json
+[turn 2] ok=True
+[turn 3] minimax wiring + paid 15s video (confirm gate)
+[confirm_request] hold=1.035 USD
+[evidence] quote-1790594823.json
+[confirm] approved: {'ok': True, 'data': {'session_id': '20260928-192357-17c09b', 'resolved': True, 'approved': True}}
+[confirm_request] hold=0.002293 USD
+[evidence] quote-1790594866.json
+[confirm] approved: {'ok': True, 'data': {'session_id': '20260928-192357-17c09b', 'resolved': True, 'approved': True}}
+[evidence] 03-turn3-video-sse.json
+[turn 3] ok=True
+[poll] waiting for the video to land in the media pool…

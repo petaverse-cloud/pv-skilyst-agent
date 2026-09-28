@@ -43,9 +43,23 @@ one, and *say which one you picked* before editing.
 | `canvas_rename_media` | rename one pool entry (locked, wholesale pool replace) | workflow_id, entry_id, name | "把参考图改名为钟馗立绘" |
 | `canvas_delete_media` | remove one pool entry (409 if referenced) | workflow_id, entry_id | "删掉池里第 2 张" (check referenced_by first) |
 
-Node types you will meet: `process` (script/LLM nodes, e.g.
-`process:script`), `generate` (minimax-h3, gpt-image-2, ...), `material` (a
-media-pool reference — pure data input, never executed).
+Node types you will meet: `generate` is the workhorse — script/LLM text
+generation is `generate:script` (NOT `process:script`), media generation is
+`generate:minimax-h3` / `generate:gpt-image-2` / ...; `material` is a
+media-pool reference (pure data input, never executed). `process` exists for
+edit/postprocess providers.
+
+## Single-node submission carries its own prompt (单节点提交自带提示词)
+
+`canvas_submit_node_job` submits ONE node in node execution mode — the
+platform does NOT merge upstream text into it. A generate node whose provider
+needs a prompt (minimax-h3, gpt-image-2, ...) MUST carry the prompt itself:
+write it into the node's config (`prompt` for video/image providers,
+`instruction` for script) via `canvas_write_node_config` BEFORE submitting.
+Wiring a script node upstream (`depends_on`) documents the flow but does
+not inject its output — read the upstream script output with
+`canvas_read_node_output` and put the distilled text into the consumer's
+prompt config yourself.
 
 ## Lock discipline (写锁纪律)
 
