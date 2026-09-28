@@ -1,0 +1,3 @@
+[confirm_request] hold=1.035 USD
+[evidence] quote-resume-1790595768.json
+[confirm] approved: {'ok': True, 'data': {'session_id': '20260928-192357-17c09b', 'resolved': True, 'approved': True}}
