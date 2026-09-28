@@ -1,0 +1,163 @@
+[
+ {
+  "session": "20260928-171559-50aade",
+  "role": "action",
+  "tool": "canvas_write_node_config",
+  "board_delta": {
+   "updated_config": "script-1",
+   "workflow_id": "workflow-1790586733426603373"
+  },
+  "note_kind": null,
+  "text": "",
+  "duration_s": 4.52,
+  "cost": null
+ },
+ {
+  "session": "20260928-171559-50aade",
+  "role": "action",
+  "tool": "canvas_query_schema",
+  "board_delta": null,
+  "note_kind": null,
+  "text": "",
+  "duration_s": 1.73,
+  "cost": null
+ },
+ {
+  "session": "20260928-171559-50aade",
+  "role": "action",
+  "tool": "canvas_generate_image",
+  "board_delta": {
+   "submitted_job": null,
+   "workflow_id": "workflow-1790586733426603373"
+  },
+  "note_kind": null,
+  "text": "",
+  "duration_s": 2.44,
+  "cost": {
+   "hold_micro_usd": 960000
+  }
+ },
+ {
+  "session": "20260928-171559-50aade",
+  "role": "action",
+  "tool": "canvas_read_node_output",
+  "board_delta": null,
+  "note_kind": null,
+  "text": "",
+  "duration_s": 1.82,
+  "cost": null
+ },
+ {
+  "session": "20260928-171559-50aade",
+  "role": "action",
+  "tool": "canvas_read_board",
+  "board_delta": null,
+  "note_kind": null,
+  "text": "",
+  "duration_s": 1.08,
+  "cost": null
+ },
+ {
+  "session": "20260928-171559-50aade",
+  "role": "action",
+  "tool": "canvas_read_node_output",
+  "board_delta": null,
+  "note_kind": null,
+  "text": "",
+  "duration_s": 1.57,
+  "cost": null
+ },
+ {
+  "session": "20260928-171559-50aade",
+  "role": "action",
+  "tool": "canvas_list_media",
+  "board_delta": null,
+  "note_kind": null,
+  "text": "",
+  "duration_s": 1.79,
+  "cost": null
+ },
+ {
+  "session": "20260928-171559-50aade",
+  "role": "action",
+  "tool": "canvas_read_node_output",
+  "board_delta": null,
+  "note_kind": null,
+  "text": "",
+  "duration_s": 1.57,
+  "cost": null
+ },
+ {
+  "session": "20260928-172149-be3a4e",
+  "role": "action",
+  "tool": "canvas_query_schema",
+  "board_delta": null,
+  "note_kind": null,
+  "text": "",
+  "duration_s": 1.37,
+  "cost": null
+ },
+ {
+  "session": "20260928-172149-be3a4e",
+  "role": "action",
+  "tool": "canvas_list_media",
+  "board_delta": null,
+  "note_kind": null,
+  "text": "",
+  "duration_s": 1.11,
+  "cost": null
+ },
+ {
+  "session": "20260928-172149-be3a4e",
+  "role": "action",
+  "tool": "canvas_read_board",
+  "board_delta": null,
+  "note_kind": null,
+  "text": "",
+  "duration_s": 1.82,
+  "cost": null
+ },
+ {
+  "session": "20260928-172149-be3a4e",
+  "role": "action",
+  "tool": "canvas_create_node",
+  "board_delta": {
+   "added_node": "minimax-1",
+   "workflow_id": "workflow-1790586733426603373"
+  },
+  "note_kind": null,
+  "text": "",
+  "duration_s": 5.24,
+  "cost": null
+ },
+ {
+  "session": "20260928-172149-be3a4e",
+  "role": "action",
+  "tool": "canvas_create_node",
+  "board_delta": {
+   "added_node": "ref-img-1",
+   "workflow_id": "workflow-1790586733426603373"
+  },
+  "note_kind": null,
+  "text": "",
+  "duration_s": 4.49,
+  "cost": null
+ },
+ {
+  "session": "20260928-172149-be3a4e",
+  "role": "action",
+  "tool": "canvas_connect_ports",
+  "board_delta": {
+   "wired": [
+    "ref-img-1",
+    "minimax-1",
+    "first_frame"
+   ],
+   "workflow_id": "workflow-1790586733426603373"
+  },
+  "note_kind": null,
+  "text": "",
+  "duration_s": 5.71,
+  "cost": null
+ }
+]

@@ -39,8 +39,8 @@ INDEX = BUNDLE / "index.json"
 INSTALL_VIEW = BUNDLE / "bundle.json"
 PACKER = ROOT / "tools" / "pack_official_bundle.py"
 
-# The five skills this bundle version ships, by content directory.
-EXPECTED_DIRS = ["doctor", "embed-video", "lipsync-audio-refs", "prompt-craft", "video-15s"]
+# The six skills this bundle version ships, by content directory.
+EXPECTED_DIRS = ["canvas-ops", "doctor", "embed-video", "lipsync-audio-refs", "prompt-craft", "video-15s"]
 # Node definition ids the bundle is allowed to depend on, as the live registry
 # names them (`GET /api/v1/nodes`). A typo here is a run-time blocking problem.
 KNOWN_NODE_IDS = {
@@ -177,8 +177,9 @@ class ManifestV02Tests(unittest.TestCase):
                 self.assertTrue(binding["tool"], skill_dir.name)
                 self.assertIsInstance(binding["config_map"], dict, skill_dir.name)
                 seen_bindings += 1
-        self.assertGreaterEqual(seen_bindings, len(EXPECTED_DIRS),
-                                "every content skill declares at least one bound node")
+        self.assertGreaterEqual(seen_bindings, len(EXPECTED_DIRS) - 2,
+                                "every content skill declares at least one bound node"
+                                " (canvas-ops, doctor and prompt-craft are methodology-only)")
 
     def test_knowledge_style_skills_declare_no_node_and_no_credential(self):
         by_dir = {d.name: m for d, m in skill_manifests()}

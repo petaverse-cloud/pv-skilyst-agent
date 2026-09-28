@@ -26,7 +26,7 @@ from skills.store import PreflightReport, preflight_nodes
 
 from .loop import AgentLoop, LoopConfig, LoopResult
 from .prompt import PromptContext
-from .tools import build_registry
+from .tools import CANVAS_SKILL_ID, build_registry
 
 
 def skill_store(cfg: RuntimeConfig, verify: bool = True) -> SkillStore:
@@ -93,9 +93,15 @@ def open_run(cfg: RuntimeConfig, *, skill_id: str | None = None, session_id: str
     gate = PermissionGate(active.dir, active.permission, workspace=cfg.workspace_dir) if active else None
     client = None
     preflight: PreflightReport | None = None
-    if active is not None and active.requires_nodes:
+    # A skill gets a platform client when it needs one of two ways: it declares
+    # node requirements (preflight gates them against the live registry), or it
+    # is the canvas skill — methodology-only, no node requirements, but its
+    # board tools need the credential (gated on permission.secrets in the
+    # registry). Without this branch canvas-ops would register zero tools.
+    if active is not None and (active.requires_nodes or active.skill_id == CANVAS_SKILL_ID):
         client = gated_client(cfg)
-        preflight = preflight_nodes(active, client, allow_fallback=allow_fallback)
+        if active.requires_nodes:
+            preflight = preflight_nodes(active, client, allow_fallback=allow_fallback)
 
     cfg.workspace_dir.mkdir(parents=True, exist_ok=True)
     sessions = SessionStore(cfg.session_dir)
@@ -103,9 +109,25 @@ def open_run(cfg: RuntimeConfig, *, skill_id: str | None = None, session_id: str
                else sessions.create(title=title, model=cfg.llm.model,
                                     workspace=str(cfg.workspace_dir),
                                     skills=[active.skill_id] if active else []))
+
+    # R3 action stream: canvas tools report board mutations here, and the rows
+    # land on the session transcript (role='action', kept out of history()).
+    # A lock-held refusal arrives with note_kind/note_text instead: it becomes
+    # the human-facing note row (the model already sees the re-raised error
+    # through the loop's tool-error path, and the trace records the failed
+    # call, so no action row is written for a refused write).
+    def record_action(action: dict) -> None:
+        note_kind = action.pop("note_kind", None)
+        if note_kind:
+            session.append_note(action.pop("note_text", ""), origin="system",
+                                note_kind=note_kind, tool=action.get("tool"))
+            return
+        session.append_action(action)
+
     registry = build_registry(store, client, active, gate, cfg.workspace_dir, dry_run=dry_run,
                               on_event=note, max_jobs=max_jobs,
-                              node_schemas=preflight.node_schemas if preflight else None)
+                              node_schemas=preflight.node_schemas if preflight else None,
+                              session_id=session.session_id, on_action=record_action)
     prompt_ctx = PromptContext(skills=skills, active_skill=active, workspace=str(cfg.workspace_dir),
                                model=cfg.llm.model, platform=cfg.beehive.base_url)
     loop = AgentLoop(ModelRouter(cfg.llm, client_factory=client_factory), registry, session, prompt_ctx,

@@ -5,6 +5,11 @@
   "index": "index.json",
   "skills": [
     {
+      "path": "canvas-ops",
+      "version": "1.0.0",
+      "content_digest": "sha256:f9cac603776ce8ab7384eda079182742ff4ceb12de18d91d1d165ab60daf518a"
+    },
+    {
       "path": "doctor",
       "version": "1.0.0",
       "content_digest": "sha256:3646cb63f93c1386433501981217ccc7fcd1352a488f162efd023cb99d30b5a1"

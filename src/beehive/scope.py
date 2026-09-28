@@ -4,7 +4,8 @@ Token model (what the runtime enforces):
   * the runtime's long-lived credential is the account's AK/SK pair (revocable,
     never the password);
   * every *skill* run gets a short-lived token carrying an explicit scope set
-    (default: jobs:write, jobs:read, assets:read -- never billing/admin);
+    (default: jobs + assets + workflows for the canvas tools -- never
+    billing/admin);
   * the scope gate refuses out-of-scope requests CLIENT-SIDE, before any HTTP
     call, so an agent that goes off the rails cannot even attempt a charge.
   * server-side RBAC is the second layer: a non-admin caller hitting an
@@ -21,12 +22,18 @@ import hmac
 import time
 from dataclasses import dataclass, field
 
-DEFAULT_SCOPE = ("jobs:write", "jobs:read", "assets:read")
+DEFAULT_SCOPE = ("jobs:write", "jobs:read", "assets:read", "workflows:read", "workflows:write")
 
 # Scopes that must never be handed to skill-facing code, whatever the caller asks.
 FORBIDDEN_SCOPES = ("billing:write", "billing:read", "admin:read", "admin:write")
 
 # (method, path-prefix) -> scope required. Anything not listed is refused.
+#
+# The workflow rules cover the A3 canvas tools (src/canvas.py): GET covers
+# /api/v1/workflows and /api/v1/workflows/{id}; the POST/PUT/DELETE prefixes
+# also cover the sub-routes the canvas uses ({id}/lock, {id}/unlock,
+# {id}/media-pool) via startswith matching, which mirrors the server's own
+# routeScopes (lock/unlock declare workflows:write there too).
 SCOPE_RULES = [
     ("POST", "/api/v1/jobs", "jobs:write"),
     ("GET", "/api/v1/jobs", "jobs:read"),
@@ -36,6 +43,10 @@ SCOPE_RULES = [
     ("GET", "/api/v1/assets", "assets:read"),
     ("GET", "/api/v1/nodes", "jobs:read"),
     ("POST", "/api/v1/billing/quote", "jobs:write"),
+    ("GET", "/api/v1/workflows", "workflows:read"),
+    ("POST", "/api/v1/workflows", "workflows:write"),
+    ("PUT", "/api/v1/workflows", "workflows:write"),
+    ("DELETE", "/api/v1/workflows", "workflows:write"),
 ]
 DENIED_PREFIXES = ("/api/v1/admin/", "/api/v1/billing/wallet", "/api/v1/billing/nodes",
                    "/api/v1/billing/history", "/api/v1/auth/api-keys")

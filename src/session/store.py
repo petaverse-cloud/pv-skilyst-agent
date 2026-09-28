@@ -75,9 +75,18 @@ class Session:
         return _read_jsonl(self.path / TRACE)
 
     def history(self) -> list[dict]:
-        """Transcript in the shape the chat API expects (internal keys stripped)."""
+        """Transcript in the shape the chat API expects (internal keys stripped).
+
+        Only chat roles pass through: the R3 action/note rows (board activity,
+        lock-held notes, ...) are transcript rows for the human, not messages
+        a chat API understands -- sending one as {role:'action'} would break
+        the request shape on the provider side.
+        """
+        chat_roles = ("user", "assistant", "tool", "system")
         out = []
         for row in self.messages:
+            if row.get("role") not in chat_roles:
+                continue
             msg = {k: v for k, v in row.items()
                    if k in ("role", "content", "tool_calls", "tool_call_id", "name")}
             if msg.get("role") == "tool":
@@ -98,6 +107,39 @@ class Session:
         row = {"ts": time.time(), "kind": kind}
         row.update(fields)
         _append_jsonl(self.path / TRACE, row)
+        return row
+
+    # -- R3 action/note stream ------------------------------------------------
+    # Board activity and human-facing notes share the messages transcript (the
+    # session IS the record of what happened), but they are not chat messages:
+    # `history()` keeps them out of what the model receives, `messages` /
+    # GET /session/<id> expose them to the desktop shell.
+
+    def append_action(self, action: dict) -> dict:
+        """Record one agent action on the session's action stream.
+
+        `action` carries at least {type, tool, params, result_ref, board_delta,
+        origin}; `duration_s` / `cost` ride along when the tool layer measured
+        them. Kept verbatim: the desktop's board replay reads these rows.
+        """
+        row = {"seq": self.meta.get("message_count", 0), "ts": time.time(), "role": "action"}
+        row.update({k: v for k, v in action.items() if v is not None})
+        _append_jsonl(self.path / MESSAGES, row)
+        self.meta["message_count"] = row["seq"] + 1
+        self.touch()
+        return row
+
+    def append_note(self, text: str, origin: str = "system", **extra) -> dict:
+        """A human-facing note on the transcript (lock held, manual step, error).
+
+        `note_kind` distinguishes 'lock' | 'manual' | 'error' | 'info'.
+        """
+        row = {"seq": self.meta.get("message_count", 0), "ts": time.time(), "role": "note",
+               "note_kind": extra.pop("note_kind", "info"), "text": text, "origin": origin}
+        row.update({k: v for k, v in extra.items() if v is not None})
+        _append_jsonl(self.path / MESSAGES, row)
+        self.meta["message_count"] = row["seq"] + 1
+        self.touch()
         return row
 
     def record_artifact(self, artifact: dict) -> None:

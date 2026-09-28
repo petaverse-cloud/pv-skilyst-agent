@@ -51,6 +51,8 @@ export default function App() {
   const [dryRun, setDryRun] = useState(true);
   const [authStatus, setAuthStatus] = useState<AuthStatus | null>(null);
   const [model, setModel] = useState(() => window.localStorage.getItem(MODEL_KEY) ?? "");
+  // A3 S3: the workflow/node an action card asked to locate on the canvas.
+  const [canvasFocus, setCanvasFocus] = useState<{ workflow_id: string; node_key?: string } | null>(null);
 
   const refreshSessions = useCallback(async () => {
     const payload = await api<{ sessions: SessionRow[] }>("/sessions");
@@ -82,6 +84,14 @@ export default function App() {
   useEffect(() => {
     void connect();
   }, [connect]);
+
+  // Deep link: ?session=<id> opens that session once the runtime is connected
+  // (openSession needs the runtime's base URL; firing on mount races connect()).
+  useEffect(() => {
+    const target = new URLSearchParams(window.location.search).get("session");
+    if (target && info) void openSession(target);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [info]);
 
   const handleLogout = useCallback(async () => {
     try {
@@ -275,7 +285,7 @@ export default function App() {
           </Alert>
         ) : null}
         {view === "canvas" ? (
-          <CanvasView onExit={() => setView("chat")} />
+          <CanvasView onExit={() => setView("chat")} focus={canvasFocus} />
         ) : view === "settings" ? (
           <Box style={{ flex: 1, overflow: "auto" }}>
             <SettingsPage info={info} model={model} onModelChange={chooseModel} />
@@ -289,7 +299,26 @@ export default function App() {
           </Stack>
         ) : (
           <>
-            <ConversationView detail={detail} stream={stream} notes={notes} busy={sending} />
+            <ConversationView
+              detail={detail}
+              stream={stream}
+              notes={notes}
+              busy={sending}
+              onLocateBoard={(message) => {
+                // Clicking an action card jumps to the canvas and opens the
+                // board the action touched. The workflow id is in the action's
+                // params (canvas tools carry workflow_id); node highlight lands
+                // with the package's focus API (none yet — see CanvasView).
+                const params = (message.params ?? {}) as Record<string, unknown>;
+                const delta = (message.board_delta ?? {}) as Record<string, unknown>;
+                const workflowId = typeof params.workflow_id === "string" ? params.workflow_id : undefined;
+                const nodeKey = typeof delta.added_node === "string" ? delta.added_node : undefined;
+                if (workflowId) {
+                  setCanvasFocus({ workflow_id: workflowId, node_key: nodeKey });
+                  setView("canvas");
+                }
+              }}
+            />
             <Composer
               onSend={(text) => void send(text)}
               busy={sending || !info}

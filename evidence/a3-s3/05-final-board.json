@@ -1,0 +1,49 @@
+{
+  "workflow_id": "workflow-1790586733426603373",
+  "name": "a3-s3-e2e-d1fe3a",
+  "nodes": [
+    {
+      "key": "script-1",
+      "type": "generate",
+      "provider": "script",
+      "depends_on": null,
+      "material_deps": null,
+      "config_keys": [
+        "instruction",
+        "max_output_tokens"
+      ]
+    },
+    {
+      "key": "minimax-1",
+      "type": "generate",
+      "provider": "minimax-h3",
+      "depends_on": [
+        "ref-img-1"
+      ],
+      "material_deps": [
+        {
+          "input_port": "first_frame",
+          "key": "ref-img-1"
+        }
+      ],
+      "config_keys": [
+        "duration",
+        "material_deps",
+        "prompt",
+        "ratio",
+        "resolution"
+      ]
+    },
+    {
+      "key": "ref-img-1",
+      "type": "material",
+      "provider": "image",
+      "depends_on": null,
+      "material_deps": null,
+      "config_keys": [
+        "pool_entry_id"
+      ]
+    }
+  ],
+  "media_pool_count": 1
+}
