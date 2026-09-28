@@ -12,10 +12,11 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { IconArrowDown } from "@tabler/icons-react";
+import { IconArrowDown, IconInfoCircle, IconLock, IconUserEdit, IconExclamationCircle } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import type { SessionDetail, TranscriptMessage } from "../api";
 import { describeActivity, formatElapsed, type StreamState } from "../stream";
+import ActionCard from "./ActionCard";
 import Markdown from "./Markdown";
 
 function roleLabel(role: string): string {
@@ -69,6 +70,28 @@ function Bubble({ message }: { message: TranscriptMessage }) {
   );
 }
 
+/** The slim system line for `note` rows: lock hints, manual changes, errors. */
+function NoteLine({ message }: { message: TranscriptMessage }) {
+  const kind = message.note_kind ?? "info";
+  const color = kind === "lock" ? "orange" : kind === "error" ? "red" : kind === "manual" ? "blue" : "gray";
+  const icon =
+    kind === "lock" ? <IconLock size={13} /> :
+    kind === "error" ? <IconExclamationCircle size={13} /> :
+    kind === "manual" ? <IconUserEdit size={13} /> :
+    <IconInfoCircle size={13} />;
+  return (
+    <Group gap="xs" px="sm" data-testid="note-message" align="flex-start">
+      <span style={{ color: "var(--mantine-color-dimmed)", display: "flex" }}>{icon}</span>
+      <Badge size="xs" variant="light" color={color}>
+        {kind}
+      </Badge>
+      <Text size="xs" c="dimmed" style={{ whiteSpace: "pre-wrap", flex: 1 }}>
+        {message.text ?? message.content}
+      </Text>
+    </Group>
+  );
+}
+
 /** Seconds since the run started, for the status line. Resets when the run ends. */
 function useBusySeconds(busy: boolean): number {
   const [seconds, setSeconds] = useState(0);
@@ -90,11 +113,13 @@ export default function ConversationView({
   stream,
   notes,
   busy,
+  onLocateBoard,
 }: {
   detail: SessionDetail | null;
   stream: StreamState;
   notes: string[];
   busy: boolean;
+  onLocateBoard?: (message: TranscriptMessage) => void;
 }) {
   const messages = detail?.messages ?? [];
   const artifacts = detail?.artifacts ?? [];
@@ -156,13 +181,18 @@ export default function ConversationView({
               No session open. Ask something to start one.
             </Text>
           ) : null}
-          {messages.map((message, index) => (
+          {messages.map((message, index) =>
             // An assistant turn that only called tools carries no text; the tool cards
-            // below it are its content.
-            message.role === "assistant" && !message.content?.trim() ? null : (
+            // below it are its content. A3 S3: `action` rows render as expandable
+            // cards (click = locate on canvas), `note` rows as slim system lines.
+            message.role === "action" ? (
+              <ActionCard key={`${message.seq ?? index}-action`} message={message} onLocate={onLocateBoard} />
+            ) : message.role === "note" ? (
+              <NoteLine key={`${message.seq ?? index}-note`} message={message} />
+            ) : message.role === "assistant" && !message.content?.trim() ? null : (
               <Bubble key={`${message.seq ?? index}-${message.role}`} message={message} />
-            )
-          ))}
+            ),
+          )}
           {stream.blocks.map((block, index) => (
             <Bubble key={`stream-${index}`} message={{ role: "assistant", content: block }} />
           ))}

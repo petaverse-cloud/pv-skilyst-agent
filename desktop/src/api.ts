@@ -38,6 +38,19 @@ export type TranscriptMessage = {
   content: string;
   name?: string;
   tool_calls?: unknown[];
+  // A3 S3 (R3 message model): `action` rows (canvas tool executions) and
+  // `note` rows (lock hints / manual changes / errors). Roles stay in one
+  // transcript; the chat API never receives these rows.
+  type?: string;
+  tool?: string;
+  params?: Record<string, unknown>;
+  result_ref?: Record<string, unknown> | null;
+  board_delta?: Record<string, unknown> | null;
+  origin?: string;
+  duration_s?: number;
+  cost?: { estimate_usd?: number; hold_micro_usd?: number };
+  note_kind?: string;
+  text?: string;
 };
 
 export type SessionDetail = {

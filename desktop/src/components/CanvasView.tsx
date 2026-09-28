@@ -17,7 +17,10 @@ import { BEEHIVE_TOKEN_KEY, desktopHostAdapter } from "../hostAdapter";
 
 type Stage = "login" | "list" | "canvas";
 
-export function CanvasView({ onExit }: { onExit: () => void }) {
+/** A3 S3: where an action card asked to locate — open this board on arrival. */
+export type CanvasFocus = { workflow_id: string; node_key?: string } | null;
+
+export function CanvasView({ onExit, focus }: { onExit: () => void; focus?: CanvasFocus }) {
   const host = useMemo(() => desktopHostAdapter(), []);
   // MaterialPanel (package) rides react-query; readOnly mode never mounts it
   // but the provider stays up so the whole package surface is usable.
@@ -58,6 +61,18 @@ export function CanvasView({ onExit }: { onExit: () => void }) {
   useEffect(() => {
     if (stage === "list") void loadWorkflows();
   }, [stage, loadWorkflows]);
+
+  // A3 S3 action-card locate: when a focus arrives with the workflow list,
+  // auto-select that board (straight to the canvas stage, skipping the manual
+  // pick). Node-level highlight needs a focus API on the studio package's
+  // WorkflowCanvas, which it does not expose yet — the board opens, the node
+  // badge in the header names the target.
+  useEffect(() => {
+    if (focus && stage === "list" && workflows?.some((wf) => wf.id === focus.workflow_id)) {
+      setActiveId(focus.workflow_id);
+      setStage("canvas");
+    }
+  }, [focus, stage, workflows]);
 
   const login = useCallback(async () => {
     setLoginError(null);
@@ -177,6 +192,11 @@ export function CanvasView({ onExit }: { onExit: () => void }) {
         <Group gap="sm">
           <Button size="xs" variant="subtle" onClick={() => setStage("list")}>← Workflow 列表</Button>
           <Badge size="sm" variant="light" color="teal">只读渲染 · skilyst-studio 包</Badge>
+          {focus?.node_key ? (
+            <Badge size="sm" variant="light" color="blue" data-testid="canvas-focus-node">
+              定位节点: {focus.node_key}
+            </Badge>
+          ) : null}
         </Group>
         <Button size="xs" variant="subtle" onClick={onExit}>返回会话</Button>
       </Group>
