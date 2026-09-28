@@ -1,0 +1,91 @@
+{
+  "skill_id": "skilyst/canvas-ops",
+  "version": "1.0.0",
+  "display_name": "画板操作（节点 / 连线 / 媒体池 / 任务）",
+  "description": "Drive the A3 canvas workbench through conversation — create nodes, write configs, wire ports, generate media, run jobs. Use when the user wants to build or edit a workflow board by talking to it. Covers lock discipline, the port-matching iron rule, quote-first submissions, and failure self-correction.",
+  "kind": "official-bundle",
+  "content_digest": "sha256:f9cac603776ce8ab7384eda079182742ff4ceb12de18d91d1d165ab60daf518a",
+  "upstream": null,
+  "fork_depth": 0,
+  "supply_chain": {
+    "source": {
+      "origin": "skilyst-registry",
+      "repo": "petaverse-cloud/pv-skilyst-agent",
+      "commit": "local-poc"
+    },
+    "static_scan": {
+      "status": "passed",
+      "scanner": "skilyst-scanner@0.1",
+      "scanned_at": "2026-09-28T00:00:00+08:00"
+    },
+    "signatures": [
+      {
+        "key_id": "skilyst-platform",
+        "algo": "ed25519",
+        "sig": "platform-signature-pending",
+        "digest": "sha256:f9cac603776ce8ab7384eda079182742ff4ceb12de18d91d1d165ab60daf518a"
+      }
+    ]
+  },
+  "permission": {
+    "egress": [
+      "beehive-api.verse4.pet"
+    ],
+    "filesystem": "skill-dir",
+    "exec": "none",
+    "secrets": true
+  },
+  "requires": {
+    "nodes": []
+  },
+  "i18n": {
+    "default_locale": "zh-CN",
+    "locales": [
+      "zh-CN",
+      "en"
+    ],
+    "glossary": {
+      "zh-CN": "references/i18n/glossary.zh-CN.json",
+      "en": "references/i18n/glossary.en.json"
+    }
+  },
+  "author": {
+    "name": "platform",
+    "handle": "@platform",
+    "verified": true
+  },
+  "attribution": {
+    "contributors": []
+  },
+  "license": {
+    "spdx": "MIT",
+    "file": "LICENSE"
+  },
+  "copyright": "Copyright (c) 2026 Petaverse",
+  "compatibility": {
+    "agent_runtime": {
+      "min": "0.1.0",
+      "tested": [
+        "0.1.0"
+      ]
+    }
+  },
+  "update": {
+    "channel": "official",
+    "policy": "auto",
+    "hot_reload": {
+      "allowed": true,
+      "exclusions": [
+        "node-schema"
+      ]
+    }
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-28",
+      "changes": "first official canvas skill (A3 S3): the ten FR-3 tools plus two board reads; lock discipline with board-busy reporting; port-matching iron rule (query_schema before connect, minimax-h3 first_frame/reference_image exclusivity as the canonical case); quote-first paid submissions; failure self-correction methodology",
+      "upstream_sync": false
+    }
+  ]
+}
