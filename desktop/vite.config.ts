@@ -5,6 +5,12 @@ import tailwindcss from "@tailwindcss/vite";
 // The dev server port is fixed: tauri.conf.json's devUrl points at it.
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  resolve: {
+    // The canvas package is a file: symlink into pv-beehive-web; without
+    // this vite resolves its react imports from the WEB repo's node_modules
+    // → two React copies at runtime ("Invalid hook call").
+    preserveSymlinks: true,
+  },
   clearScreen: false,
   server: {
     port: 1420,

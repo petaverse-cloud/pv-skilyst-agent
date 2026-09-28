@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Tailwind v4 auto-detection follows the project root and ignores symlinked
+   content outside it — the canvas package (file: symlink into pv-beehive-web)
+   must be scanned explicitly or its utility classes never compile. */
+@source "../node_modules/@petaverse/skilyst-studio/src";
+
 /*
  * A3 S1 canvas theming: the skilyst-studio package renders with Tailwind
  * utility classes + standard shadcn CSS variables. This block defines the
