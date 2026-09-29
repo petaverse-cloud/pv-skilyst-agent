@@ -51,7 +51,15 @@ export default function ActionCard({
 }) {
   const [open, setOpen] = useState(false);
   const badge = toolBadge(message.tool ?? "");
-  const cost = message.cost as { estimate_usd?: number } | undefined;
+  const cost = message.cost as
+    | { estimate_usd?: number; hold_micro_usd?: number }
+    | undefined;
+  // QA #16: estimate_usd is derived from the quote's estimate (either
+  // spelling), falling back to the hold (M1: estimate == hold upper bound) --
+  // a paid action must never lose its cost badge to a missing estimate.
+  const costUsd = cost?.estimate_usd ?? (cost?.hold_micro_usd && cost.hold_micro_usd > 0
+    ? cost.hold_micro_usd / 1_000_000
+    : undefined);
 
   return (
     <Card withBorder padding="xs" data-testid="action-card" style={{ maxWidth: "85%" }}>
@@ -83,9 +91,9 @@ export default function ActionCard({
             {message.duration_s}s
           </Text>
         ) : null}
-        {cost?.estimate_usd !== undefined ? (
+        {costUsd !== undefined ? (
           <Badge size="xs" variant="light" color="yellow" data-testid="action-cost">
-            ≈${cost.estimate_usd.toFixed(3)}
+            ≈${costUsd.toFixed(3)}
           </Badge>
         ) : null}
       </Group>

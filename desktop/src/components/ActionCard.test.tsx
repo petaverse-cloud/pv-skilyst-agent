@@ -45,6 +45,32 @@ describe("ActionCard", () => {
     expect(out).toContain("$0.500");
   });
 
+  it("renders the cost badge from the hold when the estimate is missing (QA #16)", () => {
+    // The wire quote carries total_estimate (not total_estimate_usd), so a
+    // runtime that only produced hold_micro_usd must still show the amount:
+    // a paid action card without its cost is a hidden cost.
+    const out = html(
+      action({
+        tool: "canvas_generate_image",
+        board_delta: { submitted_job: "job-10" },
+        cost: { hold_micro_usd: 960000 },
+      }),
+    );
+    expect(out).toContain('data-testid="action-cost"');
+    expect(out).toContain("$0.960");
+  });
+
+  it("shows no cost badge for a free action", () => {
+    const out = html(
+      action({
+        tool: "canvas_create_node",
+        board_delta: { added_node: "n-1" },
+        cost: { hold_micro_usd: 0 },
+      }),
+    );
+    expect(out).not.toContain('data-testid="action-cost"');
+  });
+
   it("shows params and result when expanded", () => {
     // renderToStaticMarkup cannot click; assert the collapsed state hides detail
     // and the summary line carries the delta, then assert expand content via the

@@ -116,11 +116,14 @@ def open_run(cfg: RuntimeConfig, *, skill_id: str | None = None, session_id: str
     # A lock-held refusal arrives with note_kind/note_text instead: it becomes
     # the human-facing note row (the model already sees the re-raised error
     # through the loop's tool-error path, and the trace records the failed
-    # call, so no action row is written for a refused write).
+    # call, so no action row is written for a refused write). The note's
+    # origin is 'agent' (QA #16: the R3 contract allows only agent|user -- a
+    # lock refusal is the agent's own write being refused, so it is attributed
+    # to the agent, not to an undefined 'system' origin).
     def record_action(action: dict) -> None:
         note_kind = action.pop("note_kind", None)
         if note_kind:
-            session.append_note(action.pop("note_text", ""), origin="system",
+            session.append_note(action.pop("note_text", ""), origin="agent",
                                 note_kind=note_kind, tool=action.get("tool"))
             return
         session.append_action(action)

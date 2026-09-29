@@ -129,10 +129,13 @@ class Session:
         self.touch()
         return row
 
-    def append_note(self, text: str, origin: str = "system", **extra) -> dict:
+    def append_note(self, text: str, origin: str = "agent", **extra) -> dict:
         """A human-facing note on the transcript (lock held, manual step, error).
 
         `note_kind` distinguishes 'lock' | 'manual' | 'error' | 'info'.
+        `origin` is 'agent' (the runtime writes on the agent's behalf) or
+        'user' (a manual change bridged from a host) -- the R3 contract has
+        no 'system' origin (QA #16).
         """
         row = {"seq": self.meta.get("message_count", 0), "ts": time.time(), "role": "note",
                "note_kind": extra.pop("note_kind", "info"), "text": text, "origin": origin}
