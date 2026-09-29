@@ -180,9 +180,21 @@ class RuntimeAPI:
         return resolve(**self.resolve_kwargs, require_llm=llm, require_beehive=beehive)
 
     # -- auth (A2: Figma-style deep-link login; docs/auth-deep-link.md) ----
-    def auth_status(self) -> dict:
+    def _auth_flow(self):
+        """One AuthFlow for the runtime's lifetime.
+
+        #20: each auth route used to construct a fresh AuthFlow, which threw
+        away the PKCE verifier and device_code between /auth/login and
+        /auth/deliver-code — the deep-link contract could never complete. The
+        flow holds pending-login state, so it must live as long as the login
+        it started."""
         from auth import AuthFlow
-        flow = AuthFlow()
+        if getattr(self, "_flow", None) is None:
+            self._flow = AuthFlow()
+        return self._flow
+
+    def auth_status(self) -> dict:
+        flow = self._auth_flow()
         rec = flow.current()
         if rec is None:
             dev_mode = bool(os.environ.get("SKILYST_DEV_PROFILE"))
@@ -196,10 +208,11 @@ class RuntimeAPI:
     def auth_login(self, body: dict) -> dict:
         """Start a login. In mock mode (SKILYST_MOCK_AUTH=1) the browser step is
         simulated and the flow completes within this call. In real mode the
-        shell receives {state:'awaiting_browser'} and later POSTs the code
-        captured from the skilyst:// deep link to /auth/deliver-code."""
+        caller receives {state:'awaiting_browser', browser_url} — the shell
+        opens the URL, the browser callback lands as a skilyst:// deep link,
+        and the shell POSTs the captured code to /auth/deliver-code."""
         from auth import AuthFlow, AuthError
-        flow = AuthFlow()
+        flow = self._auth_flow()
         if flow.mock:
             import threading
             result: dict = {}
@@ -224,25 +237,28 @@ class RuntimeAPI:
             return {"state": "authenticated",
                     "account": {"uid": rec.account_uid, "name": rec.account_name},
                     "scopes": rec.scopes, "storage": rec.storage}
-        # real mode: GUI opens the browser itself; we just report the launch target
-        rec = None
-        raise BadRequest("real-mode login is driven by the shell deep-link handler; "
-                         "use /auth/deliver-code after the browser callback")
+        # real mode: the shell opens the browser itself; hand it the launch
+        # target. The runtime stays in AWAITING_BROWSER with the PKCE verifier
+        # held on the persistent flow until /auth/deliver-code arrives.
+        browser_url = flow.begin_login(redirect_uri="skilyst://callback")
+        return {"state": "awaiting_browser", "browser_url": browser_url}
 
     def auth_logout(self) -> dict:
-        from auth import AuthFlow
-        flow = AuthFlow()
+        flow = self._auth_flow()
         flow.logout()
         return {"state": flow.state, "authenticated": False}
 
     def auth_deliver_code(self, body: dict) -> dict:
         """Called by the Tauri deep-link handler with the one-time code."""
-        from auth import AuthFlow, AuthError
-        flow = AuthFlow()
+        from auth import AuthError
+        flow = self._auth_flow()
         code = str(body.get("code") or "")
         if not code:
             raise BadRequest("code is required")
-        flow.deliver_code(code)
+        try:
+            flow.deliver_code(code)
+        except AuthError as exc:
+            raise BadRequest(str(exc))
         rec = flow.current()
         if rec is None:
             raise BadRequest("code exchange did not authenticate")
