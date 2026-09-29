@@ -14,6 +14,7 @@ graceful shutdown that the Rust supervisor depends on.
 """
 import json
 import os
+import shutil
 import sys
 import tempfile
 import threading
@@ -42,7 +43,8 @@ TOKEN = "test-token-0123456789"
 ENV_KEYS = ("SKILYST_ENV_FILE", "SKILYST_DEV_PROFILE", "SKILYST_LLM_BASE_URL", "SKILYST_LLM_API_KEY",
             "SKILYST_LLM_MODEL", "SKILYST_LLM_CONFIG", "SKILYST_LLM_FALLBACKS", "BEEHIVE_API",
             "BEEHIVE_PLATFORM_AK", "BEEHIVE_PLATFORM_SK", "BEEHIVE_PLATFORM_USER",
-            "BEEHIVE_PLATFORM_PASS", "BEEHIVE_PLATFORM_UID")
+            "BEEHIVE_PLATFORM_PASS", "BEEHIVE_PLATFORM_UID", "SKILYST_MOCK_AUTH",
+            "SKILYST_AUTH_STORE_HOME", "SKILYST_AUTH_HEADLESS")
 
 
 def bundle_skill_ids() -> list[str]:
@@ -204,6 +206,100 @@ class AuthTests(EnvIsolation):
         self.assertEqual(self.fx.request("GET", "/nope")[0], 404)
         self.assertEqual(self.fx.request("POST", "/nope", {})[0], 404)
         self.assertEqual(self.fx.request("POST", "/message", {"nope": 1})[0], 400)
+
+
+class DeepLinkAuthTests(EnvIsolation):
+    """#20: the desktop sign-in contract. Real-mode login is a two-step exchange
+    the shell drives: POST /auth/login -> {state:'awaiting_browser',
+    browser_url} (never an error), the browser callback lands as a
+    skilyst://callback deep link, and the shell POSTs the captured code to
+    /auth/deliver-code — which must reach the SAME AuthFlow that holds the
+    PKCE verifier and device_code.
+
+    Real mode, but the network layer is scripted: the serve contract is what
+    is under test here, not the backend (its endpoints are covered by
+    beehive-core's own suite)."""
+
+    def setUp(self):
+        super().setUp()
+        # A throwaway token store: the keychain must never be touched by a
+        # test, and credentials must never leak anywhere near the repo.
+        self.store_home = tempfile.mkdtemp()
+        self.addCleanup(lambda: shutil.rmtree(self.store_home, ignore_errors=True))
+        os.environ["SKILYST_AUTH_STORE_HOME"] = self.store_home
+        os.environ["SKILYST_AUTH_HEADLESS"] = "1"
+        self.fx = ServeFixture()
+        self.addCleanup(self.fx.cleanup)
+        # Scripted backend: a device-code response for the launch call, an
+        # AK/SK pair for the exchange. Real mode throughout (no
+        # SKILYST_MOCK_AUTH), only the transport is fake.
+        def fake_post(url, payload):
+            if url.endswith("/auth/device-code"):
+                self.challenge = payload["code_challenge"]
+                self.launch_redirect = payload["redirect_uri"]
+                return {"device_code": "dc_test_123", "expires_in": 300, "interval": 5}
+            if url.endswith("/auth/token"):
+                self.verifier = payload["code_verifier"]
+                self.device_code = payload["device_code"]
+                return {"access_key": "AKTEST", "secret_key": "SKTEST",
+                        "account": {"uid": "42", "name": "shell-user"},
+                        "scopes": ["jobs:read", "assets:read"], "expires_in": 86400}
+            raise AssertionError(f"unexpected backend call: {url}")
+
+        patcher = mock.patch("auth._post_json", side_effect=fake_post)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def _login(self):
+        status, _headers, body = self.fx.request("POST", "/auth/login", {})
+        return status, body["data"]
+
+    def _deliver(self, code="oc_test_123"):
+        return self.fx.request("POST", "/auth/deliver-code", {"code": code})
+
+    def test_real_mode_login_returns_the_browser_url_instead_of_an_error(self):
+        status, data = self._login()
+        self.assertEqual(status, 200)
+        self.assertEqual(data["state"], "awaiting_browser")
+        self.assertIn("browser_url", data)
+        self.assertIn("/login?device_code=dc_test_123", data["browser_url"])
+        # The launch carried PKCE and the deep-link redirect_uri, per contract.
+        self.assertTrue(self.challenge)
+        self.assertEqual(self.launch_redirect, "skilyst://callback")
+
+    def test_deliver_code_completes_the_flow_the_shell_started(self):
+        _status, data = self._login()
+        # The browser would land on skilyst://callback?code=...; the shell's
+        # deep-link handler POSTs that code to the runtime.
+        status, _headers, body = self._deliver()
+        self.assertEqual(status, 200)
+        self.assertEqual(body["data"]["state"], "authenticated")
+        self.assertEqual(body["data"]["account"]["name"], "shell-user")
+        # The exchange reached the backend with the SAME device_code the
+        # launch created and its PKCE verifier — the flow was not rebuilt.
+        self.assertEqual(self.device_code, "dc_test_123")
+        self.assertTrue(self.verifier)
+        # Status now reports the authenticated account (the poll the login
+        # screen runs while waiting for the deep link).
+        status, _headers, body = self.fx.request("GET", "/auth/status")
+        self.assertEqual(status, 200)
+        self.assertTrue(body["data"]["authenticated"])
+        self.assertEqual(body["data"]["account"]["name"], "shell-user")
+
+    def test_deliver_code_without_a_pending_login_is_refused_loudly(self):
+        status, _headers, body = self._deliver("orphan-code")
+        self.assertEqual(status, 400)
+        self.assertIn("did not authenticate", body["error"]["message"])
+
+    def test_the_full_lifecycle_sign_out_returns_to_the_login_gate(self):
+        self._login()
+        status, _headers, _body = self._deliver()
+        self.assertEqual(status, 200)
+        status, _headers, body = self.fx.request("POST", "/auth/logout", {})
+        self.assertEqual(status, 200)
+        self.assertFalse(body["data"]["authenticated"])
+        status, _headers, body = self.fx.request("GET", "/auth/status")
+        self.assertFalse(body["data"]["authenticated"])
 
 
 class ConfigSurfaceTests(EnvIsolation):

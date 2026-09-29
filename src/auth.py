@@ -146,13 +146,24 @@ class AuthError(Exception):
 
 
 class AuthFlow:
-    """Device-code login with deep-link (GUI) or loopback (CLI) callback."""
+    """Device-code login with deep-link (GUI) or loopback (CLI) callback.
+
+    Two hosts are involved and they are not the same one: the API endpoints
+    (device-code create, token exchange) live on the beehive API host — the
+    same ``BEEHIVE_API`` the rest of the runtime uses — while the user's
+    browser is pointed at the web console host. Pointing the API calls at the
+    console host answers 405 (verified live), so the two are resolved
+    separately.
+    """
 
     def __init__(self, store: Optional[TokenStore] = None,
                  base_url: str = "https://bee.verse4.pet",
+                 api_url: Optional[str] = None,
                  mock: Optional[bool] = None):
         self.store = store or TokenStore()
-        self.base_url = base_url.rstrip("/")
+        self.base_url = base_url.rstrip("/")            # web console (browser)
+        self.api_url = (api_url or os.environ.get("BEEHIVE_API")
+                        or "https://beehive-api.verse4.pet").rstrip("/")
         self.mock = (os.environ.get("SKILYST_MOCK_AUTH") == "1") if mock is None else mock
         self.state = AuthState.UNAUTHENTICATED
         self._verifier: Optional[str] = None
@@ -173,6 +184,43 @@ class AuthFlow:
 
     # -- login --------------------------------------------------------------
 
+    def begin_login(self, redirect_uri: str) -> str:
+        """Start a login without waiting for the exchange, and return the
+        browser URL the caller (the desktop shell) must open.
+
+        `login()` bundles three concerns for the CLI: create the device
+        session, open the browser, and block until the code comes back. The
+        desktop shell needs them split — it opens the browser itself and the
+        code arrives later through the deep-link handler → ``deliver_code``.
+        The waiting half of ``login`` still applies: the runtime holds the
+        PKCE verifier in this AuthFlow instance, so the /auth/deliver-code
+        route must reach *this* flow (RuntimeAPI keeps it alive), never a
+        fresh one."""
+        verifier, challenge = make_pkce_pair()
+        self._verifier = verifier
+
+        if self.mock:
+            self._device_code = "dc_mock_" + secrets.token_hex(8)
+            launch = f"{self.base_url}/login?device_code={self._device_code}&mock=1"
+        else:
+            resp = _post_json(f"{self.api_url}/api/v1/auth/device-code", {
+                "client": "skilyst-agent", "code_challenge": challenge,
+                "redirect_uri": redirect_uri})
+            self._device_code = resp["device_code"]
+            launch = f"{self.base_url}/login?device_code={self._device_code}&client=skilyst-agent"
+        self.state = AuthState.AWAITING_BROWSER
+        # Arm the exchange wait so deliver_code (which may race the caller's
+        # reaction to the returned URL) always finds a waiter to hand the
+        # result to; a code that never arrives just times out on the poll.
+        self._arm_exchange()
+        return launch
+
+    def _arm_exchange(self, poll_timeout: float = 300.0) -> None:
+        self._exchange_event = threading.Event()
+        self._exchange_error = None
+        self._exchange_result = None
+        self._poll_timeout = poll_timeout
+
     def login(self, redirect_uri: str, poll_timeout: float = 300.0) -> TokenRecord:
         """Start login. For GUI use redirect_uri='skilyst://callback' (deep link
         delivers the code separately); for CLI use 'loopback:<port>'."""
@@ -183,7 +231,7 @@ class AuthFlow:
             self._device_code = "dc_mock_" + secrets.token_hex(8)
             launch = f"{self.base_url}/login?device_code={self._device_code}&mock=1"
         else:
-            resp = _post_json(f"{self.base_url}/api/v1/auth/device-code", {
+            resp = _post_json(f"{self.api_url}/api/v1/auth/device-code", {
                 "client": "skilyst-agent", "code_challenge": challenge,
                 "redirect_uri": redirect_uri})
             self._device_code = resp["device_code"]
@@ -197,17 +245,19 @@ class AuthFlow:
         """CLI loopback: block until the local listener got the code and we
         exchanged it. GUI: deep-link handler calls deliver_code() separately;
         the same wait applies."""
-        self._exchange_event = threading.Event()
-        self._exchange_error = None
-        self._exchange_result = None
-        if not self._exchange_event.wait(timeout=poll_timeout):
+        if getattr(self, "_exchange_event", None) is None or self._exchange_event.is_set():
+            # Not armed by begin_login (CLI path) or a previous exchange already
+            # finished: arm fresh here so deliver_code has a waiter.
+            self._arm_exchange(poll_timeout)
+        else:
+            self._poll_timeout = poll_timeout
+        if not self._exchange_event.wait(timeout=self._poll_timeout):
             self.state = AuthState.UNAUTHENTICATED
             raise AuthError("login timed out waiting for browser callback")
         if self._exchange_error:
             self.state = AuthState.UNAUTHENTICATED
             raise AuthError(self._exchange_error)
         rec = self._exchange_result
-        self.store.save(rec)
         self.state = AuthState.AUTHENTICATED
         return rec
 
@@ -216,14 +266,22 @@ class AuthFlow:
         the one-time code from the browser redirect."""
         self.state = AuthState.EXCHANGING
         try:
-            # Race guard: the login thread sets state=AWAITING_BROWSER *before*
-            # it reaches _await_exchange (which creates _exchange_event). A
-            # caller that reacts to the state (serve's mock driver does, within
-            # milliseconds) can arrive here first -- wait briefly for the
-            # waiter to exist instead of crashing on a missing attribute.
+            # Race guard: the login path sets state=AWAITING_BROWSER *before*
+            # it arms the exchange wait (which creates _exchange_event). A
+            # caller that reacts to the state can arrive first -- wait briefly
+            # for the waiter to exist instead of crashing on a missing attribute.
             deadline = time.time() + 5
             while not hasattr(self, "_exchange_event") and time.time() < deadline:
                 time.sleep(0.01)
+            if not hasattr(self, "_exchange_event"):
+                # No pending login was ever armed: a code arriving now has
+                # nothing to exchange against. Refuse loudly (the serve layer
+                # maps AuthError to a 400 the shell can show) instead of
+                # crashing on a missing waiter.
+                self.state = AuthState.UNAUTHENTICATED
+                raise AuthError(
+                    "no pending login to deliver a code to -- start one first "
+                    "(POST /auth/login), then deliver the code from the deep link")
             if self.mock:
                 _ak = "ak-mock-" + secrets.token_hex(8)
                 _sk = "sk-mock-" + secrets.token_hex(16)
@@ -235,7 +293,7 @@ class AuthFlow:
                     "expires_in": 86400,
                 }
             else:
-                resp = _post_json(f"{self.base_url}/api/v1/auth/token", {
+                resp = _post_json(f"{self.api_url}/api/v1/auth/token", {
                     "device_code": self._device_code, "code": code,
                     "code_verifier": self._verifier})
             acct = resp.get("account") or {}
@@ -249,9 +307,20 @@ class AuthFlow:
                 access_key=resp.get("access_key", ""),
                 secret_key=resp.get("secret_key", ""))
             self._exchange_error = None
+            # Persist BEFORE setting the event: the desktop flow does not run
+            # _await_exchange (nobody blocks), so the /auth/deliver-code route
+            # reads the result from the store via current(). Saving first means
+            # the event signals "record already on disk", never "in flight".
+            self.store.save(self._exchange_result)
+            self.state = AuthState.AUTHENTICATED
         except Exception as e:  # noqa: BLE001 — surface any failure to the waiter
             self._exchange_error = f"token exchange failed: {e}"
-        getattr(self, "_exchange_event").set()
+            self.state = AuthState.UNAUTHENTICATED
+        # The waiter may legitimately not exist (no pending login): only a
+        # flow that armed an exchange wait has an event to release.
+        event = getattr(self, "_exchange_event", None)
+        if event is not None:
+            event.set()
 
     # -- logout -------------------------------------------------------------
 
@@ -266,7 +335,12 @@ def _post_json(url: str, payload: dict) -> dict:
         url, data=json.dumps(payload).encode(),
         headers={"Content-Type": "application/json"}, method="POST")
     with urllib.request.urlopen(req, timeout=15) as r:
-        return json.loads(r.read())
+        resp = json.loads(r.read())
+    # The beehive API wraps successful bodies as {code, message, payload};
+    # unwrap so the callers read the endpoint's own fields.
+    if isinstance(resp, dict) and "payload" in resp and "code" in resp:
+        return resp["payload"]
+    return resp
 
 
 # ---------------------------------------------------------------------------
