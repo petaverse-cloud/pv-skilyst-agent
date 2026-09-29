@@ -112,13 +112,36 @@ def _list_field(holder: dict, name: str) -> list:
     return value
 
 
+# Field names a material node's config may use to point at its media-pool
+# entry. `pool_entry_id` is what SKILL.md teaches and what the server compiles
+# (core's CompileMaterialNodes reads exactly that key); `entry_id` is the
+# drift QA #15 caught the model writing. Both are READ leniently (a node that
+# points at a pool entry is a material, whatever it called the pointer), but
+# only the canonical name is ever WRITTEN back, and a non-canonical spelling
+# is normalized on the next locked write with a warning.
+MATERIAL_ENTRY_FIELDS = ("pool_entry_id", "entry_id")
+
+
+def _material_entry_id(node: dict) -> str | None:
+    """The media-pool entry id a node points at, by either accepted field
+    name -- None when the node is not (or not yet) a material reference."""
+    if node.get("type") != "material":
+        return None
+    config = node.get("config") or {}
+    for field in MATERIAL_ENTRY_FIELDS:
+        value = config.get(field)
+        if value:
+            return str(value)
+    return None
+
+
 def _material_kind(workflow: dict, node: dict) -> str:
     """What kind of media a material node carries: its own config declaration
     first, then the media-pool entry it points at."""
     config = node.get("config") or {}
     if config.get("kind"):
         return str(config["kind"])
-    entry_id = config.get("pool_entry_id")
+    entry_id = _material_entry_id(node)
     for entry in workflow.get("media_pool") or []:
         if entry.get("id") == entry_id:
             return str(entry.get("kind") or "")
@@ -145,14 +168,34 @@ def _micro_to_usd(micro) -> float | None:
     return None if micro is None else round(micro / 1_000_000, 6)
 
 
+def _quote_estimate(quote: dict):
+    """The estimate off a raw quote payload, in micro-USD.
+
+    The core's QuoteResponse serializes the aggregate estimate as
+    `total_estimate` (QA #16: the runtime read `total_estimate_usd`, which the
+    wire never carries -- the estimate was always null and the action card's
+    cost badge never rendered). Both spellings are accepted; the wire one
+    wins.
+    """
+    if not isinstance(quote, dict):
+        return None
+    for key in ("total_estimate_usd", "total_estimate"):
+        value = quote.get(key)
+        if value is not None:
+            return value
+    return None
+
+
 def _quote_view(quote: dict) -> dict:
     """Expose the quote both as the API returns it (integer micro-USD) and as
     a USD display figure -- a unit guessed wrong is a budget guessed wrong."""
     quote = quote or {}
-    return {"total_estimate_usd": quote.get("total_estimate_usd"),
-            "total_hold": quote.get("total_hold"),
-            "total_estimate_usd_display": _micro_to_usd(quote.get("total_estimate_usd")),
-            "total_hold_display": _micro_to_usd(quote.get("total_hold")),
+    estimate = _quote_estimate(quote)
+    hold = quote.get("total_hold")
+    return {"total_estimate_usd": estimate,
+            "total_hold": hold,
+            "total_estimate_usd_display": _micro_to_usd(estimate),
+            "total_hold_display": _micro_to_usd(hold),
             "nodes": quote.get("nodes") or []}
 
 
@@ -387,19 +430,49 @@ class CanvasOps:
                       input_port: str | None = None) -> dict:
         """Wire an edge, material or plain.
 
-        A material node (type 'material' with config.pool_entry_id) wires as
-        beehive material wiring: a material_deps entry `{key, input_port}` on
-        the consumer plus a depends_on edge. Any other node wires as a plain
-        DAG edge (depends_on only). Image materials only accept the valid
-        image ports -- validated here, before the PUT, with the port names in
-        the error (the server enforces the same rule one step later and with
-        less context).
+        A material node (type 'material' pointing at a pool entry -- the field
+        name is read leniently, `pool_entry_id` or `entry_id`, per QA #15)
+        wires as beehive material wiring: a material_deps entry
+        `{key, input_port}` on the consumer plus a depends_on edge. Any other
+        node wires as a plain DAG edge (depends_on only). Image materials only
+        accept the valid image ports -- validated here, before the PUT, with
+        the port names in the error (the server enforces the same rule one
+        step later and with less context).
+
+        Loud-failure rules (QA #15 -- a silently dropped input_port is a
+        silently degraded board):
+        * an explicit `input_port` on a NON-material source is refused, not
+          dropped: the caller asked for port semantics the edge cannot carry;
+        * a `material` node pointing at nothing is refused when an
+          `input_port` was asked for (a draft material has no port semantics);
+        * an unrecognized material field spelling is normalized to
+          `pool_entry_id` inside the same locked write (lenient read), and
+          the normalization is reported in the result for the action stream.
         """
-        def mutate(wf: dict) -> None:
+        normalized: list = [False]
+        resolved_entry: list = [None]
+
+        def mutate(wf: dict) -> None:  # noqa: C901 -- the loud-failure ladder reads best linear
             from_node = _find_node(wf, from_key)
             to_node = _find_node(wf, to_key)
-            is_material = (from_node.get("type") == "material"
-                           and bool((from_node.get("config") or {}).get("pool_entry_id")))
+            entry_id = _material_entry_id(from_node)
+            is_material = entry_id is not None
+            normalized[0] = (is_material
+                             and "pool_entry_id" not in (from_node.get("config") or {}))
+            resolved_entry[0] = entry_id
+            if input_port is not None and not is_material:
+                if from_node.get("type") == "material":
+                    raise ValueError(
+                        f"material node {from_key!r} has no pool entry reference: a material "
+                        f"must carry config.pool_entry_id (or the accepted alias entry_id) "
+                        f"before it can be wired to an input port -- create or fix the "
+                        f"material node first, then connect")
+                raise ValueError(
+                    f"input_port {input_port!r} was given but source node {from_key!r} "
+                    f"(type {from_node.get('type')!r}) is not a material node: a plain "
+                    f"depends_on edge carries no port semantics. Either drop input_port "
+                    f"for a plain edge, or wire a material node (config.pool_entry_id) "
+                    f"as the source")
             if is_material and input_port is not None:
                 if _material_kind(wf, from_node) == "image" and input_port not in VALID_IMAGE_PORTS:
                     raise ValueError(
@@ -407,6 +480,14 @@ class CanvasOps:
                         f"{from_key!r}; valid image ports: {', '.join(VALID_IMAGE_PORTS)}. "
                         f"Call query_schema first -- the platform rejects any other port.")
             if is_material:
+                # Lenient read, canonical write: the server compiles exactly
+                # `pool_entry_id`, so a drift-spelled pointer is rewritten to
+                # the canonical field inside this same locked write.
+                if normalized[0]:
+                    config = from_node.setdefault("config", {})
+                    for field in MATERIAL_ENTRY_FIELDS:
+                        config.pop(field, None)
+                    config["pool_entry_id"] = entry_id
                 deps = _list_field(to_node, "material_deps")
                 port = input_port or ""
                 if not any(d.get("key") == from_key and d.get("input_port") == port for d in deps):
@@ -419,7 +500,11 @@ class CanvasOps:
                 depends.append(from_key)
 
         updated = self._locked_write(workflow_id, mutate)
-        return {"from": from_key, "to": to_key, "workflow": updated}
+        result = {"from": from_key, "to": to_key, "workflow": updated}
+        if normalized[0]:
+            result["normalized"] = {"node": from_key, "field": "entry_id",
+                                    "to": "pool_entry_id", "entry_id": resolved_entry[0]}
+        return result
 
     # -- 5. query_schema ---------------------------------------------------------
 
@@ -571,7 +656,7 @@ class CanvasOps:
         for node in nodes or []:
             if node.get("type") != "material":
                 continue
-            entry_id = (node.get("config") or {}).get("pool_entry_id")
+            entry_id = _material_entry_id(node)
             if entry_id:
                 refs.setdefault(str(entry_id), []).append(str(node.get("key") or ""))
         return refs

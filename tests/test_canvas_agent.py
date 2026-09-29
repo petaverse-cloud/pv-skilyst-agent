@@ -268,7 +268,7 @@ class CanvasRegistryTests(unittest.TestCase):
         def record(action):
             note_kind = action.pop("note_kind", None)
             if note_kind:
-                session.append_note(action.pop("note_text", ""), origin="system",
+                session.append_note(action.pop("note_text", ""), origin="agent",
                                     note_kind=note_kind, tool=action.get("tool"))
                 return
             session.append_action(action)
@@ -308,7 +308,7 @@ class SessionActionStreamTests(unittest.TestCase):
                                     "board_delta": {"added_node": "s-1"},
                                     "origin": "agent", "duration_s": 0.2})
         self.session.append_note("画板正被占用: held by user-session/wes@web",
-                                 origin="system", note_kind="lock", tool="canvas_create_node")
+                                 origin="agent", note_kind="lock", tool="canvas_create_node")
         reopened = self.store.open(self.session.session_id)
         roles = [row["role"] for row in reopened.messages]
         self.assertEqual(roles, ["user", "action", "note"])
@@ -318,7 +318,7 @@ class SessionActionStreamTests(unittest.TestCase):
         self.assertIn("ts", action)
         note = reopened.messages[2]
         self.assertEqual(note["note_kind"], "lock")
-        self.assertEqual(note["origin"], "system")
+        self.assertEqual(note["origin"], "agent")
 
     def test_history_excludes_action_and_note_rows(self):
         self.session.append_message("user", "hello")
@@ -332,7 +332,9 @@ class SessionActionStreamTests(unittest.TestCase):
     def test_note_defaults_to_info_kind(self):
         row = self.session.append_note("plain")
         self.assertEqual(row["note_kind"], "info")
-        self.assertEqual(row["origin"], "system")
+        # QA #16: the R3 contract has no 'system' origin -- the runtime writes
+        # notes on the agent's behalf, so the default is 'agent'.
+        self.assertEqual(row["origin"], "agent")
 
 
 if __name__ == "__main__":

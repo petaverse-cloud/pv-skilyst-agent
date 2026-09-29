@@ -554,11 +554,19 @@ def _micro_to_usd_cost(quote: dict | None) -> dict | None:
     micro-USD for accounting. None when the call carried no quote."""
     if not quote:
         return None
+    # QA #16: accept both estimate spellings -- the wire carries
+    # `total_estimate` (core's QuoteResponse), the view carries
+    # `total_estimate_usd`. When neither exists, a hold still IS an estimate
+    # (M1: estimate == hold upper bound) and must not hide the cost badge.
     estimate = quote.get("total_estimate_usd")
+    if estimate is None:
+        estimate = quote.get("total_estimate")
     hold = quote.get("total_hold")
     cost: dict = {}
     if estimate is not None:
         cost["estimate_usd"] = round(estimate / 1_000_000, 6)
+    elif hold is not None and int(hold) > 0:
+        cost["estimate_usd"] = round(int(hold) / 1_000_000, 6)
     if hold is not None:
         cost["hold_micro_usd"] = int(hold)
     return cost or None
@@ -670,9 +678,15 @@ def _register_canvas_specs(registry: ToolRegistry, make) -> None:
         return {"added_node": node.get("key"), "workflow_id": _args.get("workflow_id")}
 
     def _wired(result: dict, args: dict):
-        return {"wired": [args.get("from_key"), args.get("to_key"),
-                          args.get("input_port") or ""],
-                "workflow_id": args.get("workflow_id")}
+        delta = {"wired": [args.get("from_key"), args.get("to_key"),
+                           args.get("input_port") or ""],
+                 "workflow_id": args.get("workflow_id")}
+        # QA #15: a leniently-normalized material pointer is reported on the
+        # action row (the board_delta is what the cards render), so the
+        # field-name drift is visible, not silently repaired.
+        if isinstance(result.get("normalized"), dict):
+            delta["normalized_material_field"] = result["normalized"]
+        return delta
 
     def _config_written(result: dict, args: dict):
         return {"updated_config": args.get("key"), "workflow_id": args.get("workflow_id")}
@@ -735,7 +749,10 @@ def _register_canvas_specs(registry: ToolRegistry, make) -> None:
         "exclusive: first_frame vs reference_image cannot mix). Wires an edge on the board: a "
         "material node wires as material_deps {key, input_port} on the consumer plus a "
         "depends_on edge; any other node wires as a plain depends_on edge. Image materials "
-        "only accept the ports reference_image/first_frame/last_frame.",
+        "only accept the ports reference_image/first_frame/last_frame. input_port with a "
+        "NON-material source is an error (a plain edge carries no port semantics) -- never "
+        "silently dropped. A material node's pool reference is read leniently "
+        "(pool_entry_id or entry_id; canonical is pool_entry_id).",
         _obj({"workflow_id": {"type": "string"},
               "from_key": {"type": "string", "description": "source node key"},
               "to_key": {"type": "string", "description": "consumer node key"},

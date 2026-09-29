@@ -98,6 +98,13 @@ exist (or vice versa) is a 400 *at submit time* — expensive to discover
 late. Query the schema, decide the port deliberately, then connect. Never
 guess a port from the field name alone.
 
+**`input_port` is never silently dropped.** A connect that passes
+`input_port` with a NON-material source (a script or generate node) fails
+with a structured error naming the source node — a plain `depends_on` edge
+carries no port semantics, and a board that silently degrades the wiring is
+worse than a refused one. If the error names a material node with no pool
+reference, fix that node's `config.pool_entry_id` first, then connect.
+
 ## Quote-first (先报价)
 
 Paid submissions (`canvas_submit_node_job`, `canvas_run_workflow`,
@@ -149,7 +156,10 @@ canvas_connect_ports(workflow_id, from_key=<material key>,
 Material nodes are identified by `config.pool_entry_id`; the runtime wires
 them into the consumer's `material_deps` and `depends_on`, and the server
 compiles that to `images[]` + `image_roles[]` (or `video_refs`/`audio_refs`)
-at submit time.
+at submit time. The pool pointer is read leniently (`pool_entry_id` or the
+`entry_id` alias), but ALWAYS write `pool_entry_id` — it is the field the
+server compiles, and a lenient read that has to normalize your spelling
+reports the drift on the action card.
 
 ## Media pool lifecycle (池内资产管理)
 

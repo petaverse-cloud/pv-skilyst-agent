@@ -1,0 +1,1778 @@
+[
+  {
+    "event": "delta",
+    "data": {
+      "text": "Before"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " touching"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the wire, I'll"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " check what"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " the target"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " port actually accepts and"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " what a script node outputs"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "."
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\"}\""
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_query_schema \"{\\\"node_id\\\": \\\"generate:minimax-h3\\\"}\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "I"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'ve"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " checked both"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " schemas before wiring"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ", and this requested"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " wire can"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'t be made —"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " here's the"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " platform's own definition"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ", not"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " my guess"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":\n\n- `generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":min"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "imax-h3"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "` input"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " ports:"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `{"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "accepts: [\"image\"],"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " field: \"src_image_url"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "\"}` and `{accept"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "s: [\"text\"], field"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": \"prompt\"}`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ". `first_frame` is"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " an **image"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " role** (`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "image_roles` enum"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "),"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " i"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ".e. it can"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " only receive"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " an image.\n- `generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ":script` output schema"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ": `dest"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_prompt` (string)"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " — \""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "the generation-ready prompt, flows"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " into downstream nodes' prompt"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " field**\". A script node"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " emits"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " text, never"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " an image.\n\nSo"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " script → `first_frame`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " wire"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " is a type"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " mismatch, and the connect"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " tool treats"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " a non-material"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " source on"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " a named port as an error"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " (\"input"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_port with a NON"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-material source is an error —"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " a plain edge"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " carries no port"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " semantics\"). I'm"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " not going to fire"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " a"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " call I know is"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " invalid, and I won"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "'t silently"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " degrade"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " it to a plain edge —"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " which"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " you explicitly ruled"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " out.\n\nI did"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " create the half that is"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " valid, so nothing"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " is wasted:"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "tool canvas_create_node \"{\\\"config\\\": {\\\"instruction\\\": \\\"一段测试用的 15 秒竖屏短视频脚本：主角是夜色中巡山的白猫道士\\\"}, \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\", \\\"workflow_id\\\": \\\"workflow-179065"
+    }
+  },
+  {
+    "event": "note",
+    "data": {
+      "text": "canvas: node generate-script-3 added to workflow-1790656729594939271"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "状态：脚本"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点已建，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "但那条"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "线"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "没有接。**\n\n|"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 节点 | key"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " | config"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " |\n|---|---|---|\n| generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " / script | `generate"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-script-3` |"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " instruction: \"一段"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "测试用的 15 "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "秒竖屏短视频脚本："
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "主角是夜色"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "中巡山的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "白猫道士\" |\n\n`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "generate-script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-3` 目前**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "没有连"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "到"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "任何节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**（悬空）。min"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "imax 节点上原有的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "接线保持不变：`material"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-image-1` → `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "first_frame`。"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "没有提交任何任务。\n\n**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "为什么"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "那条线"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "接不了（平台"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " schema"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 原话）"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**\n\n`first"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_frame` 不是"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " minim"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ax 节点的一个端口字段"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，它是 `image_"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "roles` 枚举"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "里的一个**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "图片角色**值"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "；节点真正"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "接收"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "图片的输入"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "端口是 `src"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "_image_url`，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "且 `accepts` 只有 `[\"image\"]"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`。script 节点的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "输出是 `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "dest_prompt`（文本"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "），平台"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "明确"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "说明"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "它「flows"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " into downstream"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " nodes' **prompt"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "** field」。文本"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "灌"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "进图片端口属于"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "类型不匹配，没有合法的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "接线方式"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "——接"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "成普通"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "边就等于丢掉"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "first_frame` 语义，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "而你"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "明确说不要那种"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "降"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "级，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "所以我停在这里"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "问你"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "。\n\n**可"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "选的正确"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "接"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "法（你挑"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "一个，我再"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "动手"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "仍然只接线不提交）**\n\n1"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": ". **script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " → minim"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "ax "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "的 `prompt` "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "端口**（文本"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "对"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "文本，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "`accept"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "s:[\""
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "text\"]`）："
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "脚本"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "写出的成品"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "提示词自动"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "喂给 minimax 当"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "提示词。这是 script"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " 节点在设计"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "上的"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "下游"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "用法。\n2. **保留"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "现有"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `material"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-image"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "1`"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " → `first_frame`**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "不动，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "另接一条"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " script → `"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "prompt`，"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "两条边"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "并存（图片"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "定"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "首帧 + 脚本"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "定提示词，互"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "不冲突）。\n3. "
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "如果你确实想要「"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "脚本节点产出首"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "帧图」，那需要"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "的是一个"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "图像生成节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "**（gpt-image"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "-2 / nb2-image"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "）而不是 script 节点"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "——"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "我可以照"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "你说的语义"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "换成"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "图像"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "节点，再接"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": " `first_frame`。\n\n要"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "哪个"
+    }
+  },
+  {
+    "event": "delta",
+    "data": {
+      "text": "？"
+    }
+  },
+  {
+    "event": "done",
+    "data": {
+      "ok": true,
+      "data": {
+        "session_id": "20260929-123853-c8d655",
+        "skill": "skilyst/canvas-ops",
+        "stop_reason": "completed",
+        "answer": "**状态：脚本节点已建，但那条线没有接。**\n\n| 节点 | key | config |\n|---|---|---|\n| generate / script | `generate-script-3` | instruction: \"一段测试用的 15 秒竖屏短视频脚本：主角是夜色中巡山的白猫道士\" |\n\n`generate-script-3` 目前**没有连到任何节点**（悬空）。minimax 节点上原有的接线保持不变：`material-image-1` → `first_frame`。没有提交任何任务。\n\n**为什么那条线接不了（平台 schema 原话）**\n\n`first_frame` 不是 minimax 节点的一个端口字段，它是 `image_roles` 枚举里的一个**图片角色**值；节点真正接收图片的输入端口是 `src_image_url`，且 `accepts` 只有 `[\"image\"]`。script 节点的输出是 `dest_prompt`（文本），平台明确说明它「flows into downstream nodes' **prompt** field」。文本灌进图片端口属于类型不匹配，没有合法的接线方式——接成普通边就等于丢掉 `first_frame` 语义，而你明确说不要那种降级，所以我停在这里问你。\n\n**可选的正确接法（你挑一个，我再动手，仍然只接线不提交）**\n\n1. **script → minimax 的 `prompt` 端口**（文本对文本，`accepts:[\"text\"]`）：脚本节点写出的成品提示词自动喂给 minimax 当提示词。这是 script 节点在设计上的下游用法。\n2. **保留现有 `material-image-1` → `first_frame`** 不动，另接一条 script → `prompt`，两条边并存（图片定首帧 + 脚本定提示词，互不冲突）。\n3. 如果你确实想要「脚本节点产出首帧图」，那需要的是一个**图像生成节点**（gpt-image-2 / nb2-image）而不是 script 节点——我可以照你说的语义换成图像节点，再接 `first_frame`。\n\n要哪个？",
+        "model": "deepseek/deepseek-v4.1-flash",
+        "turns": 3,
+        "wall_clock_s": 69.2,
+        "usage": {
+          "prompt_tokens": 33437,
+          "completion_tokens": 4441,
+          "total_tokens": 37878,
+          "calls": 3,
+          "models_used": [
+            "deepseek/deepseek-v4.1-flash"
+          ]
+        },
+        "artifacts": [],
+        "jobs": {
+          "submitted": 0,
+          "budget": null
+        },
+        "tool_calls": [
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_type": "generate",
+              "provider": "script"
+            },
+            "result": {
+              "node_id": "generate:script",
+              "name": "AI Script (Prompt Writer)",
+              "description": null,
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "properties": {
+                  "context_urls": {
+                    "description": "Optional reference media URLs appended to the instruction as context",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "maxItems": 8,
+                    "type": "array"
+                  },
+                  "goal": {
+                    "description": "compose mode: the original goal (defaults to instruction when empty)",
+                    "type": "string"
+                  },
+                  "instruction": {
+                    "description": "What you want the video/audio/image to be, in plain language — the script node rewrites it into a generation-ready prompt",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "material_refs": {
+                    "description": "#504: material references — resolved at submit, woven into the instruction, passed through to downstream nodes via dest_refs",
+                    "items": {
+                      "properties": {
+                        "entry_id": {
+                          "description": "Media-pool entry id (mp-...)",
+                          "type": "string"
+                        },
+                        "note": {
+                          "description": "Free-text usage note — woven into the prompt's referenced-materials section",
+                          "type": "string"
+                        },
+                        "role": {
+                          "enum": [
+                            "first_frame",
+                            "last_frame",
+                            "reference_image",
+                            "reference_video",
+                            "reference_audio"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "entry_id",
+                        "role"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "max_output_tokens": {
+                    "default": 2048,
+                    "description": "Upper bound on the generated prompt length; also the billing hold bound",
+                    "maximum": 8192,
+                    "minimum": 64,
+                    "type": "integer"
+                  },
+                  "mode": {
+                    "description": "decompose = instruction is a goal, output is the questionnaire JSON (#432); compose = synthesize the final prompt + ir from goal/selections (#432); storyboard = instruction is a narrative brief, output is a template-v2 sequence JSON with shots/transitions/elements/continuity locks (#381). Absent = single-phase instruction→prompt",
+                    "enum": [
+                      "decompose",
+                      "compose",
+                      "storyboard"
+                    ],
+                    "type": "string"
+                  },
+                  "model": {
+                    "default": "deepseek-v4-flash-0731",
+                    "description": "Model. Currently only deepseek-v4-flash-0731; a value outside this set is rejected at submit time",
+                    "enum": [
+                      "deepseek-v4-flash-0731"
+                    ],
+                    "type": "string"
+                  },
+                  "selections": {
+                    "description": "compose mode: the user's picks + custom values keyed by dimension (subject/action/camera/mood/sound)",
+                    "type": "object"
+                  },
+                  "system_prompt": {
+                    "description": "Optional — overrides the built-in prompt-engineering system prompt (advanced)",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "instruction"
+                ],
+                "type": "object",
+                "x-input-ports": [
+                  {
+                    "accepts": [
+                      "text"
+                    ],
+                    "field": "instruction"
+                  }
+                ]
+              },
+              "output_schema": {
+                "completion_tokens": "integer",
+                "dest_prompt": "string — the generation-ready prompt, flows into downstream nodes' prompt field",
+                "ir": "string (JSON) — compose mode only: IR-lite axes the model applied (flat snake_case object)",
+                "prompt_tokens": "integer"
+              },
+              "config_defaults": {
+                "pricing": {
+                  "input_price_usd": 140,
+                  "model": "per_token",
+                  "output_price_usd": 280,
+                  "qty_max": 8192
+                }
+              },
+              "enabled": true,
+              "port_analysis": {
+                "enum_fields": [
+                  {
+                    "field": "mode",
+                    "enum": [
+                      "decompose",
+                      "compose",
+                      "storyboard"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "model",
+                    "enum": [
+                      "deepseek-v4-flash-0731"
+                    ],
+                    "on": "field"
+                  }
+                ],
+                "required": [
+                  "instruction"
+                ],
+                "notes": []
+              }
+            },
+            "error": null,
+            "duration_s": 4.01
+          },
+          {
+            "tool": "canvas_query_schema",
+            "arguments": {
+              "node_id": "generate:minimax-h3"
+            },
+            "result": {
+              "node_id": "generate:minimax-h3",
+              "name": "MiniMax-H3 Video Generation",
+              "description": null,
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "properties": {
+                  "audio_refs": {
+                    "description": "Reference audio (max 3, each 2-15s, total ≤15s)",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "duration": {
+                    "default": 4,
+                    "description": "Duration in seconds (4-15)",
+                    "maximum": 15,
+                    "minimum": 4,
+                    "type": "integer"
+                  },
+                  "image_roles": {
+                    "description": "Per-image roles (parallel to images). Omit for auto-derivation",
+                    "items": {
+                      "enum": [
+                        "first_frame",
+                        "last_frame",
+                        "reference_image"
+                      ],
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "images": {
+                    "description": "Input images. 1 image = first frame; multiple images default to reference mode. First/last-frame mode cannot mix with reference mode (upstream rejects the mix)",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "model": {
+                    "default": "MiniMax-H3",
+                    "description": "Model. Currently only MiniMax-H3; a value outside this set is rejected at submit time",
+                    "enum": [
+                      "MiniMax-H3"
+                    ],
+                    "type": "string"
+                  },
+                  "prompt": {
+                    "description": "Text prompt (mandatory, max 7000 chars)",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "ratio": {
+                    "default": "9:16",
+                    "description": "Aspect ratio. Defaults to 9:16 (portrait, Wesley 2026-08-28); required for text-to-video ('adaptive' not allowed); image-to-video is always adaptive regardless",
+                    "enum": [
+                      "21:9",
+                      "16:9",
+                      "4:3",
+                      "1:1",
+                      "3:4",
+                      "9:16"
+                    ],
+                    "type": "string"
+                  },
+                  "resolution": {
+                    "default": "768P",
+                    "description": "Output resolution tier (different pricing per tier)",
+                    "enum": [
+                      "768P",
+                      "2K"
+                    ],
+                    "type": "string"
+                  },
+                  "video_refs": {
+                    "description": "Reference videos (max 3, each 2-15s, total ≤15s)",
+                    "items": {
+                      "format": "uri",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "prompt"
+                ],
+                "type": "object",
+                "x-input-ports": [
+                  {
+                    "accepts": [
+                      "image"
+                    ],
+                    "field": "src_image_url"
+                  },
+                  {
+                    "accepts": [
+                      "text"
+                    ],
+                    "field": "prompt"
+                  }
+                ]
+              },
+              "output_schema": {
+                "dest_video_url": "string — SAS-authenticated URL of the generated video",
+                "duration": "integer — output duration in seconds",
+                "ratio": "string — actual output aspect ratio",
+                "resolution": "string — output resolution tier (768P/2K)",
+                "status": "string",
+                "task_id": "string",
+                "usage": "object — {output_seconds, input_seconds, input_image_count} billing metering"
+              },
+              "config_defaults": {
+                "pricing": {
+                  "dim_ratios": {
+                    "resolution": {
+                      "2K": 1.6,
+                      "768P": 1
+                    }
+                  },
+                  "model": "per_second",
+                  "qty_max": 15,
+                  "qty_min": 4,
+                  "unit_price_usd": 69000
+                }
+              },
+              "enabled": true,
+              "port_analysis": {
+                "enum_fields": [
+                  {
+                    "field": "image_roles",
+                    "enum": [
+                      "first_frame",
+                      "last_frame",
+                      "reference_image"
+                    ],
+                    "on": "items"
+                  },
+                  {
+                    "field": "model",
+                    "enum": [
+                      "MiniMax-H3"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "ratio",
+                    "enum": [
+                      "21:9",
+                      "16:9",
+                      "4:3",
+                      "1:1",
+                      "3:4",
+                      "9:16"
+                    ],
+                    "on": "field"
+                  },
+                  {
+                    "field": "resolution",
+                    "enum": [
+                      "768P",
+                      "2K"
+                    ],
+                    "on": "field"
+                  }
+                ],
+                "required": [
+                  "prompt"
+                ],
+                "notes": [
+                  "images/image_roles and video_refs are alternative input modes"
+                ]
+              }
+            },
+            "error": null,
+            "duration_s": 3.82
+          },
+          {
+            "tool": "canvas_create_node",
+            "arguments": {
+              "config": {
+                "instruction": "一段测试用的 15 秒竖屏短视频脚本：主角是夜色中巡山的白猫道士"
+              },
+              "node_type": "generate",
+              "provider": "script",
+              "workflow_id": "workflow-1790656729594939271"
+            },
+            "result": {
+              "node": {
+                "type": "generate",
+                "provider": "script",
+                "key": "generate-script-3",
+                "config": {
+                  "instruction": "一段测试用的 15 秒竖屏短视频脚本：主角是夜色中巡山的白猫道士"
+                },
+                "position": {
+                  "x": 560,
+                  "y": 80
+                }
+              },
+              "workflow": {
+                "id": "workflow-1790656729594939271",
+                "name": "qa-15-16-fix-1790656727",
+                "description": "#15/#16 fix verification board",
+                "nodes": [
+                  {
+                    "type": "material",
+                    "provider": "image",
+                    "key": "material-image-1",
+                    "config": {
+                      "kind": "image",
+                      "name": "qa-15-ref",
+                      "pool_entry_id": "mp-1790656732140243096"
+                    },
+                    "position": {
+                      "x": 80,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "generate",
+                    "provider": "minimax-h3",
+                    "key": "generate-minimax-h3-2",
+                    "config": {
+                      "material_deps": [
+                        {
+                          "input_port": "first_frame",
+                          "key": "material-image-1"
+                        }
+                      ],
+                      "prompt": "夜色中一只白猫道士巡山"
+                    },
+                    "depends_on": [
+                      "material-image-1"
+                    ],
+                    "position": {
+                      "x": 320,
+                      "y": 80
+                    }
+                  },
+                  {
+                    "type": "generate",
+                    "provider": "script",
+                    "key": "generate-script-3",
+                    "config": {
+                      "instruction": "一段测试用的 15 秒竖屏短视频脚本：主角是夜色中巡山的白猫道士"
+                    },
+                    "position": {
+                      "x": 560,
+                      "y": 80
+                    }
+                  }
+                ],
+                "owner_id": "usr-1787815793337170547",
+                "schema_version": 0,
+                "media_pool": [
+                  {
+                    "id": "mp-1790656732140243096",
+                    "name": "qa-15-ref",
+                    "kind": "image",
+                    "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790601545790-53c28591cf336fa8/node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2-image.png",
+                    "mime_type": "image/png",
+                    "origin": {
+                      "kind": "upload"
+                    },
+                    "created_at": "2026-09-29T04:38:52.140245642Z"
+                  }
+                ],
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z"
+              }
+            },
+            "error": null,
+            "duration_s": 10.18
+          }
+        ],
+        "preflight": null,
+        "error": null,
+        "ok": true,
+        "dry_run": false,
+        "notes": [
+          "tool canvas_query_schema \"{\\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\"}\"",
+          "tool canvas_query_schema \"{\\\"node_id\\\": \\\"generate:minimax-h3\\\"}\"",
+          "tool canvas_create_node \"{\\\"config\\\": {\\\"instruction\\\": \\\"一段测试用的 15 秒竖屏短视频脚本：主角是夜色中巡山的白猫道士\\\"}, \\\"node_type\\\": \\\"generate\\\", \\\"provider\\\": \\\"script\\\", \\\"workflow_id\\\": \\\"workflow-179065",
+          "canvas: node generate-script-3 added to workflow-1790656729594939271"
+        ]
+      }
+    }
+  }
+]

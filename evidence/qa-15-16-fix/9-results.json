@@ -1,0 +1,46 @@
+{
+  "checks": [
+    {
+      "check": "#15 material_deps carries input_port=first_frame",
+      "pass": true,
+      "detail": "material_deps=[{\"input_port\": \"first_frame\", \"key\": \"material-image-1\"}]"
+    },
+    {
+      "check": "#15 material pointer normalized to pool_entry_id",
+      "pass": true,
+      "detail": "config keys=['kind', 'name', 'pool_entry_id']"
+    },
+    {
+      "check": "#15 normalization reported on the action row",
+      "pass": true,
+      "detail": "wiring action rows=1, reported=True"
+    },
+    {
+      "check": "#15 non-material port wiring refused (no script entry in material_deps)",
+      "pass": true,
+      "detail": "material_deps=[{\"input_port\": \"first_frame\", \"key\": \"material-image-1\"}]"
+    },
+    {
+      "check": "#15 refusal surfaced to the user (structured, not silent)",
+      "pass": true,
+      "detail": "answer head: **状态：脚本节点已建，但那条线没有接。**\n\n| 节点 | key | config |\n|---|---|---|\n| generate / script | `generate-script-3` | instruction: \"一段测试用的 15 秒竖屏短视频脚本：主角是夜色中巡山的白猫道士\" |\n\n`generate-script-3` 目前**没有连到任何节点**（悬空）。minima"
+    },
+    {
+      "check": "#16A paid action row carries cost.estimate_usd",
+      "pass": true,
+      "detail": "submit actions=1, with cost=1, costs=[{'estimate_usd': 1.035, 'hold_micro_usd': 1035000}]"
+    },
+    {
+      "check": "#16A confirm quote shows the estimate amount",
+      "pass": true,
+      "detail": "quote={\"total_estimate_usd\": 1035000, \"total_hold\": 1035000, \"total_estimate_usd_display\": 1.035, \"total_hold_display\": 1.035, \"nodes\": [{\"node_type\": \"generate\", \"provider\": \"minimax-h3\", \"key\": \"generate-"
+    },
+    {
+      "check": "#16B note rows carry contract origins (agent|user, never system)",
+      "pass": true,
+      "detail": "note origins=[] over 0 rows"
+    }
+  ],
+  "session_id": "20260929-123853-c8d655",
+  "workflow_id": "workflow-1790656729594939271"
+}
