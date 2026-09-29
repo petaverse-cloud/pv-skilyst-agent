@@ -21,7 +21,7 @@
 ## 核心能力（M1 范围）
 
 - **SKILL.md 兼容运行时**：agentskills.io 规范零改动吃入社区 skill（T1 实测 22/22）+ 我方 manifest sidecar 规范（PR #584：fork 血缘/供应链/沙盒四维/node 依赖/i18n）
-- **beehive 集成**：job 提交/轮询/素材管理/workflow 关联（受限 token：禁 admin/billing 写——服务端 scope 中间件为最紧急依赖）
+- **skilyst platform integration**：job 提交/轮询/素材管理/workflow 关联（受限 token：禁 admin/billing 写——服务端 scope 中间件为最紧急依赖）
 - **沙盒**：三档契约（read-only / workspace-write / danger-full-access + escalation 审批流）
 - **官方 skills 预载**：安装即带 + `update skills` 独立更新通道（T4 首版 5 个官方 skill：`doctor` / `embed-video` / `lipsync-audio-refs` / `prompt-craft` / `video-15s`，清单与契约见 `skills/official/README.md`）
 - **作品墙 deep link**：fork-onboarding 入口
