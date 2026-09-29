@@ -1,0 +1,41 @@
+[deep-link] dev wrapper registered (/Users/wesley/workspace/Petaverse/src/agents/planner/pv-skilyst-agent/desktop/src-tauri/target/debug/SkilystDev.app) — re-exec from inside it so LaunchServices can route the configured schemes to this process
+[deep-link] runtime scheme registration unavailable: unsupported platform
+[runtime] orphan guard: watching stdin for EOF
+[runtime] http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+2026-09-29 18:05:44.048 skilyst-agent[24468:472334451] error messaging the mach port for IMKCFRunLoopWakeUpReliable
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /auth/login HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "POST /auth/login HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
+[deep-link] sign-in callback received, code delivered to the window
+[runtime] http 127.0.0.1 "OPTIONS /auth/deliver-code HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "POST /auth/deliver-code HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /auth/status HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /auth/status HTTP/1.1" 200 -
+[runtime] http 127.0.0.1 "OPTIONS /sessions HTTP/1.1" 204 -
+[runtime] http 127.0.0.1 "GET /sessions HTTP/1.1" 200 -
