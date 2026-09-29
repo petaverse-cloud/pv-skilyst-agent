@@ -1,0 +1,23 @@
+[
+  {
+    "turn": "把 minimax 节点改成 6 秒、768P、16:9，然后提交这个付费视频任",
+    "quote": {
+      "total_estimate_usd": 1035000,
+      "total_hold": 1035000,
+      "total_estimate_usd_display": 1.035,
+      "total_hold_display": 1.035,
+      "nodes": [
+        {
+          "node_type": "generate",
+          "provider": "minimax-h3",
+          "key": "generate-minimax-h3-2",
+          "priced": true,
+          "model": "per_second",
+          "unit_price_usd": 69000,
+          "qty_estimate": 6,
+          "amount_hold": 1035000
+        }
+      ]
+    }
+  }
+]

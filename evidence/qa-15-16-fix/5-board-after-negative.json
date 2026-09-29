@@ -1,0 +1,71 @@
+{
+  "id": "workflow-1790656729594939271",
+  "name": "qa-15-16-fix-1790656727",
+  "description": "#15/#16 fix verification board",
+  "nodes": [
+    {
+      "type": "material",
+      "provider": "image",
+      "key": "material-image-1",
+      "config": {
+        "kind": "image",
+        "name": "qa-15-ref",
+        "pool_entry_id": "mp-1790656732140243096"
+      },
+      "position": {
+        "x": 80,
+        "y": 80
+      }
+    },
+    {
+      "type": "generate",
+      "provider": "minimax-h3",
+      "key": "generate-minimax-h3-2",
+      "config": {
+        "material_deps": [
+          {
+            "input_port": "first_frame",
+            "key": "material-image-1"
+          }
+        ],
+        "prompt": "夜色中一只白猫道士巡山"
+      },
+      "depends_on": [
+        "material-image-1"
+      ],
+      "position": {
+        "x": 320,
+        "y": 80
+      }
+    },
+    {
+      "type": "generate",
+      "provider": "script",
+      "key": "generate-script-3",
+      "config": {
+        "instruction": "一段测试用的 15 秒竖屏短视频脚本：主角是夜色中巡山的白猫道士"
+      },
+      "position": {
+        "x": 560,
+        "y": 80
+      }
+    }
+  ],
+  "owner_id": "usr-1787815793337170547",
+  "schema_version": 0,
+  "media_pool": [
+    {
+      "id": "mp-1790656732140243096",
+      "name": "qa-15-ref",
+      "kind": "image",
+      "url": "https://beehive-cdn.verse4.pet/beehive-temp/beehive/job-1790601545790-53c28591cf336fa8/node-job-1790601545790-53c28591cf336fa8-generate-gpt-image-2-2-image.png",
+      "mime_type": "image/png",
+      "origin": {
+        "kind": "upload"
+      },
+      "created_at": "2026-09-29T04:38:52.140245642Z"
+    }
+  ],
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
+}
