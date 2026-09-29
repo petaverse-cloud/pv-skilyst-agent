@@ -258,6 +258,211 @@ fn code_from_url(url: &tauri::Url) -> Option<String> {
         .map(|(_, value)| value.to_string())
 }
 
+/// True when the given executable path sits inside a macOS `.app` bundle
+/// (…/Something.app/Contents/MacOS/binary). Pure — unit-tested on every CI
+/// platform, not just macOS.
+#[cfg_attr(not(all(target_os = "macos", debug_assertions)), allow(dead_code))]
+fn inside_app_bundle(exe: &std::path::Path) -> bool {
+    exe.ancestors()
+        .skip(1)
+        .any(|ancestor| ancestor.extension().is_some_and(|ext| ext == "app"))
+}
+
+/// The desktop deep-link schemes from tauri.conf.json — the single source of
+/// truth the plugin's register_all() also reads at runtime. Parsed from the
+/// file embedded at compile time so the dev wrapper can never drift from the
+/// packaged bundle's declaration. `None` means "no schemes configured".
+#[cfg_attr(not(all(target_os = "macos", debug_assertions)), allow(dead_code))]
+fn configured_schemes() -> Option<Vec<String>> {
+    let raw = include_str!("../tauri.conf.json");
+    let value: serde_json::Value = serde_json::from_str(raw).ok()?;
+    let schemes = value
+        .get("plugins")?
+        .get("deep-link")?
+        .get("desktop")?
+        .get("schemes")?
+        .as_array()?
+        .iter()
+        .filter_map(|scheme| scheme.as_str().map(str::to_string))
+        .collect::<Vec<_>>();
+    (!schemes.is_empty()).then_some(schemes)
+}
+
+/// A top-level key from tauri.conf.json (identifier / productName), with a
+/// fallback for the unlikely case the file stops parsing.
+#[cfg_attr(not(all(target_os = "macos", debug_assertions)), allow(dead_code))]
+fn configured_string(key: &str) -> String {
+    let raw = include_str!("../tauri.conf.json");
+    serde_json::from_str::<serde_json::Value>(raw)
+        .ok()
+        .and_then(|value| {
+            value
+                .get(key)
+                .and_then(|value| value.as_str())
+                .map(str::to_string)
+        })
+        .unwrap_or_default()
+}
+
+/// The Info.plist for the dev wrapper bundle. Mirrors what the bundler writes
+/// for a packaged build (CFBundleURLTypes), under a `.dev`-suffixed bundle id
+/// so a dev checkout never masquerades as the installed production app.
+/// `exec_name` must be the name bootstrap_dev_url_scheme symlinks the binary
+/// as — the plist's CFBundleExecutable and the symlink are the same contract.
+/// Pure — unit-tested on every CI platform.
+#[cfg_attr(not(all(target_os = "macos", debug_assertions)), allow(dead_code))]
+fn dev_wrapper_plist(
+    identifier: &str,
+    product_name: &str,
+    exec_name: &str,
+    schemes: &[String],
+) -> String {
+    let scheme_entries = schemes
+        .iter()
+        .map(|scheme| format!("        <string>{scheme}</string>"))
+        .collect::<Vec<_>>()
+        .join("\n");
+    format!(
+        r#"<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key><string>{product_name} Dev</string>
+  <key>CFBundleDisplayName</key><string>{product_name} Dev</string>
+  <key>CFBundleIdentifier</key><string>{identifier}.dev</string>
+  <key>CFBundleExecutable</key><string>{exec_name}</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleVersion</key><string>0.1.0</string>
+  <key>CFBundleShortVersionString</key><string>0.1.0</string>
+  <key>NSHighResolutionCapable</key><true/>
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleURLName</key><string>{identifier}.dev</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+{scheme_entries}
+      </array>
+    </dict>
+  </array>
+</dict>
+</plist>
+"#
+    )
+}
+
+/// #25 (macOS dev mode): `tauri dev` runs the bare target/debug binary, which
+/// has no Info.plist, so LaunchServices has no bundle to bind `skilyst://`
+/// to — `open "skilyst://callback?code=…"` answers kLSApplicationNotFoundErr
+/// and the browser auth callback dies silently. The deep-link plugin cannot
+/// fix this at runtime (register_all() answers UnsupportedPlatform on macOS):
+/// LaunchServices only routes URL events to a process it can associate with a
+/// registered *bundle*.
+///
+/// So a debug build bootstraps its own wrapper bundle: synthesize
+/// `target/debug/SkilystDev.app` (a symlink to this very binary plus an
+/// Info.plist declaring the configured schemes), register it with
+/// LaunchServices, and `exec` ourselves from inside the bundle. exec keeps
+/// the same PID and stdio, so `tauri dev` keeps streaming logs and reaping
+/// the right process, while LaunchServices now has a bundle to deliver GURL
+/// Apple Events to. Verified live: a bare-path process never receives the
+/// event; the same binary started from the wrapper does.
+///
+/// Failure is loud but never fatal — the app still runs, only skilyst://
+/// delivery is affected. Release builds skip this entirely (the bundler
+/// writes the real Info.plist).
+#[cfg(all(target_os = "macos", debug_assertions))]
+pub fn bootstrap_dev_url_scheme() {
+    use std::os::unix::process::CommandExt;
+
+    const BOOTSTRAPPED: &str = "SKILYST_DEV_BUNDLE";
+    // Second generation: we already re-exec'd from inside the wrapper.
+    if std::env::var_os(BOOTSTRAPPED).is_some() {
+        return;
+    }
+    let Ok(exe) = std::env::current_exe() else {
+        eprintln!(
+            "[deep-link] dev bootstrap: current_exe unavailable — skilyst:// will not reach this process"
+        );
+        return;
+    };
+    // Launched from a real bundle (cold start via `open`): nothing to do.
+    if inside_app_bundle(&exe) {
+        return;
+    }
+    let Some(schemes) = configured_schemes() else {
+        return; // no schemes configured: nothing to claim
+    };
+    let Some(target_debug) = exe.parent() else {
+        return;
+    };
+    let wrapper = target_debug.join("SkilystDev.app");
+    let macos_dir = wrapper.join("Contents").join("MacOS");
+    if let Err(exc) = std::fs::create_dir_all(&macos_dir) {
+        eprintln!(
+            "[deep-link] dev bootstrap: could not create {}: {exc}",
+            macos_dir.display()
+        );
+        return;
+    }
+    let binary_name = exe.file_name().map_or_else(
+        || "skilyst-agent".to_string(),
+        |name| name.to_string_lossy().into_owned(),
+    );
+    let linked = macos_dir.join(&binary_name);
+    // Recreate on every launch: cheap, and always points at the newest build.
+    let _ = std::fs::remove_file(&linked);
+    if let Err(exc) = std::os::unix::fs::symlink(&exe, &linked) {
+        eprintln!(
+            "[deep-link] dev bootstrap: could not link {}: {exc}",
+            linked.display()
+        );
+        return;
+    }
+    let identifier = configured_string("identifier");
+    let product_name = configured_string("productName");
+    let identifier = if identifier.is_empty() {
+        "skilyst-agent".into()
+    } else {
+        identifier
+    };
+    let product_name = if product_name.is_empty() {
+        "Skilyst Agent".into()
+    } else {
+        product_name
+    };
+    let plist = dev_wrapper_plist(&identifier, &product_name, &binary_name, &schemes);
+    if let Err(exc) = std::fs::write(wrapper.join("Contents").join("Info.plist"), plist) {
+        eprintln!("[deep-link] dev bootstrap: could not write the wrapper Info.plist: {exc}");
+        return;
+    }
+    let lsregister = "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister";
+    if !std::path::Path::new(lsregister).is_file() {
+        eprintln!("[deep-link] dev bootstrap: lsregister not found at the expected path");
+        return;
+    }
+    match std::process::Command::new(lsregister)
+        .arg("-f")
+        .arg(&wrapper)
+        .status()
+    {
+        Ok(status) if status.success() => {}
+        outcome => {
+            eprintln!("[deep-link] dev bootstrap: lsregister failed: {outcome:?}");
+            return;
+        }
+    }
+    eprintln!(
+        "[deep-link] dev wrapper registered ({}) — re-exec from inside it so LaunchServices can route the configured schemes to this process",
+        wrapper.display()
+    );
+    let mut command = std::process::Command::new(&linked);
+    command.env(BOOTSTRAPPED, "1");
+    // exec() only returns on failure: on success this image is replaced.
+    let exc = command.exec();
+    eprintln!("[deep-link] dev bootstrap: re-exec failed: {exc}");
+}
+
 /// The browser callback lands as a `skilyst://callback?code=<one-time-code>`
 /// deep link. The shell does not talk to the runtime itself (the webview owns
 /// the token and the HTTP client), so the code is forwarded as an event the
@@ -269,6 +474,10 @@ fn handle_deep_link(app: &AppHandle, url: &tauri::Url) {
     };
     if let Err(exc) = app.emit("auth-code", serde_json::json!({ "code": code })) {
         eprintln!("[deep-link] could not deliver the code to the window: {exc}");
+    } else {
+        // Success is logged without the code itself: the one-time code is a
+        // credential, so it must never appear in logs or any committed output.
+        eprintln!("[deep-link] sign-in callback received, code delivered to the window");
     }
 }
 
@@ -312,6 +521,21 @@ pub fn run() {
             // cases: the app was already running (on_open_url) or the link
             // launched it (get_current, macOS/Windows cold start) — both must
             // reach the webview as the same auth-code event.
+            //
+            // #25: claim the scheme at runtime BEFORE arming the listener.
+            // register_all() is the runtime registration that makes dev mode
+            // work on Windows (registry) and Linux (desktop entry); a packaged
+            // build already owns the scheme through its bundle metadata. The
+            // plugin has NO runtime registration on macOS (it answers
+            // UnsupportedPlatform — verified against 2.5.0 source), so on
+            // macOS the scheme is claimed by the bundle Info.plist instead:
+            // packaged builds get it from the bundler, dev builds from the
+            // wrapper bootstrap in main(). A failure here is logged loudly
+            // rather than aborting startup: the listener and the cold-start
+            // path still work for whichever mechanism did claim the scheme.
+            if let Err(exc) = app.deep_link().register_all() {
+                eprintln!("[deep-link] runtime scheme registration unavailable: {exc}");
+            }
             let handle = app.handle().clone();
             app.deep_link().on_open_url({
                 let handle = handle.clone();
@@ -395,5 +619,49 @@ mod tests {
             code_from_url(&tauri::Url::parse("https://bee.verse4.pet/callback?code=x").unwrap()),
             None
         );
+    }
+
+    // -- #25: the macOS dev wrapper bootstrap ---------------------------------
+
+    #[test]
+    fn a_bare_dev_binary_is_recognized_as_outside_any_bundle() {
+        assert!(!inside_app_bundle(std::path::Path::new(
+            "/repo/desktop/src-tauri/target/debug/skilyst-agent"
+        )));
+        assert!(!inside_app_bundle(std::path::Path::new("skilyst-agent")));
+    }
+
+    #[test]
+    fn a_binary_inside_an_app_bundle_is_recognized() {
+        // The dev wrapper's own launch path, and a packaged install.
+        assert!(inside_app_bundle(std::path::Path::new(
+            "/repo/desktop/src-tauri/target/debug/SkilystDev.app/Contents/MacOS/skilyst-agent"
+        )));
+        assert!(inside_app_bundle(std::path::Path::new(
+            "/Applications/Skilyst Agent.app/Contents/MacOS/skilyst-agent"
+        )));
+    }
+
+    #[test]
+    fn the_configured_schemes_come_from_tauri_conf_json() {
+        // The wrapper and the packaged bundle must declare the same scheme;
+        // this pins the single source of truth actually being read.
+        assert_eq!(configured_schemes(), Some(vec!["skilyst".to_string()]));
+    }
+
+    #[test]
+    fn the_wrapper_plist_declares_the_dev_bundle_id_and_scheme() {
+        let plist = dev_wrapper_plist(
+            "com.petaverse.skilyst-agent",
+            "Skilyst Agent",
+            "skilyst-agent",
+            &["skilyst".to_string()],
+        );
+        // Dev bundle id: a checkout must never pose as the installed app.
+        assert!(plist.contains("<string>com.petaverse.skilyst-agent.dev</string>"));
+        assert!(plist.contains("<string>skilyst</string>"));
+        assert!(plist.contains("<key>CFBundleURLTypes</key>"));
+        // The exec name must match what bootstrap_dev_url_scheme symlinks.
+        assert!(plist.contains("<key>CFBundleExecutable</key><string>skilyst-agent</string>"));
     }
 }
