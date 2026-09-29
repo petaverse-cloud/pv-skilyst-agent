@@ -1,11 +1,11 @@
 ---
 name: embed-video
-description: Image-to-video craft on the Skilyst/Beehive platform — animate a locked still (first-frame anchor) into a 4-15s clip that keeps the identity of that still, and cut several such clips together without a visible jump. Use when the user has a locked image (or needs one) and wants controlled motion from it, instead of a free text-to-video render.
+description: Image-to-video craft on the skilyst platform — animate a locked still (first-frame anchor) into a 4-15s clip that keeps the identity of that still, and cut several such clips together without a visible jump. Use when the user has a locked image (or needs one) and wants controlled motion from it, instead of a free text-to-video render.
 license: MIT
-compatibility: Requires the skilyst runtime (>=0.1.0) with the tool named in manifest.json requires.nodes[].binding and network access to the Beehive API host declared in permission.egress.
+compatibility: Requires the skilyst runtime (>=0.1.0) with the tool named in manifest.json requires.nodes[].binding and network access to the skilyst API host declared in permission.egress.
 metadata:
   skilyst.skill_id: skilyst/embed-video
-  skilyst.version: "1.1.0"
+  skilyst.version: "1.2.0"
 ---
 
 # Image-to-video: lock the still, animate the change

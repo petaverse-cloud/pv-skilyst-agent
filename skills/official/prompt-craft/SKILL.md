@@ -1,11 +1,11 @@
 ---
 name: prompt-craft
-description: Camera-and-prompt craft for the video nodes on the Skilyst/Beehive platform — the cross-model structural skeleton, the per-model deltas that actually change the output, the five-part reference-lock syntax that keeps a character consistent, and the dialogue pacing rule. Use when writing or reviewing any generation prompt, before submitting a job; contains no node dependency of its own.
+description: Camera-and-prompt craft for the video nodes on the skilyst platform — the cross-model structural skeleton, the per-model deltas that actually change the output, the five-part reference-lock syntax that keeps a character consistent, and the dialogue pacing rule. Use when writing or reviewing any generation prompt, before submitting a job; contains no node dependency of its own.
 license: MIT
 compatibility: Requires nothing but the skilyst runtime (>=0.1.0): pure methodology, no network, no credential. It declares requires.nodes = [] on purpose so it can never make a platform tool available.
 metadata:
   skilyst.skill_id: skilyst/prompt-craft
-  skilyst.version: "1.0.0"
+  skilyst.version: "1.1.0"
 ---
 
 # Prompt craft: the four rules that survive contact with a model

@@ -1,10 +1,10 @@
 {
   "skill_id": "skilyst/video-15s",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "display_name": "15 秒竖版短视频生产",
-  "description": "Produce a single 15-second vertical short video from a text idea on the Skilyst/Beehive platform. Use when the user wants a 15s social clip (no source media) and expects a finished video file URL. Covers the shot-intent-first prompt skeleton, the cheapest acceptable render tier, and the artifact hand-off.",
+  "description": "Produce a single 15-second vertical short video from a text idea on the skilyst platform. Use when the user wants a 15s social clip (no source media) and expects a finished video file URL. Covers the shot-intent-first prompt skeleton, the cheapest acceptable render tier, and the artifact hand-off.",
   "kind": "official-bundle",
-  "content_digest": "sha256:5663a4904ae9f486fed54b166e052a6dac9b4a7a614a6e9b4b3c9e868e0fae63",
+  "content_digest": "sha256:ce50ce69d13b435470114f7240dfc04133d0eba254185dad99c507bda9bdec24",
   "upstream": null,
   "fork_depth": 0,
   "supply_chain": {
@@ -23,7 +23,7 @@
         "key_id": "skilyst-platform",
         "algo": "ed25519",
         "sig": "platform-signature-pending",
-        "digest": "sha256:5663a4904ae9f486fed54b166e052a6dac9b4a7a614a6e9b4b3c9e868e0fae63"
+        "digest": "sha256:ce50ce69d13b435470114f7240dfc04133d0eba254185dad99c507bda9bdec24"
       }
     ]
   },
@@ -121,6 +121,12 @@
       "version": "1.1.0",
       "date": "2026-09-23",
       "changes": "manifest v0.2: requires.nodes[].binding added (tool<->node call contract) and pinned to the real runtime tool beehive_submit_job (1.0.0 named a tool that does not exist); license file and i18n glossaries shipped so every declared reference resolves; evidence lines added to every rule",
+      "upstream_sync": false
+    },
+    {
+      "version": "1.2.0",
+      "date": "2026-09-29",
+      "changes": "rebrand: user-facing copy now says skilyst (the platform brand); no functional change, tool bindings and egress hostnames unchanged",
       "upstream_sync": false
     }
   ]

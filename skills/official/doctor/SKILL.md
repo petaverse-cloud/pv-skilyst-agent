@@ -2,10 +2,10 @@
 name: doctor
 description: One-shot environment self-check for the Skilyst agent — credentials present, installed skills intact, platform reachable, required nodes registered, and which scopes the restricted key actually has. Use as the FIRST command of any session or troubleshooting thread, before submitting a paid job; the output says exactly what to fix.
 license: MIT
-compatibility: Requires the skilyst runtime (>=0.1.0) on PATH or via SKILYST_BIN, a credential env file (default ~/.skilyst/env), and network access to the Beehive API host declared in permission.egress. Runs a POSIX shell script from scripts/.
+compatibility: Requires the skilyst runtime (>=0.1.0) on PATH or via SKILYST_BIN, a credential env file (default ~/.skilyst/env), and network access to the skilyst API host declared in permission.egress. Runs a POSIX shell script from scripts/.
 metadata:
   skilyst.skill_id: skilyst/doctor
-  skilyst.version: "1.0.0"
+  skilyst.version: "1.1.0"
 ---
 
 # Environment self-check (run this first)
