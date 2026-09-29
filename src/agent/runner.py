@@ -45,7 +45,7 @@ def gated_client(cfg: RuntimeConfig, bypass: bool = False) -> BeehiveClient:
         client = client_from_bearer(cfg.beehive.base_url, bearer, cfg.beehive.user)
         client.bypass_scope = bypass
         return client
-    raise ConfigError("no usable Beehive credential (need AK/SK or user/password)")
+    raise ConfigError("no usable skilyst credential (need AK/SK or user/password)")
 
 
 def load_skill(store: SkillStore, skill_id: str) -> SkillPackage:
