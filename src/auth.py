@@ -146,13 +146,24 @@ class AuthError(Exception):
 
 
 class AuthFlow:
-    """Device-code login with deep-link (GUI) or loopback (CLI) callback."""
+    """Device-code login with deep-link (GUI) or loopback (CLI) callback.
+
+    Two hosts are involved and they are not the same one: the API endpoints
+    (device-code create, token exchange) live on the beehive API host — the
+    same ``BEEHIVE_API`` the rest of the runtime uses — while the user's
+    browser is pointed at the web console host. Pointing the API calls at the
+    console host answers 405 (verified live), so the two are resolved
+    separately.
+    """
 
     def __init__(self, store: Optional[TokenStore] = None,
                  base_url: str = "https://bee.verse4.pet",
+                 api_url: Optional[str] = None,
                  mock: Optional[bool] = None):
         self.store = store or TokenStore()
-        self.base_url = base_url.rstrip("/")
+        self.base_url = base_url.rstrip("/")            # web console (browser)
+        self.api_url = (api_url or os.environ.get("BEEHIVE_API")
+                        or "https://beehive-api.verse4.pet").rstrip("/")
         self.mock = (os.environ.get("SKILYST_MOCK_AUTH") == "1") if mock is None else mock
         self.state = AuthState.UNAUTHENTICATED
         self._verifier: Optional[str] = None
@@ -192,7 +203,7 @@ class AuthFlow:
             self._device_code = "dc_mock_" + secrets.token_hex(8)
             launch = f"{self.base_url}/login?device_code={self._device_code}&mock=1"
         else:
-            resp = _post_json(f"{self.base_url}/api/v1/auth/device-code", {
+            resp = _post_json(f"{self.api_url}/api/v1/auth/device-code", {
                 "client": "skilyst-agent", "code_challenge": challenge,
                 "redirect_uri": redirect_uri})
             self._device_code = resp["device_code"]
@@ -220,7 +231,7 @@ class AuthFlow:
             self._device_code = "dc_mock_" + secrets.token_hex(8)
             launch = f"{self.base_url}/login?device_code={self._device_code}&mock=1"
         else:
-            resp = _post_json(f"{self.base_url}/api/v1/auth/device-code", {
+            resp = _post_json(f"{self.api_url}/api/v1/auth/device-code", {
                 "client": "skilyst-agent", "code_challenge": challenge,
                 "redirect_uri": redirect_uri})
             self._device_code = resp["device_code"]
@@ -282,7 +293,7 @@ class AuthFlow:
                     "expires_in": 86400,
                 }
             else:
-                resp = _post_json(f"{self.base_url}/api/v1/auth/token", {
+                resp = _post_json(f"{self.api_url}/api/v1/auth/token", {
                     "device_code": self._device_code, "code": code,
                     "code_verifier": self._verifier})
             acct = resp.get("account") or {}
@@ -324,7 +335,12 @@ def _post_json(url: str, payload: dict) -> dict:
         url, data=json.dumps(payload).encode(),
         headers={"Content-Type": "application/json"}, method="POST")
     with urllib.request.urlopen(req, timeout=15) as r:
-        return json.loads(r.read())
+        resp = json.loads(r.read())
+    # The beehive API wraps successful bodies as {code, message, payload};
+    # unwrap so the callers read the endpoint's own fields.
+    if isinstance(resp, dict) and "payload" in resp and "code" in resp:
+        return resp["payload"]
+    return resp
 
 
 # ---------------------------------------------------------------------------

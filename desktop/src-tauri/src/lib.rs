@@ -25,7 +25,8 @@ use std::sync::Mutex;
 use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
-use tauri::{AppHandle, Manager, State};
+use tauri::{AppHandle, Emitter, Manager, State};
+use tauri_plugin_deep_link::DeepLinkExt;
 
 /// How long to wait for the runtime's ready line before giving up on it.
 const READY_TIMEOUT: Duration = Duration::from_secs(45);
@@ -238,6 +239,39 @@ fn runtime_stop(state: State<'_, RuntimeState>) -> Result<(), String> {
     Ok(())
 }
 
+/// Open the system browser at the login URL the runtime returned. The browser
+/// step of the deep-link flow MUST happen outside the webview: the console
+/// session lives in the user's browser, never in the app's own storage.
+#[tauri::command]
+fn shell_open(url: String) -> Result<(), String> {
+    tauri_plugin_opener::open_url(url, None::<&str>).map_err(|exc| exc.to_string())
+}
+
+/// Extract the one-time code from a `skilyst://callback?code=<code>` URL.
+/// Pure so the contract is unit-testable without a live window.
+fn code_from_url(url: &tauri::Url) -> Option<String> {
+    if url.scheme() != "skilyst" || url.host_str() != Some("callback") {
+        return None;
+    }
+    url.query_pairs()
+        .find(|(key, _)| key == "code")
+        .map(|(_, value)| value.to_string())
+}
+
+/// The browser callback lands as a `skilyst://callback?code=<one-time-code>`
+/// deep link. The shell does not talk to the runtime itself (the webview owns
+/// the token and the HTTP client), so the code is forwarded as an event the
+/// login screen turns into POST /auth/deliver-code.
+fn handle_deep_link(app: &AppHandle, url: &tauri::Url) {
+    let Some(code) = code_from_url(url) else {
+        eprintln!("[deep-link] not a sign-in callback (ignored): {url}");
+        return;
+    };
+    if let Err(exc) = app.emit("auth-code", serde_json::json!({ "code": code })) {
+        eprintln!("[deep-link] could not deliver the code to the window: {exc}");
+    }
+}
+
 /// `None` means "not connected"; a runtime whose process has exited is reported as
 /// gone rather than as a stale port the frontend would keep talking to.
 #[tauri::command]
@@ -264,12 +298,36 @@ fn runtime_status(state: State<'_, RuntimeState>) -> Option<RuntimeInfo> {
 
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_deep_link::init())
+        .plugin(tauri_plugin_opener::init())
         .manage(RuntimeState::default())
         .invoke_handler(tauri::generate_handler![
             runtime_start,
             runtime_stop,
-            runtime_status
+            runtime_status,
+            shell_open
         ])
+        .setup(|app| {
+            // #20: the browser callback arrives as a skilyst:// deep link. Two
+            // cases: the app was already running (on_open_url) or the link
+            // launched it (get_current, macOS/Windows cold start) — both must
+            // reach the webview as the same auth-code event.
+            let handle = app.handle().clone();
+            app.deep_link().on_open_url({
+                let handle = handle.clone();
+                move |event| {
+                    for url in event.urls() {
+                        handle_deep_link(&handle, &url);
+                    }
+                }
+            });
+            if let Ok(Some(urls)) = app.deep_link().get_current() {
+                for url in &urls {
+                    handle_deep_link(&handle, url);
+                }
+            }
+            Ok(())
+        })
         .on_window_event(|window, event| {
             if let tauri::WindowEvent::CloseRequested { .. } = event {
                 // Closing the window must not leave an orphaned agent process behind.
@@ -311,5 +369,31 @@ mod tests {
     fn a_live_runtime_is_reported_as_not_dry_run() {
         let line = READY.replace("\"dry_run\": true", "\"dry_run\": false");
         assert!(!parse_ready_line(&line).unwrap().dry_run);
+    }
+
+    #[test]
+    fn the_sign_in_callback_yields_its_one_time_code() {
+        let url = tauri::Url::parse("skilyst://callback?code=oc_abc123").unwrap();
+        assert_eq!(code_from_url(&url).as_deref(), Some("oc_abc123"));
+    }
+
+    #[test]
+    fn a_callback_without_a_code_yields_none() {
+        let url = tauri::Url::parse("skilyst://callback").unwrap();
+        assert_eq!(code_from_url(&url), None);
+    }
+
+    #[test]
+    fn foreign_schemes_and_hosts_are_ignored() {
+        // The scheme is the app's, but the host is not the sign-in callback.
+        assert_eq!(
+            code_from_url(&tauri::Url::parse("skilyst://open?code=x").unwrap()),
+            None
+        );
+        // Some other app's deep link must never be read as ours.
+        assert_eq!(
+            code_from_url(&tauri::Url::parse("https://bee.verse4.pet/callback?code=x").unwrap()),
+            None
+        );
     }
 }

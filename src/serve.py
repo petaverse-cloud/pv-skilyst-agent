@@ -195,10 +195,15 @@ class RuntimeAPI:
 
     def auth_status(self) -> dict:
         flow = self._auth_flow()
+        # The in-memory phase (awaiting_browser/exchanging) is the truth while
+        # a login is pending; current() would otherwise reset the visible
+        # state to unauthenticated on every poll of the login screen.
+        pending = flow.state if flow.state in ("awaiting_browser", "exchanging") else None
         rec = flow.current()
         if rec is None:
             dev_mode = bool(os.environ.get("SKILYST_DEV_PROFILE"))
-            return {"state": flow.state, "authenticated": False, "dev_mode": dev_mode}
+            return {"state": pending or flow.state, "authenticated": False,
+                    "dev_mode": dev_mode}
         import time as _t
         return {"state": flow.state, "authenticated": True,
                 "account": {"uid": rec.account_uid, "name": rec.account_name},
