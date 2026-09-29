@@ -268,7 +268,7 @@ export default function App() {
               variant={view === "canvas" ? "filled" : "subtle"}
               onClick={() => setView(view === "canvas" ? "chat" : "canvas")}
             >
-              画板
+              Canvas
             </Button>
             <Button
               size="xs"

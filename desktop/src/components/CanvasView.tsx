@@ -1,9 +1,9 @@
 /**
  * CanvasView (A3 S1) — the desktop's minimal integration of the
- * skilyst-studio component package: log into beehive, pick a workflow,
+ * skilyst-studio component package: log into the skilyst platform, pick a workflow,
  * render it READ-ONLY on the package's WorkflowCanvas.
  *
- * This is the S1 acceptance surface ("画板只读渲染一个 workflow"). The full
+ * This is the S1 acceptance surface (read-only render of one workflow). The full
  * workbench (Composer-driven node ops, mediapool, lock UX) lands S2-S4.
  */
 
@@ -109,19 +109,19 @@ export function CanvasView({ onExit, focus }: { onExit: () => void; focus?: Canv
   if (stage === "login") {
     return (
       <Stack align="center" justify="center" style={{ flex: 1 }} gap="md" m="xl">
-        <Title order={4}>Beehive 登录（画板数据源）</Title>
+        <Title order={4}>Skilyst sign-in (canvas data source)</Title>
         <Text size="xs" c="dimmed" maw={420} ta="center">
-          A3 S1 只读画板从 beehive dev API 读取 workflow。凭据仅存本机 localStorage，不入库。
+          A3 S1 read-only canvas reads workflows from the skilyst dev API. Credentials stay in local localStorage and are never uploaded.
         </Text>
         <TextInput
-          label="用户名"
+          label="Username"
           value={username}
           onChange={(e) => setUsername(e.currentTarget.value)}
           w={280}
           data-testid="canvas-login-user"
         />
         <TextInput
-          label="密码"
+          label="Password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.currentTarget.value)}
@@ -134,7 +134,7 @@ export function CanvasView({ onExit, focus }: { onExit: () => void; focus?: Canv
           </Alert>
         ) : null}
         <Button onClick={() => void login()} disabled={!username || !password} data-testid="canvas-login-submit">
-          登录
+          Sign in
         </Button>
       </Stack>
     );
@@ -145,11 +145,11 @@ export function CanvasView({ onExit, focus }: { onExit: () => void; focus?: Canv
       <Stack gap="sm" style={{ flex: 1, overflow: "auto" }} p="md">
         <Group justify="space-between">
           <Group gap="sm">
-            <Title order={4}>Workflow 画板</Title>
-            <Badge size="sm" variant="light" color="teal">A3 S4 · 工作台</Badge>
+            <Title order={4}>Workflow boards</Title>
+            <Badge size="sm" variant="light" color="teal">A3 S4 · Workbench</Badge>
           </Group>
           <Group gap="xs">
-            <Button size="xs" variant="default" onClick={() => void loadWorkflows()}>刷新</Button>
+            <Button size="xs" variant="default" onClick={() => void loadWorkflows()}>Refresh</Button>
             <Button
               size="xs"
               variant="subtle"
@@ -158,18 +158,18 @@ export function CanvasView({ onExit, focus }: { onExit: () => void; focus?: Canv
                 setStage("login");
               }}
             >
-              退出登录
+              Sign out
             </Button>
-            <Button size="xs" variant="subtle" onClick={onExit}>返回会话</Button>
+            <Button size="xs" variant="subtle" onClick={onExit}>Back to chat</Button>
           </Group>
         </Group>
         {listError ? (
           <Alert color="red">{listError}</Alert>
         ) : workflows === null ? (
-          <Group gap="sm" mt="md"><Loader size="sm" /><Text size="sm" c="dimmed">加载 workflow 列表…</Text></Group>
+          <Group gap="sm" mt="md"><Loader size="sm" /><Text size="sm" c="dimmed">Loading workflow list…</Text></Group>
         ) : workflows.length === 0 ? (
           <Text size="sm" c="dimmed" mt="md">
-            该账号在 dev 环境还没有 workflow。先在 web console studio 创建一个。
+            This account has no workflows in the dev environment yet. Create one in the web console studio first.
           </Text>
         ) : (
           workflows.map((wf) => (
@@ -201,15 +201,15 @@ export function CanvasView({ onExit, focus }: { onExit: () => void; focus?: Canv
     <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
       <Group px="md" py={6} justify="space-between" bg="var(--mantine-color-dark-8)">
         <Group gap="sm">
-          <Button size="xs" variant="subtle" onClick={() => setStage("list")}>← Workflow 列表</Button>
-          <Badge size="sm" variant="light" color="teal">完整工作台 · skilyst-studio 包</Badge>
+          <Button size="xs" variant="subtle" onClick={() => setStage("list")}>← Workflow list</Button>
+          <Badge size="sm" variant="light" color="teal">Full workbench · skilyst-studio package</Badge>
           {focus?.node_key ? (
             <Badge size="sm" variant="light" color="blue" data-testid="canvas-focus-node">
-              定位节点: {focus.node_key}
+              Focus node: {focus.node_key}
             </Badge>
           ) : null}
         </Group>
-        <Button size="xs" variant="subtle" onClick={onExit}>返回会话</Button>
+        <Button size="xs" variant="subtle" onClick={onExit}>Back to chat</Button>
       </Group>
       <div style={{ flex: 1, minHeight: 0 }}>
         <QueryClientProvider client={queryClient}>
