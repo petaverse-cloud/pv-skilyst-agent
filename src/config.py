@@ -212,7 +212,7 @@ def resolve(env_file: str | Path | None = None, *, store_dir: str | Path | None 
         )
     if require_beehive and not (beehive.has_api_key or beehive.has_password):
         raise ConfigError(
-            "no Beehive credential found: set BEEHIVE_PLATFORM_AK/BEEHIVE_PLATFORM_SK "
+            "no skilyst credential found: set BEEHIVE_PLATFORM_AK/BEEHIVE_PLATFORM_SK "
             f"(or BEEHIVE_PLATFORM_USER/BEEHIVE_PLATFORM_PASS) in the process environment, "
             f"in {candidate_env} (mode 0600), or point SKILYST_DEV_PROFILE at a profile directory. "
             f"Looked at: env_file={candidate_env if candidate_env.is_file() else 'absent'}, "

@@ -1,11 +1,11 @@
 ---
 name: lipsync-audio-refs
-description: Dialogue shots on the Skilyst/Beehive platform — synthesize the line with TTS first, then drive the shot with that track (audio_refs plus reference images) so the mouth follows the voice and the clip ships with its own audio. Use when a shot has spoken dialogue; covers the 2-15s audio_refs bounds, the first_frame ban in audio mode, and the pacing rule that decides how long the line may be.
+description: Dialogue shots on the skilyst platform — synthesize the line with TTS first, then drive the shot with that track (audio_refs plus reference images) so the mouth follows the voice and the clip ships with its own audio. Use when a shot has spoken dialogue; covers the 2-15s audio_refs bounds, the first_frame ban in audio mode, and the pacing rule that decides how long the line may be.
 license: MIT
-compatibility: Requires the skilyst runtime (>=0.1.0) with the tool named in manifest.json requires.nodes[].binding and network access to the Beehive API host declared in permission.egress.
+compatibility: Requires the skilyst runtime (>=0.1.0) with the tool named in manifest.json requires.nodes[].binding and network access to the skilyst API host declared in permission.egress.
 metadata:
   skilyst.skill_id: skilyst/lipsync-audio-refs
-  skilyst.version: "1.1.0"
+  skilyst.version: "1.2.0"
 ---
 
 # Dialogue shots: TTS first, then audio-driven generation

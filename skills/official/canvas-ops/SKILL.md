@@ -2,7 +2,7 @@
 name: canvas-ops
 description: Drive the A3 canvas workbench through conversation — create nodes, write configs, wire ports, generate media, run jobs. Use when the user wants to build or edit a workflow board by talking to it. Covers lock discipline, the port-matching iron rule, quote-first submissions, and failure self-correction.
 license: MIT
-compatibility: Requires the skilyst runtime (>=0.1.0) with a Beehive credential (AK/SK or user/password), network access to beehive-api.verse4.pet, and an existing workflow board. The twelve canvas tools register only when this skill is active.
+compatibility: Requires the skilyst runtime (>=0.1.0) with a skilyst credential (AK/SK or user/password), network access to beehive-api.verse4.pet, and an existing workflow board. The twelve canvas tools register only when this skill is active.
 metadata:
   skilyst.skill_id: skilyst/canvas-ops
   skilyst.version: "1.0.0"

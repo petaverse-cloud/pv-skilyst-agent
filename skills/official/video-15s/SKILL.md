@@ -1,11 +1,11 @@
 ---
 name: video-15s
-description: Produce a single 15-second vertical short video from a text idea on the Skilyst/Beehive platform. Use when the user wants a 15s social clip (no source media) and expects a finished video file URL. Covers the shot-intent-first prompt skeleton, the cheapest acceptable render tier, and the artifact hand-off.
+description: Produce a single 15-second vertical short video from a text idea on the skilyst platform. Use when the user wants a 15s social clip (no source media) and expects a finished video file URL. Covers the shot-intent-first prompt skeleton, the cheapest acceptable render tier, and the artifact hand-off.
 license: MIT
-compatibility: Requires the skilyst runtime (>=0.1.0) with the tool named in manifest.json requires.nodes[].binding and network access to the Beehive API host declared in permission.egress.
+compatibility: Requires the skilyst runtime (>=0.1.0) with the tool named in manifest.json requires.nodes[].binding and network access to the skilyst API host declared in permission.egress.
 metadata:
   skilyst.skill_id: skilyst/video-15s
-  skilyst.version: "1.1.0"
+  skilyst.version: "1.2.0"
 ---
 
 # 15s Vertical Short Video (text-to-video)

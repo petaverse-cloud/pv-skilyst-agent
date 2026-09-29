@@ -1,10 +1,10 @@
 {
   "skill_id": "skilyst/lipsync-audio-refs",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "display_name": "口型工艺（audio_refs 音频驱动）",
-  "description": "Dialogue shots on the Skilyst/Beehive platform — synthesize the line with TTS first, then drive the shot with that track (audio_refs plus reference images) so the mouth follows the voice and the clip ships with its own audio. Use when a shot has spoken dialogue; covers the 2-15s audio_refs bounds, the first_frame ban in audio mode, and the pacing rule that decides how long the line may be.",
+  "description": "Dialogue shots on the skilyst platform — synthesize the line with TTS first, then drive the shot with that track (audio_refs plus reference images) so the mouth follows the voice and the clip ships with its own audio. Use when a shot has spoken dialogue; covers the 2-15s audio_refs bounds, the first_frame ban in audio mode, and the pacing rule that decides how long the line may be.",
   "kind": "official-bundle",
-  "content_digest": "sha256:f7677cd2c460eebba269fc02292501072d34b476c32ec8d74094f3f73550e50e",
+  "content_digest": "sha256:887b1450cbecd80f543a975deaa10a73a26a833f602704ffc059156bf41731bb",
   "upstream": null,
   "fork_depth": 0,
   "supply_chain": {
@@ -23,7 +23,7 @@
         "key_id": "skilyst-platform",
         "algo": "ed25519",
         "sig": "platform-signature-pending",
-        "digest": "sha256:f7677cd2c460eebba269fc02292501072d34b476c32ec8d74094f3f73550e50e"
+        "digest": "sha256:887b1450cbecd80f543a975deaa10a73a26a833f602704ffc059156bf41731bb"
       }
     ]
   },
@@ -143,6 +143,12 @@
       "version": "1.1.0",
       "date": "2026-09-24",
       "changes": "A1 phase-2: beehive_submit_job forwards the binding's declared arguments for the TTS node (text / voice_id / emotion / speed) and the dialogue-shot node (images / image_roles / audio_refs); the M1 note that a direct API call is required is superseded",
+      "upstream_sync": false
+    },
+    {
+      "version": "1.2.0",
+      "date": "2026-09-29",
+      "changes": "rebrand: user-facing copy now says skilyst (the platform brand); no functional change, tool bindings and egress hostnames unchanged",
       "upstream_sync": false
     }
   ]

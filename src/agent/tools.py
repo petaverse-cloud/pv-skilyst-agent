@@ -143,7 +143,7 @@ def _required_intersection(node_ids: list[str], required_args) -> list[str]:
 
 def _submit_description(active, node_ids: list[str], default_node: str, plan: dict,
                         declared_args, required_args, dry_run: bool = False) -> str:
-    lines = [f"Submit a generation job to the Beehive platform and return its job id. Node ids allowed "
+    lines = [f"Submit a generation job to the skilyst platform and return its job id. Node ids allowed "
              f"for {active.skill_id}: {', '.join(node_ids)} (default {default_node})."]
     if dry_run:
         # Without this line an agent that is careful about spending money reads the call
@@ -296,7 +296,7 @@ def build_registry(store: SkillStore, client: BeehiveClient | None, active: Skil
 
     def _require_secrets() -> None:
         if gate is not None:
-            gate.require_secrets("Beehive credential")
+            gate.require_secrets("skilyst credential")
 
     # -- argument contract, derived from the manifest + the live node schema ----
     def _binding_for(node_id: str) -> NodeBinding:
