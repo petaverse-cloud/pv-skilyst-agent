@@ -63,6 +63,9 @@ messages.jsonl 条目类型：
   action      执行条目（tool_result 中含画板变更的）
               { type, tool, params, result_ref, board_delta, origin: agent|user, cost?, duration? }
   note        系统条目（锁提示/手动变更提示/错误/费用说明）
+              { note_kind: lock|manual|error|info, origin: agent|user }
+              origin 归属：agent = 运行时代表 agent 写入（锁拒绝提示等），
+              user = 宿主事件桥转发的手动变更提示。契约无 system origin（#16 归一）。
 action 卡片：点开=调用详情；点卡片=画板定位高亮
 手动变更经事件桥进流（note 条目，origin=user）——双端审计无盲区
 ```

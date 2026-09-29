@@ -6,8 +6,8 @@
   "skills": [
     {
       "path": "canvas-ops",
-      "version": "1.0.0",
-      "content_digest": "sha256:e3a411ff2657fc8f5f41caed155100b7a0dd0cddef088b5094a30fa58ab71e6a"
+      "version": "1.1.0",
+      "content_digest": "sha256:a5908f9d4bf81e1825c2f897f98a85262b82127ec17ec9c22693a2ac43c29538"
     },
     {
       "path": "doctor",
