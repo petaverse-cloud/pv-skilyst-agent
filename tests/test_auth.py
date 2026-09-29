@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from auth import (AuthFlow, AuthState, TokenRecord, TokenStore,
+from auth import (AuthError, AuthFlow, AuthState, TokenRecord, TokenStore,
                   make_pkce_pair, run_cli_login)
 
 
@@ -102,6 +102,18 @@ class FlowTests(unittest.TestCase):
         flow = self._flow("x")
         with self.assertRaises(Exception):
             flow.login(redirect_uri="skilyst://callback", poll_timeout=0.2)
+        self.assertEqual(flow.state, AuthState.UNAUTHENTICATED)
+
+    def test_deliver_code_without_pending_login_raises_loudly(self):
+        # #24 probe scenario: an orphan code (no login ever started) must
+        # raise AuthError out of deliver_code -- not be swallowed into
+        # _exchange_error -- and must not spin the 5s race guard.
+        flow = self._flow("x")
+        started = time.time()
+        with self.assertRaises(AuthError) as ctx:
+            flow.deliver_code("orphan-code")
+        self.assertLess(time.time() - started, 2.0)
+        self.assertIn("no pending login", str(ctx.exception))
         self.assertEqual(flow.state, AuthState.UNAUTHENTICATED)
 
     def test_exchange_failure_surfaces(self):

@@ -263,25 +263,40 @@ class AuthFlow:
 
     def deliver_code(self, code: str) -> None:
         """Called by deep-link handler (GUI) or loopback listener (CLI) with
-        the one-time code from the browser redirect."""
+        the one-time code from the browser redirect.
+
+        Raises AuthError when no login is pending — loudly (#24): this used
+        to raise inside the try below, where ``except Exception`` swallowed
+        it into ``_exchange_error``; the serve layer then never saw the
+        error and answered with the misleading fallback. The no-pending-login
+        refusal must propagate to the caller (which maps AuthError to a 400
+        the shell can show)."""
+        # Race guard: the login path sets state=AWAITING_BROWSER *before* it
+        # arms the exchange wait (which creates _exchange_event). A caller
+        # that reacts to the state can arrive first -- but ONLY in that
+        # state is an arm imminent. Any other state means no login is
+        # starting, so refuse immediately instead of spinning the 5s guard
+        # for a waiter that will never exist (#24: the orphan probe used to
+        # burn the full 5.01s before failing).
+        if self.state != AuthState.AWAITING_BROWSER:
+            self.state = AuthState.UNAUTHENTICATED
+            raise AuthError(
+                "no pending login to deliver a code to -- start one first "
+                "(POST /auth/login), then deliver the code from the deep link")
+        deadline = time.time() + 5
+        while not hasattr(self, "_exchange_event") and time.time() < deadline:
+            time.sleep(0.01)
+        if not hasattr(self, "_exchange_event"):
+            # AWAITING_BROWSER but the arm never landed (the login thread
+            # died between the two steps). Refuse loudly -- BEFORE the try
+            # block, so the AuthError escapes to the caller (#24) instead of
+            # being captured into _exchange_error where nobody re-raises it.
+            self.state = AuthState.UNAUTHENTICATED
+            raise AuthError(
+                "no pending login to deliver a code to -- start one first "
+                "(POST /auth/login), then deliver the code from the deep link")
         self.state = AuthState.EXCHANGING
         try:
-            # Race guard: the login path sets state=AWAITING_BROWSER *before*
-            # it arms the exchange wait (which creates _exchange_event). A
-            # caller that reacts to the state can arrive first -- wait briefly
-            # for the waiter to exist instead of crashing on a missing attribute.
-            deadline = time.time() + 5
-            while not hasattr(self, "_exchange_event") and time.time() < deadline:
-                time.sleep(0.01)
-            if not hasattr(self, "_exchange_event"):
-                # No pending login was ever armed: a code arriving now has
-                # nothing to exchange against. Refuse loudly (the serve layer
-                # maps AuthError to a 400 the shell can show) instead of
-                # crashing on a missing waiter.
-                self.state = AuthState.UNAUTHENTICATED
-                raise AuthError(
-                    "no pending login to deliver a code to -- start one first "
-                    "(POST /auth/login), then deliver the code from the deep link")
             if self.mock:
                 _ak = "ak-mock-" + secrets.token_hex(8)
                 _sk = "sk-mock-" + secrets.token_hex(16)

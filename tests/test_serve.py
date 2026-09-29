@@ -287,9 +287,20 @@ class DeepLinkAuthTests(EnvIsolation):
         self.assertEqual(body["data"]["account"]["name"], "shell-user")
 
     def test_deliver_code_without_a_pending_login_is_refused_loudly(self):
+        # #24: the refusal must be loud AND immediate. The old code raised the
+        # AuthError inside deliver_code's try block, where ``except Exception``
+        # swallowed it into _exchange_error -- the serve layer then answered
+        # with the misleading "code exchange did not authenticate" fallback
+        # after spinning the 5s race guard. Assert the real contract: the
+        # "no pending login" message (tells the user to start a login, not
+        # that an exchange failed) and a fast refusal, not a 5s spin.
+        started = time.time()
         status, _headers, body = self._deliver("orphan-code")
+        elapsed = time.time() - started
         self.assertEqual(status, 400)
-        self.assertIn("did not authenticate", body["error"]["message"])
+        self.assertIn("no pending login", body["error"]["message"])
+        self.assertNotIn("did not authenticate", body["error"]["message"])
+        self.assertLess(elapsed, 2.0)
 
     def test_the_full_lifecycle_sign_out_returns_to_the_login_gate(self):
         self._login()
