@@ -1,6 +1,6 @@
 """QA regression pins for #15 / #16 (qa #13 full-regression findings).
 
-These are the pytest twins of the qa reproduction scripts
+These are the unittest pins of the qa reproduction scripts
 (tools/qa_a3_t1a.py T1a-5 for #15, T1a/T2 cost observations for #16),
 pinned so the defects cannot silently return:
 
@@ -34,8 +34,6 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-
-import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -153,7 +151,7 @@ class OpsFixture:
 # -- #15: material wiring field-name lenient read + loud failure ---------------
 
 
-class TestQa15MaterialFieldLeniency:
+class TestQa15MaterialFieldLeniency(unittest.TestCase):
     def test_entry_id_material_wires_with_port_and_normalizes(self):
         """The qa T1a-5 FAIL pin: `entry_id` variant must produce the
         material_deps entry with input_port INTACT (the pre-fix code dropped
@@ -218,15 +216,15 @@ class TestQa15MaterialFieldLeniency:
         assert _material_kind(fx.store.workflows["wf-1"], node) == "image"
 
 
-class TestQa15LoudFailures:
+class TestQa15LoudFailures(unittest.TestCase):
     def test_input_port_on_non_material_source_is_refused_not_dropped(self):
         """The silent-degradation regression pin: pre-fix, this call returned
         'wired' with the input_port thrown away. Post-fix it must raise."""
         fx = OpsFixture(board_with_plain_source())
-        with pytest.raises(ValueError) as excinfo:
+        with self.assertRaises(ValueError) as excinfo:
             fx.ops.connect_ports("wf-1", "generate-script-1", "generate-minimax-h3-4",
                                  input_port="first_frame")
-        message = str(excinfo.value)
+        message = str(excinfo.exception)
         assert "generate-script-1" in message
         assert "not a material node" in message
         assert "first_frame" in message
@@ -239,10 +237,10 @@ class TestQa15LoudFailures:
         fx = OpsFixture(board_with_entry_id_material())
         node = fx.node("material-image-3")
         node["config"] = {}   # a draft material: no pointer at all
-        with pytest.raises(ValueError) as excinfo:
+        with self.assertRaises(ValueError) as excinfo:
             fx.ops.connect_ports("wf-1", "material-image-3", "generate-minimax-h3-4",
                                  input_port="first_frame")
-        assert "no pool entry reference" in str(excinfo.value)
+        assert "no pool entry reference" in str(excinfo.exception)
 
     def test_plain_edge_without_port_still_works(self):
         fx = OpsFixture(board_with_plain_source())
@@ -253,10 +251,10 @@ class TestQa15LoudFailures:
 
     def test_invalid_image_port_still_rejected_early(self):
         fx = OpsFixture(board_with_entry_id_material())
-        with pytest.raises(ValueError) as excinfo:
+        with self.assertRaises(ValueError) as excinfo:
             fx.ops.connect_ports("wf-1", "material-image-3", "generate-minimax-h3-4",
                                  input_port="middle_frame")
-        assert "valid image port" in str(excinfo.value)
+        assert "valid image port" in str(excinfo.exception)
 
 
 # -- #15: the action stream reports the normalization --------------------------
@@ -264,7 +262,7 @@ class TestQa15LoudFailures:
 
 def make_canvas_skill(directory: Path) -> Path:
     """A minimal published canvas-ops-like package (same shape as
-    test_canvas_agent.make_skill, but self-contained for pytest)."""
+    test_canvas_agent.make_skill, but self-contained)."""
     directory.mkdir(parents=True, exist_ok=True)
     (directory / "SKILL.md").write_text(
         "---\nname: canvas-ops\ndescription: A canvas test skill.\nlicense: MIT\n---\n\n"
@@ -308,7 +306,7 @@ class AgentFixture:
                                         on_action=on_action))
 
 
-class TestQa15ActionStream:
+class TestQa15ActionStream(unittest.TestCase):
     def test_wiring_action_row_carries_the_normalization_warning(self):
         fx = AgentFixture(board_with_entry_id_material())
         recorded: list[dict] = []
@@ -331,7 +329,7 @@ class TestQa15ActionStream:
 # -- #16A: the action cost chain ------------------------------------------------
 
 
-class TestQa16CostChain:
+class TestQa16CostChain(unittest.TestCase):
     def _cost_from_quote(self, quote_payload: dict) -> dict | None:
         from agent.tools import _micro_to_usd_cost
         return _micro_to_usd_cost(quote_payload)
@@ -398,7 +396,7 @@ class TestQa16CostChain:
 # -- #16B: note origin contract --------------------------------------------------
 
 
-class TestQa16NoteOrigin:
+class TestQa16NoteOrigin(unittest.TestCase):
     def test_note_default_origin_is_agent_not_system(self):
         tmp = tempfile.TemporaryDirectory()
         try:
@@ -426,7 +424,7 @@ class TestQa16NoteOrigin:
 
         session, registry = fx.registry(on_action=record)
         try:
-            with pytest.raises(LockHeldError):
+            with self.assertRaises(LockHeldError):
                 registry.call("canvas_create_node",
                               {"workflow_id": "wf-1", "node_type": "process",
                                "provider": "script"})
