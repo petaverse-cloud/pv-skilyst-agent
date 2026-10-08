@@ -21,7 +21,15 @@ import SessionList from "./SessionList";
 import { CanvasView, type CanvasFocus } from "./CanvasView";
 import { QuoteConfirmCard, type QuoteView } from "@petaverse/skilyst-studio/session";
 
-type WorkflowRow = { id: string; name: string; nodes?: unknown[] };
+type WorkflowRow = {
+  id: string;
+  name: string;
+  nodes?: unknown[];
+  /** BR-A: workflow-level settings container (explicit cover). */
+  settings?: { cover_url?: string | null } | null;
+  /** BR-B: provenance — "agent" workflows are agent-built. */
+  created_via?: string | null;
+};
 
 export default function WorkbenchPage({
   routeSessionId,
@@ -249,6 +257,11 @@ export default function WorkbenchPage({
             <Text size="sm" fw={500} truncate data-testid="workbench-title">
               {activeWorkflowId ? (workflow?.name ?? workflowIdLabel(activeWorkflowId)) : "Workbench"}
             </Text>
+            {workflow?.created_via === "agent" && (
+              <Badge size="xs" variant="light" color="violet" data-testid="workbench-agent-badge">
+                agent-built
+              </Badge>
+            )}
             {activeWorkflowId && (workflow?.nodes?.length != null) && (
               <Badge size="xs" variant="light" color="teal">
                 {(workflow.nodes as unknown[]).length} nodes
