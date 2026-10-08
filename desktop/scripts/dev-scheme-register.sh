@@ -7,7 +7,7 @@
 # so a cold skilyst:// link launches the actual dev process.
 set -euo pipefail
 BIN="$1"                 # target/debug/skilyst-agent
-BUNDLE_ID="${2:-com.petaverse.skilyst-agent.dev}"
+BUNDLE_ID="${2:-com.petaverse.skilyst-agent}"
 STUB_DIR="$BIN.dev.app"  # /path/to/skilyst-agent.dev.app
 CONTENTS="$STUB_DIR/Contents"
 mkdir -p "$CONTENTS/MacOS"

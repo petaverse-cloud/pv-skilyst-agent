@@ -51,7 +51,7 @@ fn register_macos_dev_scheme(app: &tauri::App) -> Result<(), String> {
         .map_err(|exc| format!("current_exe: {exc}"))?;
     let output = std::process::Command::new(script)
         .arg(&binary)
-        .arg(format!("{}.dev", app.config().identifier))
+        .arg(app.config().identifier.clone())
         .output()
         .map_err(|exc| format!("running dev-scheme-register.sh: {exc}"))?;
     if output.status.success() {
