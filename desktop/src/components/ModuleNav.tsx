@@ -104,7 +104,7 @@ export default function ModuleNav({
         </Group>
 
         {/* Module entries */}
-        <Stack gap={2} px="xs">
+        <Stack gap={2} px="xs" align="stretch">
           {modules.map((mod) => (
             <NavLink
               key={mod.id}
@@ -115,8 +115,9 @@ export default function ModuleNav({
               variant="subtle"
               w="100%"
               styles={{
-                root: { borderRadius: 8 },
-                label: { fontWeight: route.module === mod.id ? 600 : 500 },
+                root: { borderRadius: 8, justifyContent: "flex-start", paddingLeft: 10 },
+                section: { marginRight: collapsed ? 0 : 8 },
+                label: { fontWeight: route.module === mod.id ? 600 : 500, textAlign: "left" },
               }}
               data-testid={`nav-${mod.id}`}
             />

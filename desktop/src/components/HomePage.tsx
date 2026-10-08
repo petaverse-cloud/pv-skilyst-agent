@@ -238,7 +238,7 @@ export default function HomePage({
       </Box>
 
       {/* ── Works wall ── */}
-      <Stack gap="sm" px="xl" py="lg" style={{ flex: 1 }}>
+      <Stack gap="sm" px="xl" py="xl" style={{ flex: 1 }}>
         {listError ? (
           <Alert color="red" title="Could not load your workflows">
             {listError}

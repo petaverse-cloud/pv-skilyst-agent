@@ -135,7 +135,7 @@ export default function App() {
   return (
     <AppShell
       header={{ height: 0 }}
-      navbar={{ width: { base: 200 }, breakpoint: 0 }}
+      navbar={{ width: { base: 216 }, breakpoint: 0 }}
       padding={0}
       styles={{ main: { display: "flex", flexDirection: "column", height: "100vh" } }}
     >
