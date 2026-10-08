@@ -35,6 +35,16 @@ npm run tauri:dev          # builds the Rust shell, starts vite, opens the windo
 
 `npm run tauri dev` works too (the `tauri` script is an alias for the CLI).
 
+On macOS the debug build bootstraps a tiny wrapper bundle
+(`target/debug/SkilystDev.app`, a symlink to the dev binary + an Info.plist
+declaring the `skilyst://` scheme) and re-execs itself from inside it, so
+LaunchServices can route the sign-in deep link to the dev process (#25). This
+is transparent: same PID, same stdio, `tauri dev` logs and reaps as before.
+`open "skilyst://callback?code=probe"` from another terminal should print a
+`[deep-link]` line in the dev log. Windows registers the scheme in the
+registry and Linux writes a desktop entry at runtime (the plugin's
+`register_all()`); a packaged build gets its declaration from the bundler.
+
 The shell needs a runtime checkout: it looks at `$SKILYST_LAUNCHER`, then a bundled
 copy in the app resources (phase 2), then the sibling checkout this repo is. Python is
 `$SKILYST_PYTHON`, `python3`, or `python` on Windows. The runtime needs credentials in
