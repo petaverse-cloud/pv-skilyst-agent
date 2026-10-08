@@ -20,7 +20,16 @@ type Stage = "login" | "list" | "canvas";
 /** A3 S3: where an action card asked to locate — open this board on arrival. */
 export type CanvasFocus = { workflow_id: string; node_key?: string } | null;
 
-export function CanvasView({ onExit, focus }: { onExit: () => void; focus?: CanvasFocus }) {
+export function CanvasView({
+  onExit,
+  focus,
+  initialWorkflowId,
+}: {
+  onExit: () => void;
+  focus?: CanvasFocus;
+  /** #31: the workbench pane opens the canvas bound to this workflow. */
+  initialWorkflowId?: string | null;
+}) {
   const host = useMemo(() => desktopHostAdapter(), []);
   // MaterialPanel (package) rides react-query; readOnly mode never mounts it
   // but the provider stays up so the whole package surface is usable.
@@ -28,12 +37,20 @@ export function CanvasView({ onExit, focus }: { onExit: () => void; focus?: Canv
   const [stage, setStage] = useState<Stage>(() =>
     window.localStorage.getItem(BEEHIVE_TOKEN_KEY) ? "list" : "login",
   );
+  // The workbench embed starts straight on the bound board (skipping the
+  // manual pick) when a workflow id is provided and we are signed in.
+  const [activeId, setActiveId] = useState<string | null>(initialWorkflowId ?? null);
+  useEffect(() => {
+    if (initialWorkflowId && stage === "list") {
+      setActiveId(initialWorkflowId);
+      setStage("canvas");
+    }
+  }, [initialWorkflowId, stage]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
   const [workflows, setWorkflows] = useState<Workflow[] | null>(null);
   const [listError, setListError] = useState<string | null>(null);
-  const [activeId, setActiveId] = useState<string | null>(null);
 
   const loadWorkflows = useCallback(async () => {
     setListError(null);
