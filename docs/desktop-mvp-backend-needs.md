@@ -1,141 +1,102 @@
-# Desktop MVP 重构——后端需求文档（Home / Projects / Workbench）
+# Desktop MVP 重构——后端需求文档（Home / Workbench，v0.2）
 
-> 状态：v0.1——需求草案，待 Wesley 裁决后分发 backend
+> 状态：v0.2——2026-10-08 Wesley 裁决修订：**放弃 project 叙事，沿用 workflow**（变更记录见附二）
 > 发起：Wesley 2026-09-30（desktop 布局重构方向裁决）。
-> 关联：pv-skilyst-agent desktop 重构（本 profile 承载）；a3-canvas-workbench.md（A3 工作台形态，双端对齐既定）；pv-beehive-web `src/lib/api.ts`（现有消费侧契约）。
-> 分发对象：backend（本文档主体）；platform 有一节独立诉求（§5，非阻塞）。
+> 关联：pv-skilyst-agent desktop 重构（#31 承载实现）；a3-canvas-workbench.md（A3 工作台形态，双端对齐既定）；pv-beehive-web `src/lib/api.ts`（现有消费侧契约）。
+> 分发对象：backend（本文档主体）；platform 有一节独立诉求（§4，非阻塞）。
 
 ---
 
-## 一、产品背景（已裁决方向）
+## 一、产品背景（v0.2 修订）
 
 Desktop 信息架构重构，最小化 MVP 模块集：
 
-1. **Home = Gallery 进化**：类 Figma 首页定位——品牌叙事 + 作品展示（showcase）+ 生产力入口（新建/继续 project）
-2. **Projects = 核心模块**：传统 project 域模型——用户建 project → 在 project 内 chat generate workflow、chat define nodes/params；chat history 属于 project 域，需保留并可回溯所有会话步骤
+1. **Home = Gallery 进化**：类 Figma 首页定位——品牌叙事 + 作品展示（showcase）+ 生产力入口（新建/继续创作）
+2. **创作域 = workflow**：不引入 project 概念。用户建 workflow → 在其会话中 chat generate nodes、define params；chat history 归属 workflow 域（本地 runtime session，desktop 端记录归属），保留并可回溯所有会话步骤
 3. **Templates 退役**；**Canvas 不再是独立模块**（被 Chat Workbench 吸收为内嵌右栏，组件 @petaverse/skilyst-studio/canvas 双端共用）
-4. Web console 同构反推：本方案确立的 Home/Projects 形态，web 侧后续跟进（"改造它，不是迁就它"，A3 既定原则）
+4. Web console 同构反推（A3 既定原则："改造它，不是迁就它"）
 
-**SSOT 原则（A3 既定）**：两端一致性靠"都渲染同一个服务端真源"。Project 与作品聚合是双端语义，因此放 beehive 后端，不做 desktop 私有实体。
+**SSOT 原则（A3 既定）**：两端一致性靠"都渲染同一个服务端真源"。workflow 是 beehive 服务端既有实体，创作域直接复用，不新建容器。
+
+**语义澄清（2026-10-08 Wesley）**：media_pool 是 workflow 内节点生成内容的聚合（workflow 私有素材库，BEE-142），**不是**作品封面来源。封面走 workflow 级属性（BR-A）。
 
 ## 二、现状契约盘点（2026-09-30 核实，消费侧代码为准）
 
 已有能力（`pv-beehive-web/src/lib/api.ts` + openapi 真源 `pv-beehive-core/docs/openapi.yaml`）：
 
-- `workflows`：CRUD + media-pool（list/get/add/remove/upload/promote）——**无 cover/封面字段，无来源标记**
-- `assets`：CRUD + multipart upload；字段 id/name/asset_type/url/mime_type/file_size/tags/created_at/updated_at——**无 thumbnail 字段，无"作品集"聚合语义**
-- `jobs`：create/get/result/cancel/executeNode/runAll——**无按作品维度的输出聚合视图**
-- `templates`：CRUD（本方案下退役，见非目标）
+- `workflows`：CRUD + media-pool（list/get/add/remove/upload/promote，含 origin 溯源）+ 锁协议（A3 S2，lock/unlock/心跳）
+- `assets`：CRUD + multipart upload——用户级资产库
+- `jobs`：create/get/result/cancel/executeNode/runAll
+- `templates`：CRUD（本方案下退役）
 - `billing/wallet`、`auth`、`admin/users`：与本需求无冲突
 
-**缺口结论**：后端没有任何"project"容器实体；workflows/assets/jobs 是三个平铺列表，无法支撑 Home 作品流和 project 域模型。
+**缺口结论**：workflow 无级别属性设置（元数据容器），无 cover 字段，无创建来源标记。除此之外创作域所需契约已齐。
 
-## 三、BR-1（P0）：Project 实体
+## 三、BR-A（P0，backend）：workflow 级属性设置（含 cover）
 
-**需求**：用户级 project 容器，聚合 workflows（远端实体）与展示性元数据。
-
-字段建议（命名遵循现有 uid/xxxUid 惯例）：
+**需求**：workflow 增加 workflow 级属性设置能力，作为双端共享的元数据容器。第一期字段：
 
 ```
-Project {
-  project_uid: string
-  name: string
-  owner_uid: number
-  workflow_uids: string[]        // 引用，非外键强约束（workflow 删除即从列表剔除）
-  cover_asset_uid: string | null // 可选封面（P1 可先空）
-  created_at / updated_at: string
+WorkflowSettings {
+  cover_url: string | null        // 显式封面（用户或 agent 设置）
+  // 预留扩展：后续 workflow 级偏好等
 }
 ```
 
-端点（遵循 /api/v1 前缀 + 现有 REST 风格）：
+实现路径建议（backend 定夺）：
 
-```
-GET    /api/v1/projects?limit&offset     # 本人列表，updated_at desc
-POST   /api/v1/projects                  { name }
-GET    /api/v1/projects/{project_uid}
-PUT    /api/v1/projects/{project_uid}    { name?, cover_asset_uid?, workflow_uids? }
-DELETE /api/v1/projects/{project_uid}    # 仅删容器，不级联删 workflows
-POST   /api/v1/projects/{project_uid}/workflows/{workflow_uid}    # 挂载
-DELETE /api/v1/projects/{project_uid}/workflows/{workflow_uid}    # 摘除
-```
+- workflow 实体增加可选 `cover_url`，或 `settings` 子对象容纳（倾向后者，避免逐字段加列）——URL 指向 asset/media_pool 条目或外链
+- 写路径走现有 `PUT /api/v1/workflows/{id}`（咨询式锁 MVP 语义不变）
+- **canvas skill 的写通道可顺带设置 cover**：agent 在创作闭环里把代表产物设为封面（runtime 侧为 canvas tools 加可选参数，涉 src/ 归 platform，见 §4）
+
+**Home 封面推导规则（desktop/web 前端约定，不进后端）**：
+- 有显式 cover_url → 用之
+- 无 → 由 workflow name 自动生成简化封面（本地生成，纯前端，零后端依赖）
 
 验收标准：
 
-1. CRUD 全绿（含鉴权：仅 owner 可读写）
-2. workflow 被删除后，projects 列表视图不再返回悬空引用（服务端过滤或标记）
-3. 分页语义与 assets/jobs 现有 limit/offset 一致
-4. openapi.yaml 同步更新（契约真源，从 handler 注解生成）
+1. workflow 创建默认 cover 为空，不破坏现有读写
+2. cover 可经 PUT 设置/清除，双端 GET 均可见
+3. 咨询式锁语义回归不破坏（cover-only 更新不触发锁拒绝——现状 PUT 本就不校验，钉住测试）
+4. openapi.yaml 同步更新
 
-**Desktop 消费方式**：新建 project → POST create；agent 在会话中创建 workflow（canvas tools，服务端已有）→ desktop 拿到 workflow_id 后调用挂载端点。chat history 归属（session 列表）为 runtime 本地域，desktop 端按 project 本地记录，**不进后端**（见 §5）。
+## 四、BR-B（P1，platform 主责、backend 契约收口）：workflow 溯源标记
 
-## 四、BR-2（P0）：Home 作品流（works feed）
+Agent 会话创建的 workflow 与用户手动创建的，双端应可区分（Home 卡片角标"agent created"、自动封面策略依据）。
 
-**需求**：Home 页的"作品展示"数据源。聚合用户全部可见产出，单端点、可分页。
+诉求：workflow 增加可选元数据 `created_via`（"web" | "desktop" | "agent"）+ `source` 自由文本。canvas skill 的 create_workflow 透传（runtime `src/canvas.py:376` 现有 name/description 参数，加一个可选参数，platform 小改动 + backend 契约收口）。
 
-```
-GET /api/v1/home/feed?limit&offset&kind
-```
+不阻塞 MVP：desktop 可在本地记录归属作降级路径。
 
-返回条目（统一卡片模型）：
+## 五、非目标（明确不做，防止范围蔓延）
 
-```
-WorkCard {
-  kind: "workflow" | "asset" | "job_output"
-  ref_uid: string
-  title: string
-  cover_url: string | null     # 关键缺口：现无任何封面来源
-  updated_at: string
-  project_uid: string | null
-}
-```
+1. **Project 实体**：已裁决放弃（v0.2）。workflow 即创作域单元；若未来出现"一个创作聚合多 workflow"的真实场景，再议容器
+2. **Public gallery / 分享页**：Home 第一期只做"我的作品"，社区/营销 showcase 是第二期
+3. **Templates 数据迁移**：退役即可，存量数据不动不迁
+4. **Session/对话数据上后端**：会话与 transcript 属本地 runtime（pv-skilyst-agent src/session），SSOT 在本机磁盘
+5. **Billing/钱包变更**：现有 D3 展示性余额链路不动
 
-排序：updated_at desc。kind 过滤可选（第一期可只做全量混排）。
+## 六、待裁决问题（backend 评审时回应）
 
-**关键子需求——封面**：现状 workflows 无 cover 字段、assets 无 thumbnail。最低成本路径（backend 定夺）：
-
-- 方案 A：workflow 增加可选 `cover_asset_uid`，agent/用户把 mediapool promote 出的 asset 设为封面
-- 方案 B：feed 端点服务端推导（workflow 取其 media-pool 首图，asset 取原图 url）
-
-MVP 可接受 cover_url 为 null（前端占位图），但字段必须在契约里，避免二次破坏性变更。
-
-验收标准：
-
-1. 空数据返回空列表不报错
-2. 三类 kind 至少 workflow/asset 可返回真实条目
-3. 分页正确（offset 翻页无重复）
-4. openapi 同步
-
-## 五、BR-3（P1，platform 分发）：workflow 溯源标记
-
-Agent 会话创建的 workflow 与用户手动创建的，双端应可区分归属（Home 卡片角标"agent created"、project 自动挂载依据）。
-
-诉求：workflow 实体增加可选元数据 `created_via`（"web" | "desktop" | "agent"）+ `source` 自由文本。canvas tools 的 create_workflow 透传即可（runtime 侧一行参数，**涉及 src/，归 platform**，backend 只需契约收口）。
-
-不阻塞 MVP：desktop 可在挂载 project 时本地记录来源，作为降级路径。
-
-## 六、非目标（明确不做，防止范围蔓延）
-
-1. **Public gallery / 分享页**：Home 第一期只做"我的作品"，社区/营销 showcase 是第二期
-2. **Templates 数据迁移**：退役即可，存量 templates 数据不动不迁
-3. **Session/对话数据上后端**：会话与 transcript 属本地 runtime（pv-skilyst-agent src/session），SSOT 在本机磁盘；后端不存对话内容（隐私 + 域边界）
-4. **Billing/钱包变更**：现有 D3 展示性余额链路不动
-
-## 七、待裁决问题（backend 评审时回应）
-
-1. BR-1 挂载端点 vs 直接 PUT workflow_uids 数组——倾向独立挂载/摘除端点（并发友好），backend 定
-2. BR-2 封面方案 A/B 取舍与排期
-3. project 数量上限、命名约束（是否复用 assets 的校验惯例）
-4. BR-3 created_via 枚举是否需要预留 "api"（第三方 API key 调用方）
+1. cover_url 独立字段 vs settings 子对象——倾向后者（扩展性），backend 定
+2. cover_url 校验策略（仅允许本服务 asset/media_pool URL，还是放开外链）
+3. BR-B created_via 枚举是否预留 "api"（第三方 API key 调用方）
 
 ---
 
-## 附：desktop 侧交付依赖关系
+## 附一：desktop 侧交付依赖关系（v0.2）
 
 | Desktop 里程碑 | 依赖 |
 |---|---|
-| M1 布局重构（Home/Projects/Settings 导航 + workbench 内嵌 canvas） | 无后端依赖，纯前端，先行 |
-| M2 Projects 域（project CRUD + history 归属） | BR-1 |
-| M3 Home 作品流 | BR-2（封面可为 null） |
-| M4 归属角标/自动挂载 | BR-3 |
+| M1 布局重构（Home/Workbench/Settings 导航 + workbench 内嵌 canvas） | 无后端依赖，先行 |
+| M2 Workbench 域（workflow 列表入口 + history 归属记录） | 无后端依赖（workflow CRUD 现成） |
+| M3 Home 封面显式化 | BR-A |
+| M4 归属角标/agent 自动封面 | BR-B |
 
-M1 不等后端；BR-1/BR-2 是 M2/M3 的硬前置。desktop 侧对 openapi 变更的消费将走 `@petaverse/skilyst-studio` 包 + 本地 api.ts 适配层。
+M1/M2 不等后端；BR-A 是 M3 的前置。desktop 侧对 openapi 变更的消费走 `@petaverse/skilyst-studio` 包 + 本地 api.ts 适配层。
+
+## 附二：v0.1 → v0.2 变更记录（2026-10-08 Wesley 裁决）
+
+1. **撤回 BR-1（Project 实体）**：v0.1 的 project 容器与 workflow 实质一对一，重复造壳。裁决"放弃 project 叙事，沿用 workflow"——project 概念从 UI 叙事到数据模型全面移除
+2. **BR-2 重写为 BR-A（workflow 级属性设置）**：原 /home/feed 端点撤回；Home 作品流由 workflows.list 现有契约 + 封面推导规则（前端）支撑。media_pool 语义澄清：workflow 内节点生成内容聚合，非封面来源；封面默认由 workflow name 前端自动生成，显式 cover 为 workflow 级属性（BR-A）
+3. **BR-3 改号 BR-B**：内容不变（created_via 溯源），补充 runtime 侧落点（src/canvas.py:376）
