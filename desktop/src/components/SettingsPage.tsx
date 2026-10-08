@@ -30,10 +30,17 @@ export default function SettingsPage({
   info,
   model,
   onModelChange,
+  onStopRuntime,
+  onStartRuntime,
+  connecting,
 }: {
   info: RuntimeInfo | null;
   model: string;
   onModelChange: (value: string) => void;
+  /** #31: start/stop moved here from the old header — infrastructure, not a module. */
+  onStopRuntime: () => void;
+  onStartRuntime: () => void;
+  connecting: boolean;
 }) {
   const [config, setConfig] = useState<RedactedConfig | null>(null);
   const [doctor, setDoctor] = useState<DoctorReport | null>(null);
@@ -200,9 +207,27 @@ export default function SettingsPage({
       </Card>
 
       <Card withBorder>
-        <Title order={5} mb="xs">
-          Runtime
-        </Title>
+        <Group justify="space-between" mb="xs">
+          <Title order={5}>
+            Runtime
+          </Title>
+          <Group gap="xs">
+            {info ? (
+              <Button size="xs" variant="default" onClick={onStopRuntime} data-testid="stop-runtime">
+                Stop runtime
+              </Button>
+            ) : (
+              <Button
+                size="xs"
+                onClick={onStartRuntime}
+                loading={connecting}
+                data-testid="start-runtime"
+              >
+                Start runtime
+              </Button>
+            )}
+          </Group>
+        </Group>
         <Table variant="vertical" withRowBorders={false} fz="sm">
           <Table.Tbody>
             <Table.Tr>

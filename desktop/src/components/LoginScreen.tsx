@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Button, Card, Stack, Text, Title, Loader, Center, Group, Badge } from "@mantine/core";
+import { Box, Button, Card, Stack, Text, Title, Loader, Center, Group, Badge } from "@mantine/core";
+import { IconSparkles } from "@tabler/icons-react";
 
 export interface AuthStatus {
   state: string;
@@ -85,77 +86,135 @@ export function LoginScreen({
   };
 
   return (
-    <Center style={{ height: "100vh" }}>
-      <Card shadow="sm" padding="xl" radius="md" withBorder style={{ maxWidth: 420 }}>
-        <Stack align="center" gap="lg">
-          <Title order={2} c="indigo">Skilyst Agent</Title>
-          <Text c="dimmed" ta="center">
-            Sign in to start creating.
+    <Center
+      style={{
+        height: "100vh",
+        background:
+          "radial-gradient(900px 420px at 20% 0%, rgba(124,92,255,.16), transparent 60%), radial-gradient(700px 380px at 90% 100%, rgba(38,208,124,.10), transparent 55%)",
+      }}
+    >
+      <Stack align="center" gap="xl" maw={440} px="lg">
+        <Group gap={8} wrap="nowrap">
+          <Box
+            w={34}
+            h={34}
+            style={{
+              borderRadius: 10,
+              background: "linear-gradient(135deg, #7c5cff, #26d07c)",
+            }}
+          />
+          <Text fz={22} fw={800}>
+            Skilyst
           </Text>
+        </Group>
+        <Card shadow="lg" padding="xl" radius="lg" withBorder style={{ width: "100%" }}>
+          <Stack align="center" gap="md">
+            <Title order={3} ta="center">
+              Sign in to start creating
+            </Title>
+            <Text size="sm" c="dimmed" ta="center" lh={1.5}>
+              Your agent builds workflows, wires nodes, and generates output — visually.
+              Authorization happens in your browser; credentials are stored in your keychain,
+              never uploaded.
+            </Text>
 
-          {phase === "awaiting" ? (
-            <Stack align="center" gap="sm">
-              <Loader size="sm" />
-              <Text size="sm" c="dimmed">
-                Waiting for browser authorization...
+            {phase === "awaiting" ? (
+              <Stack align="center" gap="sm" w="100%">
+                <Loader size="sm" />
+                <Text size="sm" fw={500}>
+                  Waiting for browser authorization…
+                </Text>
+                <Text size="xs" c="dimmed" ta="center">
+                  Complete the login in the browser window, then return here.
+                </Text>
+              </Stack>
+            ) : (
+              <Button
+                fullWidth
+                size="md"
+                radius="md"
+                leftSection={<IconSparkles size={16} />}
+                onClick={login}
+                data-testid="signin-button"
+              >
+                Sign in with Skilyst
+              </Button>
+            )}
+
+            {phase === "error" && error && (
+              <Text size="sm" c="red.6" ta="center" data-testid="signin-error">
+                {error}
               </Text>
-              <Text size="xs" c="dimmed">
-                Complete the login in the browser window, then return here.
-              </Text>
-            </Stack>
-          ) : (
-            <Button fullWidth size="md" onClick={login}>
-              Sign in
-            </Button>
-          )}
-
-          {phase === "error" && error && (
-            <Text size="sm" c="red" ta="center">{error}</Text>
-          )}
-
-          <Text size="xs" c="dimmed" ta="center">
-            Developer? Set <code>SKILYST_DEV_PROFILE</code> to use local
-            credentials and skip this screen.
-          </Text>
-        </Stack>
-      </Card>
+            )}
+          </Stack>
+        </Card>
+        <Text size="xs" c="dimmed" ta="center">
+          Developer? Set <code>SKILYST_DEV_PROFILE</code> to use local credentials and skip
+          this screen.
+        </Text>
+      </Stack>
     </Center>
   );
+}
+
+/** Renewal urgency model, exported for tests and reuse.
+ * Returns null when expiry is unknown (no expires_in from the runtime). */
+export function expiryUrgency(expiresIn: number | undefined): {
+  expiringSoon: boolean;
+  daysLeft: number | null;
+} {
+  if (!expiresIn) return { expiringSoon: false, daysLeft: null };
+  const hours = Math.floor(expiresIn / 3600);
+  return { expiringSoon: hours <= 72, daysLeft: Math.round((hours / 24) * 10) / 10 };
 }
 
 /** Header account chip + logout popover (used once authenticated). */
 export function AccountChip({
   status,
   onLogout,
+  onReauthorize,
 }: {
   status: AuthStatus;
   onLogout: () => void;
+  /** Called when the user wants to proactively renew before expiry. */
+  onReauthorize?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const name = status.account?.name || status.account?.uid || "signed in";
-  const hours = status.expires_in ? Math.floor(status.expires_in / 3600) : null;
+  const { expiringSoon, daysLeft } = expiryUrgency(status.expires_in);
   return (
     <Group gap="xs" style={{ position: "relative" }}>
       <Badge
         variant="light"
-        color="indigo"
+        color={expiringSoon ? "yellow" : "indigo"}
         style={{ cursor: "pointer" }}
         onClick={() => setOpen((v) => !v)}
+        data-testid="account-chip"
       >
         {name}
+        {expiringSoon ? " · expiring" : ""}
       </Badge>
       {open && (
         <Card
           shadow="sm" padding="sm" radius="md" withBorder
-          style={{ position: "absolute", top: "130%", right: 0, zIndex: 50, minWidth: 220 }}
+          style={{ position: "absolute", top: "130%", right: 0, zIndex: 50, minWidth: 240 }}
         >
           <Stack gap="xs">
             <Text size="sm" fw={600}>{name}</Text>
             {status.scopes && (
               <Text size="xs" c="dimmed">scopes: {status.scopes.join(", ")}</Text>
             )}
-            {hours !== null && (
-              <Text size="xs" c="dimmed">token expires in ~{hours}h</Text>
+            {daysLeft !== null && (
+              <Text size="xs" c={expiringSoon ? "yellow.4" : "dimmed"}>
+                {expiringSoon
+                  ? `session expires in ~${daysLeft} day${daysLeft === 1 ? "" : "s"} — renew now to stay signed in`
+                  : `signed in for ~${daysLeft} more day${daysLeft === 1 ? "" : "s"}`}
+              </Text>
+            )}
+            {expiringSoon && onReauthorize && (
+              <Button size="xs" variant="light" color="yellow" onClick={onReauthorize}>
+                Re-authorize now
+              </Button>
             )}
             <Button size="xs" variant="light" color="red" onClick={onLogout}>
               Sign out
