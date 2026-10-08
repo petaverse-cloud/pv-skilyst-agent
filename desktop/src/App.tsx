@@ -145,6 +145,7 @@ export default function App() {
           authStatus={authStatus}
           runtimeBadge={runtimeBadge}
           onLogout={() => void handleLogout()}
+          onReauthorize={() => void handleLogout()}
         />
       </AppShell.Navbar>
 

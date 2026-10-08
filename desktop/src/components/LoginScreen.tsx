@@ -157,39 +157,64 @@ export function LoginScreen({
   );
 }
 
+/** Renewal urgency model, exported for tests and reuse.
+ * Returns null when expiry is unknown (no expires_in from the runtime). */
+export function expiryUrgency(expiresIn: number | undefined): {
+  expiringSoon: boolean;
+  daysLeft: number | null;
+} {
+  if (!expiresIn) return { expiringSoon: false, daysLeft: null };
+  const hours = Math.floor(expiresIn / 3600);
+  return { expiringSoon: hours <= 72, daysLeft: Math.round((hours / 24) * 10) / 10 };
+}
+
 /** Header account chip + logout popover (used once authenticated). */
 export function AccountChip({
   status,
   onLogout,
+  onReauthorize,
 }: {
   status: AuthStatus;
   onLogout: () => void;
+  /** Called when the user wants to proactively renew before expiry. */
+  onReauthorize?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const name = status.account?.name || status.account?.uid || "signed in";
-  const hours = status.expires_in ? Math.floor(status.expires_in / 3600) : null;
+  const { expiringSoon, daysLeft } = expiryUrgency(status.expires_in);
   return (
     <Group gap="xs" style={{ position: "relative" }}>
       <Badge
         variant="light"
-        color="indigo"
+        color={expiringSoon ? "yellow" : "indigo"}
         style={{ cursor: "pointer" }}
         onClick={() => setOpen((v) => !v)}
+        data-testid="account-chip"
       >
         {name}
+        {expiringSoon ? " · expiring" : ""}
       </Badge>
       {open && (
         <Card
           shadow="sm" padding="sm" radius="md" withBorder
-          style={{ position: "absolute", top: "130%", right: 0, zIndex: 50, minWidth: 220 }}
+          style={{ position: "absolute", top: "130%", right: 0, zIndex: 50, minWidth: 240 }}
         >
           <Stack gap="xs">
             <Text size="sm" fw={600}>{name}</Text>
             {status.scopes && (
               <Text size="xs" c="dimmed">scopes: {status.scopes.join(", ")}</Text>
             )}
-            {hours !== null && (
-              <Text size="xs" c="dimmed">token expires in ~{hours}h</Text>
+            {daysLeft !== null && (
+              <Text size="xs" c={expiringSoon ? "yellow.4" : "dimmed"}>
+                {expiringSoon
+                  ? `session expires in ~${daysLeft} day${daysLeft === 1 ? "" : "s"} — renew now to stay signed in`
+                  : `signed in for ~${daysLeft} more day${daysLeft === 1 ? "" : "s"}`}
+              </Text>
+            )}
+            {expiringSoon && onReauthorize && (
+              <Button size="xs" variant="light" color="yellow" onClick={onReauthorize}>
+                Re-authorize now
+              </Button>
             )}
             <Button size="xs" variant="light" color="red" onClick={onLogout}>
               Sign out

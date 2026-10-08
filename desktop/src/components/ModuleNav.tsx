@@ -57,11 +57,14 @@ export default function ModuleNav({
   authStatus,
   runtimeBadge,
   onLogout,
+  onReauthorize,
 }: {
   route: Route;
   authStatus: AuthStatus | null;
   runtimeBadge: RuntimeBadgeState;
   onLogout: () => void;
+  /** Proactive renewal before the credential lapses (AccountChip). */
+  onReauthorize?: () => void;
 }) {
   const [collapsed, { toggle }] = useDisclosure(false);
 
@@ -129,7 +132,7 @@ export default function ModuleNav({
       <Stack gap="xs" px="sm" pb="sm" align={collapsed ? "center" : "stretch"}>
         <RuntimeBadge state={runtimeBadge} />
         {authStatus?.authenticated ? (
-          <AccountChip status={authStatus} onLogout={onLogout} />
+          <AccountChip status={authStatus} onLogout={onLogout} onReauthorize={onReauthorize} />
         ) : null}
         {collapsed ? null : (
           <Text size="xs" c="dimmed" lh={1.3}>
