@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <!-- #25: a `tauri dev` run is a bare target/debug binary — LaunchServices
+         only learns the skilyst:// scheme from an Info.plist. Production .app
+         bundles get their own plist from tauri.conf.json at bundle time; this
+         one is merged into the dev binary so the browser auth callback can
+         reach the app during development. macOS has no runtime registration
+         (deep-link register_all() is Windows/Linux-only). -->
+    <key>CFBundleURLTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleURLName</key>
+        <string>ai.skilyst.agent</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>skilyst</string>
+        </array>
+      </dict>
+    </array>
+  </dict>
+</plist>

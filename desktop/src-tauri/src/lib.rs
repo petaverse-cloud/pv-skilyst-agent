@@ -308,13 +308,12 @@ pub fn run() {
             shell_open
         ])
         .setup(|app| {
-            // #25: a dev-mode run is a bare target/debug binary — LaunchServices
-            // has no Info.plist to learn the skilyst:// scheme from, so the
-            // handler above is wired but nobody can reach it and the browser
-            // auth callback dies silently (kLSApplicationNotFoundErr). Register
-            // the scheme at runtime; production .app bundles keep the plist path.
-            // The call is macOS/Windows-only and a no-op where registration is
-            // not supported — a loud error would break Linux smoke builds.
+            // #25: macOS has no runtime scheme registration (deep-link
+            // register_all() is Windows/Linux-only) — a dev-mode run is a bare
+            // target/debug binary that only gets the skilyst:// scheme from
+            // src-tauri/Info.plist, which `tauri dev` merges into it. Windows/
+            // Linux dev runs DO register at runtime:
+            #[cfg(any(target_os = "linux", all(debug_assertions, windows)))]
             if let Err(exc) = app.deep_link().register_all() {
                 eprintln!("[deep-link] runtime scheme registration failed: {exc}");
             }
