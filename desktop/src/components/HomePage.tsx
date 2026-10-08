@@ -211,7 +211,7 @@ export default function HomePage({
           <Title order={2} lh={1.15}>
             Create with your agent, visually.
           </Title>
-          <Text size="sm" c="dimmed" maw={520}>
+          <Text size="sm" c="dimmed" maw={520} lh={1.55}>
             Describe the shot you want — the agent builds the workflow, wires the nodes, and
             generates the output. Everything stays on this machine unless you sign in.
           </Text>

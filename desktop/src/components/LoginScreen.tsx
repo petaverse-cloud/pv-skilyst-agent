@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Button, Card, Stack, Text, Title, Loader, Center, Group, Badge } from "@mantine/core";
+import { Box, Button, Card, Stack, Text, Title, Loader, Center, Group, Badge } from "@mantine/core";
+import { IconSparkles } from "@tabler/icons-react";
 
 export interface AuthStatus {
   state: string;
@@ -85,40 +86,73 @@ export function LoginScreen({
   };
 
   return (
-    <Center style={{ height: "100vh" }}>
-      <Card shadow="sm" padding="xl" radius="md" withBorder style={{ maxWidth: 420 }}>
-        <Stack align="center" gap="lg">
-          <Title order={2} c="indigo">Skilyst Agent</Title>
-          <Text c="dimmed" ta="center">
-            Sign in to start creating.
+    <Center
+      style={{
+        height: "100vh",
+        background:
+          "radial-gradient(900px 420px at 20% 0%, rgba(124,92,255,.16), transparent 60%), radial-gradient(700px 380px at 90% 100%, rgba(38,208,124,.10), transparent 55%)",
+      }}
+    >
+      <Stack align="center" gap="xl" maw={440} px="lg">
+        <Group gap={8} wrap="nowrap">
+          <Box
+            w={34}
+            h={34}
+            style={{
+              borderRadius: 10,
+              background: "linear-gradient(135deg, #7c5cff, #26d07c)",
+            }}
+          />
+          <Text fz={22} fw={800}>
+            Skilyst
           </Text>
+        </Group>
+        <Card shadow="lg" padding="xl" radius="lg" withBorder style={{ width: "100%" }}>
+          <Stack align="center" gap="md">
+            <Title order={3} ta="center">
+              Sign in to start creating
+            </Title>
+            <Text size="sm" c="dimmed" ta="center" lh={1.5}>
+              Your agent builds workflows, wires nodes, and generates output — visually.
+              Authorization happens in your browser; credentials are stored in your keychain,
+              never uploaded.
+            </Text>
 
-          {phase === "awaiting" ? (
-            <Stack align="center" gap="sm">
-              <Loader size="sm" />
-              <Text size="sm" c="dimmed">
-                Waiting for browser authorization...
+            {phase === "awaiting" ? (
+              <Stack align="center" gap="sm" w="100%">
+                <Loader size="sm" />
+                <Text size="sm" fw={500}>
+                  Waiting for browser authorization…
+                </Text>
+                <Text size="xs" c="dimmed" ta="center">
+                  Complete the login in the browser window, then return here.
+                </Text>
+              </Stack>
+            ) : (
+              <Button
+                fullWidth
+                size="md"
+                radius="md"
+                leftSection={<IconSparkles size={16} />}
+                onClick={login}
+                data-testid="signin-button"
+              >
+                Sign in with Skilyst
+              </Button>
+            )}
+
+            {phase === "error" && error && (
+              <Text size="sm" c="red.6" ta="center" data-testid="signin-error">
+                {error}
               </Text>
-              <Text size="xs" c="dimmed">
-                Complete the login in the browser window, then return here.
-              </Text>
-            </Stack>
-          ) : (
-            <Button fullWidth size="md" onClick={login}>
-              Sign in
-            </Button>
-          )}
-
-          {phase === "error" && error && (
-            <Text size="sm" c="red" ta="center">{error}</Text>
-          )}
-
-          <Text size="xs" c="dimmed" ta="center">
-            Developer? Set <code>SKILYST_DEV_PROFILE</code> to use local
-            credentials and skip this screen.
-          </Text>
-        </Stack>
-      </Card>
+            )}
+          </Stack>
+        </Card>
+        <Text size="xs" c="dimmed" ta="center">
+          Developer? Set <code>SKILYST_DEV_PROFILE</code> to use local credentials and skip
+          this screen.
+        </Text>
+      </Stack>
     </Center>
   );
 }
