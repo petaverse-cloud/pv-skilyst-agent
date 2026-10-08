@@ -26,19 +26,12 @@ import {
 import { IconArrowRight, IconMessage, IconSparkles } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
 import type { SessionRow } from "../api";
-import { BEEHIVE_TOKEN_KEY } from "../hostAdapter";
+import { listWorkflows, type WorkflowRow } from "../beehiveClient";
 import { sessionsFor, type WorkflowSessions } from "../workflowRegistry";
 import { navigate } from "../router";
 
-type WorkflowRow = {
-  id: string;
-  name: string;
-  updated_at?: string;
-  /** BR-A: explicit workflow-level cover (server settings container). */
-  settings?: { cover_url?: string | null } | null;
-  /** BR-B: provenance — "agent" entries earn a corner badge. */
-  created_via?: string | null;
-};
+// WorkflowRow comes from beehiveClient (#36 unified posture); BR-A cover_url
+// and BR-B created_via are carried there.
 
 /**
  * Deterministic simplified cover from the name hash — two hues on a diagonal.
@@ -151,28 +144,11 @@ export default function HomePage({
   const loadWorkflows = useCallback(async () => {
     setListError(null);
     setWorkflows(null);
-    const token = window.localStorage.getItem(BEEHIVE_TOKEN_KEY);
-    if (!token) {
-      // Not signed into the canvas data source: an empty works wall, not an
-      // error — the user may purely use local chat.
-      setWorkflows([]);
-      return;
-    }
     try {
-      const res = await fetch("/api/v1/workflows?limit=50&offset=0", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (res.status === 401) {
-        window.localStorage.removeItem(BEEHIVE_TOKEN_KEY);
-        setWorkflows([]);
-        return;
-      }
-      if (!res.ok) throw new Error(`workflow list failed (HTTP ${res.status})`);
-      const data = await res.json();
-      setWorkflows((data.payload ?? data).workflows ?? []);
+      // Unified posture (#36): runtime proxy with keychain AK/SK signing —
+      // never a direct webview→beehive call, never a localStorage web token.
+      const rows = await listWorkflows(50, 0);
+      setWorkflows(rows);
     } catch (exc) {
       // Loud failure (G4-15): a broken list must be visible and diagnosable.
       setListError(exc instanceof Error ? exc.message : String(exc));

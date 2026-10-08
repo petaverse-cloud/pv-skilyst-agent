@@ -13,9 +13,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { HostProvider } from "@petaverse/skilyst-studio/host";
 import WorkflowCanvas, { type WorkflowCanvasHandle } from "@petaverse/skilyst-studio/canvas";
 import type { Workflow } from "@petaverse/skilyst-studio/types";
-import { BEEHIVE_TOKEN_KEY, desktopHostAdapter } from "../hostAdapter";
+import { desktopHostAdapter } from "../hostAdapter";
+import { listWorkflows } from "../beehiveClient";
 
-type Stage = "login" | "list" | "canvas";
+type Stage = "list" | "canvas";
 
 /** A3 S3: where an action card asked to locate — open this board on arrival. */
 export type CanvasFocus = { workflow_id: string; node_key?: string } | null;
@@ -34,9 +35,10 @@ export function CanvasView({
   // MaterialPanel (package) rides react-query; readOnly mode never mounts it
   // but the provider stays up so the whole package surface is usable.
   const queryClient = useMemo(() => new QueryClient(), []);
-  const [stage, setStage] = useState<Stage>(() =>
-    window.localStorage.getItem(BEEHIVE_TOKEN_KEY) ? "list" : "login",
-  );
+  // The web-token login stage is retired (#36 unified posture): the app gate
+  // (keychain AK/SK via the runtime) IS the data-source login. Canvas data
+  // flows through the runtime proxy like every other beehive call.
+  const [stage, setStage] = useState<Stage>("list");
   // The workbench embed starts straight on the bound board (skipping the
   // manual pick) when a workflow id is provided and we are signed in.
   const [activeId, setActiveId] = useState<string | null>(initialWorkflowId ?? null);
@@ -46,9 +48,7 @@ export function CanvasView({
       setStage("canvas");
     }
   }, [initialWorkflowId, stage]);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [loginError, setLoginError] = useState<string | null>(null);
+  const loginError = null as string | null; // retired with the web-token stage
   const [workflows, setWorkflows] = useState<Workflow[] | null>(null);
   const [listError, setListError] = useState<string | null>(null);
 
@@ -56,20 +56,10 @@ export function CanvasView({
     setListError(null);
     setWorkflows(null);
     try {
-      const res = await fetch("/api/v1/workflows?limit=50&offset=0", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${window.localStorage.getItem(BEEHIVE_TOKEN_KEY) ?? ""}`,
-        },
-      });
-      if (res.status === 401) {
-        window.localStorage.removeItem(BEEHIVE_TOKEN_KEY);
-        setStage("login");
-        return;
-      }
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      setWorkflows((data.payload ?? data).workflows ?? []);
+      // Unified posture (#36): runtime proxy, keychain-signed. A 401 here means
+      // the app-level login lapsed — the App gate handles that screen.
+      const rows = await listWorkflows(50, 0);
+      setWorkflows(rows as unknown as Workflow[]);
     } catch (exc) {
       setListError(exc instanceof Error ? exc.message : String(exc));
     }
@@ -102,63 +92,8 @@ export function CanvasView({
     return () => window.clearTimeout(timer);
   }, [focus, stage]);
 
-  const login = useCallback(async () => {
-    setLoginError(null);
-    try {
-      const res = await fetch("/api/v1/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.payload?.error ?? err?.error ?? `HTTP ${res.status}`);
-      }
-      const data = await res.json();
-      const token = (data.payload ?? data).token as string;
-      window.localStorage.setItem(BEEHIVE_TOKEN_KEY, token);
-      setStage("list");
-    } catch (exc) {
-      setLoginError(exc instanceof Error ? exc.message : String(exc));
-    }
-  }, [username, password]);
-
-  if (stage === "login") {
-    return (
-      <Stack align="center" justify="center" style={{ flex: 1 }} gap="md" m="xl">
-        <Title order={4}>Skilyst sign-in (canvas data source)</Title>
-        <Text size="xs" c="dimmed" maw={420} ta="center">
-          A3 S1 read-only canvas reads workflows from the skilyst dev API. Credentials stay in local localStorage and are never uploaded.
-        </Text>
-        <TextInput
-          label="Username"
-          value={username}
-          onChange={(e) => setUsername(e.currentTarget.value)}
-          w={280}
-          data-testid="canvas-login-user"
-        />
-        <TextInput
-          label="Password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.currentTarget.value)}
-          w={280}
-          data-testid="canvas-login-pass"
-        />
-        {loginError ? (
-          <Alert color="red" w={280}>
-            {loginError}
-          </Alert>
-        ) : null}
-        <Button onClick={() => void login()} disabled={!username || !password} data-testid="canvas-login-submit">
-          Sign in
-        </Button>
-      </Stack>
-    );
-  }
-
-  if (stage === "list") {
-    return (
+  // stage === "list": the login stage is retired; the app gate owns sign-in.
+  return (
       <Stack gap="sm" style={{ flex: 1, overflow: "auto" }} p="md">
         <Group justify="space-between">
           <Group gap="sm">
@@ -167,16 +102,6 @@ export function CanvasView({
           </Group>
           <Group gap="xs">
             <Button size="xs" variant="default" onClick={() => void loadWorkflows()}>Refresh</Button>
-            <Button
-              size="xs"
-              variant="subtle"
-              onClick={() => {
-                window.localStorage.removeItem(BEEHIVE_TOKEN_KEY);
-                setStage("login");
-              }}
-            >
-              Sign out
-            </Button>
             <Button size="xs" variant="subtle" onClick={onExit}>Back to chat</Button>
           </Group>
         </Group>
@@ -210,8 +135,7 @@ export function CanvasView({
           ))
         )}
       </Stack>
-    );
-  }
+  );
 
   // stage === "canvas": the package renders the workflow, read-only.
   return (
@@ -220,11 +144,14 @@ export function CanvasView({
         <Group gap="sm">
           <Button size="xs" variant="subtle" onClick={() => setStage("list")}>← Workflow list</Button>
           <Badge size="sm" variant="light" color="teal">Full workbench · skilyst-studio package</Badge>
-          {focus?.node_key ? (
-            <Badge size="sm" variant="light" color="blue" data-testid="canvas-focus-node">
-              Focus node: {focus.node_key}
-            </Badge>
-          ) : null}
+          {(() => {
+            const focusedNode = focus?.node_key;
+            return focusedNode != null ? (
+              <Badge size="sm" variant="light" color="blue" data-testid="canvas-focus-node">
+                Focus node: {focusedNode}
+              </Badge>
+            ) : null;
+          })()}
         </Group>
         <Button size="xs" variant="subtle" onClick={onExit}>Back to chat</Button>
       </Group>

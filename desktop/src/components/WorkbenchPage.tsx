@@ -12,7 +12,7 @@ import { Alert, Badge, Box, Button, Divider, Group, Loader, Stack, Text } from "
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { api, type RunSummary, type SessionDetail, type SessionRow } from "../api";
 import { resolveConfirm, sendMessage } from "../api";
-import { BEEHIVE_TOKEN_KEY } from "../hostAdapter";
+import { getWalletBalance, getWorkflow, type WorkflowRow } from "../beehiveClient";
 import { appendDelta, emptyStream, freezeTurn, type StreamState } from "../stream";
 import { recordSession, sessionsFor, type WorkflowSessions } from "../workflowRegistry";
 import Composer from "./Composer";
@@ -21,15 +21,7 @@ import SessionList from "./SessionList";
 import { CanvasView, type CanvasFocus } from "./CanvasView";
 import { QuoteConfirmCard, type QuoteView } from "@petaverse/skilyst-studio/session";
 
-type WorkflowRow = {
-  id: string;
-  name: string;
-  nodes?: unknown[];
-  /** BR-A: workflow-level settings container (explicit cover). */
-  settings?: { cover_url?: string | null } | null;
-  /** BR-B: provenance — "agent" workflows are agent-built. */
-  created_via?: string | null;
-};
+// WorkflowRow comes from ../beehiveClient (#36 unified posture).
 
 export default function WorkbenchPage({
   routeSessionId,
@@ -100,22 +92,13 @@ export default function WorkbenchPage({
       setWorkflowError(null);
       return;
     }
-    const token = window.localStorage.getItem(BEEHIVE_TOKEN_KEY);
-    if (!token) {
-      setWorkflowError("Sign in to the canvas data source to open this workflow's board.");
-      setWorkflow(null);
-      return;
-    }
     let cancelled = false;
     (async () => {
       setWorkflowError(null);
       try {
-        const res = await fetch(`/api/v1/workflows/${activeWorkflowId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error(`workflow fetch failed (HTTP ${res.status})`);
-        const data = await res.json();
-        if (!cancelled) setWorkflow((data.payload ?? data) as WorkflowRow);
+        // Unified posture (#36): runtime proxy, keychain-signed.
+        const row = await getWorkflow(activeWorkflowId);
+        if (!cancelled) setWorkflow(row);
       } catch (exc) {
         if (!cancelled) setWorkflowError(exc instanceof Error ? exc.message : String(exc));
       }
@@ -151,17 +134,11 @@ export default function WorkbenchPage({
             onConfirmRequest: (detail2) => {
               const quote = (detail2.quote ?? {}) as QuoteView;
               setPendingConfirm({ sessionId: detail2.session_id ?? detail?.session_id ?? "", quote });
-              const token = window.localStorage.getItem("skilyst.beehive_token");
-              if (token) {
-                fetch("/api/v1/billing/wallet", { headers: { Authorization: `Bearer ${token}` } })
-                  .then((r) => (r.ok ? r.json() : null))
-                  .then((data) => {
-                    const payload = data?.payload ?? data;
-                    const usd = payload?.balance_usd ?? payload?.balance;
-                    if (typeof usd === "number") onBalanceUsd(usd);
-                  })
-                  .catch(() => onBalanceUsd(null));
-              }
+              // Wallet context for the quote (S4) — unified posture (#36): the
+              // runtime signs with the keychain pair; no web token involved.
+              getWalletBalance()
+                .then((usd) => onBalanceUsd(usd))
+                .catch(() => onBalanceUsd(null));
             },
           },
         );
@@ -262,9 +239,9 @@ export default function WorkbenchPage({
                 agent-built
               </Badge>
             )}
-            {activeWorkflowId && (workflow?.nodes?.length != null) && (
+            {activeWorkflowId && ((workflow?.nodes as unknown[] | undefined)?.length != null) && (
               <Badge size="xs" variant="light" color="teal">
-                {(workflow.nodes as unknown[]).length} nodes
+                {(workflow?.nodes as unknown[]).length} nodes
               </Badge>
             )}
           </Group>
