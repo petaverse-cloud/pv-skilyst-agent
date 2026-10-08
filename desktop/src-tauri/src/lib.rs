@@ -28,6 +28,42 @@ use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Emitter, Manager, State};
 use tauri_plugin_deep_link::DeepLinkExt;
 
+/// #25 (macOS dev only): point LaunchServices at the running debug binary for
+/// the skilyst:// scheme. `tauri dev` runs a bare binary with no Info.plist, so
+/// nothing else claims the scheme and browser auth callbacks die with
+/// kLSApplicationNotFoundErr. LSSetDefaultHandlerForURLScheme alone is NOT
+/// enough (verified live): LaunchServices refuses to route a URL to a bundle
+/// id it has never seen — the binary must exist as a registered .app. We
+/// shell out to scripts/dev-scheme-register.sh, which wraps the running
+/// binary in a throwaway .app stub (symlinked executable + minimal
+/// Info.plist with the skilyst scheme) and `lsregister -f`s it once.
+/// Production bundles get the scheme from the real Info.plist and never run
+/// this (debug_assertions-gated at the call site).
+#[cfg(all(target_os = "macos", debug_assertions))]
+fn register_macos_dev_scheme(app: &tauri::App) -> Result<(), String> {
+    let manifest = std::env::var("CARGO_MANIFEST_DIR")
+        .unwrap_or_else(|_| concat!(env!("CARGO_MANIFEST_DIR")).to_string());
+    let script = std::path::Path::new(&manifest)
+        .join("..")
+        .join("scripts")
+        .join("dev-scheme-register.sh");
+    let binary = std::env::current_exe()
+        .map_err(|exc| format!("current_exe: {exc}"))?;
+    let output = std::process::Command::new(script)
+        .arg(&binary)
+        .arg(format!("{}.dev", app.config().identifier))
+        .output()
+        .map_err(|exc| format!("running dev-scheme-register.sh: {exc}"))?;
+    if output.status.success() {
+        Ok(())
+    } else {
+        Err(format!(
+            "dev-scheme-register.sh failed: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        ))
+    }
+}
+
 /// How long to wait for the runtime's ready line before giving up on it.
 const READY_TIMEOUT: Duration = Duration::from_secs(45);
 
@@ -298,6 +334,15 @@ fn runtime_status(state: State<'_, RuntimeState>) -> Option<RuntimeInfo> {
 
 pub fn run() {
     tauri::Builder::default()
+        // #25: a second instance launched by a skilyst:// cold start (the dev
+        // stub app, or a duplicate double-click) must hand its URL to the
+        // running instance and exit, not race a second runtime child.
+        .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
+            // The deep-link plugin parses argv in the second instance and
+            // forwards to the primary through its deep-link feature.
+            eprintln!("[single-instance] secondary launch forwarded: {argv:?}");
+            let _ = app;
+        }))
         .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_opener::init())
         .manage(RuntimeState::default())
@@ -308,11 +353,21 @@ pub fn run() {
             shell_open
         ])
         .setup(|app| {
-            // #25: macOS has no runtime scheme registration (deep-link
-            // register_all() is Windows/Linux-only) — a dev-mode run is a bare
-            // target/debug binary that only gets the skilyst:// scheme from
-            // src-tauri/Info.plist, which `tauri dev` merges into it. Windows/
-            // Linux dev runs DO register at runtime:
+            // #25: macOS LaunchServices learns the skilyst:// scheme from the
+            // app bundle's Info.plist — which a `tauri dev` run does not have
+            // (bare target/debug binary, and the plugin's register_all() is
+            // Windows/Linux-only). In dev we register the running binary with
+            // LaunchServices directly; production bundles take the plist path.
+            #[cfg(all(target_os = "macos", debug_assertions))]
+            {
+                if let Err(exc) = register_macos_dev_scheme(app) {
+                    // Loud but non-fatal: the app still runs, deep links just
+                    // keep dying silently (the original #25 symptom) — the log
+                    // line is the difference between a mystery and a hint.
+                    eprintln!("[deep-link] dev scheme registration failed: {exc}");
+                }
+            }
+            // Windows/Linux dev runs register through the plugin.
             #[cfg(any(target_os = "linux", all(debug_assertions, windows)))]
             if let Err(exc) = app.deep_link().register_all() {
                 eprintln!("[deep-link] runtime scheme registration failed: {exc}");
