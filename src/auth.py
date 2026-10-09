@@ -232,13 +232,21 @@ class AuthFlow:
     # -- current identity ---------------------------------------------------
 
     def current(self) -> Optional[TokenRecord]:
+        """Read-only identity probe (#28): NEVER clobbers in-memory login
+        state. Finding a valid record still promotes state to AUTHENTICATED
+        (a successful poll mid-pending legitimately ends the pending phase),
+        but the no-record path only writes UNAUTHENTICATED when the state
+        machine is not mid-login — otherwise a status poll would wipe
+        awaiting_browser/exchanging and the desktop login screen would show
+        "login vanished" from the second poll on."""
         rec = self.store.load()
         if rec and rec.expires_at > time.time():
             self.state = AuthState.AUTHENTICATED
             return rec
         if rec:
             self.store.clear()  # expired
-        self.state = AuthState.UNAUTHENTICATED
+        if self.state not in (AuthState.AWAITING_BROWSER, AuthState.EXCHANGING):
+            self.state = AuthState.UNAUTHENTICATED
         return None
 
     def refresh(self) -> TokenRecord:

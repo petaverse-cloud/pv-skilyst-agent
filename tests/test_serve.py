@@ -276,6 +276,31 @@ class DeepLinkAuthTests(EnvIsolation):
         self.assertTrue(self.challenge)
         self.assertEqual(self.launch_redirect, "skilyst://callback")
 
+    def test_status_polls_do_not_clobber_the_pending_login(self):
+        # #28: current() used to unconditionally rewrite state to
+        # unauthenticated when no record was stored, so poll 1 of the login
+        # screen showed awaiting_browser and every poll after it showed
+        # "the login vanished". Pin the two-poll (plus third, per the issue's
+        # acceptance wording) sequence: state must stay awaiting_browser
+        # until deliver-code completes.
+        self._login()
+        for _ in range(3):
+            status, _headers, body = self.fx.request("GET", "/auth/status")
+            self.assertEqual(status, 200)
+            data = body["data"]
+            self.assertEqual(data["state"], "awaiting_browser")
+            self.assertFalse(data["authenticated"])
+        # Delivering the code still ends the pending phase through the
+        # promoted side of current(): the record is real, the poll reflects
+        # the authenticated account.
+        status, _headers, body = self._deliver()
+        self.assertEqual(status, 200)
+        status, _headers, body = self.fx.request("GET", "/auth/status")
+        data = body["data"]
+        self.assertTrue(data["authenticated"])
+        self.assertEqual(data["state"], "authenticated")
+        self.assertEqual(data["account"]["name"], "shell-user")
+
     def test_deliver_code_completes_the_flow_the_shell_started(self):
         _status, data = self._login()
         # The browser would land on skilyst://callback?code=...; the shell's
