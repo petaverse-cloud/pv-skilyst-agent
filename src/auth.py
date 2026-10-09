@@ -329,6 +329,21 @@ class AuthFlow:
         self._arm_exchange()
         return launch
 
+    # -- redirect scheme selection (#43) --------------------------------
+    # The beehive console allowlists redirect URIs; the reverse-domain
+    # scheme (petaverse.skilyst://, RFC 8252 §7.1) is the target, the bare
+    # word is the legacy registration. Until the console adds the new
+    # scheme to its allowlist, the runtime keeps issuing the legacy URI so
+    # logins do not break; SKILYST_REDIRECT_SCHEME=petaverse.skilyst flips
+    # to the new one the moment backend confirms the allowlist entry.
+    REDIRECT_SCHEMES = ("petaverse.skilyst", "skilyst")
+
+    def _redirect_uri(self) -> str:
+        requested = os.environ.get("SKILYST_REDIRECT_SCHEME", "")
+        if requested in self.REDIRECT_SCHEMES:
+            return f"{requested}://callback"
+        return "skilyst://callback"
+
     def _arm_exchange(self, poll_timeout: float = 300.0) -> None:
         self._exchange_event = threading.Event()
         self._exchange_error = None
@@ -336,7 +351,7 @@ class AuthFlow:
         self._poll_timeout = poll_timeout
 
     def login(self, redirect_uri: str, poll_timeout: float = 300.0) -> TokenRecord:
-        """Start login. For GUI use redirect_uri='skilyst://callback' (deep link
+        """Start login. For GUI use redirect_uri='petaverse.skilyst://callback' (deep link
         delivers the code separately); for CLI use 'loopback:<port>'."""
         verifier, challenge = make_pkce_pair()
         self._verifier = verifier

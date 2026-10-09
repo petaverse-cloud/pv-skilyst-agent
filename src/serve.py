@@ -223,7 +223,7 @@ class RuntimeAPI:
             result: dict = {}
             def _bg():
                 try:
-                    result["rec"] = flow.login(redirect_uri="skilyst://callback", poll_timeout=30)
+                    result["rec"] = flow.login(redirect_uri=flow._redirect_uri(), poll_timeout=30)
                 except AuthError as exc:
                     result["err"] = str(exc)
             t = threading.Thread(target=_bg)
@@ -245,7 +245,7 @@ class RuntimeAPI:
         # real mode: the shell opens the browser itself; hand it the launch
         # target. The runtime stays in AWAITING_BROWSER with the PKCE verifier
         # held on the persistent flow until /auth/deliver-code arrives.
-        browser_url = flow.begin_login(redirect_uri="skilyst://callback")
+        browser_url = flow.begin_login(redirect_uri=flow._redirect_uri())
         return {"state": "awaiting_browser", "browser_url": browser_url}
 
     def auth_logout(self) -> dict:
