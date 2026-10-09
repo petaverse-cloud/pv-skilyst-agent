@@ -118,3 +118,95 @@ class SkillFaceUnchangedTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class StudioApiForwardTests(unittest.TestCase):
+    """A3 R6: the /api/v1/* transparent relay for the skilyst-studio package.
+
+    Envelope contract: core's {code,message,payload} passes through UNTOUCHED
+    (apiFetch unwraps it itself) — the opposite of the /beehive/* channel."""
+
+    def test_forward_preserves_the_core_envelope(self):
+        api = serve.RuntimeAPI.__new__(serve.RuntimeAPI)
+        cfg = type("Cfg", (), {})()
+        cfg.beehive = type("B", (), {"base_url": "https://b"})()
+        api._proxy_token = lambda: (cfg, "tok")
+        seen = {}
+
+        class FakeClient:
+            def __init__(self, base_url=None, token=None, timeout=None):
+                seen["token"] = token
+            def request(self, method, path, body=None):
+                seen["call"] = (method, path, body)
+                return 200, {"code": 200, "message": "OK",
+                             "payload": {"workflows": [{"id": "wf-1"}]}}
+
+        import serve as serve_mod
+        orig = serve_mod.serve  # silence linters; module identity check
+        import beehive.client as bc
+        bc_ref = bc.BeehiveClient
+        bc.BeehiveClient = FakeClient
+        try:
+            out = api.beehive_api_forward(
+                "GET", "/api/v1/workflows", {"limit": "5"}, None)
+        finally:
+            bc.BeehiveClient = bc_ref
+        self.assertEqual(out["payload"]["workflows"][0]["id"], "wf-1")
+        self.assertIn("code", out)              # envelope intact, not unwrapped
+        self.assertEqual(seen["call"][0], "GET")
+        self.assertEqual(seen["call"][1], "/api/v1/workflows?limit=5")
+
+    def test_forward_relays_upstream_errors_with_status(self):
+        api = serve.RuntimeAPI.__new__(serve.RuntimeAPI)
+        cfg = type("Cfg", (), {})()
+        cfg.beehive = type("B", (), {"base_url": "https://b"})()
+        api._proxy_token = lambda: (cfg, "tok")
+
+        class FakeErrClient:
+            def __init__(self, **kw): pass
+            def request(self, method, path, body=None):
+                return 403, {"code": 403, "message": "Forbidden",
+                             "payload": {"error": "missing scope billing:read"}}
+
+        import beehive.client as bc
+        bc_ref = bc.BeehiveClient
+        bc.BeehiveClient = FakeErrClient
+        try:
+            with self.assertRaises(serve.BeehiveErrorWithStatus) as ctx:
+                api.beehive_api_forward("GET", "/api/v1/billing/wallet", {}, None)
+        finally:
+            bc.BeehiveClient = bc_ref
+        self.assertEqual(ctx.exception.status, 403)
+        self.assertEqual(ctx.exception.envelope["payload"]["error"],
+                         "missing scope billing:read")
+
+    def test_error_payload_relays_the_upstream_envelope(self):
+        exc = serve.BeehiveErrorWithStatus(
+            409, {"code": 409, "message": "Conflict",
+                  "payload": {"error": "lock held"}})
+        out = serve.error_payload(exc)
+        self.assertEqual(out["payload"]["error"], "lock held")
+        self.assertEqual(out["error"]["status"], 409)
+
+    def test_off_table_scope_paths_are_refused_not_passthrough(self):
+        api = serve.RuntimeAPI.__new__(serve.RuntimeAPI)
+        cfg = type("Cfg", (), {})()
+        cfg.beehive = type("B", (), {"base_url": "https://b"})()
+        api._proxy_token = lambda: (cfg, "tok")
+
+        class NeverClient:
+            def __init__(self, **kw):
+                raise AssertionError("client constructed for an off-table path")
+            def request(self, *a, **k):
+                raise AssertionError("request made for an off-table path")
+
+        import beehive.client as bc
+        bc_ref = bc.BeehiveClient
+        bc.BeehiveClient = NeverClient
+        try:
+            with self.assertRaises(Exception):
+                api.beehive_api_forward("GET", "/api/v1/admin/users", {}, None)
+            with self.assertRaises(Exception):
+                api.beehive_api_forward("POST", "/api/v1/unknown/route", {}, {})
+        finally:
+            bc.BeehiveClient = bc_ref
