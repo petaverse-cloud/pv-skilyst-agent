@@ -101,6 +101,22 @@ class BadRequest(APIError):
 class NotFound(APIError):
     status, kind = 404, "NotFound"
 
+class BeehiveErrorWithStatus(APIError):
+    """Relay an upstream beehive failure with its envelope intact (A3 studio
+    channel): apiFetch on the webview side reads payload.error itself, so the
+    runtime must not remap it into a generic kind/message."""
+    kind = "BeehiveError"
+
+    def __init__(self, status_code: int, envelope: dict | None):
+        self.status = status_code
+        env = envelope if isinstance(envelope, dict) else {}
+        msg = env.get("message") or str(env)[:200]
+        super().__init__(msg)
+        self.envelope = env
+
+    def payload(self) -> dict:
+        return self.envelope or {"error": self.message}
+
 
 class Unauthorised(APIError):
     status, kind = 401, "Unauthorised"
@@ -138,6 +154,11 @@ def error_payload(exc: BaseException) -> dict:
     detail = getattr(exc, "detail", None)
     if detail is not None:
         payload["error"]["detail"] = detail
+    # A3 studio channel: relay the upstream core envelope untouched so the
+    # package's apiFetch can read payload.error exactly like on the web host.
+    envelope = getattr(exc, "envelope", None)
+    if isinstance(envelope, dict):
+        payload.update(envelope)
     return payload
 
 
@@ -284,6 +305,55 @@ class RuntimeAPI:
         if isinstance(body, dict) and "payload" in body and "code" in body:
             return body["payload"]
         return body if isinstance(body, dict) else {"payload": body}
+
+    def _proxy_token(self):
+        """The desktop-proxy credential: minted only here, trusted (exact
+        wallet-read carve-out, see scope.py), never handed to skill code."""
+        from beehive.scope import RestrictedToken, DESKTOP_PROXY_SCOPE
+        cfg = self._resolve(llm=False, beehive=True)
+        if not cfg.beehive.has_api_key:
+            raise Unauthorised("sign in to reach beehive data (no platform credential)")
+        return cfg, RestrictedToken(
+            access_key=cfg.beehive.access_key, secret_key=cfg.beehive.secret_key,
+            account=cfg.beehive.user or cfg.beehive.uid,
+            scope=DESKTOP_PROXY_SCOPE, trusted=True)
+
+    def beehive_api_forward(self, method: str, path: str, params: dict, body: dict | None) -> dict:
+        """A3 studio-package channel: transparent /api/v1/* relay.
+
+        The skilyst-studio package (R6: one component source, two hosts) calls
+        ``${apiBaseUrl}/api/v1/...`` with its own fetch. On the web host that is
+        beehive itself; on the desktop it is this runtime, which signs with the
+        platform credential and forwards. The core envelope
+        ({code,message,payload}) is relayed UNTOUCHED — the package unwraps it
+        itself (apiFetch reads data.payload / payload.error), so this channel
+        must NOT do the /beehive/* payload-unwrap.
+
+        Gating: the scope table in beehive/scope.py is the shared contract
+        (same SCOPE_RULES the canvas skill faces). An off-table path is a loud
+        refusal, not a fallback pass-through — a new studio route means a
+        deliberate table entry, mirroring the server's routeScopes.
+        """
+        from beehive.client import BeehiveClient
+        from beehive.scope import ScopeRefusal
+        cfg, tok = self._proxy_token()
+        client = BeehiveClient(base_url=cfg.beehive.base_url, token=tok, timeout=60)
+        query = {k: v for k, v in params.items() if v is not None}
+        upstream = path if not query else f"{path}?{urllib.parse.urlencode(query, doseq=True)}"
+        payload = body if isinstance(body, dict) else None
+        try:
+            status, resp = client.request(method, upstream, body=payload)
+        except ScopeRefusal as exc:
+            # The gate refused before any credential was used: same shape as
+            # the server's own envelope so apiFetch's error path reads it.
+            raise BeehiveErrorWithStatus(403, {"code": 403, "message": "Forbidden",
+                                               "payload": {"error": str(exc)}})
+        if status >= 400:
+            raise BeehiveErrorWithStatus(status, resp)
+        # 204 (DELETE success) has no envelope; return an empty payload marker.
+        if status == 204 or resp is None:
+            return {"code": 204, "message": "No Content", "payload": None}
+        return resp if isinstance(resp, dict) else {"code": status, "payload": resp}
 
     def auth_login(self, body: dict) -> dict:
         """Start a login. In mock mode (SKILYST_MOCK_AUTH=1) the browser step is
@@ -619,6 +689,13 @@ def make_handler(api: RuntimeAPI, token: str, allowed_origins: tuple[str, ...],
         def _ok(self, data) -> None:
             self._json(200, {"ok": True, "data": data})
 
+        def _ok_raw(self, data) -> None:
+            """Bare JSON, no {ok,data} wrapper: the A3 studio-package channel
+            relays core's {code,message,payload} envelope untouched because
+            apiFetch (the package's own client) unwraps it itself — wrapping
+            it again would hide payload from every studio consumer."""
+            self._json(200, data)
+
         def _fail(self, exc: BaseException) -> None:
             status, _kind = error_status(exc)
             self._json(status, error_payload(exc))
@@ -697,6 +774,10 @@ def make_handler(api: RuntimeAPI, token: str, allowed_origins: tuple[str, ...],
                     # #36: whitelisted proxy to beehive, signed with the
                     # platform credential (keychain AK/SK).
                     self._ok(api.beehive_proxy(path[len("/beehive/"):], params))
+                elif path.startswith("/api/v1/"):
+                    # A3 studio-package channel (R6): bare relay — the core
+                    # envelope passes through; apiFetch unwraps it itself.
+                    self._ok_raw(api.beehive_api_forward("GET", path, params, None))
                 elif path == "/doctor":
                     self._ok(api.doctor(params.get("skill")))
                 elif path == "/sessions":
@@ -748,8 +829,28 @@ def make_handler(api: RuntimeAPI, token: str, allowed_origins: tuple[str, ...],
                     body = self._parse_json(raw)
                     session_id = path.split("/", 2)[2]
                     self._ok(api.resolve_confirm(session_id, bool(body.get("approve"))))
+                elif path.startswith("/api/v1/"):
+                    # A3 studio-package channel: bare relay with envelope intact.
+                    self._ok_raw(api.beehive_api_forward("POST", path, _params,
+                                                         self._parse_json(raw)))
                 else:
                     raise NotFound(f"no route for POST {path}")
+            except Exception as exc:                        # noqa: BLE001
+                self._fail(exc)
+
+        def do_PUT(self) -> None:                           # noqa: N802
+            path, _params = self._split()
+            raw = self._read_body()
+            if not self._authorised():
+                self._fail(Unauthorised("missing or invalid runtime token"))
+                return
+            try:
+                if path.startswith("/api/v1/"):
+                    # A3 studio-package channel: bare relay with envelope intact.
+                    self._ok_raw(api.beehive_api_forward("PUT", path, _params,
+                                                         self._parse_json(raw)))
+                else:
+                    raise NotFound(f"no route for PUT {path}")
             except Exception as exc:                        # noqa: BLE001
                 self._fail(exc)
 
@@ -761,6 +862,9 @@ def make_handler(api: RuntimeAPI, token: str, allowed_origins: tuple[str, ...],
             try:
                 if path.startswith("/session/"):
                     self._ok(api.delete_session(path.split("/", 2)[2]))
+                elif path.startswith("/api/v1/"):
+                    # A3 studio-package channel: bare relay with envelope intact.
+                    self._ok_raw(api.beehive_api_forward("DELETE", path, _params, None))
                 else:
                     raise NotFound(f"no route for DELETE {path}")
             except Exception as exc:                        # noqa: BLE001
