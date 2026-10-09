@@ -28,7 +28,10 @@
   "plugins": {
     "deep-link": {
       "desktop": {
-        "schemes": ["skilyst"]
+        "schemes": [
+          "petaverse.skilyst",
+          "skilyst"
+        ]
       }
     }
   },

@@ -283,10 +283,15 @@ fn shell_open(url: String) -> Result<(), String> {
     tauri_plugin_opener::open_url(url, None::<&str>).map_err(|exc| exc.to_string())
 }
 
-/// Extract the one-time code from a `skilyst://callback?code=<code>` URL.
-/// Pure so the contract is unit-testable without a live window.
+/// Extract the one-time code from a `petaverse.skilyst://callback?code=<one-time-code>`
+/// or legacy `skilyst://callback?code=…` URL (transition window, #43: the
+/// reverse-domain scheme is the RFC 8252 §7.1 compliant primary; the bare
+/// word stays accepted until the beehive console drops it).
 fn code_from_url(url: &tauri::Url) -> Option<String> {
-    if url.scheme() != "skilyst" || url.host_str() != Some("callback") {
+    const LEGACY_SCHEME: &str = "skilyst";
+    const PRIMARY_SCHEME: &str = "petaverse.skilyst";
+    let scheme_ok = url.scheme() == PRIMARY_SCHEME || url.scheme() == LEGACY_SCHEME;
+    if !scheme_ok || url.host_str() != Some("callback") {
         return None;
     }
     url.query_pairs()
@@ -661,8 +666,24 @@ mod tests {
 
     #[test]
     fn the_sign_in_callback_yields_its_one_time_code() {
+        // #43: the reverse-domain scheme is the primary (RFC 8252 §7.1).
+        let url = tauri::Url::parse("petaverse.skilyst://callback?code=oc_abc123").unwrap();
+        assert_eq!(code_from_url(&url).as_deref(), Some("oc_abc123"));
+    }
+
+    #[test]
+    fn the_legacy_bare_scheme_still_yields_its_code_during_the_window() {
         let url = tauri::Url::parse("skilyst://callback?code=oc_abc123").unwrap();
         assert_eq!(code_from_url(&url).as_deref(), Some("oc_abc123"));
+    }
+
+    #[test]
+    fn a_stranger_reverse_domain_scheme_is_ignored() {
+        // Scheme collision protection (#43): only OUR reverse domain is ours.
+        assert_eq!(
+            code_from_url(&tauri::Url::parse("evil.skilyst://callback?code=x").unwrap()),
+            None
+        );
     }
 
     #[test]
@@ -708,9 +729,16 @@ mod tests {
 
     #[test]
     fn the_configured_schemes_come_from_tauri_conf_json() {
-        // The wrapper and the packaged bundle must declare the same scheme;
-        // this pins the single source of truth actually being read.
-        assert_eq!(configured_schemes(), Some(vec!["skilyst".to_string()]));
+        // The wrapper and the packaged bundle must declare the same schemes;
+        // this pins the single source of truth actually being read. #43:
+        // reverse-domain primary first, bare word legacy during the window.
+        assert_eq!(
+            configured_schemes(),
+            Some(vec![
+                "petaverse.skilyst".to_string(),
+                "skilyst".to_string()
+            ])
+        );
     }
 
     #[test]

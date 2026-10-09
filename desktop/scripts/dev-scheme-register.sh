@@ -24,7 +24,7 @@ cat > "$CONTENTS/Info.plist" <<PLIST
   <key>CFBundleURLTypes</key>
   <array><dict>
     <key>CFBundleURLName</key><string>ai.skilyst.agent</string>
-    <key>CFBundleURLSchemes</key><array><string>skilyst</string></array>
+    <key>CFBundleURLSchemes</key><array><string>petaverse.skilyst</string><string>skilyst</string></array>
   </dict></array>
 </dict>
 </plist>
