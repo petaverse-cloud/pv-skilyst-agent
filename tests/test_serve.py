@@ -165,6 +165,15 @@ class EnvIsolation(unittest.TestCase):
     def setUp(self):
         self.saved = {key: os.environ.pop(key, None) for key in ENV_KEYS}
         self.addCleanup(self._restore)
+        # #37 follow-up: a REAL login on this machine must not leak into
+        # tests either — the login layer (keychain + ~/.skilyst) wins over
+        # env credentials by design, so tests that assert env behavior
+        # need an empty auth store. Without this, a logged-in developer
+        # machine flips these tests red (the auth fix merely exposed it:
+        # the old store could not produce a SK, so the login layer never won).
+        self._auth_sandbox = tempfile.TemporaryDirectory()
+        os.environ["SKILYST_AUTH_STORE_HOME"] = self._auth_sandbox.name
+        self.addCleanup(self._auth_sandbox.cleanup)
 
     def _restore(self):
         for key, value in self.saved.items():

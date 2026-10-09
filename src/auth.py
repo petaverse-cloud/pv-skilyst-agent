@@ -64,6 +64,10 @@ class TokenStore:
     """OS keychain via `security` (macOS) in production; dev-file fallback."""
 
     SERVICE = "skilyst-agent"
+    # #37: the SK gets its own keychain item (execve argv cannot carry the
+    # NUL byte a single "AK\0SK" item would need). Suffix keeps the legacy
+    # AK item's (account, service) address untouched for upgrade-in-place.
+    SECRET_SERVICE = "skilyst-agent-secret"
 
     def __init__(self, home: Optional[Path] = None):
         # SKILYST_AUTH_STORE_HOME lets tests (and multi-install setups) point
@@ -82,19 +86,44 @@ class TokenStore:
 
     def save(self, record: TokenRecord) -> None:
         if record.storage == "keychain" and self._keychain_available():
+            # #37: the keychain must hold the FULL pair. NUL-separated
+            # single-item storage is infeasible (execve argv cannot carry
+            # NUL bytes — subprocess raises "embedded null byte"), so the
+            # pair lives as two keychain items. Non-sensitive fields
+            # (account/scopes/expiry) stay in the meta file so /auth/status
+            # works without touching secrets.
             subprocess.run(
                 ["security", "add-generic-password",
                  "-a", record.account_uid, "-s", self.SERVICE,
-                 "-U", "-w", record.access_key or record.access_token],
+                 "-U", "-w", record.access_key or record.access_token or ""],
                 check=True, capture_output=True)
+            if record.secret_key:
+                subprocess.run(
+                    ["security", "add-generic-password",
+                     "-a", record.account_uid, "-s", self.SECRET_SERVICE,
+                     "-U", "-w", record.secret_key],
+                    check=True, capture_output=True)
+            else:
+                # Review note (verify): an SK-less save must not leave a
+                # stale SK item behind — a later load() would reassemble
+                # new-AK + old-SK, a credential pair that never existed.
+                # No call site saves a half pair today; this makes mixed
+                # pairs impossible by construction anyway.
+                subprocess.run(
+                    ["security", "delete-generic-password",
+                     "-a", record.account_uid, "-s", self.SECRET_SERVICE],
+                    capture_output=True)
             meta = self.home / "credentials.meta"
             meta.write_text(json.dumps({
                 "account_uid": record.account_uid, "account_name": record.account_name,
                 "scopes": record.scopes, "expires_at": record.expires_at,
-                "storage": "keychain", "secret_key": record.secret_key}))
+                "storage": "keychain"}))
             meta.chmod(0o600)
             return
-        # fallback: 0600 dev file, explicitly marked
+        # fallback: 0600 dev file, explicitly marked. DEV-ONLY semantics
+        # (#37 constraint): non-macOS or keychain-less environments —
+        # production mac installs never take this path, so the plaintext
+        # JSON here is a developer-machine tradeoff, documented as such.
         record.storage = "dev-file"
         self._dev_path.write_text(record.to_json())
         self._dev_path.chmod(0o600)
@@ -103,16 +132,39 @@ class TokenStore:
         meta = self.home / "credentials.meta"
         if meta.is_file():
             m = json.loads(meta.read_text())
+            uid = m.get("account_uid", "")
             r = subprocess.run(
                 ["security", "find-generic-password",
-                 "-a", m.get("account_uid", ""), "-s", self.SERVICE, "-w"],
+                 "-a", uid, "-s", self.SERVICE, "-w"],
                 capture_output=True, text=True)
             if r.returncode == 0 and r.stdout.strip():
+                ak = r.stdout.rstrip("\n")
+                # SK lives in its own keychain item (#37). The legacy
+                # layout kept it in PLAINTEXT in the meta file — promote
+                # it into the keychain and strip it from disk, idempotent:
+                # old versions transparently upgrade on first load.
+                rs = subprocess.run(
+                    ["security", "find-generic-password",
+                     "-a", uid, "-s", self.SECRET_SERVICE, "-w"],
+                    capture_output=True, text=True)
+                sk = rs.stdout.rstrip("\n") if rs.returncode == 0 else ""
+                legacy = m.get("secret_key", "")
+                if legacy and not sk:
+                    sk = legacy
+                    subprocess.run(
+                        ["security", "add-generic-password",
+                         "-a", uid, "-s", self.SECRET_SERVICE,
+                         "-U", "-w", sk],
+                        check=True, capture_output=True)
+                if legacy:
+                    m.pop("secret_key", None)
+                    meta.write_text(json.dumps(m))
+                    meta.chmod(0o600)
                 return TokenRecord(
-                    access_token=r.stdout.strip(), account_uid=m["account_uid"],
+                    access_token=ak, account_uid=m["account_uid"],
                     account_name=m.get("account_name", ""), scopes=m.get("scopes", []),
                     expires_at=m.get("expires_at", 0), storage="keychain",
-                    access_key=r.stdout.strip(), secret_key=m.get("secret_key", ""))
+                    access_key=ak, secret_key=sk)
         if self._dev_path.is_file():
             rec = TokenRecord.from_json(self._dev_path.read_text())
             if rec.storage == "dev-file":
@@ -123,9 +175,15 @@ class TokenStore:
         meta = self.home / "credentials.meta"
         if meta.is_file():
             m = json.loads(meta.read_text())
+            uid = m.get("account_uid", "")
             subprocess.run(
                 ["security", "delete-generic-password",
-                 "-a", m.get("account_uid", ""), "-s", self.SERVICE],
+                 "-a", uid, "-s", self.SERVICE],
+                capture_output=True)
+            # #37: the SK's own item goes with the AK's
+            subprocess.run(
+                ["security", "delete-generic-password",
+                 "-a", uid, "-s", self.SECRET_SERVICE],
                 capture_output=True)
             meta.unlink(missing_ok=True)
         self._dev_path.unlink(missing_ok=True)
