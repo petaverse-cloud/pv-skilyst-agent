@@ -232,13 +232,21 @@ class AuthFlow:
     # -- current identity ---------------------------------------------------
 
     def current(self) -> Optional[TokenRecord]:
+        """Read the stored credential. Deliberately NO state side effects.
+
+        #28: rewriting self.state here clobbered the in-memory pending login
+        (awaiting_browser/exchanging) on every status poll — serve.auth_status
+        read the pending state correctly once, then current() flipped it to
+        unauthenticated and the login screen flashed back to "signed out".
+        State transitions belong to the flow methods that cause them
+        (deliver_code → AUTHENTICATED, begin_login → AWAITING_BROWSER);
+        a reader must not mutate what it reads.
+        """
         rec = self.store.load()
         if rec and rec.expires_at > time.time():
-            self.state = AuthState.AUTHENTICATED
             return rec
         if rec:
-            self.store.clear()  # expired
-        self.state = AuthState.UNAUTHENTICATED
+            self.store.clear()  # expired credential: store hygiene, not state
         return None
 
     def refresh(self) -> TokenRecord:

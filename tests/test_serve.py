@@ -297,6 +297,33 @@ class DeepLinkAuthTests(EnvIsolation):
         self.assertTrue(body["data"]["authenticated"])
         self.assertEqual(body["data"]["account"]["name"], "shell-user")
 
+    def test_pending_login_survives_repeated_status_polls(self):
+        """#28: the second poll must not lose the pending state.
+
+        Root cause was AuthFlow.current() rewriting self.state to
+        unauthenticated on every read while a login was in flight — poll 1
+        showed awaiting_browser, poll 2+ flipped to signed-out and the login
+        screen flashed back. current() is now side-effect-free; serve
+        auth_status snapshots the pending state and reports the effective
+        state for a valid stored credential.
+        """
+        _status, _data = self._login()
+        for i in (1, 2, 3, 4, 5):
+            status, _headers, body = self.fx.request("GET", "/auth/status")
+            self.assertEqual(status, 200, f"poll {i}")
+            data = body["data"]
+            self.assertFalse(data["authenticated"], f"poll {i}: no credential yet")
+            self.assertEqual(data["state"], "awaiting_browser",
+                             f"poll {i}: pending state must survive the poll")
+        # After delivery the status flips to authenticated and STAYS there
+        # across polls (the same regression in the other direction).
+        self._deliver()
+        for i in (1, 2, 3):
+            status, _headers, body = self.fx.request("GET", "/auth/status")
+            data = body["data"]
+            self.assertTrue(data["authenticated"], f"post-delivery poll {i}")
+            self.assertEqual(data["state"], "authenticated", f"poll {i}")
+
     def test_deliver_code_without_a_pending_login_is_refused_loudly(self):
         # #24: the refusal must be loud AND immediate. The old code raised the
         # AuthError inside deliver_code's try block, where ``except Exception``

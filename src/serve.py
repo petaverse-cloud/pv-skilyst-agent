@@ -195,6 +195,7 @@ class RuntimeAPI:
         return self._flow
 
     def auth_status(self) -> dict:
+        from auth import AuthState
         flow = self._auth_flow()
         # The in-memory phase (awaiting_browser/exchanging) is the truth while
         # a login is pending; current() would otherwise reset the visible
@@ -206,7 +207,12 @@ class RuntimeAPI:
             return {"state": pending or flow.state, "authenticated": False,
                     "dev_mode": dev_mode}
         import time as _t
-        return {"state": flow.state, "authenticated": True,
+        # A valid stored credential IS the authenticated state, even when the
+        # in-memory flow object is fresh (app restart: state starts at
+        # unauthenticated until something logs in — but the keychain record
+        # is the truth). Report the effective state, not the stale field.
+        return {"state": "authenticated" if flow.state == AuthState.UNAUTHENTICATED else flow.state,
+                "authenticated": True,
                 "account": {"uid": rec.account_uid, "name": rec.account_name},
                 "scopes": rec.scopes, "storage": rec.storage,
                 "expires_in": int(rec.expires_at - _t.time())}
