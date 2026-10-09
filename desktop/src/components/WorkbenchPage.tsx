@@ -268,6 +268,7 @@ export default function WorkbenchPage({
           <CanvasView
             focus={canvasFocus}
             initialWorkflowId={activeWorkflowId}
+            runtimeReady={info !== null}
           />
         </div>
       )}
