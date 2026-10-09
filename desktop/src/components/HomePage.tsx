@@ -157,8 +157,12 @@ export default function HomePage({
   }, []);
 
   useEffect(() => {
+    // Re-run when the runtime connects: on a cold start HomePage mounts
+    // before startRuntime() finishes, and api() would fail its first
+    // load with "not connected" forever (no retry) — the works wall
+    // stayed dead even though the runtime was perfectly healthy.
     void loadWorkflows();
-  }, [loadWorkflows]);
+  }, [loadWorkflows, runtimeConnected]);
 
   const artifactCount = sessions.reduce((sum, s) => sum + (s.artifacts ?? 0), 0);
   const agentCount = (workflows ?? []).filter((w) => w.created_via === "agent").length;
