@@ -41,6 +41,13 @@ export async function postAuthLogout(): Promise<AuthStatus> {
   return api<AuthStatus>("/auth/logout", { method: "POST", body: {} });
 }
 
+/** #34: rotate the stored pair in place (core#681 refresh endpoint, runtime
+ * proxy). Returns the refreshed status; throws when the pair is past the
+ * overlap window — the caller falls back to the browser re-auth flow. */
+export async function postAuthRefresh(): Promise<AuthStatus> {
+  return api<AuthStatus>("/auth/refresh", { method: "POST", body: {} });
+}
+
 /**
  * Login gate — shown when the runtime reports no credentials.
  *

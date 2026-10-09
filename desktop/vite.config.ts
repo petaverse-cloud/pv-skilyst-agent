@@ -15,18 +15,10 @@ export default defineConfig({
   server: {
     port: 1420,
     strictPort: true,
-    proxy: {
-      // A3 S1 canvas: the skilyst-studio package talks to the beehive dev API.
-      // The API's CORS allowlist (bee.verse4.pet + localhost:3000) does not
-      // include :1420, so dev traffic goes through this same-origin proxy
-      // (REST + jobs WS). Production wiring (a core CORS entry for the desktop
-      // origin) is tracked on pv-skilyst-agent#10.
-      "/api": {
-        target: "https://beehive-api.verse4.pet",
-        changeOrigin: true,
-        ws: true,
-      },
-    },
+    // No /api proxy anymore: the unified posture (#36) sends every beehive
+    // call through the local runtime, which signs with the keychain AK/SK.
+    // The vite proxy previously masked the production-bundle breakage where
+    // webview-relative /api fetches hit the webview's own origin.
   },
   envPrefix: ["VITE_", "TAURI_"],
   build: { target: "esnext" },

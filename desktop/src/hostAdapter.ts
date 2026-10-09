@@ -1,14 +1,13 @@
 /**
  * Desktop HostAdapter (A3 S1) — the skilyst-studio package's view of the
- * desktop shell. S1 scope is the READ-ONLY canvas; the adapter therefore
- * implements the minimum viable host:
+ * desktop shell. Unified server-data posture (#36):
  *
- *  - apiBaseUrl: "" (relative) — dev traffic rides the vite same-origin proxy
- *    (/api → beehive-api.verse4.pet, REST + WS). Production wiring (a core
- *    CORS entry for the desktop origin) is tracked on pv-skilyst-agent#10.
- *  - getToken: the beehive JWT kept in localStorage by the canvas login form
- *    (canvas-local; the runtime's AK/SK credentials are NOT reused here —
- *    they are scope-restricted agent credentials, not user sessions).
+ *  - apiBaseUrl: the local runtime origin. The package's internal apiFetch
+ *    therefore hits the runtime proxy, which signs beehive calls with the
+ *    keychain AK/SK. No webview→beehive direct call, no localStorage JWT —
+ *    the retired canvas login form's token never comes back.
+ *  - getToken: the RUNTIME bearer (127.0.0.1 capability token), not a
+ *    beehive web session. Retrieved from the same place api.ts gets it.
  *  - t: key passthrough (the desktop has no i18n yet — package keys are the
  *    English source strings' fallbacks).
  *  - confirm: window.confirm (WebView supports it).
@@ -17,14 +16,17 @@
  */
 
 import type { HostAdapter } from "@petaverse/skilyst-studio/host";
-
-export const BEEHIVE_TOKEN_KEY = "skilyst.beehive_token";
+import { runtime } from "./api";
 
 export function desktopHostAdapter(): HostAdapter {
   const listeners = new Map<string, Set<(detail?: unknown) => void>>();
+  const info = runtime();
   return {
-    apiBaseUrl: "",
-    getToken: () => window.localStorage.getItem(BEEHIVE_TOKEN_KEY),
+    // #36: the runtime origin — the package's internal apiFetch routes
+    // "/api/v1/..." through the runtime proxy, keychain-signed. Identical in
+    // dev and the installed bundle; no webview→beehive direct calls remain.
+    apiBaseUrl: info?.base_url ?? "",
+    getToken: () => runtime()?.token ?? null,
     navigate: () => {
       /* the desktop has no router; the canvas Back button is hidden by the
          host view chrome (CanvasView renders its own header). */

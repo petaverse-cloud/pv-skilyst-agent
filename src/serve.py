@@ -253,6 +253,17 @@ class RuntimeAPI:
         flow.logout()
         return {"state": flow.state, "authenticated": False}
 
+    def auth_refresh(self) -> dict:
+        """#34: rotate the stored AK/SK pair server-side (core#681).
+        AuthError (no stored pair / server refusal) propagates to the 400
+        mapper like every other loud refusal."""
+        flow = self._auth_flow()
+        rec = flow.refresh()
+        return {"state": flow.state, "authenticated": True,
+                "account": {"uid": rec.account_uid, "name": rec.account_name},
+                "scopes": rec.scopes, "storage": rec.storage,
+                "expires_in": int(rec.expires_at - time.time())}
+
     def auth_deliver_code(self, body: dict) -> dict:
         """Called by the Tauri deep-link handler with the one-time code."""
         from auth import AuthError
@@ -645,6 +656,8 @@ def make_handler(api: RuntimeAPI, token: str, allowed_origins: tuple[str, ...],
                     self._ok(api.auth_login(self._parse_json(raw)))
                 elif path == "/auth/logout":
                     self._ok(api.auth_logout())
+                elif path == "/auth/refresh":
+                    self._ok(api.auth_refresh())
                 elif path == "/auth/deliver-code":
                     self._ok(api.auth_deliver_code(self._parse_json(raw)))
                 elif path == "/shutdown":

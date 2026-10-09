@@ -1,6 +1,6 @@
 import { Alert, AppShell, Box, Group, Text } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
-import { LoginScreen, fetchAuthStatus, postAuthLogout, type AuthStatus } from "./components/LoginScreen";
+import { LoginScreen, fetchAuthStatus, postAuthLogout, postAuthRefresh, type AuthStatus } from "./components/LoginScreen";
 import {
   api,
   inShell,
@@ -88,6 +88,18 @@ export default function App() {
     }
   }, []);
 
+  // #34: renewal in place — try the refresh endpoint first (core#681, no
+  // browser round-trip); only when the pair is past the overlap window does
+  // it degrade to the full logout + sign-in gate.
+  const handleReauthorize = useCallback(async () => {
+    try {
+      setAuthStatus(await postAuthRefresh());
+    } catch {
+      await postAuthLogout().catch(() => undefined);
+      setAuthStatus(await fetchAuthStatus().catch(() => null));
+    }
+  }, []);
+
   // A session created by anything other than this window (a CLI run, another shell)
   // shows up within one poll interval instead of needing a restart.
   useEffect(() => {
@@ -145,7 +157,7 @@ export default function App() {
           authStatus={authStatus}
           runtimeBadge={runtimeBadge}
           onLogout={() => void handleLogout()}
-          onReauthorize={() => void handleLogout()}
+          onReauthorize={() => void handleReauthorize()}
         />
       </AppShell.Navbar>
 
