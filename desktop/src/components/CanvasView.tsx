@@ -25,11 +25,16 @@ export function CanvasView({
   onExit,
   focus,
   initialWorkflowId,
+  runtimeReady,
 }: {
   onExit?: () => void;
   focus?: CanvasFocus;
   /** #31: the workbench pane opens the canvas bound to this workflow. */
   initialWorkflowId?: string | null;
+  /** #53 cold-start race class: the list load re-runs when the runtime
+   * connects — a mount before startRuntime() resolves would otherwise fail
+   * "not connected" once, forever (same shape the works wall had). */
+  runtimeReady?: boolean;
 }) {
   const host = useMemo(() => desktopHostAdapter(), []);
   // MaterialPanel (package) rides react-query; readOnly mode never mounts it
@@ -66,8 +71,10 @@ export function CanvasView({
   }, []);
 
   useEffect(() => {
+    // #53: re-run when the runtime becomes ready — the first mount may
+    // precede startRuntime() finishing (cold start straight to workbench).
     if (stage === "list") void loadWorkflows();
-  }, [stage, loadWorkflows]);
+  }, [stage, loadWorkflows, runtimeReady]);
 
   // A3 S3 action-card locate: when a focus arrives with the workflow list,
   // auto-select that board (straight to the canvas stage, skipping the manual
