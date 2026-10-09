@@ -180,6 +180,12 @@ class ConfigTests(unittest.TestCase):
                        "BEEHIVE_PLATFORM_SK", "BEEHIVE_PLATFORM_USER", "BEEHIVE_PLATFORM_PASS",
                        "BEEHIVE_PLATFORM_UID")}
         self.addCleanup(self._restore)
+        # #37 follow-up: sandbox the auth store too — a real login on this
+        # machine wins over env credentials by design and would flip these
+        # env-layering assertions (same gap EnvIsolation had).
+        self._auth_sandbox = tempfile.TemporaryDirectory()
+        os.environ["SKILYST_AUTH_STORE_HOME"] = self._auth_sandbox.name
+        self.addCleanup(self._auth_sandbox.cleanup)
 
     def _restore(self):
         for key, value in self.saved.items():
