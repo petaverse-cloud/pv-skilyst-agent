@@ -211,9 +211,13 @@ fn runtime_start(
     app: AppHandle,
     state: State<'_, RuntimeState>,
     live: Option<bool>,
-) -> Result<RuntimeInfo, String> {
+) -> Result<RuntimeStatus, String> {
+    // #42: JS never receives the token — not on the first start, not on the
+    // idempotent re-attach path. The shell keeps the full RuntimeInfo (token
+    // included) in Rust state and speaks HTTP on the webview's behalf via
+    // runtime_request / runtime_request_stream.
     if let Some(info) = state.info.lock().unwrap().clone() {
-        return Ok(info);
+        return Ok(RuntimeStatus::from(&info));
     }
     let launcher = launcher_path(&app)?;
     let mut command = Command::new(python_command());
@@ -282,7 +286,8 @@ fn runtime_start(
             state.child.lock().unwrap().replace(child);
             state.stdin.lock().unwrap().replace(stdin);
             *state.info.lock().unwrap() = Some(info.clone());
-            Ok(info)
+            // #42: the token lives in Rust state only; JS gets the view.
+            Ok(RuntimeStatus::from(&info))
         }
         Ok(Err(message)) => {
             let _ = child.kill();
@@ -886,6 +891,27 @@ mod tests {
         assert!(inside_app_bundle(std::path::Path::new(
             "/Applications/Skilyst Agent.app/Contents/MacOS/skilyst-agent"
         )));
+    }
+
+    #[test]
+    fn runtime_start_signature_returns_the_token_free_view() {
+        // #42 round 2 (review blocking): the START path must hand JS the
+        // same token-free view as runtime_status — previously runtime_start
+        // returned the full RuntimeInfo and startRuntime() parked it (token
+        // included) in module scope for the app's whole lifetime.
+        // Type-level pin: both commands must serialize RuntimeStatus, whose
+        // serialized form is token-free (see the test above). RuntimeInfo
+        // (token included) must not be reachable from any command return.
+        fn assert_status<T: serde::Serialize + From<&'static RuntimeInfo>>() {}
+        assert_status::<RuntimeStatus>();
+        let full = RuntimeInfo {
+            port: 1, token: "t".into(), base_url: "u".into(), pid: 2, dry_run: true,
+            sessions_dir: String::new(), store_dir: String::new(), workspace_dir: String::new(),
+        };
+        // From<&RuntimeInfo> exists and drops the token — the view used by
+        // BOTH runtime_start and runtime_status return paths.
+        let view = RuntimeStatus::from(&full);
+        assert!(serde_json::to_string(&view).unwrap().find("\"token\"").is_none());
     }
 
     #[test]
