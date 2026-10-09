@@ -1,0 +1,88 @@
+import { MantineProvider } from "@mantine/core";
+import { renderToString } from "react-dom/server";
+import { describe, expect, it, vi } from "vitest";
+import WorkbenchPage from "./WorkbenchPage";
+import type { SessionRow } from "../api";
+import type { WorkflowSessions } from "../workflowRegistry";
+
+// M2 #38 acceptance: canvas-first layout. The board is the primary surface
+// (always mounted), the input bar docks at the bottom, history + transcript
+// live in a Drawer overlay — never a resident column.
+
+vi.mock("../api", () => ({
+  api: vi.fn(),
+  sendMessage: vi.fn(),
+  resolveConfirm: vi.fn(),
+}));
+vi.mock("../beehiveClient", () => ({
+  getWalletBalance: vi.fn(),
+  getWorkflow: vi.fn(),
+}));
+vi.mock("./Composer", () => ({ default: () => <div data-testid="composer" /> }));
+vi.mock("./ConversationView", () => ({ default: () => <div data-testid="conversation" /> }));
+vi.mock("./SessionList", () => ({ default: () => <div data-testid="session-list" /> }));
+vi.mock("./CanvasView", () => ({
+  CanvasView: (props: { initialWorkflowId?: string | null }) => (
+    <div data-testid="canvas" data-wf={props.initialWorkflowId ?? ""} />
+  ),
+}));
+vi.mock("@petaverse/skilyst-studio/session", () => ({
+  QuoteConfirmCard: () => <div data-testid="quote-card" />,
+}));
+
+const sessions: SessionRow[] = [];
+const registry: WorkflowSessions = {};
+const info = { dry_run: true, port: 12345, pid: 1 };
+
+const html = (workflowId?: string) =>
+  renderToString(
+    <MantineProvider defaultColorScheme="dark">
+      <WorkbenchPage
+        routeWorkflowId={workflowId}
+        sessions={sessions}
+        registry={registry}
+        onRegistryChange={() => undefined}
+        info={info}
+        dryRun
+        onDryRunChange={() => undefined}
+        model="test"
+        balanceUsd={null}
+        onBalanceUsd={() => undefined}
+      />
+    </MantineProvider>,
+  );
+
+describe("WorkbenchPage M2 layout (#38)", () => {
+  it("mounts the canvas as the primary surface, not behind a toggle", () => {
+    const out = html("workflow-1");
+    expect(out).toContain('data-testid="workbench-canvas"');
+    // M1 had a Canvas toggle button; M2 must not.
+    expect(out).not.toContain('data-testid="toggle-canvas"');
+  });
+
+  it("always renders the composer (input bar at the bottom)", () => {
+    const out = html();
+    expect(out).toContain('data-testid="composer"');
+  });
+
+  it("renders history as an overlay drawer, never a resident column", () => {
+    const out = html("workflow-1");
+    // The Drawer is present in markup (Portal renders into the tree in
+    // renderToString; its content mounts only when opened, but the drawer
+    // shell + toggle exist) and the M1 resident 240px pane marker is gone.
+    expect(out).toContain('data-testid="toggle-history"');
+    expect(out).not.toMatch(/w[:]240/);
+    expect(out).not.toContain('style="width:240px');
+  });
+
+  it("binds the canvas to the active workflow", () => {
+    const out = html("workflow-abc");
+    expect(out).toContain('data-wf="workflow-abc"');
+  });
+
+  it("without a workflow, still shows the board surface (picker state)", () => {
+    const out = html();
+    expect(out).toContain('data-testid="workbench-canvas"');
+    expect(out).toContain('data-testid="toggle-history"');
+  });
+});

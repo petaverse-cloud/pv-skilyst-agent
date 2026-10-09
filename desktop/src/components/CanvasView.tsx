@@ -26,7 +26,7 @@ export function CanvasView({
   focus,
   initialWorkflowId,
 }: {
-  onExit: () => void;
+  onExit?: () => void;
   focus?: CanvasFocus;
   /** #31: the workbench pane opens the canvas bound to this workflow. */
   initialWorkflowId?: string | null;
@@ -102,7 +102,7 @@ export function CanvasView({
           </Group>
           <Group gap="xs">
             <Button size="xs" variant="default" onClick={() => void loadWorkflows()}>Refresh</Button>
-            <Button size="xs" variant="subtle" onClick={onExit}>Back to chat</Button>
+            {onExit ? <Button size="xs" variant="subtle" onClick={onExit}>Back to chat</Button> : null}
           </Group>
         </Group>
         {listError ? (
@@ -153,7 +153,7 @@ export function CanvasView({
             ) : null;
           })()}
         </Group>
-        <Button size="xs" variant="subtle" onClick={onExit}>Back to chat</Button>
+        {onExit ? <Button size="xs" variant="subtle" onClick={onExit}>Back to chat</Button> : null}
       </Group>
       <div style={{ flex: 1, minHeight: 0 }}>
         <QueryClientProvider client={queryClient}>
