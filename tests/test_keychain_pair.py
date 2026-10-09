@@ -35,6 +35,11 @@ class _FakeSecurity:
             if val is None:
                 return mock.Mock(returncode=44, stdout="")
             return mock.Mock(returncode=0, stdout=val + "\n")
+        if "delete-generic-password" in cmd:
+            i = cmd.index("-a")
+            account, service = cmd[i + 1], cmd[i + 3]
+            self.items.pop((account, service), None)
+            return mock.Mock(returncode=0, stdout="")
         return mock.Mock(returncode=0, stdout="")
 
 
@@ -112,13 +117,11 @@ class KeychainPairTests(unittest.TestCase):
                 self.assertEqual(rec.access_key, "ak-lone")
                 self.assertEqual(rec.secret_key, "")
 
-
-if __name__ == "__main__":
-    unittest.main()
-
     def test_skless_save_stale_item_cleanup(self):
-        """Review note (verify): saving without an SK must remove any stale
-        SK item — mixed new-AK/old-SK pairs must be impossible by construction."""
+        """#44 / review note (verify): saving without an SK must remove any
+        stale SK item — mixed new-AK/old-SK pairs must be impossible by
+        construction. The exact latent shape #44 describes: save full pair,
+        then a half pair — load() must NOT reassemble new-AK + old-SK."""
         with tempfile.TemporaryDirectory() as d:
             fake = _FakeSecurity()
             with mock.patch("subprocess.run", side_effect=fake.run):
@@ -131,3 +134,7 @@ if __name__ == "__main__":
                 self.assertNotIn(("77", "skilyst-agent-secret"), fake.items)
                 rec = store.load()
                 self.assertEqual((rec.access_key, rec.secret_key), ("ak-2", ""))
+
+
+if __name__ == "__main__":
+    unittest.main()
