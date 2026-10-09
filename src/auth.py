@@ -103,6 +103,16 @@ class TokenStore:
                      "-a", record.account_uid, "-s", self.SECRET_SERVICE,
                      "-U", "-w", record.secret_key],
                     check=True, capture_output=True)
+            else:
+                # Review note (verify): an SK-less save must not leave a
+                # stale SK item behind — a later load() would reassemble
+                # new-AK + old-SK, a credential pair that never existed.
+                # No call site saves a half pair today; this makes mixed
+                # pairs impossible by construction anyway.
+                subprocess.run(
+                    ["security", "delete-generic-password",
+                     "-a", record.account_uid, "-s", self.SECRET_SERVICE],
+                    capture_output=True)
             meta = self.home / "credentials.meta"
             meta.write_text(json.dumps({
                 "account_uid": record.account_uid, "account_name": record.account_name,

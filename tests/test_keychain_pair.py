@@ -115,3 +115,19 @@ class KeychainPairTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+    def test_skless_save_stale_item_cleanup(self):
+        """Review note (verify): saving without an SK must remove any stale
+        SK item — mixed new-AK/old-SK pairs must be impossible by construction."""
+        with tempfile.TemporaryDirectory() as d:
+            fake = _FakeSecurity()
+            with mock.patch("subprocess.run", side_effect=fake.run):
+                store = _KeychainStore(Path(d), fake)
+                store.save(self._record())
+                self.assertEqual(fake.items[("77", "skilyst-agent-secret")], "sk-1")
+                # a save without an SK (no call site does this today) must
+                # not leave the old SK item behind
+                store.save(self._record(ak="ak-2", sk="", uid="77"))
+                self.assertNotIn(("77", "skilyst-agent-secret"), fake.items)
+                rec = store.load()
+                self.assertEqual((rec.access_key, rec.secret_key), ("ak-2", ""))
