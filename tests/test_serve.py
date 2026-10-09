@@ -855,3 +855,43 @@ class PaidConfirmGateTests(EnvIsolation):
         self.assertTrue(body["data"]["approved"])
         t.join(timeout=5)
         self.assertTrue(result["approved"])
+
+
+class SkillsRouteTests(EnvIsolation):
+    """M3a (#52): GET /skills feeds the Workbench picker — the local store
+    is the legal first slice (planner C2). A broken install is a degraded
+    row, never a hidden one."""
+
+    def setUp(self):
+        super().setUp()
+        os.environ["SKILYST_SKILLS_HOME"] = tempfile.mkdtemp()
+        self.fx = ServeFixture()
+        self.addCleanup(self.fx.cleanup)
+
+    def test_skills_lists_the_installed_bundle_rows(self):
+        status, _headers, body = self.fx.request("GET", "/skills")
+        self.assertEqual(status, 200)
+        rows = body["data"]["skills"]
+        self.assertTrue(isinstance(rows, list) and rows, "expected installed skills")
+        for row in rows:
+            for key in ("skill_id", "version", "title", "description", "degraded"):
+                self.assertIn(key, row)
+        # the official preloaded bundle is present (namespaced ids)
+        ids = [r["skill_id"] for r in rows]
+        self.assertTrue(any(i.endswith("/doctor") for i in ids),
+                        f"expected a doctor skill in {ids}")
+
+    def test_skills_reports_broken_installs_as_degraded_rows(self):
+        # The fixture's api is wired to fx.store (ServeFixture constructor):
+        # corrupt a skill INSIDE that store, behind its back.
+        entry = self.fx.store.index[[k for k in self.fx.store.index
+                                      if k.endswith("/doctor")][0]]
+        skill_dir = self.fx.store.root / entry["dir"]
+        (skill_dir / "SKILL.md").write_text("tampered: broken frontmatter ---", encoding="utf-8")
+        status, _headers, body = self.fx.request("GET", "/skills")
+        self.assertEqual(status, 200)
+        rows = body["data"]["skills"]
+        broken = [r for r in rows if r["skill_id"].endswith("/doctor")]
+        self.assertEqual(len(broken), 1)
+        self.assertTrue(broken[0]["degraded"], "a corrupted install must surface, not vanish")
+        self.assertIn("modified after install", broken[0]["description"])
