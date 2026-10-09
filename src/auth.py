@@ -120,7 +120,10 @@ class TokenStore:
                 "storage": "keychain"}))
             meta.chmod(0o600)
             return
-        # fallback: 0600 dev file, explicitly marked
+        # fallback: 0600 dev file, explicitly marked. DEV-ONLY semantics
+        # (#37 constraint): non-macOS or keychain-less environments —
+        # production mac installs never take this path, so the plaintext
+        # JSON here is a developer-machine tradeoff, documented as such.
         record.storage = "dev-file"
         self._dev_path.write_text(record.to_json())
         self._dev_path.chmod(0o600)
