@@ -51,6 +51,7 @@ import signal
 import sys
 import threading
 import time
+import urllib.parse
 from dataclasses import dataclass, replace
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -209,6 +210,80 @@ class RuntimeAPI:
                 "account": {"uid": rec.account_uid, "name": rec.account_name},
                 "scopes": rec.scopes, "storage": rec.storage,
                 "expires_in": int(rec.expires_at - _t.time())}
+
+    # -- beehive proxy (#36) -------------------------------------------------
+    # The webview never talks to beehive directly: it calls these routes with
+    # the runtime bearer token, and the runtime signs with the platform
+    # credential (keychain AK/SK via config.resolve). A table, not one-off
+    # handlers, so the A3 write surface extends it without restructuring.
+
+    # (runtime subpath, HTTP method, beehive path template). Query params for
+    # list endpoints are forwarded from the caller verbatim.
+    BEEHIVE_PROXY_ROUTES: tuple[tuple[str, str, str], ...] = (
+        ("workflows",        "GET", "/api/v1/workflows"),           # list (+limit/offset fwd)
+        ("workflows/{}",     "GET", "/api/v1/workflows/{}"),        # detail
+        ("billing/wallet",   "GET", "/api/v1/billing/wallet"),      # quote-UX balance
+    )
+
+    def beehive_proxy(self, subpath: str, params: dict) -> dict:
+        """Forward a whitelisted GET to beehive with the platform credential.
+
+        Loud failures only: unauthenticated → Unauthorised (the UI shows its
+        sign-in gate); a route outside the table → NotFound; upstream errors
+        surface the BeehiveError message (the desktop renders it visibly).
+        """
+        from beehive import BeehiveError  # local import: heavy only when proxied
+        if not subpath:
+            raise NotFound("no beehive route given")
+        for pattern, method, target in self.BEEHIVE_PROXY_ROUTES:
+            if method != "GET":
+                continue
+            if "{}" in pattern:
+                head, _, tail = pattern.partition("{}")
+                if subpath.startswith(head) and len(subpath) > len(head):
+                    segment = subpath[len(head):]
+                    if "/" in segment:
+                        continue  # only a single path segment is the id
+                    upstream = target.format(urllib.parse.quote(segment, safe=""))
+                    return self._beehive_get(upstream, params)
+            elif subpath == pattern:
+                return self._beehive_get(target, params)
+        raise NotFound(f"no beehive proxy route for GET /beehive/{subpath}")
+
+    def _beehive_get(self, upstream_path: str, params: dict) -> dict:
+        """One signed GET against the beehive API using the resolved platform
+        credential. ``bypass_scope`` stays False: the *platform* credential is
+        the full-scope user credential, but it still passes the client-side
+        gate like every other call (defense in depth)."""
+        from beehive.client import BeehiveClient
+        from beehive.scope import RestrictedToken, DESKTOP_PROXY_SCOPE
+        cfg = self._resolve(llm=False, beehive=True)
+        if not cfg.beehive.has_api_key:
+            raise Unauthorised("sign in to reach beehive data (no platform credential)")
+        # The proxy is the USER's data plane, not a skill's: mint the token at
+        # the platform preset (which is what the user's login actually holds),
+        # not the restricted DEFAULT_SCOPE handed to skills.
+        # Desktop proxy preset (see scope.py): the USER's data plane on the
+        # user's own credential — never handed to skill code.
+        tok = RestrictedToken(access_key=cfg.beehive.access_key,
+                              secret_key=cfg.beehive.secret_key,
+                              account=cfg.beehive.user or cfg.beehive.uid,
+                              scope=DESKTOP_PROXY_SCOPE, trusted=True)
+        client = BeehiveClient(base_url=cfg.beehive.base_url, token=tok, timeout=30)
+        query = {k: v for k, v in params.items() if v is not None}
+        if query:
+            upstream_path = f"{upstream_path}?{urllib.parse.urlencode(query, doseq=True)}"
+        status, body = client.request("GET", upstream_path)
+        if status not in (200, 204):
+            from beehive import BeehiveError
+            raise BeehiveError(f"GET {upstream_path} failed: HTTP {status} "
+                               f"{json.dumps(body, ensure_ascii=False)[:300]}")
+        # Unwrap the core {code,message,payload} envelope: the webview gets
+        # the payload directly (works wall reads .workflows, wallet reads
+        # .balance_usd), no double-envelope gymnastics client-side.
+        if isinstance(body, dict) and "payload" in body and "code" in body:
+            return body["payload"]
+        return body if isinstance(body, dict) else {"payload": body}
 
     def auth_login(self, body: dict) -> dict:
         """Start a login. In mock mode (SKILYST_MOCK_AUTH=1) the browser step is
@@ -618,6 +693,10 @@ def make_handler(api: RuntimeAPI, token: str, allowed_origins: tuple[str, ...],
                     self._ok(api.config())
                 elif path == "/auth/status":
                     self._ok(api.auth_status())
+                elif path.startswith("/beehive/"):
+                    # #36: whitelisted proxy to beehive, signed with the
+                    # platform credential (keychain AK/SK).
+                    self._ok(api.beehive_proxy(path[len("/beehive/"):], params))
                 elif path == "/doctor":
                     self._ok(api.doctor(params.get("skill")))
                 elif path == "/sessions":

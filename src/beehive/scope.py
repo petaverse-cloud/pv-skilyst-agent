@@ -24,6 +24,13 @@ from dataclasses import dataclass, field
 
 DEFAULT_SCOPE = ("jobs:write", "jobs:read", "assets:read", "workflows:read", "workflows:write")
 
+# The #36 desktop proxy is the USER's data plane (UI reading the user's own
+# account), not a skill: it runs on the platform credential and needs the
+# read-only wallet route for the quote card. core#684 tracks the server-side
+# preset addition; this preset is what a logged-in user's pair actually
+# grants to the desktop client.
+DESKTOP_PROXY_SCOPE = DEFAULT_SCOPE + ("billing:read",)
+
 # Scopes that must never be handed to skill-facing code, whatever the caller asks.
 FORBIDDEN_SCOPES = ("billing:write", "billing:read", "admin:read", "admin:write")
 
@@ -44,6 +51,10 @@ SCOPE_RULES = [
     ("GET", "/api/v1/nodes", "jobs:read"),
     ("POST", "/api/v1/billing/quote", "jobs:write"),
     ("GET", "/api/v1/workflows", "workflows:read"),
+    # Wallet display for the desktop quote card (#36 proxy, core#684):
+    # read-only, granted only to DESKTOP_PROXY_SCOPE holders — skills keep
+    # the DENIED_PREFIXES wall below.
+    ("GET", "/api/v1/billing/wallet", "billing:read"),
     ("POST", "/api/v1/workflows", "workflows:write"),
     ("PUT", "/api/v1/workflows", "workflows:write"),
     ("DELETE", "/api/v1/workflows", "workflows:write"),
@@ -63,17 +74,29 @@ class RestrictedToken:
     scope: tuple[str, ...] = DEFAULT_SCOPE
     account: str = ""
     issued_at: float = field(default_factory=time.time)
+    # `trusted` marks a token minted by the runtime itself for the USER's own
+    # data plane (#36 desktop proxy), never reachable from skill code: it is
+    # constructed only in serve.py._beehive_get. It relaxes exactly one thing —
+    # the read-only wallet route — while every write-side FORBIDDEN scope
+    # (billing:write, admin:*) and every other DENIED_PREFIX stays walled.
+    trusted: bool = False
 
     def __post_init__(self) -> None:
         bad = sorted(set(self.scope) & set(FORBIDDEN_SCOPES))
-        if bad:
+        if bad and not (self.trusted and bad == ["billing:read"]):
             raise ScopeRefusal(f"scope {bad} may never be granted to a skill-facing token (D3)")
 
     def allows(self, method: str, path: str) -> tuple[bool, str]:
         for prefix in DENIED_PREFIXES:
-            if path.startswith(prefix):
-                return False, (f"path {prefix} is outside every granted scope "
-                               f"(billing/admin are never granted to a skill)")
+            if not path.startswith(prefix):
+                continue
+            # The single trusted carve-out (#36 desktop proxy): an exact
+            # read-only wallet lookup. Sub-paths (history, ...) stay walled.
+            if (self.trusted and prefix == "/api/v1/billing/wallet"
+                    and method.upper() == "GET" and path == prefix):
+                continue
+            return False, (f"path {prefix} is outside every granted scope "
+                           f"(billing/admin are never granted to a skill)")
         for m, prefix, scope in SCOPE_RULES:
             if path.startswith(prefix) and method.upper() == m:
                 if scope in self.scope:
