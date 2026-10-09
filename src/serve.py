@@ -238,6 +238,40 @@ class RuntimeAPI:
                 "scopes": rec.scopes, "storage": rec.storage,
                 "expires_in": int(rec.expires_at - _t.time())}
 
+    # -- skills (M3a, #52) ----------------------------------------------------
+    def skills(self) -> dict:
+        """Installed skills for the Workbench picker: the local store is the
+        first slice (planner C2: local-store-only is the legal first cut;
+        the cloud registry joins when core P1 freezes, core#708). A broken
+        install surfaces as degraded, never as an absent row — the picker
+        must show the user what is wrong, not hide it.
+        """
+        cfg = self._resolve(llm=False, beehive=False)
+        installed, partial = skill_store(cfg).list_partial()
+        rows = []
+        for pkg in installed:
+            rows.append({
+                "skill_id": pkg.skill_id,
+                "version": pkg.version,
+                "title": pkg.display_name,
+                "description": (pkg.description or "").strip()[:280],
+                "degraded": bool(pkg.warnings),
+                "warnings": list(pkg.warnings)[:5] if pkg.warnings else [],
+            })
+        for entry in partial:
+            # list_partial's second list is the packages that FAILED to load:
+            # show them so the user can reinstall instead of wondering where
+            # the skill went (store.py: broken carries skill_id + error).
+            rows.append({
+                "skill_id": entry.get("skill_id") or "unknown",
+                "version": "",
+                "title": entry.get("skill_id") or "unknown",
+                "description": entry.get("error") or "failed to load",
+                "degraded": True,
+                "warnings": [entry.get("error") or "failed to load"],
+            })
+        return {"skills": rows}
+
     # -- beehive proxy (#36) -------------------------------------------------
     # The webview never talks to beehive directly: it calls these routes with
     # the runtime bearer token, and the runtime signs with the platform
@@ -776,6 +810,9 @@ def make_handler(api: RuntimeAPI, token: str, allowed_origins: tuple[str, ...],
                     self._ok(api.config())
                 elif path == "/auth/status":
                     self._ok(api.auth_status())
+                elif path == "/skills":
+                    # M3a (#52): installed skills for the Workbench picker.
+                    self._ok(api.skills())
                 elif path.startswith("/beehive/"):
                     # #36: whitelisted proxy to beehive, signed with the
                     # platform credential (keychain AK/SK).
