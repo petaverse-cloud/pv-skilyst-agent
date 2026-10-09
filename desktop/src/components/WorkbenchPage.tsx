@@ -15,7 +15,7 @@
 import { Alert, Badge, Box, Button, Drawer, Group, Loader, Stack, Text, Tooltip } from "@mantine/core";
 import { IconHistory, IconMessage } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { api, type RunSummary, type SessionDetail, type SessionRow } from "../api";
+import { api, type RunSummary, type SessionDetail, type SessionRow, type TranscriptMessage } from "../api";
 import { resolveConfirm, sendMessage } from "../api";
 import { getWalletBalance, getWorkflow, type WorkflowRow } from "../beehiveClient";
 import { appendDelta, emptyStream, freezeTurn, type StreamState } from "../stream";
@@ -120,6 +120,10 @@ export default function WorkbenchPage({
       setNotes([]);
       setStream(emptyStream);
       setPendingConfirm(null);
+      // The reply streams into the conversation overlay: open it so the
+      // run's feedback is visible by default (Figma opens the comment list
+      // when you comment) — the input bar must not fire into a void.
+      setHistoryOpen(true);
       try {
         const summary: RunSummary = await sendMessage(
           {
@@ -138,6 +142,7 @@ export default function WorkbenchPage({
             onConfirmRequest: (detail2) => {
               const quote = (detail2.quote ?? {}) as QuoteView;
               setPendingConfirm({ sessionId: detail2.session_id ?? detail?.session_id ?? "", quote });
+              setHistoryOpen(true);
               // Wallet context for the quote (S4) — unified posture (#36).
               getWalletBalance()
                 .then((usd) => onBalanceUsd(usd))
@@ -184,17 +189,9 @@ export default function WorkbenchPage({
 
   // A3 S3 action-card locate: hop the canvas focus (same surface now — the
   // board centers on the node the action touched).
-  const locate = useCallback((message: TranscriptMessageLike) => {
-    const params = (message.tool_params ?? {}) as Record<string, unknown>;
-    const delta = (message.board_delta ?? {}) as Record<string, unknown>;
-    const ref = (message.result_ref ?? {}) as Record<string, unknown>;
-    const workflowId = typeof params.workflow_id === "string" ? params.workflow_id : undefined;
-    const nodeKey =
-      typeof ref.node === "string" ? ref.node
-      : Array.isArray(ref.wired) && typeof ref.wired[0] === "string" ? (ref.wired[0] as string)
-      : typeof delta.added_node === "string" ? delta.added_node
-      : undefined;
-    if (workflowId) setCanvasFocus({ workflow_id: workflowId, node_key: nodeKey });
+  const locate = useCallback((message: TranscriptMessage) => {
+    const focus = extractCanvasFocus(message);
+    if (focus) setCanvasFocus(focus);
   }, []);
 
   return (
@@ -269,7 +266,6 @@ export default function WorkbenchPage({
       ) : (
         <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }} data-testid="workbench-canvas">
           <CanvasView
-            onExit={() => undefined}
             focus={canvasFocus}
             initialWorkflowId={activeWorkflowId}
           />
@@ -348,11 +344,29 @@ export default function WorkbenchPage({
   );
 }
 
-type TranscriptMessageLike = {
-  tool_params?: unknown;
-  board_delta?: unknown;
-  result_ref?: unknown;
-};
+/**
+ * Action row → canvas focus. Contract fields only: the runtime writes
+ * "params" (src/agent/tools.py), session store keeps board_delta/result_ref
+ * verbatim, and TranscriptMessage.params is the frontend shape. Any other
+ * field name silently degrades locate to a no-op (#15 pattern) — hence the
+ * dedicated data-path test with real-shaped rows.
+ */
+export function extractCanvasFocus(message: TranscriptMessage): {
+  workflow_id: string;
+  node_key?: string;
+} | null {
+  const params = (message.params ?? {}) as Record<string, unknown>;
+  const delta = (message.board_delta ?? {}) as Record<string, unknown>;
+  const ref = (message.result_ref ?? {}) as Record<string, unknown>;
+  const workflowId = typeof params.workflow_id === "string" ? params.workflow_id : undefined;
+  if (!workflowId) return null;
+  const nodeKey =
+    typeof ref.node === "string" ? ref.node
+    : Array.isArray(ref.wired) && typeof ref.wired[0] === "string" ? (ref.wired[0] as string)
+    : typeof delta.added_node === "string" ? delta.added_node
+    : undefined;
+  return { workflow_id: workflowId, node_key: nodeKey };
+}
 
 function workflowIdLabel(id: string): string {
   return id.length > 18 ? `${id.slice(0, 16)}…` : id;
