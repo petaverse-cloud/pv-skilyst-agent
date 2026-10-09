@@ -274,7 +274,9 @@ class DeepLinkAuthTests(EnvIsolation):
         self.assertIn("/login?device_code=dc_test_123", data["browser_url"])
         # The launch carried PKCE and the deep-link redirect_uri, per contract.
         self.assertTrue(self.challenge)
-        self.assertEqual(self.launch_redirect, "skilyst://callback")
+        # core#683 allowlist is live: the default redirect is now the
+        # reverse-domain scheme (RFC 8252 §7.1).
+        self.assertEqual(self.launch_redirect, "petaverse.skilyst://callback")
 
     def test_deliver_code_completes_the_flow_the_shell_started(self):
         _status, data = self._login()

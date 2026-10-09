@@ -342,7 +342,10 @@ class AuthFlow:
         requested = os.environ.get("SKILYST_REDIRECT_SCHEME", "")
         if requested in self.REDIRECT_SCHEMES:
             return f"{requested}://callback"
-        return "skilyst://callback"
+        # Default is the reverse-domain scheme (core#683 allowlist is live on
+        # staging, probed 2026-10-09); the legacy bare word stays available via
+        # SKILYST_REDIRECT_SCHEME=skilyst for older console deployments.
+        return "petaverse.skilyst://callback"
 
     def _arm_exchange(self, poll_timeout: float = 300.0) -> None:
         self._exchange_event = threading.Event()
