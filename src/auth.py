@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import hmac
 import json
 import os
 import secrets
@@ -181,6 +182,61 @@ class AuthFlow:
             self.store.clear()  # expired
         self.state = AuthState.UNAUTHENTICATED
         return None
+
+    def refresh(self) -> TokenRecord:
+        """Rotate the stored AK/SK pair server-side (core#681: POST
+        /api/v1/auth/refresh, authenticated with the CURRENT pair, 72h
+        overlap window on the old key). On success the new pair replaces
+        the stored one atomically: save() overwrites the keychain entry and
+        the meta file, and the old key is dead server-side after the overlap
+        lapses — nothing to clean locally beyond the entry we just
+        overwrote.
+
+        Raises AuthError when no valid credential is stored or the server
+        refuses (expired past the overlap, revoked). Loud by contract (#34):
+        the desktop re-authorize UX depends on a refusal reaching the user.
+        """
+        rec = self.current()
+        if rec is None:
+            raise AuthError("no stored credential to refresh -- sign in first")
+        if self.mock:
+            # Mock mode: extend the existing record's life; no server to ask.
+            rec.expires_at = time.time() + 86400
+            self.store.save(rec)
+            return rec
+        ts = str(int(time.time()))
+        sig = hmac.new(rec.secret_key.encode(),
+                       (rec.access_key + ts).encode(), hashlib.sha256).hexdigest()
+        import urllib.request
+        req = urllib.request.Request(
+            f"{self.api_url}/api/v1/auth/refresh", data=b"{}", method="POST",
+            headers={"Content-Type": "application/json",
+                     "X-Api-Key": rec.access_key,
+                     "X-Api-Timestamp": ts,
+                     "X-Api-Signature": sig})
+        try:
+            with urllib.request.urlopen(req, timeout=15) as r:
+                resp = json.loads(r.read())
+        except urllib.error.HTTPError as exc:
+            # 401 = the pair is past the overlap or revoked: the honest answer
+            # is "re-authorize", surfaced as AuthError for the gate to show.
+            raise AuthError(f"refresh refused (HTTP {exc.code}): "
+                            f"re-authorization required") from exc
+        payload = resp.get("payload", resp) if isinstance(resp, dict) else {}
+        new = TokenRecord(
+            access_token=payload.get("access_key", ""),
+            account_uid=rec.account_uid,
+            account_name=rec.account_name,
+            scopes=payload.get("scopes") or rec.scopes,
+            expires_at=time.time() + payload.get("expires_in", 86400),
+            storage="keychain" if rec.storage == "keychain" else "dev-file",
+            access_key=payload.get("access_key", ""),
+            secret_key=payload.get("secret_key", ""))
+        if not new.access_key or not new.secret_key:
+            raise AuthError("refresh response missing the credential pair")
+        self.store.save(new)
+        self.state = AuthState.AUTHENTICATED
+        return new
 
     # -- login --------------------------------------------------------------
 
