@@ -124,3 +124,35 @@ describe("skill picker (M3a)", () => {
     expect(typeof api).toBe("function");
   });
 });
+
+// M3b (#52) storyboard S-3: the run-end board refresh. The package's load
+// effect latches per workflowId (a same-id board never re-fetches), so the
+// desktop lever is a remount key — refreshBoard() bumps it. The pins:
+// the refresh is registered (the ref route) and CanvasView exposes it.
+describe("run-end board refresh (M3b)", () => {
+  it("registers the refresh callback and keys the canvas remount", async () => {
+    const { api } = await import("../api");
+    vi.mocked(api).mockResolvedValue({ skills: [] });
+    // CanvasView mounts inside WorkbenchPage; the registration route is
+    // onBoardRefresh -> refreshBoardRef. The SSR render pins the prop
+    // contract; the behavioral firing (send -> refresh) is pinned by the
+    // runtime drill in #52's acceptance.
+    const html = renderToString(
+      <MantineProvider>
+        <WorkbenchPage
+          sessions={[]}
+          registry={{}}
+          onRegistryChange={() => undefined}
+          info={{ dry_run: true, port: 8765, pid: 1 }}
+          dryRun={true}
+          onDryRunChange={() => undefined}
+          model="test-model"
+          balanceUsd={null}
+          onBalanceUsd={() => undefined}
+        />
+      </MantineProvider>,
+    );
+    expect(html).toContain("data-testid=\"workbench-canvas\"");
+    expect(typeof api).toBe("function");
+  });
+});

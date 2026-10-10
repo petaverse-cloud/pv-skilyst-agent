@@ -14,7 +14,7 @@
 
 import { Alert, Badge, Box, Button, Drawer, Group, Loader, Stack, Text, Tooltip } from "@mantine/core";
 import { IconHistory, IconMessage } from "@tabler/icons-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, type RunSummary, type SessionDetail, type SessionRow, type TranscriptMessage } from "../api";
 import { resolveConfirm, sendMessage } from "../api";
 import { getWalletBalance, getWorkflow, type WorkflowRow } from "../beehiveClient";
@@ -112,6 +112,12 @@ export default function WorkbenchPage({
     };
   }, [activeWorkflowId]);
 
+  // M3b (#52): the run-end board refresh — CanvasView registers its
+  // refreshBoard() (a remount lever over the package's latched load effect)
+  // and send() fires it after a run completes so the board reflects the
+  // materialized workflow (storyboard S-3: end-of-materialization state).
+  const refreshBoardRef = useRef<(() => void) | null>(null);
+
   // M3a (#52): the skill picker feed — GET /skills via the runtime (unified
   // posture; the cloud registry joins at core P1 freeze, core#708).
   const [skills, setSkills] = useState<ComposerSkillOption[]>([]);
@@ -173,6 +179,12 @@ export default function WorkbenchPage({
         if (activeWorkflowId && summary.session_id) {
           onRegistryChange(recordSession(activeWorkflowId, summary.session_id));
         }
+        // M3b storyboard S-3: the run may have materialized nodes onto the
+        // active board (canvas-ops tools) — the canvas shows the pre-run
+        // snapshot until refreshed. Fire regardless of summary.ok: a failed
+        // run may have left PARTIAL board state (loud error already shown),
+        // and the board should tell the truth about what landed.
+        refreshBoardRef.current?.();
         if (!summary.ok) {
           setError(`${summary.stop_reason}: ${summary.error ?? "the run did not complete"}`);
         }
@@ -284,6 +296,9 @@ export default function WorkbenchPage({
             focus={canvasFocus}
             initialWorkflowId={activeWorkflowId}
             runtimeReady={info !== null}
+            onBoardRefresh={(refresh) => {
+              refreshBoardRef.current = refresh;
+            }}
           />
         </div>
       )}

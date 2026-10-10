@@ -26,8 +26,10 @@ export function CanvasView({
   focus,
   initialWorkflowId,
   runtimeReady,
+  onBoardRefresh,
 }: {
   onExit?: () => void;
+  onBoardRefresh?: (refresh: () => void) => void;
   focus?: CanvasFocus;
   /** #31: the workbench pane opens the canvas bound to this workflow. */
   initialWorkflowId?: string | null;
@@ -88,6 +90,27 @@ export function CanvasView({
   }, [focus, stage, workflows]);
 
   const canvasRef = useRef<WorkflowCanvasHandle>(null);
+
+  // M3b (#52): run-end board refresh. The package's load effect latches
+  // once per workflowId (loadedWfRef), so a same-id board never re-fetches
+  // — the materialization result would land on the server while the canvas
+  // still shows the pre-run snapshot. The desktop-owned lever is a remount:
+  // bumping boardReloadKey forces a fresh WorkflowCanvas mount, which
+  // re-runs the load effect and pulls the server's SSOT (design doc §3;
+  // the alternative — a package-side refreshBoard() — is a web-repo change
+  // and stays the follow-up). Viewport resets on remount; node ids are
+  // stable so layout identity survives, and the storyboard's S-3 acceptance
+  // (end-of-materialization state visible) is what this delivers.
+  const [boardReloadKey, setBoardReloadKey] = useState(0);
+  const refreshBoard = useCallback(() => {
+    if (stage !== "canvas" || !activeId) return;
+    setBoardReloadKey((k) => k + 1);
+  }, [stage, activeId]);
+  // Exposed upward: WorkbenchPage calls this when a run finishes so the
+  // board reflects the materialized workflow (M3b storyboard S-3).
+  useEffect(() => {
+    onBoardRefresh?.(refreshBoard);
+  }, [onBoardRefresh, refreshBoard]);
 
   // focusNode fires after the canvas mounts with the focused board; a short
   // settle lets the node layout land before the viewport centers on it.
@@ -165,7 +188,13 @@ export function CanvasView({
       <div style={{ flex: 1, minHeight: 0 }}>
         <QueryClientProvider client={queryClient}>
           <HostProvider adapter={host}>
-            <WorkflowCanvas ref={canvasRef} workflowId={activeId} variant="designer" liveBoard />
+            <WorkflowCanvas
+              ref={canvasRef}
+              key={boardReloadKey}
+              workflowId={activeId}
+              variant="designer"
+              liveBoard
+            />
           </HostProvider>
         </QueryClientProvider>
       </div>
