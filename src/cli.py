@@ -434,6 +434,14 @@ def _display_price(price_usd) -> str:
     return f"${int(price_usd) / 1_000_000:.2f}"
 
 
+def _price_to_micro(price_usd) -> int:
+    """CLI --price is human USD; the registry field is µUSD (1 cent = 10,000,
+    per core#714's ledger convention). E2E on 2026-10-10 caught the mismatch:
+    `--price 2` was sent as the raw integer 2 and rendered back as $0.00.
+    Convert at the boundary so the wire unit is always µUSD."""
+    return int(round(float(price_usd) * 1_000_000))
+
+
 def cmd_skill_info(args) -> int:
     cfg = runtime(args)
     client = gated_client(cfg)
@@ -499,7 +507,7 @@ def cmd_publish(args) -> int:
         return EXIT_REFUSED
     client = _creator_client(cfg)
     body = {"slug": args.slug or package.community.name,
-            "price_usd": int(args.price),
+            "price_usd": _price_to_micro(args.price),
             "skeleton": _skeleton_counts(package),
             # taxonomy per #719: author-declared, required. The server
             # ignores unknown fields until its taxonomy column lands —
@@ -523,7 +531,7 @@ def cmd_fork(args) -> int:
         return EXIT_REFUSED
     client = _creator_client(cfg)
     parent = client.get_skill(args.skill_id)
-    body = {"slug": args.slug, "price_usd": int(args.price),
+    body = {"slug": args.slug, "price_usd": _price_to_micro(args.price),
             "skeleton": {"pinned": 0, "parameterized": 0, "free_zones": 0}}
     view = client._payload("POST", f"/api/v1/skills/{args.skill_id}/fork", body, ok=(200, 201))
     emit({"forked": view.get("id"), "upstream_id": parent.get("id"),
