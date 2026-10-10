@@ -284,6 +284,11 @@ class RuntimeAPI:
         ("workflows",        "GET", "/api/v1/workflows"),           # list (+limit/offset fwd)
         ("workflows/{}",     "GET", "/api/v1/workflows/{}"),        # detail
         ("billing/wallet",   "GET", "/api/v1/billing/wallet"),      # quote-UX balance
+        # #54 skills registry (core#714): list/detail/versions/fork-tree.
+        ("skills",           "GET", "/api/v1/skills"),
+        ("skills/{}",        "GET", "/api/v1/skills/{}"),
+        ("skills/{}/versions",       "GET", "/api/v1/skills/{}/versions"),
+        ("skills/{}/fork-tree",      "GET", "/api/v1/skills/{}/fork-tree"),
     )
 
     def beehive_proxy(self, subpath: str, params: dict) -> dict:
@@ -301,12 +306,21 @@ class RuntimeAPI:
                 continue
             if "{}" in pattern:
                 head, _, tail = pattern.partition("{}")
-                if subpath.startswith(head) and len(subpath) > len(head):
-                    segment = subpath[len(head):]
-                    if "/" in segment:
-                        continue  # only a single path segment is the id
-                    upstream = target.format(urllib.parse.quote(segment, safe=""))
-                    return self._beehive_get(upstream, params)
+                if not (subpath.startswith(head) and len(subpath) > len(head)):
+                    continue
+                rest = subpath[len(head):]
+                if tail:
+                    # Suffix template (e.g. "skills/{}/versions"): the rest
+                    # is <id>/<suffix> — single-segment id, exact suffix.
+                    if not rest.endswith(tail):
+                        continue
+                    segment = rest[: -len(tail)]
+                else:
+                    segment = rest
+                if not segment or "/" in segment:
+                    continue  # the id is exactly one path segment
+                upstream = target.format(urllib.parse.quote(segment, safe=""))
+                return self._beehive_get(upstream, params)
             elif subpath == pattern:
                 return self._beehive_get(target, params)
         raise NotFound(f"no beehive proxy route for GET /beehive/{subpath}")
