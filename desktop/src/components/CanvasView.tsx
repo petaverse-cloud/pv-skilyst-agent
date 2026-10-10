@@ -111,6 +111,9 @@ export function CanvasView({
   useEffect(() => {
     onBoardRefresh?.(refreshBoard);
   }, [onBoardRefresh, refreshBoard]);
+  // Exposed upward: WorkbenchPage calls this when a run finishes so the
+  // board reflects the materialized workflow (M3b storyboard S-3).
+
 
   // focusNode fires after the canvas mounts with the focused board; a short
   // settle lets the node layout land before the viewport centers on it.
@@ -123,7 +126,12 @@ export function CanvasView({
   }, [focus, stage]);
 
   // stage === "list": the login stage is retired; the app gate owns sign-in.
-  return (
+  // M2-review fix: the original M1 shape guarded each stage with an if;
+  // the M2 rewrite left TWO bare returns — the canvas branch was
+  // unreachable (esbuild drops it; list JSX rendered for every stage).
+  // Restored: list is the guarded early return, canvas the fallthrough.
+  if (stage === "list") {
+    return (
       <Stack gap="sm" style={{ flex: 1, overflow: "auto" }} p="md">
         <Group justify="space-between">
           <Group gap="sm">
@@ -165,7 +173,8 @@ export function CanvasView({
           ))
         )}
       </Stack>
-  );
+    );
+  }
 
   // stage === "canvas": the package renders the workflow, read-only.
   return (
