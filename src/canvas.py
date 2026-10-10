@@ -250,10 +250,17 @@ class CanvasOps:
     """
 
     def __init__(self, client, session_id: str,
-                 paid_confirm: Callable[[dict], bool] | None = None):
+                 paid_confirm: Callable[[dict], bool] | None = None,
+                 skeleton_gate=None):
         self.client = client
         self.session_id = session_id
         self.paid_confirm = paid_confirm
+        # v0.3 skeleton gate (#55): an optional callable(package, materialized)
+        # -> list of problems. The runner installs it when the active skill
+        # declares a workflow_skeleton, so every board submission is compared
+        # against the author's contract BEFORE it costs money. Loud refusal
+        # (BeehiveError) with every problem spelled out -- iron rule 7.
+        self.skeleton_gate = skeleton_gate
 
     # -- transport ----------------------------------------------------------
 
@@ -589,6 +596,14 @@ class CanvasOps:
         nodes = workflow.get("nodes") or []
         if not nodes:
             raise ValueError(f"workflow {workflow_id} has no nodes to run")
+        if self.skeleton_gate is not None:
+            problems = self.skeleton_gate(nodes)
+            if problems:
+                detail = "; ".join(f"[{p.node_id}] {p.detail}" for p in problems)
+                raise BeehiveError(
+                    f"workflow {workflow_id} violates the skill's workflow_skeleton "
+                    f"(v0.3 author contract) -- submission refused BEFORE quoting or "
+                    f"charging: {detail}")
         result = self._submit_nodes(workflow_id, nodes, quote_first=quote_first)
         result["node_count"] = len(nodes)
         return result

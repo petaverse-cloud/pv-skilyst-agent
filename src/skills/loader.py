@@ -17,7 +17,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from errors import ManifestError, SkillMutationError, SkillValidationError
-from manifest import NodeRequirement, deprecation_warnings, node_requirements, validate_manifest
+from manifest import (NodeRequirement, WorkflowSkeleton, deprecation_warnings, node_requirements,
+                      skeleton_of, validate_manifest)
 from .digest import content_digest, tree_digest
 from .frontmatter import KNOWN_FRONTMATTER, FrontmatterError, parse_frontmatter, split_frontmatter
 
@@ -86,6 +87,14 @@ class SkillPackage:
     @property
     def requires_nodes(self) -> list[NodeRequirement]:
         return node_requirements(self.manifest) if self.manifest else []
+
+    @property
+    def skeleton(self) -> WorkflowSkeleton | None:
+        """The v0.3 workflow_skeleton, or None when the package declares none.
+
+        Already parsed and validated at load time (``validate_manifest``);
+        ``None`` for degraded (manifest-less community) packages."""
+        return skeleton_of(self.manifest) if self.manifest else None
 
     @property
     def plan(self) -> dict:
