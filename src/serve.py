@@ -885,8 +885,13 @@ def make_handler(api: RuntimeAPI, token: str, allowed_origins: tuple[str, ...],
                     # M3c (#52): the full skeleton contract of one skill —
                     # nodes with freedom/config_open/role, free zones, the
                     # reference snapshot. The canvas three-color-renders off
-                    # this; unknown ids answer 404 loud.
-                    self._ok(api.skill_detail(path[len("/skills/"):]))
+                    # this; unknown ids answer 404 loud. The id segment is
+                    # URL-DECODED before lookup: skill ids are namespaced
+                    # (skilyst/doctor) and a standards-compliant caller
+                    # encodes the slash (%2F) — both forms must resolve.
+                    self._ok(api.skill_detail(
+                        urllib.parse.unquote(path[len("/skills/"):]) if "%" in path
+                        else path[len("/skills/"):]))
                 elif path.startswith("/beehive/"):
                     # #36: whitelisted proxy to beehive, signed with the
                     # platform credential (keychain AK/SK).

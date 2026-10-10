@@ -995,6 +995,15 @@ class SkillDetailRouteTests(EnvIsolation):
         self.assertEqual(sk["free_zones"][0]["max_nodes"], 2)
         self.assertEqual(sk["reference_workflow"], {"snapshot_of": "wf-1 abc123"})
 
+    def test_detail_decodes_percent_encoded_id(self):
+        # Review r2: a standards-compliant caller encodes the namespaced
+        # skill_id's slash (skilyst%2Fdoctor). Both forms must resolve —
+        # the raw form worked, the encoded form 404'd (the #15 family of
+        # silent-contract seams).
+        status, _headers, body = self.fx.request("GET", "/skills/skilyst%2Fdoctor")
+        self.assertEqual(status, 200)
+        self.assertEqual(body["data"]["skill_id"], "skilyst/doctor")
+
     def test_detail_unknown_skill_404s_loud(self):
         status, _headers, body = self.fx.request("GET", "/skills/skilyst/nope")
         self.assertEqual(status, 404)
