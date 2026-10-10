@@ -549,11 +549,41 @@ def cmd_clone(args) -> int:
         return EXIT_REFUSED
     emit({"cloned": args.skill_id, "slug": detail.get("slug"),
           "version": detail.get("version"), "digest": detail.get("content_digest"),
-          "skeleton": detail.get("skeleton_summary"),
-          "note": "free-skill acquisition recorded; package-content download lands with "
-                  "the content-distribution endpoint (tracked on #56) — until then pair "
-                  "`skilyst install <dir>` with a local copy of the package"})
+          "skeleton": detail.get("skeleton_summary")})
+    # The download leg (#730 contract, registry-mediated): the server serves
+    # the package + its declared digest; skills lacking a published package
+    # answer 404 — that is a contract state, not an error to hide. Requesting
+    # the download is the natural follow-up; failure surfaces loudly.
+    if not args.no_download:
+        try:
+            body, declared = client.download_skill_package(args.skill_id)
+            emit({"package_bytes": len(body), "declared_digest": declared,
+                  "digest_verified": bool(declared) and _digest_matches(body, declared)})
+        except Exception as exc:  # loud, structured — never swallow
+            emit({"package_download": f"unavailable: {exc}",
+                  "hint": "the registry may not have a package published for this "
+                          "skill yet (404) — publish the package content via the "
+                          "distribution channel (core#730 rollout)"},
+                 stream=sys.stderr)
     return EXIT_OK
+
+
+def _digest_matches(body: bytes, declared: str) -> bool:
+    """Client-side verify of the two-sided trust chain (#730): sha256 of the
+    bytes vs the server-declared digest. Formats seen in the registry:
+    'sha256-<hex>' (the dev registry currently stores a 16-hex TRUNCATED
+    summary, e.g. 'sha256-d1bf326902882d3a') and 'fork-of:sha256-<hex>'
+    (fork reference snapshots). A 64-hex digest is compared whole; a
+    truncated one is compared as a prefix — honest about what the registry
+    actually declares today."""
+    import hashlib
+    import re as _re
+    m = _re.search(r"sha256[-:]?([0-9a-f]+)", str(declared))
+    if not m:
+        return False
+    hexpart = m.group(1)
+    actual = hashlib.sha256(body).hexdigest()
+    return actual.startswith(hexpart) if hexpart else False
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -598,6 +628,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--price", default=0, help="fork price in USD (default 0 = free)")
     p.set_defaults(func=cmd_fork, needs_llm=False)
     p = sub.add_parser("clone"); p.add_argument("skill_id")
+    p.add_argument("--no-download", dest="no_download", action="store_true",
+                   help="record the acquisition without fetching the package "
+                        "(skip the registry-mediated download leg)")
     p.set_defaults(func=cmd_clone, needs_llm=False)
     p = sub.add_parser("preload"); p.add_argument("bundle"); p.set_defaults(func=cmd_preload, needs_llm=False, needs_beehive=False)
     p = sub.add_parser("digest"); p.add_argument("dir"); p.add_argument("--write", action="store_true")
