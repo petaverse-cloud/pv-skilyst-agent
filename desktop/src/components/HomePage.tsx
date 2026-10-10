@@ -134,7 +134,7 @@ function WorkflowCard({ wf, sessionCount }: { wf: WorkflowRow; sessionCount: num
  * invariants — skill identity, visual body (cover or nameCover fallback),
  * lineage hint — regardless of what core P1's final field names settle to
  * (the normalizer in beehiveClient absorbs the drift). */
-function SkillCard({ sk }: { sk: SkillCardData }) {
+export function SkillCard({ sk }: { sk: SkillCardData }) {
   const cover = sk.reference_workflow?.cover_url ?? null;
   const price = sk.pricing;
   return (

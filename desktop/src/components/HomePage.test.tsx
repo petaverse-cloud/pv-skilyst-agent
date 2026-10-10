@@ -2,75 +2,92 @@ import { renderToString } from "react-dom/server";
 import { MantineProvider } from "@mantine/core";
 import { describe, expect, it, vi } from "vitest";
 
-// The beehiveClient channel is stubbed — the pin is the card surface's
-// markup contract (three invariants: identity, visual body, lineage hint)
-// and the degrade ladder when the registry answers 403 (pre-scope pair).
+// The beehiveClient channel is stubbed — what these tests pin is the
+// SkillCard VISUAL CONTRACT (review r2: mutation-testing found the first
+// version's assertions vacuous — deleting the price badge / verified mark /
+// fork-depth line left the suite green, and `await expect(mock).toHaveBeenCalled`
+// without call parens asserted nothing). Each test renders the card directly
+// and asserts markup that only exists when the visual block does: delete the
+// block, the test fails. HomePage-level effect wiring (the 403 degrade) stays
+// pinned by the runtime drills — SSR cannot run effects (#49 lesson).
 vi.mock("../beehiveClient", () => ({
   listWorkflows: vi.fn(),
   listSkills: vi.fn(),
 }));
 
-import HomePage from "./HomePage";
-import { listSkills, listWorkflows } from "../beehiveClient";
+import { SkillCard } from "./HomePage";
+import type { SkillCardData } from "../beehiveClient";
 
-const mockSkills = vi.mocked(listSkills);
-const mockWorkflows = vi.mocked(listWorkflows);
-
-function view() {
+function card(sk: Partial<SkillCardData> & Pick<SkillCardData, "skill_id" | "display_name">) {
+  const full: SkillCardData = {
+    version: "",
+    author_name: "",
+    author_verified: false,
+    fork_depth: 0,
+    usage_count: 0,
+    reference_workflow: null,
+    pricing: null,
+    ...sk,
+  };
   return renderToString(
     <MantineProvider>
-      <HomePage sessions={[]} registry={{}} runtimeConnected={true} />
+      <SkillCard sk={full} />
     </MantineProvider>,
   );
 }
 
-describe("works wall skill dimension (#54)", () => {
-  it("renders skill cards with the three invariants", async () => {
-    mockWorkflows.mockResolvedValue([]);
-    mockSkills.mockResolvedValue([
-      {
-        skill_id: "skilyst/vid-15s",
-        display_name: "15s Video",
-        version: "1.2",
-        author_name: "Wesley",
-        author_verified: true,
-        fork_depth: 2,
-        usage_count: 12,
-        reference_workflow: { id: "wf-1" },
-        pricing: { price_usd: 0, free: true },
-      },
-      {
-        skill_id: "skilyst/plain",
-        display_name: "Plain Skill",
-        version: "",
-        author_name: "",
-        author_verified: false,
-        fork_depth: 0,
-        usage_count: 0,
-        reference_workflow: null,
-        pricing: null,
-      },
-    ]);
-    const html = view();
-    // SSR does not run effects (#49 lesson): the async loaders resolve
-    // after render, so the pins below are the *component* surface — the
-    // effect wiring is covered by runtime drills. We pin the render of the
-    // initial state (loading), which must not break.
-    expect(html).toContain("home-page");
-    expect(typeof listSkills).toBe("function");
-    // After the loaders resolve, the skills would render; the mock contract
-    // above pins the data shape the renderer consumes.
-    await expect(mockSkills).toHaveBeenCalled;
+const base = { skill_id: "skilyst/vid", display_name: "15s Video" } as const;
+
+// React SSR inserts <!-- --> comment separators between adjacent text
+// nodes ("by <!-- -->Wesley"); assertions anchor on single-node strings
+// (badge labels, testids) or regex tolerant of the separators.
+const node = (text: string) =>
+  // "2 upstreams" renders as text nodes "2" + " upstream" + "s" with
+  // <!-- --> between: tolerate separators AND whitespace per word.
+  new RegExp(text.split(/\s+/).map((w) => w).join("(\\s|<!-- -->)*"));
+
+describe("SkillCard visual contract (#54)", () => {
+  it("renders the price corner badge — Free for zero, $N otherwise, none when undeclared", () => {
+    expect(card({ ...base, pricing: { price_usd: 0, free: true } })).toContain("Free");
+    const paid = card({ ...base, pricing: { price_usd: 12.5, free: false } });
+    expect(paid).toContain("$12.5");
+    expect(paid).not.toContain("Free");
+    // No pricing declared -> no badge at all.
+    expect(card(base)).not.toContain("Free");
   });
 
-  it("degrades loudly (not an error state) when the registry refuses 403", async () => {
-    mockWorkflows.mockResolvedValue([]);
-    mockSkills.mockRejectedValue(new Error("HTTP 403: missing scope skills:read"));
-    const html = view();
-    expect(html).toContain("home-page");
-    // The initial render stays healthy (loading state, no red error) —
-    // the 403 notice renders after the effect resolves; the pin is that
-    // the workflow wall surface does not break when skills refuse.
-    expect(html).not.toContain("Could not load your workflows");
+  it("renders the author line with the verified mark only when verified", () => {
+    const html = card({ ...base, author_name: "Wesley", author_verified: true });
+    expect(node("by Wesley").test(html)).toBe(true);
+    expect(html).toContain("author-verified");
+    const unverified = card({ ...base, author_name: "Wesley" });
+    expect(node("by Wesley").test(unverified)).toBe(true);
+    expect(unverified).not.toContain("author-verified");
+  });
+
+  it("renders the lineage hint — depth for forks, original otherwise", () => {
+    // "2 upstreams" renders as "2" + " upstream" + "s" (separator comments
+    // between) — the regex tolerates the seams at the word level.
+    expect(/2(\s|<!-- -->)*upstream(\s|<!-- -->)*s/.test(card({ ...base, fork_depth: 2 }))).toBe(true);
+    expect(/1(\s|<!-- -->)*upstream/.test(card({ ...base, fork_depth: 1 }))).toBe(true);
+    // depth 0 is the original: no upstream text.
+    expect(card(base)).not.toMatch(/upstream/);
+    expect(/original/.test(card(base))).toBe(true);
+  });
+
+  it("renders usage runs only when the registry reports them", () => {
+    expect(node("12 runs").test(card({ ...base, usage_count: 12 }))).toBe(true);
+    expect(card(base)).not.toMatch(/\bruns\b/);
+  });
+
+  it("renders the identity block — name and version", () => {
+    const html = card({ ...base, version: "1.2" });
+    expect(html).toContain("15s Video");
+    // "· v" + "1.2" split by the SSR separator comment.
+    expect(/v(<!-- -->)?1\.2/.test(html)).toBe(true);
+  });
+
+  it("emits the skill-card testid surface", () => {
+    expect(card(base)).toContain("skill-card");
   });
 });
