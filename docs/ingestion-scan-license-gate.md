@@ -131,11 +131,14 @@ After both gates pass, the synthesizer emits:
   "skill_id": "absorbed/<repo-short-name>",
   "kind": "knowledge",
   "upstream": null,
+  "origin": "github",
+  "origin_identity": "github:<node_id>",
   "supply_chain": {
     "source": {
       "origin": "github",
       "repo": "owner/repo",
-      "commit": "<pinned sha>"
+      "commit": "<pinned sha>",
+      "ref": "<tag or branch the operator referenced, if any>"
     },
     "static_scan": { "status": "passed", "scanner": "skilyst-scanner@0.2", "scanned_at": "..." }
   },
@@ -154,6 +157,15 @@ Invariants (deliberate, matching the closed-ecosystem ruling):
 - `upstream=null` declares "original" — absorbed GitHub content IS the
   original as far as our fork chain is concerned; provenance lives in
   `supply_chain.source`, not the fork chain.
+- **`origin`/`origin_identity` (#727 ownership contract, added 2026-10-10)**:
+  `origin` is the provenance channel — `github` for pipeline-absorbed entries,
+  `native` for everything else. `origin_identity` is the external author's
+  stable anchor: `github:<node_id>` (the NUMERIC GitHub user id — login
+  names are mutable, node ids are not). `author_id` at ingest is the ops
+  service account (unclaimed state); ownership transfers at claim time when
+  a GitHub login's oauth_idents (provider+sub) matches `origin_identity` —
+  core #727 owns that flow. NOT applicable to clone/fork artifacts:
+  attribution covers contribution, `origin` stays `native`.
 - `exec: none` always (EX-3); `secrets: false` always (absorbed skills never
   hold credentials).
 - **`permission.egress: "none"` always — hosts are added ONLY by an explicit
