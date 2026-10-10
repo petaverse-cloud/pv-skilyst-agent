@@ -155,6 +155,28 @@ class BeehiveClient:
         payload = self._payload("GET", f"/api/v1/assets?limit={int(limit)}")
         return payload.get("assets", payload) if isinstance(payload, dict) else payload
 
+    # -- skills master library (core#714 registry read API, #703) -----------
+    def list_skills(self, limit: int = 20, offset: int = 0, visibility: str = "") -> dict:
+        """List the master library (public + caller's unlisted). Returns
+        {skills, total, limit, offset} — the registry's own envelope, callers
+        decide how to present it."""
+        q = f"limit={int(limit)}&offset={int(offset)}"
+        if visibility:
+            q += f"&visibility={visibility}"
+        return self._payload("GET", f"/api/v1/skills?{q}")
+
+    def get_skill(self, skill_id: str) -> dict:
+        """Skill detail: attribution chain, fork depth, price, skeleton
+        summary, materialization count."""
+        return self._payload("GET", f"/api/v1/skills/{skill_id}")
+
+    def list_skill_versions(self, skill_id: str) -> list[dict]:
+        payload = self._payload("GET", f"/api/v1/skills/{skill_id}/versions")
+        return payload.get("versions", payload) if isinstance(payload, dict) else payload
+
+    def skill_fork_tree(self, skill_id: str) -> dict:
+        return self._payload("GET", f"/api/v1/skills/{skill_id}/fork-tree")
+
     # -- auth ---------------------------------------------------------------
     def login(self, username: str, password: str) -> str:
         status, resp = BeehiveClient(self.base).request(
