@@ -69,6 +69,12 @@ SCOPE_RULES = [
     ("POST", "/api/v1/workflows", "workflows:write"),
     ("PUT", "/api/v1/workflows", "workflows:write"),
     ("DELETE", "/api/v1/workflows", "workflows:write"),
+    # Lifecycle writes (#56 second half, core #723/#704): publish/fork ride
+    # skills:write — deliberately NOT in DEFAULT_SCOPE: the creator commands
+    # opt in via the _CREATOR_SCOPE client so agent tools never grow
+    # catalog-write rights by accident (mirrors the server-side preset split).
+    ("POST", "/api/v1/skills", "skills:write"),
+    ("POST", "/api/v1/skills/", "skills:write"),
 ]
 DENIED_PREFIXES = ("/api/v1/admin/", "/api/v1/billing/wallet", "/api/v1/billing/nodes",
                    "/api/v1/billing/history", "/api/v1/auth/api-keys")

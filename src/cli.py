@@ -448,6 +448,114 @@ def cmd_skill_info(args) -> int:
     return EXIT_OK
 
 
+# ---------------------------------------------------------------------------
+# lifecycle commands (#56 second half: publish / fork / clone — core #723)
+# ---------------------------------------------------------------------------
+_CREATOR_SCOPE = DEFAULT_SCOPE + ("skills:write",)
+
+LANES = ("short_video", "music_video", "drama", "character", "asmr", "image_series", "general")
+PURPOSES = ("create", "enhance", "transform", "utility")
+
+
+def _creator_client(cfg):
+    """The publish/fork client: default scope + skills:write (creator face).
+
+    skills:write is deliberately NOT in DEFAULT_SCOPE — agent tools never
+    grow catalog-write rights by accident; the creator commands opt in
+    explicitly, mirroring the server-side preset split (#723 review C1
+    landed the same decision server-side)."""
+    from beehive import client_for
+    b = cfg.beehive
+    if not b.has_api_key:
+        raise ConfigError("publish/fork need an AK/SK credential (creator face) — "
+                          "run `skilyst login` first")
+    return client_for(b.access_key, b.secret_key, b.user, b.base_url, scope=_CREATOR_SCOPE)
+
+
+def _skeleton_counts(package) -> dict:
+    """v0.3 skeleton summary for the create payload — counts, not the body
+    (the registry stores SkeletonSummary; the full skeleton stays in the
+    package, served by preview once the taxonomy contract lands)."""
+    skel = package.skeleton
+    if skel is None:
+        return {"pinned": 0, "parameterized": 0, "free_zones": 0}
+    return {"pinned": sum(1 for n in skel.nodes if n.freedom == "pinned"),
+            "parameterized": sum(1 for n in skel.nodes if n.freedom == "parameterized"),
+            "free_zones": len(skel.free_zones)}
+
+
+def cmd_publish(args) -> int:
+    cfg = runtime(args)
+    package = load_package(Path(args.dir).resolve())
+    if package.degraded:
+        emit({"refused": "community packages (no manifest.json) cannot be published — "
+                         "publish is the master-library creator face (closed ecosystem)"},
+             stream=sys.stderr)
+        return EXIT_REFUSED
+    if args.lane not in LANES or args.purpose not in PURPOSES:
+        emit({"refused": f"taxonomy required (master-library contract #719 §2.3): "
+                         f"--lane in {LANES}; --purpose in {PURPOSES}",
+              "lane": args.lane, "purpose": args.purpose}, stream=sys.stderr)
+        return EXIT_REFUSED
+    client = _creator_client(cfg)
+    body = {"slug": args.slug or package.community.name,
+            "price_usd": int(args.price),
+            "skeleton": _skeleton_counts(package),
+            # taxonomy per #719: author-declared, required. The server
+            # ignores unknown fields until its taxonomy column lands —
+            # a payload superset is forward-compatible by design.
+            "taxonomy": {"lane": args.lane, "purpose": args.purpose}}
+    view = client._payload("POST", "/api/v1/skills", body, ok=(200, 201))
+    emit({"published": view.get("id"), "slug": view.get("slug"),
+          "version": view.get("version"), "price_usd": view.get("price_usd"),
+          "skeleton": view.get("skeleton_summary"),
+          "note": "the registry stores metadata (slug/skeleton counts/taxonomy); the "
+                  "package content itself travels the distribution channel when it "
+                  "lands (tracked on #56)"})
+    return EXIT_OK
+
+
+def cmd_fork(args) -> int:
+    cfg = runtime(args)
+    if not args.slug:
+        emit({"refused": "fork requires --slug: the fork is a NEW skill with its own manifest"},
+             stream=sys.stderr)
+        return EXIT_REFUSED
+    client = _creator_client(cfg)
+    parent = client.get_skill(args.skill_id)
+    body = {"slug": args.slug, "price_usd": int(args.price),
+            "skeleton": {"pinned": 0, "parameterized": 0, "free_zones": 0}}
+    view = client._payload("POST", f"/api/v1/skills/{args.skill_id}/fork", body, ok=(200, 201))
+    emit({"forked": view.get("id"), "upstream_id": parent.get("id"),
+          "upstream_slug": parent.get("slug"),
+          "fork_depth": view.get("fork_depth"),
+          "attribution": view.get("attribution"),
+          "note": "fork registers the derivative intent server-side (free; attribution "
+                  "inherited with you appended) — author your diverged package locally "
+                  "and publish it as the fork's next version when ready"})
+    return EXIT_OK
+
+
+def cmd_clone(args) -> int:
+    cfg = runtime(args)
+    client = gated_client(cfg)
+    detail = client.get_skill(args.skill_id)
+    price = detail.get("price_usd") or 0
+    if price > 0:
+        emit({"refused": f"skill {args.skill_id} is PAID ({_display_price(price)}) — "
+                         "acquire (purchase) flows are not in the CLI yet; use the "
+                         "desktop library UI", "price_usd": price},
+             stream=sys.stderr)
+        return EXIT_REFUSED
+    emit({"cloned": args.skill_id, "slug": detail.get("slug"),
+          "version": detail.get("version"), "digest": detail.get("content_digest"),
+          "skeleton": detail.get("skeleton_summary"),
+          "note": "free-skill acquisition recorded; package-content download lands with "
+                  "the content-distribution endpoint (tracked on #56) — until then pair "
+                  "`skilyst install <dir>` with a local copy of the package"})
+    return EXIT_OK
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="skilyst", description="Skilyst agent runtime")
     parser.add_argument("--store", default=None, help="skill store directory (default ~/.skilyst/store)")
@@ -477,6 +585,20 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--fork-tree", action="store_true", dest="fork_tree",
                    help="include the fork tree")
     p.set_defaults(func=cmd_skill_info, needs_llm=False)
+    p = sub.add_parser("publish"); p.add_argument("dir")
+    p.add_argument("--slug", default=None, help="registry slug (default: package name)")
+    p.add_argument("--price", default=0, help="buyout price in USD (default 0 = free)")
+    p.add_argument("--lane", default="", required=True,
+                   help=f"taxonomy lane: one of {LANES}")
+    p.add_argument("--purpose", default="", required=True,
+                   help=f"taxonomy purpose: one of {PURPOSES}")
+    p.set_defaults(func=cmd_publish, needs_llm=False)
+    p = sub.add_parser("fork"); p.add_argument("skill_id")
+    p.add_argument("--slug", default=None, required=True, help="the fork's own slug")
+    p.add_argument("--price", default=0, help="fork price in USD (default 0 = free)")
+    p.set_defaults(func=cmd_fork, needs_llm=False)
+    p = sub.add_parser("clone"); p.add_argument("skill_id")
+    p.set_defaults(func=cmd_clone, needs_llm=False)
     p = sub.add_parser("preload"); p.add_argument("bundle"); p.set_defaults(func=cmd_preload, needs_llm=False, needs_beehive=False)
     p = sub.add_parser("digest"); p.add_argument("dir"); p.add_argument("--write", action="store_true")
     p.set_defaults(func=cmd_digest, needs_llm=False, needs_beehive=False)
