@@ -406,6 +406,48 @@ def cmd_authz_probe(args) -> int:
 
 
 # ---------------------------------------------------------------------------
+# master-library commands (#56 data half — registry reads, core#714)
+# ---------------------------------------------------------------------------
+def cmd_library(args) -> int:
+    cfg = runtime(args)
+    client = gated_client(cfg)
+    payload = client.list_skills(limit=args.limit, offset=args.offset,
+                                 visibility=args.visibility)
+    skills = payload.get("skills") or []
+    emit({"total": payload.get("total"), "limit": payload.get("limit"),
+          "offset": payload.get("offset"),
+          "skills": [{"id": s.get("id"), "slug": s.get("slug"), "version": s.get("version"),
+                      "fork_depth": s.get("fork_depth"),
+                      "price_usd": s.get("price_usd"),
+                      "price_display": _display_price(s.get("price_usd")),
+                      "visibility": s.get("visibility"),
+                      "skeleton": s.get("skeleton_summary")}
+                     for s in skills]})
+    return EXIT_OK
+
+
+def _display_price(price_usd) -> str:
+    """µUSD integers (1 cent = 10,000) to a human string, per the ledger
+    convention core#714 ships. 0 = free."""
+    if price_usd in (None, 0):
+        return "free"
+    return f"${int(price_usd) / 1_000_000:.2f}"
+
+
+def cmd_skill_info(args) -> int:
+    cfg = runtime(args)
+    client = gated_client(cfg)
+    detail = client.get_skill(args.skill_id)
+    out = dict(detail)
+    out["price_display"] = _display_price(detail.get("price_usd"))
+    if args.versions:
+        out["versions"] = client.list_skill_versions(args.skill_id)
+    if args.fork_tree:
+        out["fork_tree"] = client.skill_fork_tree(args.skill_id)
+    emit(out)
+    return EXIT_OK
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="skilyst", description="Skilyst agent runtime")
     parser.add_argument("--store", default=None, help="skill store directory (default ~/.skilyst/store)")
@@ -424,6 +466,17 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(func=cmd_install, needs_llm=False, needs_beehive=False)
     p = sub.add_parser("uninstall"); p.add_argument("skill_id"); p.set_defaults(func=cmd_uninstall, needs_llm=False, needs_beehive=False)
     p = sub.add_parser("list"); p.set_defaults(func=cmd_list, needs_llm=False, needs_beehive=False)
+    p = sub.add_parser("library")
+    p.add_argument("--limit", type=int, default=20)
+    p.add_argument("--offset", type=int, default=0)
+    p.add_argument("--visibility", default="", choices=["", "public", "unlisted"],
+                   help="filter (default: public + your unlisted)")
+    p.set_defaults(func=cmd_library, needs_llm=False)
+    p = sub.add_parser("skill-info"); p.add_argument("skill_id")
+    p.add_argument("--versions", action="store_true", help="include the version history")
+    p.add_argument("--fork-tree", action="store_true", dest="fork_tree",
+                   help="include the fork tree")
+    p.set_defaults(func=cmd_skill_info, needs_llm=False)
     p = sub.add_parser("preload"); p.add_argument("bundle"); p.set_defaults(func=cmd_preload, needs_llm=False, needs_beehive=False)
     p = sub.add_parser("digest"); p.add_argument("dir"); p.add_argument("--write", action="store_true")
     p.set_defaults(func=cmd_digest, needs_llm=False, needs_beehive=False)

@@ -22,7 +22,8 @@ import hmac
 import time
 from dataclasses import dataclass, field
 
-DEFAULT_SCOPE = ("jobs:write", "jobs:read", "assets:read", "workflows:read", "workflows:write")
+DEFAULT_SCOPE = ("jobs:write", "jobs:read", "assets:read", "workflows:read", "workflows:write",
+                 "skills:read")
 
 # The #36 desktop proxy is the USER's data plane (UI reading the user's own
 # account), not a skill: it runs on the platform credential and needs the
@@ -51,6 +52,10 @@ SCOPE_RULES = [
     ("GET", "/api/v1/nodes", "jobs:read"),
     ("POST", "/api/v1/billing/quote", "jobs:write"),
     ("GET", "/api/v1/workflows", "workflows:read"),
+    # Registry reads (core#714, skills P1 #703): list/detail/versions/fork-tree.
+    # Read-only, no write surface — publish/fork writes are #56's second half,
+    # gated on core's P2 lifecycle API (#704).
+    ("GET", "/api/v1/skills", "skills:read"),
     # Wallet display for the desktop quote card (#36 proxy, core#684):
     # read-only, granted only to DESKTOP_PROXY_SCOPE holders — skills keep
     # the DENIED_PREFIXES wall below.
