@@ -98,8 +98,6 @@ describe("skill picker (M3a)", () => {
     return renderToString(
       <MantineProvider>
         <WorkbenchPage
-          routeSessionId={null}
-          routeWorkflowId={null}
           sessions={[]}
           registry={{}}
           onRegistryChange={() => undefined}
@@ -107,6 +105,8 @@ describe("skill picker (M3a)", () => {
           dryRun={true}
           onDryRunChange={() => undefined}
           model="test-model"
+          balanceUsd={null}
+          onBalanceUsd={() => undefined}
         />
       </MantineProvider>,
     );
