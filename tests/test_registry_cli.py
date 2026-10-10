@@ -131,5 +131,70 @@ class PriceDisplayTests(unittest.TestCase):
         self.assertEqual(_display_price(10000), "$0.01")
 
 
+class LifecycleCommandTests(unittest.TestCase):
+    """#56 second half: publish / fork / clone against the #723 contract."""
+
+    def test_creator_scope_is_default_plus_skills_write(self):
+        from cli import _CREATOR_SCOPE
+        self.assertIn("skills:write", _CREATOR_SCOPE)
+        self.assertIn("skills:read", _CREATOR_SCOPE)
+        # Agent default never grew the write face by accident.
+        self.assertNotIn("skills:write", DEFAULT_SCOPE)
+
+    def test_creator_client_passes_the_write_gate(self):
+        # The _CREATOR_SCOPE token may POST /api/v1/skills (skills:write in
+        # SCOPE_RULES since this PR), while a DEFAULT_SCOPE token may not.
+        t = _Scripted()
+        from beehive import client_for
+        from cli import _CREATOR_SCOPE
+        c = client_for("AK", "SK", "usr", "https://beehive.example", scope=_CREATOR_SCOPE)
+        c._transport = t
+        c.request("POST", "/api/v1/skills", {"slug": "x"})
+        self.assertEqual(len(t.calls), 1)  # did not raise ScopeRefusal
+
+    def test_default_scope_still_cannot_write_skills(self):
+        from beehive.scope import ScopeRefusal
+        t = _Scripted()
+        client = _client_for(t)
+        with self.assertRaises(ScopeRefusal):
+            client.request("POST", "/api/v1/skills", {"slug": "x"})
+
+    def test_skeleton_counts_from_a_real_skeleton(self):
+        from cli import _skeleton_counts
+        from skills.loader import SkillPackage
+        from manifest import parse_skeleton
+        pkg = SkillPackage.__new__(SkillPackage)
+        pkg.manifest = {"workflow_skeleton": {
+            "version": 1,
+            "nodes": [
+                {"node_id": "generate:minimax-h3", "freedom": "pinned"},
+                {"node_id": "generate:*", "freedom": "parameterized",
+                 "config_open": ["provider"]},
+            ],
+            "free_zones": [{"name": "z", "max_nodes": 2,
+                            "allowed_node_types": ["process:transcode"]}],
+        }}
+        counts = _skeleton_counts(pkg)
+        self.assertEqual(counts, {"pinned": 1, "parameterized": 1, "free_zones": 1})
+
+    def test_skeleton_counts_zero_for_skeletonless(self):
+        from cli import _skeleton_counts
+        from skills.loader import SkillPackage
+        pkg = SkillPackage.__new__(SkillPackage)
+        pkg.manifest = None
+        self.assertEqual(_skeleton_counts(pkg),
+                         {"pinned": 0, "parameterized": 0, "free_zones": 0})
+
+    def test_taxonomy_gate_rejects_out_of_enum(self):
+        # publish with a bogus lane is refused BEFORE any network call —
+        # validated in cmd_publish, LANES/PURPOSES pin the #719 contract.
+        from cli import LANES, PURPOSES
+        self.assertIn("general", LANES)
+        self.assertIn("short_video", LANES)
+        self.assertNotIn("gpl", LANES)
+        self.assertEqual(len(PURPOSES), 4)
+        self.assertIn("create", PURPOSES)
+
+
 if __name__ == "__main__":
     unittest.main()
