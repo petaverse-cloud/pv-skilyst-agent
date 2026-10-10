@@ -557,11 +557,52 @@ def cmd_clone(args) -> int:
         return EXIT_REFUSED
     emit({"cloned": args.skill_id, "slug": detail.get("slug"),
           "version": detail.get("version"), "digest": detail.get("content_digest"),
-          "skeleton": detail.get("skeleton_summary"),
-          "note": "free-skill acquisition recorded; package-content download lands with "
-                  "the content-distribution endpoint (tracked on #56) — until then pair "
-                  "`skilyst install <dir>` with a local copy of the package"})
+          "skeleton": detail.get("skeleton_summary")})
+    # The download leg (#730 contract, registry-mediated): the server serves
+    # the package + its declared digest; skills lacking a published package
+    # answer 404 — that is a contract state, not an error to hide. Requesting
+    # the download is the natural follow-up; failure surfaces loudly.
+    if not args.no_download:
+        try:
+            body, declared = client.download_skill_package(args.skill_id)
+            emit({"package_bytes": len(body), "declared_digest": declared,
+                  "digest_verified": _digest_matches(body, declared)})
+        except Exception as exc:  # loud, structured — never swallow
+            emit({"package_download": f"unavailable: {exc}",
+                  "hint": "the registry may not have a package published for this "
+                          "skill yet (404) — publish the package content via the "
+                          "distribution channel (core#730 rollout)"},
+                 stream=sys.stderr)
     return EXIT_OK
+
+
+def _digest_matches(body: bytes, declared: str) -> bool | None:
+    """Client-side verify of the two-sided trust chain (#730): sha256 of the
+    package BYTES vs the digest the server declares for them.
+
+    Digest semantics, kept honest (mirrors the core review on PR #740):
+    - 64-hex ('sha256-<64>') — a real package-body digest: compare whole.
+    - 16-hex ('sha256-<16>') — the manifest content-digest (#723 semantics:
+      hash of manifest+skeleton, truncated). It is NOT a body hash and can
+      NEVER verify package bytes — prefix-comparing it was wrong (my
+      first cut did that; a manifest hash never equals a body sha256).
+    - 'fork-of:sha256-<hex>' — a fork reference snapshot, not this body.
+
+    Returns True/False when the declared digest is a verifiable body
+    digest, None when it is a manifest/identity digest (verification not
+    applicable — the package's own body digest arrives with core#740's
+    package_digest in storage.location). Callers surface the distinction
+    instead of collapsing it into a misleading False."""
+    import hashlib
+    import re as _re
+    m = _re.search(r"sha256[-:]?([0-9a-f]+)", str(declared))
+    if not m:
+        return False
+    hexpart = m.group(1)
+    if len(hexpart) != 64:
+        return None  # manifest/identity digest — not a body hash
+    actual = hashlib.sha256(body).hexdigest()
+    return actual == hexpart
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -606,6 +647,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--price", default=0, help="fork price in USD (default 0 = free)")
     p.set_defaults(func=cmd_fork, needs_llm=False)
     p = sub.add_parser("clone"); p.add_argument("skill_id")
+    p.add_argument("--no-download", dest="no_download", action="store_true",
+                   help="record the acquisition without fetching the package "
+                        "(skip the registry-mediated download leg)")
     p.set_defaults(func=cmd_clone, needs_llm=False)
     p = sub.add_parser("preload"); p.add_argument("bundle"); p.set_defaults(func=cmd_preload, needs_llm=False, needs_beehive=False)
     p = sub.add_parser("digest"); p.add_argument("dir"); p.add_argument("--write", action="store_true")

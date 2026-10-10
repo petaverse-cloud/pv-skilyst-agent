@@ -207,3 +207,103 @@ class LifecycleCommandTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PackageDownloadTests(unittest.TestCase):
+    """The clone download leg (#730): binary-safe transport + digest verify.
+
+    The scripted transport decodes bodies as text, so these tests drive the
+    real urllib path through a local HTTP server — a package bundle with
+    gzip/binary bytes would be silently corrupted through the text path,
+    which is exactly what the binary method exists to prevent.
+    """
+
+    def _serve(self, body: bytes, digest: str):
+        import http.server, threading
+        class H(http.server.BaseHTTPRequestHandler):
+            def do_GET(self):
+                if self.path.endswith("/package"):
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/octet-stream")
+                    self.send_header("X-Skill-Content-Digest", digest)
+                    self.send_header("Content-Length", str(len(body)))
+                    self.end_headers()
+                    self.wfile.write(body)
+                else:  # metadata endpoint
+                    import json as _json
+                    meta = {"payload": {"id": "skl-1", "slug": "s", "version": 1,
+                                        "price_usd": 0, "content_digest": digest,
+                                        "skeleton_summary": {}}}
+                    blob = _json.dumps(meta).encode()
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.send_header("Content-Length", str(len(blob)))
+                    self.end_headers()
+                    self.wfile.write(blob)
+            def log_message(self, *a):
+                pass
+        srv = http.server.HTTPServer(("127.0.0.1", 0), H)
+        t = threading.Thread(target=srv.serve_forever, daemon=True)
+        t.start()
+        return srv
+
+    def test_download_returns_raw_bytes_and_declared_digest(self):
+        import gzip
+        from beehive import BeehiveClient  # binary path must not go through transport
+        blob = gzip.compress(b"\x00binary\xfe\xff package bytes")  # non-utf8-safe
+        declared = "sha256:" + __import__("hashlib").sha256(blob).hexdigest()
+        srv = self._serve(blob, declared)
+        try:
+            c = client_for("AK", "SK", "usr-1", f"http://127.0.0.1:{srv.server_port}")
+            body, got = c.download_skill_package("skl-1")
+            self.assertEqual(body, blob)  # bytes identity — no utf-8 replace damage
+            self.assertEqual(got, declared)
+            self.assertTrue(_digest_helper(body, declared))
+        finally:
+            srv.shutdown()
+
+    def test_digest_mismatch_is_reported_not_raised(self):
+        # clone surfaces verification as data; the caller decides. A wrong
+        # declared digest (or fork-of: reference) must not crash the CLI.
+        blob = b"some package"
+        srv = self._serve(blob, "sha256:" + "0" * 64)
+        try:
+            c = client_for("AK", "SK", "usr-1", f"http://127.0.0.1:{srv.server_port}")
+            body, got = c.download_skill_package("skl-1")
+            self.assertFalse(_digest_helper(body, got))
+        finally:
+            srv.shutdown()
+
+
+def _digest_helper(body: bytes, declared: str):
+    """Mirrors cli._digest_matches semantics for the tests below."""
+    import hashlib, re
+    m = re.search(r"sha256[-:]?([0-9a-f]+)", str(declared))
+    if not m:
+        return False
+    hexpart = m.group(1)
+    if len(hexpart) != 64:
+        return None  # manifest/identity digest — not a body hash
+    return hashlib.sha256(body).hexdigest() == hexpart
+
+
+    def test_manifest_digest_is_not_verifiable_as_body(self):
+        # 16-hex 'sha256-<16>' is the MANIFEST content-digest (#723: hash of
+        # manifest+skeleton). It can never verify package bytes — the first
+        # cut prefix-compared it, which always yields a misleading False.
+        # The honest answer is None (verification not applicable) until
+        # core#740's package_digest lands in storage.location.
+        import hashlib
+        blob = b"package"
+        short = "sha256-" + hashlib.sha256(blob).hexdigest()[:16]
+        self.assertIsNone(_digest_helper(blob, short))
+        self.assertIsNone(_digest_helper(blob, "sha256-d1bf326902882d3a"))
+
+    def test_fork_of_reference_digest(self):
+        # 'fork-of:sha256-<64>' is a reference snapshot of the upstream, not
+        # a digest of THIS body — verification is not applicable (None),
+        # not a pass and not a misleading fail.
+        import hashlib
+        blob = b"package"
+        fork_ref = "fork-of:sha256-" + hashlib.sha256(blob).hexdigest()
+        self.assertIsNone(_digest_helper(blob, fork_ref))

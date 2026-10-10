@@ -177,6 +177,36 @@ class BeehiveClient:
     def skill_fork_tree(self, skill_id: str) -> dict:
         return self._payload("GET", f"/api/v1/skills/{skill_id}/fork-tree")
 
+    def download_skill_package(self, skill_id: str) -> tuple[bytes, str]:
+        """The clone network leg (#730 contract): registry-mediated package
+        download. Returns (body, declared_digest).
+
+        Binary-safe path of its own: the shared transport decodes every body
+        as utf-8 text (fine for JSON, lossy for a package bundle) — this
+        method rides the same signed headers and scope gate but reads the
+        response as raw bytes, then reports the server's declared digest
+        (X-Skill-Content-Digest) so the caller verifies WITHOUT a second
+        metadata round-trip. The server already refuses mismatched packages
+        (loud 502); this is the client side of the two-sided trust chain.
+        """
+        path = f"/api/v1/skills/{skill_id}/package"
+        headers = self._headers("GET", path)
+        headers["Accept"] = "application/octet-stream"
+        del headers["Content-Type"]  # no request body
+        url = self.base + path
+        req = urllib.request.Request(url, headers=headers, method="GET")
+        try:
+            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+                body = resp.read()
+                declared = resp.headers.get("X-Skill-Content-Digest", "")
+                return body, declared
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode("utf-8", errors="replace")[:300]
+            raise BeehiveError(
+                f"GET {path} failed: HTTP {exc.code} {detail}") from exc
+        except urllib.error.URLError as exc:
+            raise BeehiveError(f"GET {url} could not be reached: {exc.reason}") from exc
+
     # -- auth ---------------------------------------------------------------
     def login(self, username: str, password: str) -> str:
         status, resp = BeehiveClient(self.base).request(
