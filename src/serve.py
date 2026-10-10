@@ -257,6 +257,9 @@ class RuntimeAPI:
                 "description": (pkg.description or "").strip()[:280],
                 "degraded": bool(pkg.warnings),
                 "warnings": list(pkg.warnings)[:5] if pkg.warnings else [],
+                # v0.3 skeleton summary (M3c): the picker shows the freedom
+                # shape at a glance; the full contract rides on GET /skills/{id}.
+                "skeleton": _skeleton_summary(pkg),
             })
         for entry in partial:
             # list_partial's second list is the packages that FAILED to load:
@@ -271,6 +274,57 @@ class RuntimeAPI:
                 "warnings": [entry.get("error") or "failed to load"],
             })
         return {"skills": rows}
+
+    def skill_detail(self, skill_id: str) -> dict:
+        """M3c (#52): one installed skill's full skeleton contract. The id is
+        the namespaced skill_id (e.g. skilyst/doctor) as listed by GET
+        /skills. Missing skill = 404 (loud), unparsable skeleton = degraded
+        row with the error — never silent absence."""
+        cfg = self._resolve(llm=False, beehive=False)
+        store = skill_store(cfg)
+        try:
+            pkg = store.get(skill_id)
+        except KeyError:
+            raise NotFound(f"skill not installed: {skill_id}") from None
+        manifest = getattr(pkg, "manifest", None) or {}
+        skeleton = None
+        error = None
+        try:
+            from manifest import skeleton_of
+            sk = skeleton_of(manifest)
+            if sk is not None:
+                skeleton = {
+                    "version": sk.version,
+                    "nodes": [
+                        {
+                            "node_id": n.node_id,
+                            "freedom": n.freedom,
+                            "config_open": list(n.config_open),
+                            "role": n.role,
+                        }
+                        for n in sk.nodes
+                    ],
+                    "free_zones": [
+                        {
+                            "name": z.name,
+                            "max_nodes": z.max_nodes,
+                            "allowed_node_types": list(z.allowed_node_types),
+                        }
+                        for z in sk.free_zones
+                    ],
+                    "reference_workflow": sk.reference_workflow,
+                }
+        except Exception as exc:                            # noqa: BLE001 -- degraded, not hidden
+            error = f"skeleton parse failed: {exc}"
+        return {
+            "skill_id": pkg.skill_id,
+            "version": pkg.version,
+            "title": pkg.display_name,
+            "description": (pkg.description or "").strip()[:280],
+            "degraded": bool(pkg.warnings) or error is not None,
+            "warnings": (list(pkg.warnings)[:5] if pkg.warnings else []) + ([error] if error else []),
+            "skeleton": skeleton,
+        }
 
     # -- beehive proxy (#36) -------------------------------------------------
     # The webview never talks to beehive directly: it calls these routes with
@@ -827,6 +881,17 @@ def make_handler(api: RuntimeAPI, token: str, allowed_origins: tuple[str, ...],
                 elif path == "/skills":
                     # M3a (#52): installed skills for the Workbench picker.
                     self._ok(api.skills())
+                elif path.startswith("/skills/"):
+                    # M3c (#52): the full skeleton contract of one skill —
+                    # nodes with freedom/config_open/role, free zones, the
+                    # reference snapshot. The canvas three-color-renders off
+                    # this; unknown ids answer 404 loud. The id segment is
+                    # URL-DECODED before lookup: skill ids are namespaced
+                    # (skilyst/doctor) and a standards-compliant caller
+                    # encodes the slash (%2F) — both forms must resolve.
+                    self._ok(api.skill_detail(
+                        urllib.parse.unquote(path[len("/skills/"):]) if "%" in path
+                        else path[len("/skills/"):]))
                 elif path.startswith("/beehive/"):
                     # #36: whitelisted proxy to beehive, signed with the
                     # platform credential (keychain AK/SK).
@@ -1044,3 +1109,32 @@ def serve(cfg: RuntimeConfig, options: ServeOptions, *, resolve_kwargs: dict | N
 __all__ = ["API_VERSION", "DEFAULT_HOST", "DEFAULT_PORT", "RuntimeAPI", "RuntimeHTTPServer",
            "ServeOptions", "WEBVIEW_ORIGINS", "error_payload", "error_status", "make_handler",
            "ready_line", "serve"]
+
+def _skeleton_summary(pkg) -> dict | None:
+    """M3c (#52): the freedom shape of a skill's workflow_skeleton, or None
+    when the skill declares no skeleton. Summary-level — the full parsed
+    contract (nodes with roles and config_open, free zones) rides on
+    GET /skills/{id} so the canvas can three-color-render without loading
+    every installed skill's manifest up front."""
+    manifest = getattr(pkg, "manifest", None)
+    if not manifest:
+        return None
+    try:
+        from manifest import skeleton_of
+        sk = skeleton_of(manifest)
+    except Exception:
+        return None  # no skeleton or unparsable: not degraded, just absent
+    if sk is None:
+        return None
+    freedoms = {"pinned": 0, "parameterized": 0, "free": 0}
+    for n in sk.nodes:
+        freedoms[n.freedom] = freedoms.get(n.freedom, 0) + 1
+    return {
+        "nodes": len(sk.nodes),
+        "freedoms": freedoms,
+        "free_zones": [
+            {"name": z.name, "max_nodes": z.max_nodes,
+             "allowed_node_types": list(z.allowed_node_types)}
+            for z in sk.free_zones
+        ],
+    }

@@ -7,6 +7,13 @@ export type SkillOption = {
   title: string;
   version: string;
   degraded: boolean;
+  /** M3c (#52): v0.3 freedom shape at a glance — null when the skill
+   * declares no skeleton (a plain prompt-flow skill). */
+  skeleton?: {
+    nodes: number;
+    freedoms: { pinned: number; parameterized: number; free: number };
+    free_zones: { name: string; max_nodes: number }[];
+  } | null;
 };
 
 export default function Composer({
@@ -75,6 +82,15 @@ export default function Composer({
           data={skills.map((s) => ({
             value: s.skill_id,
             label: `${s.degraded ? "⚠ " : ""}${s.title} · v${s.version}`,
+            // M3c (#52): the v0.3 freedom shape in the dropdown — pinned ⬤,
+            // parameterized ◐, free ○ (with zone allowance). Plain skills
+            // (no skeleton) stay plain rows.
+            description: s.skeleton
+              ? `⬤ ${s.skeleton.freedoms.pinned} pinned · ◐ ${s.skeleton.freedoms.parameterized} parameterized · ○ ${s.skeleton.freedoms.free} free`
+                + (s.skeleton.free_zones.length
+                  ? ` · zones: ${s.skeleton.free_zones.map((z) => `${z.name} ≤${z.max_nodes}`).join(", ")}`
+                  : "")
+              : undefined,
           }))}
         />
         <Text size="xs" c="dimmed">

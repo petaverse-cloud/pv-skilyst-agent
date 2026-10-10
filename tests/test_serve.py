@@ -922,3 +922,94 @@ class SkillsRouteTests(EnvIsolation):
         self.assertEqual(len(broken), 1)
         self.assertTrue(broken[0]["degraded"], "a corrupted install must surface, not vanish")
         self.assertIn("modified after install", broken[0]["description"])
+
+
+class SkillDetailRouteTests(EnvIsolation):
+    """M3c (#52): GET /skills/{id} — the full skeleton contract for the
+    canvas three-color rendering; the summary rides on the list rows."""
+
+    def setUp(self):
+        super().setUp()
+        os.environ["SKILYST_SKILLS_HOME"] = tempfile.mkdtemp()
+        self.fx = ServeFixture()
+        self.addCleanup(self.fx.cleanup)
+
+    def _install_skeleton_skill(self):
+        """Install a skill whose manifest declares a v0.3 workflow_skeleton
+        (the spec §3.2 shape, as test_skeleton pins it) through the real
+        store path so the index/receipt stay honest. The manifest starts
+        from a real official manifest (doctor's) so every required field
+        is present — only skill_id/display_name and the skeleton differ."""
+        import json as _json
+        base = _json.loads((BUNDLE / "doctor" / "manifest.json").read_text())
+        base["skill_id"] = "skilyst/skeleton-demo"
+        base["display_name"] = "skeleton contract demo"
+        base["workflow_skeleton"] = {
+            "version": 1,
+            "nodes": [
+                {"node_id": "generate:minimax-h3", "freedom": "pinned",
+                 "role": "hero_shot"},
+                {"node_id": "generate:*", "freedom": "parameterized",
+                 "config_open": ["provider", "resolution"], "role": "b_roll"},
+            ],
+            "free_zones": [
+                {"name": "transitions", "max_nodes": 2,
+                 "allowed_node_types": ["process:transcode"]},
+            ],
+            "reference_workflow": {"snapshot_of": "wf-1 abc123"},
+        }
+        src_dir = self.fx.root / "skeleton-demo"
+        src_dir.mkdir()
+        (src_dir / "SKILL.md").write_text(
+            f"---\nname: skeleton-demo\ndescription: {base['description']}\n---\nbody\n")
+        # content_digest covers SKILL.md + references/scripts -- the manifest
+        # itself stays out (it declares the digest), so it is written last
+        # with the freshly computed value (what `skilyst digest --write` does).
+        from skills.digest import content_digest
+        base["content_digest"] = content_digest(src_dir)
+        (src_dir / "manifest.json").write_text(_json.dumps(base))
+        return self.fx.store.install(src_dir)
+
+    def test_detail_returns_full_skeleton(self):
+        self._install_skeleton_skill()
+
+        status, _headers, body = self.fx.request("GET", "/skills")
+        self.assertEqual(status, 200)
+        rows = body["data"]["skills"]
+        demo = next(r for r in rows if r["skill_id"] == "skilyst/skeleton-demo")
+        # List row: summary shape.
+        self.assertEqual(demo["skeleton"]["nodes"], 2)
+        self.assertEqual(demo["skeleton"]["freedoms"],
+                         {"pinned": 1, "parameterized": 1, "free": 0})
+        self.assertEqual(demo["skeleton"]["free_zones"][0]["name"], "transitions")
+
+        # Detail: the full contract over HTTP.
+        status, _headers, body = self.fx.request("GET", "/skills/skilyst/skeleton-demo")
+        self.assertEqual(status, 200)
+        detail = body["data"]
+        self.assertEqual(detail["degraded"], False)
+        sk = detail["skeleton"]
+        self.assertEqual(sk["nodes"][0]["freedom"], "pinned")
+        self.assertEqual(sk["nodes"][0]["role"], "hero_shot")
+        self.assertEqual(sk["nodes"][1]["config_open"], ["provider", "resolution"])
+        self.assertEqual(sk["free_zones"][0]["max_nodes"], 2)
+        self.assertEqual(sk["reference_workflow"], {"snapshot_of": "wf-1 abc123"})
+
+    def test_detail_decodes_percent_encoded_id(self):
+        # Review r2: a standards-compliant caller encodes the namespaced
+        # skill_id's slash (skilyst%2Fdoctor). Both forms must resolve —
+        # the raw form worked, the encoded form 404'd (the #15 family of
+        # silent-contract seams).
+        status, _headers, body = self.fx.request("GET", "/skills/skilyst%2Fdoctor")
+        self.assertEqual(status, 200)
+        self.assertEqual(body["data"]["skill_id"], "skilyst/doctor")
+
+    def test_detail_unknown_skill_404s_loud(self):
+        status, _headers, body = self.fx.request("GET", "/skills/skilyst/nope")
+        self.assertEqual(status, 404)
+
+    def test_skill_without_skeleton_reports_none(self):
+        status, _headers, body = self.fx.request("GET", "/skills/skilyst/doctor")
+        self.assertEqual(status, 200)
+        self.assertIsNone(body["data"]["skeleton"])
+        self.assertEqual(body["data"]["degraded"], False)
