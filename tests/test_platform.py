@@ -49,8 +49,11 @@ class ScopeTests(unittest.TestCase):
     def test_default_scope_covers_jobs_assets_and_workflows(self):
         # workflows:read/write joined the default set with the A3 canvas tools
         # (src/canvas.py) -- the canvas is an official skill surface now.
+        # skills:read joined with the master-library registry reads (#56 data
+        # half, core#714): every skill-facing client may browse the library.
         self.assertEqual(sorted(DEFAULT_SCOPE),
-                         ["assets:read", "jobs:read", "jobs:write", "workflows:read", "workflows:write"])
+                         ["assets:read", "jobs:read", "jobs:write", "skills:read",
+                          "workflows:read", "workflows:write"])
 
     def test_billing_and_admin_are_refused_for_every_method(self):
         token = RestrictedToken("ak", "sk")
