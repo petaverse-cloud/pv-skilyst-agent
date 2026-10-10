@@ -81,6 +81,11 @@ function normalizeSkillCard(row: Record<string, unknown>): SkillCardData {
   const pricing = (row.pricing ?? null) as Record<string, unknown> | null;
   const price = pricing ? Number(pricing.price_usd ?? pricing.priceUsd ?? 0) : null;
   return {
+    ...row,
+    // Normalized fields LAST: the raw row is the passthrough floor, not the
+    // ceiling — a raw-typed field (e.g. pricing.price_usd as a string, or a
+    // number display_name) must never punch through to the card renderer.
+    // review round-2: spread order fixed (raw-first, coerced-last).
     skill_id: String(row.skill_id ?? row.id ?? ""),
     display_name: String(row.display_name ?? row.name ?? row.skill_id ?? ""),
     version: String(row.version ?? ""),
@@ -94,6 +99,5 @@ function normalizeSkillCard(row: Record<string, unknown>): SkillCardData {
       cover_url: ref.cover_url ? String(ref.cover_url) : undefined,
     } : null,
     pricing: price !== null ? { price_usd: price, free: price === 0 } : null,
-    ...row,
   };
 }
