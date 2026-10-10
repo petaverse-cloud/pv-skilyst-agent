@@ -274,7 +274,15 @@ def build_registry(store: SkillStore, client: BeehiveClient | None, active: Skil
     # that dies when the agent dies).
     if client is not None and active is not None and active.skill_id == CANVAS_SKILL_ID \
             and active.permission.get("secrets"):
-        _register_canvas_tools(registry, client, session_id, events, on_action, paid_confirm)
+        # v0.3 (#55): when the active skill declares a workflow_skeleton, every
+        # board submission is compared against it before it can cost money.
+        from skills.store import check_skeleton
+        skeleton_gate = None
+        if active.skeleton is not None:
+            def skeleton_gate(nodes, _pkg=active):
+                return check_skeleton(_pkg, {"nodes": nodes})
+        _register_canvas_tools(registry, client, session_id, events, on_action, paid_confirm,
+                               skeleton_gate=skeleton_gate)
 
     # -- platform tools (only with an active skill that declares them) -------
     if active is None or client is None:
@@ -575,7 +583,8 @@ def _micro_to_usd_cost(quote: dict | None) -> dict | None:
 def _register_canvas_tools(registry: ToolRegistry, client, session_id: str,
                            events: Callable[[str], None],
                            on_action: Callable[[dict], None] | None,
-                           paid_confirm: Callable[[dict], bool] | None = None) -> None:
+                           paid_confirm: Callable[[dict], bool] | None = None,
+                           skeleton_gate=None) -> None:
     """Wire the canvas tools (FR-3 + S4 media-pool lifecycle).
 
     Every tool shares one wrapper (`_make`) that provides the R3 action
@@ -590,7 +599,7 @@ def _register_canvas_tools(registry: ToolRegistry, client, session_id: str,
     the quote view and returns True to proceed. A declined/timeout refusal
     raises PaidConfirmDeclined (the model is told; nothing is charged).
     """
-    ops = CanvasOps(client, session_id, paid_confirm=paid_confirm)
+    ops = CanvasOps(client, session_id, paid_confirm=paid_confirm, skeleton_gate=skeleton_gate)
     actions = on_action or (lambda _action: None)
 
     def _make(tool_name: str, method_name: str,
