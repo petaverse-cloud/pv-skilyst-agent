@@ -20,7 +20,7 @@ import { resolveConfirm, sendMessage } from "../api";
 import { getWalletBalance, getWorkflow, type WorkflowRow } from "../beehiveClient";
 import { appendDelta, emptyStream, freezeTurn, type StreamState } from "../stream";
 import { recordSession, sessionsFor, type WorkflowSessions } from "../workflowRegistry";
-import Composer from "./Composer";
+import Composer, { type SkillOption as ComposerSkillOption } from "./Composer";
 import ConversationView from "./ConversationView";
 import SessionList from "./SessionList";
 import { CanvasView, type CanvasFocus } from "./CanvasView";
@@ -112,6 +112,20 @@ export default function WorkbenchPage({
     };
   }, [activeWorkflowId]);
 
+  // M3a (#52): the skill picker feed — GET /skills via the runtime (unified
+  // posture; the cloud registry joins at core P1 freeze, core#708).
+  const [skills, setSkills] = useState<ComposerSkillOption[]>([]);
+  const [skill, setSkill] = useState<string>("");
+  useEffect(() => {
+    if (!info) return;
+    let cancelled = false;
+    api<{ skills: ComposerSkillOption[] }>("/skills")
+      .then((payload) => { if (!cancelled) setSkills(payload.skills ?? []); })
+      .catch((exc) => { if (!cancelled) setError(`skills unavailable: ${exc instanceof Error ? exc.message : String(exc)}`); });
+    return () => { cancelled = true; };
+    // keyed on info like the rest of the mount-fetch audit (#53)
+  }, [info]);
+
   const send = useCallback(
     async (text: string) => {
       if (!info) return;
@@ -129,6 +143,7 @@ export default function WorkbenchPage({
           {
             message: text,
             session_id: detail?.session_id,
+            skill: skill || undefined,
             model: model || undefined,
             dry_run: dryRun,
             confirm_paid: true,
@@ -295,6 +310,9 @@ export default function WorkbenchPage({
           onDryRunChange={onDryRunChange}
           serverDryRun={info.dry_run}
           model={model}
+          skills={skills}
+          skill={skill}
+          onSkillChange={setSkill}
         />
       )}
 

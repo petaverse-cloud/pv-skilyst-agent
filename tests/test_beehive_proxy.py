@@ -36,6 +36,10 @@ class ProxyRouteTableTests(unittest.TestCase):
                 ("workflows", "GET", "/api/v1/workflows"),
                 ("workflows/{}", "GET", "/api/v1/workflows/{}"),
                 ("billing/wallet", "GET", "/api/v1/billing/wallet"),
+                ("skills", "GET", "/api/v1/skills"),
+                ("skills/{}", "GET", "/api/v1/skills/{}"),
+                ("skills/{}/versions", "GET", "/api/v1/skills/{}/versions"),
+                ("skills/{}/fork-tree", "GET", "/api/v1/skills/{}/fork-tree"),
             ),
         )
 
@@ -57,6 +61,18 @@ class ProxyRouteTableTests(unittest.TestCase):
         self.assertEqual(calls[-1], ("/api/v1/workflows/wf-123", {}))
         api.beehive_proxy("billing/wallet", {})
         self.assertEqual(calls[-1], ("/api/v1/billing/wallet", {}))
+        # #54 registry family: list, detail, versions, fork-tree.
+        api.beehive_proxy("skills", {"limit": "5"})
+        self.assertEqual(calls[-1], ("/api/v1/skills", {"limit": "5"}))
+        api.beehive_proxy("skills/vid-15s", {})
+        self.assertEqual(calls[-1], ("/api/v1/skills/vid-15s", {}))
+        api.beehive_proxy("skills/vid-15s/versions", {})
+        self.assertEqual(calls[-1], ("/api/v1/skills/vid-15s/versions", {}))
+        api.beehive_proxy("skills/vid-15s/fork-tree", {})
+        self.assertEqual(calls[-1], ("/api/v1/skills/vid-15s/fork-tree", {}))
+        # A suffix that is not in the table stays a loud 404.
+        with self.assertRaises(serve.NotFound):
+            api.beehive_proxy("skills/vid-15s/secret", {})
 
     def test_id_segment_is_url_quoted_not_slash_stuffed(self):
         api = serve.RuntimeAPI.__new__(serve.RuntimeAPI)

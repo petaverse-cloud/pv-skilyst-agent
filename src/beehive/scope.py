@@ -22,14 +22,18 @@ import hmac
 import time
 from dataclasses import dataclass, field
 
-DEFAULT_SCOPE = ("jobs:write", "jobs:read", "assets:read", "workflows:read", "workflows:write")
+DEFAULT_SCOPE = ("jobs:write", "jobs:read", "assets:read", "workflows:read", "workflows:write",
+                 "skills:read")
 
 # The #36 desktop proxy is the USER's data plane (UI reading the user's own
 # account), not a skill: it runs on the platform credential and needs the
 # read-only wallet route for the quote card. core#684 tracks the server-side
 # preset addition; this preset is what a logged-in user's pair actually
 # grants to the desktop client.
-DESKTOP_PROXY_SCOPE = DEFAULT_SCOPE + ("billing:read",)
+# skills:read (core#714, registry read API): the works-wall skill dimension
+# (#54) and the M3a picker's cloud side browse the registry through the
+# desktop proxy — read-only, same preset the AgentScopes login grants.
+DESKTOP_PROXY_SCOPE = DEFAULT_SCOPE + ("billing:read", "skills:read")
 
 # Scopes that must never be handed to skill-facing code, whatever the caller asks.
 FORBIDDEN_SCOPES = ("billing:write", "billing:read", "admin:read", "admin:write")
@@ -50,7 +54,14 @@ SCOPE_RULES = [
     ("GET", "/api/v1/assets", "assets:read"),
     ("GET", "/api/v1/nodes", "jobs:read"),
     ("POST", "/api/v1/billing/quote", "jobs:write"),
+    ("GET", "/api/v1/skills", "skills:read"),
+    # core#714 registry: list/detail/fork-tree under /skills (startswith
+    # matching covers /{id} and sub-routes like the workflows family).
     ("GET", "/api/v1/workflows", "workflows:read"),
+    # Registry reads (core#714, skills P1 #703): list/detail/versions/fork-tree.
+    # Read-only, no write surface — publish/fork writes are #56's second half,
+    # gated on core's P2 lifecycle API (#704).
+    ("GET", "/api/v1/skills", "skills:read"),
     # Wallet display for the desktop quote card (#36 proxy, core#684):
     # read-only, granted only to DESKTOP_PROXY_SCOPE holders — skills keep
     # the DENIED_PREFIXES wall below.

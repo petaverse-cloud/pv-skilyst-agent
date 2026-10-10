@@ -339,6 +339,89 @@ def _check_requirement(req: NodeRequirement, known: dict, allow_fallback: bool =
     return problems
 
 
+def check_skeleton(package: SkillPackage, materialized: dict) -> list[NodeProblem]:
+    """Compare a materialized workflow against the package's v0.3 skeleton.
+
+    ``materialized`` is the board/workflow shape the agent is about to submit:
+    ``{"nodes": [{"node_id": ..., "config": {...}, "zone": ...}, ...]}``. The
+    skeleton is the author's contract (skills-as-product-core.md §3.2), so the
+    comparison is structural and needs no registry:
+
+    * every pinned/parameterized skeleton node must be present (exact id or
+      its wildcard family) -- a missing slot is blocking;
+    * a materialized node that matches no skeleton slot and no free zone is
+      an undeclared addition -- blocking (the agent left the author's drawing);
+    * free zones are bounded: node count > max_nodes is blocking, a node type
+      outside the zone's allowed_node_types is blocking.
+
+    Iron rule 7: every finding carries an actionable message (which slot, what
+    was expected, what to do), never prose. A package without a skeleton has
+    nothing to check -- empty list.
+    """
+    skel = package.skeleton
+    if skel is None:
+        return []
+
+    nodes = materialized.get("nodes") or []
+    problems: list[NodeProblem] = []
+    matched_slots: set[str] = set()
+    zone_counts: dict[str, int] = {z.name: 0 for z in skel.free_zones}
+
+    for n in nodes:
+        node_id = str(n.get("node_id") or "")
+        slot = skel.matching_node(node_id)
+        if slot is not None:
+            matched_slots.add(slot.node_id)
+            if slot.freedom == "parameterized":
+                extra = [k for k in (n.get("config") or {})
+                         if k not in slot.config_open]
+                if extra:
+                    problems.append(NodeProblem(
+                        node_id, "blocking",
+                        f"node {node_id} is parameterized on config_open {slot.config_open} "
+                        f"but the materialization writes {extra} -- remove those keys or ask "
+                        f"the author to open them"))
+            continue
+        zone = n.get("zone")
+        z = next((z for z in skel.free_zones if z.name == zone), None)
+        if z is None:
+            # Try to attribute the node to a zone by its type before refusing.
+            z = next((z for z in skel.free_zones
+                      if node_id in z.allowed_node_types and zone_counts[z.name] < z.max_nodes), None)
+        if z is None:
+            declared = (", ".join(n2.node_id for n2 in skel.nodes) or "no nodes")
+            zones = (", ".join(f"{z2.name}({z2.allowed_node_types})" for z2 in skel.free_zones)
+                     or "no free zones")
+            problems.append(NodeProblem(
+                node_id, "blocking",
+                f"node {node_id} matches no skeleton slot ({declared}) and no free zone "
+                f"({zones}) -- the skeleton is the author's contract; additions must land "
+                f"in a declared free zone"))
+            continue
+        if node_id not in z.allowed_node_types:
+            problems.append(NodeProblem(
+                node_id, "blocking",
+                f"node {node_id} sits in free zone {z.name!r} whose allowed_node_types are "
+                f"{z.allowed_node_types} -- move it or ask the author to widen the zone"))
+            continue
+        zone_counts[z.name] += 1
+        if zone_counts[z.name] > z.max_nodes:
+            problems.append(NodeProblem(
+                node_id, "blocking",
+                f"free zone {z.name!r} holds {zone_counts[z.name]} nodes, max_nodes is "
+                f"{z.max_nodes} -- remove nodes from the zone"))
+
+    for slot in skel.nodes:
+        if slot.node_id not in matched_slots and not slot.node_id.endswith(":*"):
+            problems.append(NodeProblem(
+                slot.node_id, "blocking",
+                f"skeleton slot {slot.node_id} (role {slot.role or 'unlabeled'}, "
+                f"freedom {slot.freedom}) is missing from the materialization -- the "
+                f"pinned structure is the methodology; it may not be dropped"))
+
+    return problems
+
+
 def inventory_report(package: SkillPackage) -> dict:
     from sandbox import classify_resources
     inv = classify_resources(package.dir, package.body)

@@ -1,6 +1,13 @@
-import { ActionIcon, Badge, Group, Stack, Switch, Text, Textarea } from "@mantine/core";
+import { ActionIcon, Badge, Group, Select, Stack, Switch, Text, Textarea } from "@mantine/core";
 import { IconSend } from "@tabler/icons-react";
 import { useState } from "react";
+
+export type SkillOption = {
+  skill_id: string;
+  title: string;
+  version: string;
+  degraded: boolean;
+};
 
 export default function Composer({
   onSend,
@@ -9,6 +16,9 @@ export default function Composer({
   onDryRunChange,
   serverDryRun,
   model,
+  skills,
+  skill,
+  onSkillChange,
 }: {
   onSend: (text: string) => void;
   busy: boolean;
@@ -16,6 +26,11 @@ export default function Composer({
   onDryRunChange: (value: boolean) => void;
   serverDryRun: boolean;
   model: string;
+  /** M3a (#52): installed skills for the picker (GET /skills). */
+  skills: SkillOption[];
+  /** The selected skill id ("" = no skill, plain conversation). */
+  skill: string;
+  onSkillChange: (value: string) => void;
 }) {
   const [text, setText] = useState("");
 
@@ -44,6 +59,24 @@ export default function Composer({
             label="dry run (no paid job)"
           />
         )}
+        {/* M3a (#52): skill picker — the main selector; empty value = plain
+            conversation. Degraded installs are visible with a ⚠ marker so the
+            user knows WHY a skill is listed but not loadable (G4: the picker
+            shows what is wrong instead of hiding it). */}
+        <Select
+          size="xs"
+          clearable
+          placeholder="skill"
+          data-testid="skill-picker"
+          value={skill || null}
+          onChange={(value) => onSkillChange(value ?? "")}
+          style={{ minWidth: 220 }}
+          maxDropdownHeight={280}
+          data={skills.map((s) => ({
+            value: s.skill_id,
+            label: `${s.degraded ? "⚠ " : ""}${s.title} · v${s.version}`,
+          }))}
+        />
         <Text size="xs" c="dimmed">
           Enter sends, Shift+Enter adds a line
         </Text>

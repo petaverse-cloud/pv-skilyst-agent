@@ -48,6 +48,12 @@ NODE_ID_KEYS = ("node_id", "node_type")
 # manifest route them into a node field would let a package click its own controls.
 BINDING_CONTROL_ARGS = ("node_id", "workflow_id", "wait", "timeout_s")
 FIELD_NAME_RE = re.compile(r"^[a-z][a-z0-9_]*$")
+# v0.3 workflow_skeleton (skills-as-product-core.md §3.2): freedom tiers.
+SKELETON_FREEDOMS = ("pinned", "parameterized", "free")
+# A skeleton node_id may pin an exact definition ("generate:minimax-h3") or a
+# wildcard family ("generate:*"). The wildcard only means "some variant in this
+# family" -- it must still be a legal node-id shape.
+SKELETON_NODE_ID_RE = re.compile(r"^[a-z0-9][a-z0-9_-]*:(\*|[A-Za-z0-9][A-Za-z0-9._*-]*)$")
 
 
 @dataclass
@@ -162,6 +168,144 @@ def parse_node_requirement(raw: dict) -> NodeRequirement:
                            binding=parse_node_binding(raw["binding"], node_id) if "binding" in raw else None)
 
 
+@dataclass
+class SkeletonNode:
+    """One node slot in a v0.3 workflow_skeleton.
+
+    ``node_id`` is a definition id or a wildcard family (``generate:*``);
+    ``freedom`` is the tier the materializing agent gets: pinned (structure and
+    binding untouchable), parameterized (config keys in ``config_open`` only),
+    free (agent may add/remove/reconnect within its zone). ``role`` is the
+    author's semantic label (e.g. hero_shot).
+    """
+
+    node_id: str
+    freedom: str
+    role: str = ""
+    config_open: list[str] = field(default_factory=list)
+
+    @property
+    def node_type(self) -> str:
+        return self.node_id.split(":", 1)[0]
+
+
+@dataclass
+class SkeletonFreeZone:
+    """A region where the materializing agent may add nodes (v0.3 §3.2)."""
+
+    name: str
+    max_nodes: int
+    allowed_node_types: list[str] = field(default_factory=list)
+
+
+@dataclass
+class WorkflowSkeleton:
+    """The v0.3 manifest extension: author-drawn structure + freedom tiers.
+
+    Parsed and validated at load time (structure-level, no registry needed);
+    materialization-time comparison lives in skills.store preflight.
+    """
+
+    version: int
+    nodes: list[SkeletonNode] = field(default_factory=list)
+    free_zones: list[SkeletonFreeZone] = field(default_factory=list)
+    reference_workflow: dict = field(default_factory=dict)
+
+    def matching_node(self, node_id: str) -> SkeletonNode | None:
+        """The most specific skeleton slot a materialized node matches."""
+        exact = next((n for n in self.nodes if n.node_id == node_id), None)
+        if exact:
+            return exact
+        family = node_id.split(":", 1)[0] + ":*"
+        return next((n for n in self.nodes if n.node_id == family), None)
+
+
+def parse_skeleton(raw: dict) -> WorkflowSkeleton:
+    """Parse + validate the manifest's workflow_skeleton block.
+
+    Raises ManifestError with an actionable message (iron rule 7: loud,
+    structured, not prose) on any structural violation.
+    """
+    if not isinstance(raw, dict):
+        raise ManifestError("workflow_skeleton must be an object")
+    version = raw.get("version")
+    if version != 1:
+        raise ManifestError(f"workflow_skeleton.version must be 1 (v0.3), got {version!r}")
+
+    nodes: list[SkeletonNode] = []
+    seen_ids: set[str] = set()
+    for i, n in enumerate(raw.get("nodes") or []):
+        if not isinstance(n, dict):
+            raise ManifestError(f"workflow_skeleton.nodes[{i}] must be an object")
+        node_id = n.get("node_id")
+        if not isinstance(node_id, str) or not SKELETON_NODE_ID_RE.match(node_id):
+            raise ManifestError(f"workflow_skeleton.nodes[{i}].node_id {node_id!r} must be a node "
+                                f"definition id or family wildcard, e.g. generate:minimax-h3 / generate:*")
+        if node_id in seen_ids:
+            raise ManifestError(f"workflow_skeleton.nodes[{i}].node_id {node_id!r} is declared twice")
+        seen_ids.add(node_id)
+        freedom = n.get("freedom")
+        if freedom not in SKELETON_FREEDOMS:
+            raise ManifestError(f"workflow_skeleton.nodes[{i}].freedom must be one of "
+                                f"{'|'.join(SKELETON_FREEDOMS)}, got {freedom!r}")
+        config_open = n.get("config_open") or []
+        if freedom == "pinned" and config_open:
+            raise ManifestError(f"workflow_skeleton.nodes[{i}] ({node_id}) is pinned but declares "
+                                f"config_open {config_open} -- pinned means the config is NOT open")
+        if freedom == "parameterized":
+            if not config_open:
+                raise ManifestError(f"workflow_skeleton.nodes[{i}] ({node_id}) is parameterized but "
+                                    f"declares no config_open -- that is what parameterized means")
+            for k in config_open:
+                if not isinstance(k, str) or not FIELD_NAME_RE.match(k):
+                    raise ManifestError(f"workflow_skeleton.nodes[{i}].config_open entry {k!r} must "
+                                        f"be a snake_case config field name")
+        role = n.get("role") or ""
+        if not isinstance(role, str):
+            raise ManifestError(f"workflow_skeleton.nodes[{i}].role must be a string label")
+        nodes.append(SkeletonNode(node_id=node_id, freedom=freedom, role=role,
+                                  config_open=[str(k) for k in config_open]))
+
+    zones: list[SkeletonFreeZone] = []
+    seen_zones: set[str] = set()
+    for i, z in enumerate(raw.get("free_zones") or []):
+        if not isinstance(z, dict):
+            raise ManifestError(f"workflow_skeleton.free_zones[{i}] must be an object")
+        name = z.get("name")
+        if not isinstance(name, str) or not NAME_RE.match(name):
+            raise ManifestError(f"workflow_skeleton.free_zones[{i}].name {name!r} must be kebab-case")
+        if name in seen_zones:
+            raise ManifestError(f"workflow_skeleton.free_zones[{i}].name {name!r} is declared twice")
+        seen_zones.add(name)
+        max_nodes = z.get("max_nodes")
+        if not isinstance(max_nodes, int) or isinstance(max_nodes, bool) or max_nodes < 0:
+            raise ManifestError(f"workflow_skeleton.free_zones[{i}].max_nodes must be a "
+                                f"non-negative integer, got {max_nodes!r}")
+        allowed = z.get("allowed_node_types") or []
+        for t in allowed:
+            if not isinstance(t, str) or not NODE_ID_RE.match(t):
+                raise ManifestError(f"workflow_skeleton.free_zones[{i}].allowed_node_types entry "
+                                    f"{t!r} is not a node definition id, e.g. process:transcode")
+        zones.append(SkeletonFreeZone(name=name, max_nodes=max_nodes,
+                                      allowed_node_types=[str(t) for t in allowed]))
+
+    ref = raw.get("reference_workflow") or {}
+    if not isinstance(ref, dict):
+        raise ManifestError("workflow_skeleton.reference_workflow must be an object "
+                            "(snapshot_of + note)")
+
+    return WorkflowSkeleton(version=int(version), nodes=nodes, free_zones=zones,
+                            reference_workflow=ref)
+
+
+def skeleton_of(manifest: dict) -> WorkflowSkeleton | None:
+    """The parsed workflow_skeleton of a manifest, or None when undeclared."""
+    raw = (manifest or {}).get("workflow_skeleton")
+    if raw is None:
+        return None
+    return parse_skeleton(raw)
+
+
 def node_requirements(manifest: dict) -> list[NodeRequirement]:
     return [parse_node_requirement(n) for n in ((manifest.get("requires") or {}).get("nodes") or [])]
 
@@ -201,6 +345,14 @@ def validate_manifest(m: dict) -> None:
         raise ManifestError(f"kind={m['kind']} must declare requires (the node dependency block)")
     for n in nodes:
         parse_node_requirement(n)
+
+    # v0.3 workflow_skeleton: declared means validated. kind=knowledge may not
+    # carry one (it is the same node-facing surface requires.nodes = [] forbids).
+    if "workflow_skeleton" in m:
+        if m["kind"] == "knowledge":
+            raise ManifestError("kind=knowledge must not declare workflow_skeleton "
+                                "(same rule as requires.nodes = [])")
+        parse_skeleton(m["workflow_skeleton"])
 
     up = m["upstream"]
     if up is not None:
