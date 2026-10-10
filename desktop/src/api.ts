@@ -2,16 +2,24 @@
  * The shell's whole view of the runtime: start/stop the child process (Tauri
  * commands) and speak its loopback HTTP contract.
  *
- * Nothing here invents data. The token and the port come from the runtime's own
- * ready line via Rust state, and every payload is the JSON the runtime returned --
+ * Nothing here invents data. Every payload is the JSON the runtime returned --
  * if the runtime is not connected, the calls fail loudly instead of rendering an
  * empty screen that looks like an answer.
+ *
+ * #42: inside the desktop shell, requests go through the Rust command
+ * `runtime_request` (invoke) — the bearer token stays in Rust state and never
+ * enters JS. The fetch path remains ONLY for browser dev
+ * (VITE_SKILYST_RUNTIME), where there is no shell to hold the token.
  */
 import { invoke } from "@tauri-apps/api/core";
 
+/**
+ * #42: the webview's view of the runtime. The bearer token lives in Rust
+ * state only (runtime_request / runtime_request_stream speak HTTP on JS's
+ * behalf); no field here has ever carried it since the invoke proxy landed.
+ */
 export type RuntimeInfo = {
   port: number;
-  token: string;
   base_url: string;
   pid: number;
   dry_run: boolean;
@@ -128,14 +136,22 @@ export function runtime(): RuntimeInfo | null {
   return current;
 }
 
-/** Browser-only development: point the UI at a runtime you started yourself. */
+/**
+ * Browser-only development: point the UI at a runtime you started yourself
+ * (VITE_SKILYST_RUNTIME=http://127.0.0.1:8765#<token>). The dev token is
+ * kept OUTSIDE the RuntimeInfo object — it exists only in the browser-dev
+ * fallback where there is no shell to hold it; in the desktop shell this
+ * path never runs and no token reaches JS at all.
+ */
+let devToken: string | null = null;
+
 function browserFallback(): RuntimeInfo | null {
   const spec = import.meta.env.VITE_SKILYST_RUNTIME as string | undefined;
   if (!spec) return null;
   const [base, token] = spec.split("#");
+  devToken = token ?? null;
   return {
     base_url: base.replace(/\/$/, ""),
-    token: token ?? "",
     port: Number(base.split(":").pop() ?? 0),
     pid: 0,
     dry_run: true,
@@ -191,12 +207,29 @@ type ApiOptions = { method?: string; body?: unknown; timeoutMs?: number };
 
 export async function api<T>(path: string, options: ApiOptions = {}): Promise<T> {
   if (!current) throw new Error("the local runtime is not connected");
+  // #42: the shell proxies for us so the token stays out of JS. The browser
+  // dev fallback keeps the direct fetch (there is no shell to hold anything).
+  if (inShell()) {
+    const relay = await invoke<{ status: number; payload: {
+      ok?: boolean; data?: T; error?: { kind?: string; message?: string };
+    } }>("runtime_request", {
+      path,
+      method: options.method ?? "GET",
+      body: options.body === undefined ? null : options.body,
+    });
+    const payload = relay.payload;
+    if (relay.status >= 400 || payload.ok === false) {
+      const error = payload.error;
+      throw new Error(error ? `${error.kind ?? "Error"}: ${error.message ?? "request failed"}` : `HTTP ${relay.status}`);
+    }
+    return payload.data as T;
+  }
   const controller = new AbortController();
   const timer = window.setTimeout(() => controller.abort(), options.timeoutMs ?? 15 * 60 * 1000);
   try {
     const response = await fetch(`${current.base_url}${path}`, {
       method: options.method ?? "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${current.token}` },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${devToken ?? ""}` },
       body: options.body === undefined ? undefined : JSON.stringify(options.body),
       signal: controller.signal,
     });
@@ -256,9 +289,14 @@ export async function resolveConfirm(sessionId: string, approve: boolean): Promi
 
 export async function sendMessage(request: MessageRequest, handlers: StreamHandlers = {}): Promise<RunSummary> {
   if (!current) throw new Error("the local runtime is not connected");
+  // #42: inside the shell the SSE bytes come through the Rust bridge as
+  // Tauri events — the fetch path below is the browser-dev fallback only.
+  if (inShell()) {
+    return sendMessageViaBridge(request, handlers);
+  }
   const response = await fetch(`${current.base_url}/message`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${current.token}` },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${devToken ?? ""}` },
     body: JSON.stringify({ ...request, stream: true }),
   });
   if (!response.ok) {
@@ -296,4 +334,68 @@ export async function sendMessage(request: MessageRequest, handlers: StreamHandl
   }
   if (!summary) throw new Error("the runtime closed the stream without a result");
   return summary;
+}
+
+/**
+ * #42: the shell's SSE bridge. The Rust command holds the bearer token and
+ * relays raw stream bytes as "runtime-stream-*" events; the same parser and
+ * handler semantics as the fetch path apply (one code path for both).
+ */
+async function sendMessageViaBridge(request: MessageRequest, handlers: StreamHandlers): Promise<RunSummary> {
+  const { listen } = await import("@tauri-apps/api/event");
+  const streamId = `runtime-stream-${Math.random().toString(36).slice(2)}`;
+  let summary: RunSummary | null = null;
+  let buffer = "";
+  const unlisten = await listen<string>(streamId, (event) => {
+    buffer += event.payload;
+    let boundary = buffer.indexOf("\n\n");
+    while (boundary >= 0) {
+      const parsed = parseEvent(buffer.slice(0, boundary));
+      buffer = buffer.slice(boundary + 2);
+      if (parsed) {
+        if (parsed.name === "delta") handlers.onDelta?.(String(parsed.data.text ?? ""));
+        else if (parsed.name === "note") handlers.onNote?.(String(parsed.data.text ?? ""));
+        else if (parsed.name === "confirm_request") handlers.onConfirmRequest?.(
+          parsed.data as { session_id?: string; quote?: { total_hold?: number; total_hold_display?: number; nodes?: unknown[] } });
+        else if (parsed.name === "done") {
+          summary = (parsed.data as { data?: RunSummary }).data ?? null;
+        } else if (parsed.name === "error") {
+          const error = parsed.data.error as { kind?: string; message?: string } | undefined;
+          summary = null; // the throw below surfaces it
+          throw new Error(`${error?.kind ?? "Error"}: ${error?.message ?? "the run was refused"}`);
+        }
+      }
+      boundary = buffer.indexOf("\n\n");
+    }
+  });
+  try {
+    await invoke("runtime_request_stream", { streamId, body: { ...request, stream: true } });
+  } finally {
+    unlisten();
+  }
+  if (!summary) throw new Error("the runtime closed the stream without a result");
+  return summary;
+}
+
+/**
+ * #42 stage 2: the studio-package transport. The package's apiFetch hook
+ * delegates every JSON request here; the shell (Rust runtime_request) performs
+ * the HTTP with its own credential custody and returns the raw core envelope,
+ * which we unwrap with exactly the package's semantics (data.payload, and
+ * upstream payload.error on failure) so studio consumers are unchanged.
+ */
+export async function studioApiFetch<T = unknown>(method: string, path: string, body?: unknown): Promise<T> {
+  const relay = await invoke<{ status: number; payload: unknown }>("runtime_request", {
+    path,
+    method,
+    body: body === undefined ? null : body,
+  });
+  const envelope = relay.payload as { code?: number; message?: string; payload?: unknown };
+  if (relay.status >= 400) {
+    const err = envelope as { payload?: { error?: string }; message?: string };
+    throw new Error(err.payload?.error ?? err.message ?? `HTTP ${relay.status}`);
+  }
+  if (relay.status === 204) return undefined as T;
+  const data = envelope as { payload?: unknown };
+  return (data.payload !== undefined ? data.payload : data) as T;
 }

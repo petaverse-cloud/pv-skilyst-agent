@@ -16,7 +16,7 @@
  */
 
 import type { HostAdapter } from "@petaverse/skilyst-studio/host";
-import { runtime } from "./api";
+import { runtime, studioApiFetch } from "./api";
 
 export function desktopHostAdapter(): HostAdapter {
   const listeners = new Map<string, Set<(detail?: unknown) => void>>();
@@ -26,7 +26,13 @@ export function desktopHostAdapter(): HostAdapter {
     // "/api/v1/..." through the runtime proxy, keychain-signed. Identical in
     // dev and the installed bundle; no webview→beehive direct calls remain.
     apiBaseUrl: info?.base_url ?? "",
-    getToken: () => runtime()?.token ?? null,
+    // #42: the desktop shell keeps the runtime bearer in Rust state; the
+    // studio package's requests go through the invoke proxy instead, so
+    // this is null BY DESIGN — the webview JS heap never holds a token.
+    getToken: () => null,
+    // #42 stage 2: host-injected transport — the package delegates here
+    // (apiFetch hook) and the shell performs HTTP with its own custody.
+    apiFetch: studioApiFetch,
     navigate: () => {
       /* the desktop has no router; the canvas Back button is hidden by the
          host view chrome (CanvasView renders its own header). */

@@ -79,6 +79,35 @@ pub struct RuntimeInfo {
     pub workspace_dir: String,
 }
 
+/// The webview-facing view of the runtime: everything except the bearer
+/// token (#42). The shell keeps the token itself and performs HTTP on the
+/// webview's behalf via the `runtime_request` command, so the credential
+/// never enters JS-reachable memory.
+#[derive(Debug, Clone, Serialize)]
+pub struct RuntimeStatus {
+    pub port: u16,
+    pub base_url: String,
+    pub pid: u32,
+    pub dry_run: bool,
+    pub sessions_dir: String,
+    pub store_dir: String,
+    pub workspace_dir: String,
+}
+
+impl From<&RuntimeInfo> for RuntimeStatus {
+    fn from(info: &RuntimeInfo) -> Self {
+        RuntimeStatus {
+            port: info.port,
+            base_url: info.base_url.clone(),
+            pid: info.pid,
+            dry_run: info.dry_run,
+            sessions_dir: info.sessions_dir.clone(),
+            store_dir: info.store_dir.clone(),
+            workspace_dir: info.workspace_dir.clone(),
+        }
+    }
+}
+
 #[derive(Default)]
 pub struct RuntimeState {
     child: Mutex<Option<Child>>,
@@ -182,9 +211,13 @@ fn runtime_start(
     app: AppHandle,
     state: State<'_, RuntimeState>,
     live: Option<bool>,
-) -> Result<RuntimeInfo, String> {
+) -> Result<RuntimeStatus, String> {
+    // #42: JS never receives the token — not on the first start, not on the
+    // idempotent re-attach path. The shell keeps the full RuntimeInfo (token
+    // included) in Rust state and speaks HTTP on the webview's behalf via
+    // runtime_request / runtime_request_stream.
     if let Some(info) = state.info.lock().unwrap().clone() {
-        return Ok(info);
+        return Ok(RuntimeStatus::from(&info));
     }
     let launcher = launcher_path(&app)?;
     let mut command = Command::new(python_command());
@@ -253,7 +286,8 @@ fn runtime_start(
             state.child.lock().unwrap().replace(child);
             state.stdin.lock().unwrap().replace(stdin);
             *state.info.lock().unwrap() = Some(info.clone());
-            Ok(info)
+            // #42: the token lives in Rust state only; JS gets the view.
+            Ok(RuntimeStatus::from(&info))
         }
         Ok(Err(message)) => {
             let _ = child.kill();
@@ -525,7 +559,7 @@ fn handle_deep_link(app: &AppHandle, url: &tauri::Url) {
 /// `None` means "not connected"; a runtime whose process has exited is reported as
 /// gone rather than as a stale port the frontend would keep talking to.
 #[tauri::command]
-fn runtime_status(state: State<'_, RuntimeState>) -> Option<RuntimeInfo> {
+fn runtime_status(state: State<'_, RuntimeState>) -> Option<RuntimeStatus> {
     let alive = {
         let mut guard = state.child.lock().unwrap();
         match guard.as_mut() {
@@ -543,7 +577,137 @@ fn runtime_status(state: State<'_, RuntimeState>) -> Option<RuntimeInfo> {
         *state.info.lock().unwrap() = None;
         return None;
     }
-    state.info.lock().unwrap().clone()
+    state.info.lock().unwrap().as_ref().map(RuntimeStatus::from)
+}
+
+/// #42: the webview's only path to the runtime API. The shell holds the
+/// bearer token; JS calls this command with (path, method, body) and gets
+/// the parsed JSON envelope back. The allowlist below is deliberately
+/// per-method-prefix so new runtime routes do not need a shell change —
+/// the security property is "no token in JS", not "route filtering" (the
+/// runtime itself authenticates every call).
+#[tauri::command]
+async fn runtime_request(
+    state: State<'_, RuntimeState>,
+    path: String,
+    method: String,
+    body: Option<serde_json::Value>,
+) -> Result<serde_json::Value, String> {
+    let (base_url, token) = {
+        let info = state.info.lock().unwrap();
+        match info.as_ref() {
+            Some(info) => (info.base_url.clone(), info.token.clone()),
+            None => return Err("the local runtime is not connected".to_string()),
+        }
+    };
+    // Reject obvious abuse shapes early with a loud, diagnosable error.
+    if !path.starts_with('/') {
+        return Err(format!("runtime_request: path must start with '/', got {path:?}"));
+    }
+    let method = method.to_uppercase();
+    if !matches!(method.as_str(), "GET" | "POST" | "PUT" | "DELETE") {
+        return Err(format!("runtime_request: unsupported method {method}"));
+    }
+    let url = format!("{base_url}{path}");
+    let client = reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(900))
+        .build()
+        .map_err(|exc| format!("runtime_request: client build failed: {exc}"))?;
+    let mut request = client.request(
+        match method.as_str() {
+            "POST" => reqwest::Method::POST,
+            "PUT" => reqwest::Method::PUT,
+            "DELETE" => reqwest::Method::DELETE,
+            _ => reqwest::Method::GET,
+        },
+        &url,
+    )
+    .header("Authorization", format!("Bearer {token}"));
+    if let Some(value) = body {
+        request = request
+            .header("Content-Type", "application/json")
+            .json(&value);
+    }
+    let response = request
+        .send()
+        .await
+        .map_err(|exc| format!("runtime_request: {method} {path} transport failed: {exc}"))?;
+    let status = response.status();
+    let payload: serde_json::Value = response
+        .json()
+        .await
+        .map_err(|exc| format!("runtime_request: {method} {path} returned invalid JSON: {exc}"))?;
+    // Keep the runtime's own envelope intact; the webview api() layer
+    // unpacks {ok, data, error} exactly like the fetch path did.
+    if !status.is_success() {
+        eprintln!(
+            "[runtime_request] {method} {path} -> {status} (non-2xx relayed to the webview)"
+        );
+    }
+    Ok(serde_json::json!({
+        "status": status.as_u16(),
+        "payload": payload,
+    }))
+}
+
+/// #42 streaming half: POST /message with stream:true and relay the SSE
+/// events to the webview as Tauri events ("runtime-stream-<id>"). The shell
+/// holds the bearer token; JS never sees it. The command returns once the
+/// stream completes (the "done" event), with the final envelope.
+#[tauri::command]
+async fn runtime_request_stream(
+    state: State<'_, RuntimeState>,
+    app: AppHandle,
+    stream_id: String,
+    body: serde_json::Value,
+) -> Result<serde_json::Value, String> {
+    use futures_util::StreamExt;
+    let (base_url, token) = {
+        let info = state.info.lock().unwrap();
+        match info.as_ref() {
+            Some(info) => (info.base_url.clone(), info.token.clone()),
+            None => return Err("the local runtime is not connected".to_string()),
+        }
+    };
+    let stream_id = if stream_id.starts_with("runtime-stream-") {
+        stream_id
+    } else {
+        return Err("runtime_request_stream: stream_id must start with 'runtime-stream-'".to_string());
+    };
+    let client = reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(900))
+        .build()
+        .map_err(|exc| format!("runtime_request_stream: client build failed: {exc}"))?;
+    let response = client
+        .post(format!("{base_url}/message"))
+        .header("Authorization", format!("Bearer {token}"))
+        .header("Content-Type", "application/json")
+        .json(&body)
+        .send()
+        .await
+        .map_err(|exc| format!("runtime_request_stream: transport failed: {exc}"))?;
+    if !response.status().is_success() {
+        let status = response.status();
+        let payload: serde_json::Value = response.json().await.unwrap_or(serde_json::Value::Null);
+        return Err(format!(
+            "runtime_request_stream: HTTP {status}: {}",
+            serde_json::to_string(&payload).unwrap_or_default()
+        ));
+    }
+    // Relay raw SSE bytes; the webview's existing parser handles framing.
+    let mut stream = response.bytes_stream();
+    let mut final_envelope = serde_json::Value::Null;
+    while let Some(chunk) = stream.next().await {
+        let chunk = chunk.map_err(|exc| format!("runtime_request_stream: read failed: {exc}"))?;
+        let text = String::from_utf8_lossy(&chunk).to_string();
+        if text.contains("\"event\": \"done\"") || text.contains("event: done") {
+            final_envelope = serde_json::from_str(&text).unwrap_or(serde_json::Value::Null);
+        }
+        if let Err(exc) = app.emit(&stream_id, text) {
+            return Err(format!("runtime_request_stream: emit failed: {exc}"));
+        }
+    }
+    Ok(final_envelope)
 }
 
 pub fn run() {
@@ -564,6 +728,8 @@ pub fn run() {
             runtime_start,
             runtime_stop,
             runtime_status,
+            runtime_request,
+            runtime_request_stream,
             shell_open
         ])
         .setup(|app| {
@@ -725,6 +891,49 @@ mod tests {
         assert!(inside_app_bundle(std::path::Path::new(
             "/Applications/Skilyst Agent.app/Contents/MacOS/skilyst-agent"
         )));
+    }
+
+    #[test]
+    fn runtime_start_signature_returns_the_token_free_view() {
+        // #42 round 2 (review blocking): the START path must hand JS the
+        // same token-free view as runtime_status — previously runtime_start
+        // returned the full RuntimeInfo and startRuntime() parked it (token
+        // included) in module scope for the app's whole lifetime.
+        // Type-level pin: both commands must serialize RuntimeStatus, whose
+        // serialized form is token-free (see the test above). RuntimeInfo
+        // (token included) must not be reachable from any command return.
+        fn assert_status<T: serde::Serialize + From<&'static RuntimeInfo>>() {}
+        assert_status::<RuntimeStatus>();
+        let full = RuntimeInfo {
+            port: 1, token: "t".into(), base_url: "u".into(), pid: 2, dry_run: true,
+            sessions_dir: String::new(), store_dir: String::new(), workspace_dir: String::new(),
+        };
+        // From<&RuntimeInfo> exists and drops the token — the view used by
+        // BOTH runtime_start and runtime_status return paths.
+        let view = RuntimeStatus::from(&full);
+        assert!(serde_json::to_string(&view).unwrap().find("\"token\"").is_none());
+    }
+
+    #[test]
+    fn runtime_status_view_never_carries_the_token() {
+        // #42: the webview-facing view of the runtime must not serialize the
+        // bearer token — that is the whole point of the invoke proxy.
+        let info = RuntimeInfo {
+            port: 8765,
+            token: "secret-bearer".to_string(),
+            base_url: "http://127.0.0.1:8765".to_string(),
+            pid: 42,
+            dry_run: true,
+            sessions_dir: String::new(),
+            store_dir: String::new(),
+            workspace_dir: String::new(),
+        };
+        let status = RuntimeStatus::from(&info);
+        let json = serde_json::to_string(&status).expect("serialize");
+        assert!(!json.contains("secret-bearer"));
+        assert!(!serde_json::to_value(&status).unwrap().get("token").is_some());
+        // and the shell-internal struct still has it (the proxy needs it)
+        assert_eq!(info.token, "secret-bearer");
     }
 
     #[test]
