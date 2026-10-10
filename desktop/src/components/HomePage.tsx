@@ -26,7 +26,7 @@ import {
 import { IconArrowRight, IconMessage, IconSparkles } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
 import type { SessionRow } from "../api";
-import { listWorkflows, type WorkflowRow } from "../beehiveClient";
+import { listWorkflows, listSkills, type WorkflowRow, type SkillCardData } from "../beehiveClient";
 import { sessionsFor, type WorkflowSessions } from "../workflowRegistry";
 import { navigate } from "../router";
 
@@ -129,6 +129,92 @@ function WorkflowCard({ wf, sessionCount }: { wf: WorkflowRow; sessionCount: num
   );
 }
 
+/** #54: the works wall's skill-dimension card (design doc
+ * docs/design/works-wall-skill-card.md §2). Every card carries the three
+ * invariants — skill identity, visual body (cover or nameCover fallback),
+ * lineage hint — regardless of what core P1's final field names settle to
+ * (the normalizer in beehiveClient absorbs the drift). */
+function SkillCard({ sk }: { sk: SkillCardData }) {
+  const cover = sk.reference_workflow?.cover_url ?? null;
+  const price = sk.pricing;
+  return (
+    <Card
+      withBorder
+      padding={0}
+      radius="md"
+      style={{ cursor: "pointer", overflow: "hidden", transition: "transform .15s ease, box-shadow .15s ease" }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = "translateY(-2px)";
+        e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,.45)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = "";
+        e.currentTarget.style.boxShadow = "";
+      }}
+      onClick={() => navigate({ module: "workbench" })}
+      data-testid="skill-card"
+    >
+      <Box
+        h={130}
+        style={{
+          position: "relative",
+          background: cover ? `center / cover no-repeat url(${cover})` : nameCover(sk.display_name),
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {!cover && (
+          <Text c="white" fz={30} fw={700} lh={1} style={{ letterSpacing: 1, textShadow: "0 1px 8px rgba(0,0,0,.35)" }}>
+            {initials(sk.display_name)}
+          </Text>
+        )}
+        {price && (
+          <Badge
+            size="xs"
+            variant="light"
+            color={price.free ? "green" : "yellow"}
+            style={{ position: "absolute", top: 8, right: 8 }}
+            data-testid="skill-price-badge"
+          >
+            {price.free ? "Free" : `$${price.price_usd}`}
+          </Badge>
+        )}
+      </Box>
+      <Stack gap={2} p="sm">
+        <Text size="sm" fw={500} truncate>
+          {sk.display_name}
+        </Text>
+        <Group gap={4} wrap="nowrap">
+          <Text size="xs" c="dimmed" truncate>
+            by {sk.author_name || "unknown"}
+          </Text>
+          {sk.author_verified && (
+            <Badge size="xs" variant="light" color="blue" data-testid="author-verified">
+              ✓
+            </Badge>
+          )}
+          {sk.version && <Text size="xs" c="dimmed">· v{sk.version}</Text>}
+        </Group>
+        <Group gap="xs" justify="space-between">
+          {/* Lineage hint — the deep fork tree stays on the console (web#356
+              dual-host split); the card shows depth only. */}
+          {sk.fork_depth > 0 ? (
+            <Text size="xs" c="dimmed" data-testid="fork-depth">
+              {sk.fork_depth} upstream{sk.fork_depth === 1 ? "" : "s"}
+            </Text>
+          ) : (
+            <Text size="xs" c="dimmed">original</Text>
+          )}
+          {sk.usage_count > 0 && (
+            <Text size="xs" c="dimmed">{sk.usage_count} runs</Text>
+          )}
+        </Group>
+      </Stack>
+    </Card>
+  );
+}
+
 export default function HomePage({
   sessions,
   registry,
@@ -140,6 +226,26 @@ export default function HomePage({
 }) {
   const [workflows, setWorkflows] = useState<WorkflowRow[] | null>(null);
   const [listError, setListError] = useState<string | null>(null);
+  // #54: the skill dimension of the wall — the registry list through the
+  // runtime proxy. Until the account's pair is re-issued with skills:read
+  // (a fresh login walks the new AgentScopes preset), this answers 403 and
+  // the section degrades to the notice below — loud, not broken.
+  const [skills, setSkills] = useState<SkillCardData[] | null>(null);
+  const [skillsNotice, setSkillsNotice] = useState<string | null>(null);
+
+  const loadSkills = useCallback(async () => {
+    setSkillsNotice(null);
+    setSkills(null);
+    try {
+      const rows = await listSkills(50, 0);
+      setSkills(rows);
+    } catch (exc) {
+      // Degrade, never break (design doc §4): the workflow wall keeps
+      // rendering; the skill dimension shows why it is absent.
+      setSkillsNotice(exc instanceof Error ? exc.message : String(exc));
+      setSkills([]);
+    }
+  }, []);
 
   const loadWorkflows = useCallback(async () => {
     setListError(null);
@@ -162,7 +268,8 @@ export default function HomePage({
     // load with "not connected" forever (no retry) — the works wall
     // stayed dead even though the runtime was perfectly healthy.
     void loadWorkflows();
-  }, [loadWorkflows, runtimeConnected]);
+    void loadSkills();
+  }, [loadWorkflows, loadSkills, runtimeConnected]);
 
   const artifactCount = sessions.reduce((sum, s) => sum + (s.artifacts ?? 0), 0);
   const agentCount = (workflows ?? []).filter((w) => w.created_via === "agent").length;
@@ -260,6 +367,41 @@ export default function HomePage({
             )}
           </>
         )}
+
+        {/* ── Skills (the #54 dimension) ── */}
+        <Box mt="lg" pt="md" style={{ borderTop: "1px solid var(--mantine-color-dark-4)" }}>
+          <Group justify="space-between" mb="xs">
+            <Title order={5}>Skills</Title>
+            <Text size="xs" c="dimmed">
+              {skills === null ? "" : `${skills.length} published`}
+            </Text>
+          </Group>
+          {skillsNotice ? (
+            // Design doc §4 degrade ladder: pre-scope notice, not an error
+            // state — the registry itself is deployed; the account's pair
+            // predates skills:read. A fresh sign-in lights this section up.
+            <Text size="sm" c="dimmed" py="md" maw={520}>
+              The skill dimension is not available for this account yet —{" "}
+              {skillsNotice}. A fresh sign-in (Settings → Sign in) re-issues
+              the credential with skills:read and lights this section up.
+            </Text>
+          ) : skills === null ? (
+            <Group gap="sm" py="md" justify="center">
+              <Loader size="xs" />
+              <Text size="xs" c="dimmed">Loading skills…</Text>
+            </Group>
+          ) : skills.length === 0 ? (
+            <Text size="sm" c="dimmed" py="md">
+              No published skills in the registry yet.
+            </Text>
+          ) : (
+            <SimpleGrid cols={{ base: 2, sm: 3, lg: 4 }} spacing="md" style={{ alignItems: "start" }}>
+              {skills.map((sk) => (
+                <SkillCard key={sk.skill_id} sk={sk} />
+              ))}
+            </SimpleGrid>
+          )}
+        </Box>
       </Stack>
     </Stack>
   );
