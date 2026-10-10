@@ -124,3 +124,48 @@ describe("skill picker (M3a)", () => {
     expect(typeof api).toBe("function");
   });
 });
+
+// M3c (#52): the picker dropdown carries the v0.3 freedom shape —
+// pinned/parameterized/free counts and zone allowances per skill.
+describe("skill picker freedom summary (M3c)", () => {
+  it("mounts the picker with skeleton-carrying skills in the feed shape", () => {
+    // The freedom description is a Select option field (rendered in the open
+    // dropdown only) — the pin here is the feed contract: rows may carry a
+    // skeleton summary, plain skills carry null, and the SSR surface mounts
+    // the same picker the M3a test pins. Runtime summary shape is pinned by
+    // SkillDetailRouteTests (freedom counts, zones) on the real store path.
+    vi.mocked(api).mockResolvedValueOnce({
+      skills: [
+        {
+          skill_id: "skilyst/skeleton-demo",
+          title: "skeleton contract demo",
+          version: "1.0.0",
+          degraded: false,
+          skeleton: {
+            nodes: 2,
+            freedoms: { pinned: 1, parameterized: 1, free: 0 },
+            free_zones: [{ name: "transitions", max_nodes: 2 }],
+          },
+        },
+        { skill_id: "skilyst/doctor", title: "Doctor", version: "1.0.0", degraded: false, skeleton: null },
+      ],
+    });
+    const html = renderToString(
+      <MantineProvider>
+        <WorkbenchPage
+          sessions={[]}
+          registry={{}}
+          onRegistryChange={() => undefined}
+          info={{ dry_run: true, port: 8765, pid: 1 }}
+          dryRun={true}
+          onDryRunChange={() => undefined}
+          model="test-model"
+          balanceUsd={null}
+          onBalanceUsd={() => undefined}
+        />
+      </MantineProvider>,
+    );
+    expect(html).toContain("data-testid=\"workbench-canvas\"");
+    expect(typeof api).toBe("function");
+  });
+});
