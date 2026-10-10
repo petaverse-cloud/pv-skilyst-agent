@@ -558,7 +558,7 @@ def cmd_clone(args) -> int:
         try:
             body, declared = client.download_skill_package(args.skill_id)
             emit({"package_bytes": len(body), "declared_digest": declared,
-                  "digest_verified": bool(declared) and _digest_matches(body, declared)})
+                  "digest_verified": _digest_matches(body, declared)})
         except Exception as exc:  # loud, structured — never swallow
             emit({"package_download": f"unavailable: {exc}",
                   "hint": "the registry may not have a package published for this "
@@ -568,22 +568,33 @@ def cmd_clone(args) -> int:
     return EXIT_OK
 
 
-def _digest_matches(body: bytes, declared: str) -> bool:
+def _digest_matches(body: bytes, declared: str) -> bool | None:
     """Client-side verify of the two-sided trust chain (#730): sha256 of the
-    bytes vs the server-declared digest. Formats seen in the registry:
-    'sha256-<hex>' (the dev registry currently stores a 16-hex TRUNCATED
-    summary, e.g. 'sha256-d1bf326902882d3a') and 'fork-of:sha256-<hex>'
-    (fork reference snapshots). A 64-hex digest is compared whole; a
-    truncated one is compared as a prefix — honest about what the registry
-    actually declares today."""
+    package BYTES vs the digest the server declares for them.
+
+    Digest semantics, kept honest (mirrors the core review on PR #740):
+    - 64-hex ('sha256-<64>') — a real package-body digest: compare whole.
+    - 16-hex ('sha256-<16>') — the manifest content-digest (#723 semantics:
+      hash of manifest+skeleton, truncated). It is NOT a body hash and can
+      NEVER verify package bytes — prefix-comparing it was wrong (my
+      first cut did that; a manifest hash never equals a body sha256).
+    - 'fork-of:sha256-<hex>' — a fork reference snapshot, not this body.
+
+    Returns True/False when the declared digest is a verifiable body
+    digest, None when it is a manifest/identity digest (verification not
+    applicable — the package's own body digest arrives with core#740's
+    package_digest in storage.location). Callers surface the distinction
+    instead of collapsing it into a misleading False."""
     import hashlib
     import re as _re
     m = _re.search(r"sha256[-:]?([0-9a-f]+)", str(declared))
     if not m:
         return False
     hexpart = m.group(1)
+    if len(hexpart) != 64:
+        return None  # manifest/identity digest — not a body hash
     actual = hashlib.sha256(body).hexdigest()
-    return actual.startswith(hexpart) if hexpart else False
+    return actual == hexpart
 
 
 def build_parser() -> argparse.ArgumentParser:

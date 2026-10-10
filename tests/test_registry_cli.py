@@ -266,23 +266,35 @@ class PackageDownloadTests(unittest.TestCase):
             srv.shutdown()
 
 
-def _digest_helper(body: bytes, declared: str) -> bool:
+def _digest_helper(body: bytes, declared: str):
+    """Mirrors cli._digest_matches semantics for the tests below."""
     import hashlib, re
     m = re.search(r"sha256[-:]?([0-9a-f]+)", str(declared))
-    return bool(m) and hashlib.sha256(body).hexdigest().startswith(m.group(1))
+    if not m:
+        return False
+    hexpart = m.group(1)
+    if len(hexpart) != 64:
+        return None  # manifest/identity digest — not a body hash
+    return hashlib.sha256(body).hexdigest() == hexpart
 
 
-    def test_truncated_digest_prefix_match(self):
-        # The dev registry stores 16-hex truncated summaries
-        # ('sha256-d1bf326902882d3a'); prefix comparison is the honest match.
+    def test_manifest_digest_is_not_verifiable_as_body(self):
+        # 16-hex 'sha256-<16>' is the MANIFEST content-digest (#723: hash of
+        # manifest+skeleton). It can never verify package bytes — the first
+        # cut prefix-compared it, which always yields a misleading False.
+        # The honest answer is None (verification not applicable) until
+        # core#740's package_digest lands in storage.location.
         import hashlib
         blob = b"package"
         short = "sha256-" + hashlib.sha256(blob).hexdigest()[:16]
-        self.assertTrue(_digest_helper(blob, short))
-        self.assertFalse(_digest_helper(blob + b"x", short))
+        self.assertIsNone(_digest_helper(blob, short))
+        self.assertIsNone(_digest_helper(blob, "sha256-d1bf326902882d3a"))
 
     def test_fork_of_reference_digest(self):
+        # 'fork-of:sha256-<64>' is a reference snapshot of the upstream, not
+        # a digest of THIS body — verification is not applicable (None),
+        # not a pass and not a misleading fail.
         import hashlib
         blob = b"package"
         fork_ref = "fork-of:sha256-" + hashlib.sha256(blob).hexdigest()
-        self.assertTrue(_digest_helper(blob, fork_ref))
+        self.assertIsNone(_digest_helper(blob, fork_ref))
