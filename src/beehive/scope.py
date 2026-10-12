@@ -33,7 +33,7 @@ DEFAULT_SCOPE = ("jobs:write", "jobs:read", "assets:read", "workflows:read", "wo
 # skills:read (core#714, registry read API): the works-wall skill dimension
 # (#54) and the M3a picker's cloud side browse the registry through the
 # desktop proxy — read-only, same preset the AgentScopes login grants.
-DESKTOP_PROXY_SCOPE = DEFAULT_SCOPE + ("billing:read", "skills:read")
+DESKTOP_PROXY_SCOPE = DEFAULT_SCOPE + ("billing:read", "skills:read", "assets:write")
 
 # Scopes that must never be handed to skill-facing code, whatever the caller asks.
 FORBIDDEN_SCOPES = ("billing:write", "billing:read", "admin:read", "admin:write")
@@ -52,6 +52,12 @@ SCOPE_RULES = [
     ("POST", "/api/v1/jobs/", "jobs:write"),
     ("GET", "/api/v1/jobs/", "jobs:read"),
     ("GET", "/api/v1/assets", "assets:read"),
+    # #81 asset upload: the user's own media into the pool. Same preset the
+    # AgentScopes login grants (assets:write is in the user pair); the proxy
+    # mints DESKTOP_PROXY_SCOPE which inherits it. Uploads are user-initiated
+    # Composer attachments, never skill-driven (the canvas tools add pool
+    # entries by URL — they do not upload).
+    ("POST", "/api/v1/assets", "assets:write"),
     ("GET", "/api/v1/nodes", "jobs:read"),
     ("POST", "/api/v1/billing/quote", "jobs:write"),
     ("GET", "/api/v1/skills", "skills:read"),

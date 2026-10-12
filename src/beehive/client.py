@@ -97,13 +97,18 @@ class BeehiveClient:
             headers["Authorization"] = f"Bearer {self.bearer}"
         return headers
 
-    def request(self, method: str, path: str, body: dict | None = None, raw: bool = False,
+    def request(self, method: str, path: str, body: dict | bytes | None = None, raw: bool = False,
                 headers: dict | None = None):
         base_headers = self._headers(method, path)
         if headers:
             base_headers.update(headers)
         headers = base_headers
-        data = json.dumps(body).encode() if body is not None else None
+        # #81: bytes pass through untouched (the upload path assembles its
+        # own multipart body); dicts keep the JSON envelope.
+        if isinstance(body, bytes):
+            data = body
+        else:
+            data = json.dumps(body).encode() if body is not None else None
         self.requests.append({"method": method.upper(), "path": path, "headers": dict(headers)})
         status, text = self._transport(method, self.base + path, headers, data, self.timeout)
         if raw:

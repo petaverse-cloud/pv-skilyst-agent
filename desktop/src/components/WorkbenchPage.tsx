@@ -20,7 +20,7 @@ import { resolveConfirm, sendMessage } from "../api";
 import { getWalletBalance, getWorkflow, type WorkflowRow } from "../beehiveClient";
 import { appendDelta, emptyStream, freezeTurn, type StreamState } from "../stream";
 import { recordSession, sessionsFor, type WorkflowSessions } from "../workflowRegistry";
-import Composer, { type SkillOption as ComposerSkillOption } from "./Composer";
+import Composer, { type PendingAsset, type SkillOption as ComposerSkillOption, withAssetContext } from "./Composer";
 import ConversationView from "./ConversationView";
 import SessionList from "./SessionList";
 import { CanvasView, type CanvasFocus } from "./CanvasView";
@@ -121,6 +121,9 @@ export default function WorkbenchPage({
   // M3a (#52): the skill picker feed — GET /skills via the runtime (unified
   // posture; the cloud registry joins at core P1 freeze, core#708).
   const [skills, setSkills] = useState<ComposerSkillOption[]>([]);
+  // #81: the uploaded asset rides the next message as explicit context —
+  // the URL is in the text the model sees, not a hidden field.
+  const [attachedAsset, setAttachedAsset] = useState<PendingAsset | null>(null);
   const [skill, setSkill] = useState<string>("");
   useEffect(() => {
     if (!info) return;
@@ -140,6 +143,7 @@ export default function WorkbenchPage({
       setNotes([]);
       setStream(emptyStream);
       setPendingConfirm(null);
+      setAttachedAsset(null); // the asset rode this message
       // The reply streams into the conversation overlay: open it so the
       // run's feedback is visible by default (Figma opens the comment list
       // when you comment) — the input bar must not fire into a void.
@@ -147,7 +151,7 @@ export default function WorkbenchPage({
       try {
         const summary: RunSummary = await sendMessage(
           {
-            message: text,
+            message: withAssetContext(text, attachedAsset),
             session_id: detail?.session_id,
             skill: skill || undefined,
             model: model || undefined,
@@ -328,6 +332,7 @@ export default function WorkbenchPage({
           skills={skills}
           skill={skill}
           onSkillChange={setSkill}
+          onAssetUploaded={setAttachedAsset}
         />
       )}
 
