@@ -66,7 +66,9 @@ class ScopeTests(unittest.TestCase):
 
     def test_unlisted_routes_are_refused_rather_than_allowed(self):
         token = RestrictedToken("ak", "sk")
-        allowed, why = token.allows("POST", "/api/v1/assets")
+        # POST /api/v1/assets became a listed route (#81 upload); templates
+        # stay unlisted — the refusal shape for genuinely unknown routes.
+        allowed, why = token.allows("POST", "/api/v1/templates")
         self.assertFalse(allowed)
         self.assertIn("no scope rule", why)
 

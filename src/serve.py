@@ -338,6 +338,11 @@ class RuntimeAPI:
         ("workflows",        "GET", "/api/v1/workflows"),           # list (+limit/offset fwd)
         ("workflows/{}",     "GET", "/api/v1/workflows/{}"),        # detail
         ("billing/wallet",   "GET", "/api/v1/billing/wallet"),      # quote-UX balance
+        # #81 asset upload: read-back paths (list + detail) so the Composer
+        # can show what the user uploaded; the upload itself is the dedicated
+        # POST route below (multipart does not fit the GET table).
+        ("assets",           "GET", "/api/v1/assets"),
+        ("assets/{}",        "GET", "/api/v1/assets/{}"),
         # #54 skills registry (core#714): list/detail/versions/fork-tree.
         ("skills",           "GET", "/api/v1/skills"),
         ("skills/{}",        "GET", "/api/v1/skills/{}"),
@@ -378,6 +383,84 @@ class RuntimeAPI:
             elif subpath == pattern:
                 return self._beehive_get(target, params)
         raise NotFound(f"no beehive proxy route for GET /beehive/{subpath}")
+
+    def beehive_upload(self, payload: dict) -> dict:
+        """#81 asset upload: the webview hands over {filename, mime_type,
+        data_b64, name, tags}; the runtime assembles the multipart body and
+        signs the POST with the platform credential. Multipart never passes
+        through the webview and the signing keys never leave this process.
+
+        Loud failures only: missing fields → BadRequest; no credential →
+        Unauthorised (the sign-in gate); upstream errors surface the
+        BeehiveError message verbatim (the Composer renders it visibly).
+        """
+        import base64
+        import binascii
+        import uuid
+        from beehive import BeehiveError
+        from beehive.client import BeehiveClient
+        from beehive.scope import RestrictedToken, DESKTOP_PROXY_SCOPE
+        filename = str(payload.get("filename") or "").strip()
+        data_b64 = str(payload.get("data_b64") or "").strip()
+        if not filename or not data_b64:
+            raise BadRequest("filename and data_b64 are required")
+        mime_type = str(payload.get("mime_type") or "application/octet-stream").strip()
+        name = str(payload.get("name") or filename).strip()
+        tags = payload.get("tags") or []
+        if not isinstance(tags, list):
+            raise BadRequest("tags must be a list")
+        try:
+            data = base64.b64decode(data_b64, validate=True)
+        except (binascii.Error, ValueError) as exc:
+            raise BadRequest(f"data_b64 is not valid base64: {exc}") from exc
+        if not data:
+            raise BadRequest("data_b64 decoded to an empty file")
+        if len(data) > 50 * 1024 * 1024:
+            raise BadRequest("file exceeds the 50 MiB upload limit")
+        cfg = self._resolve(llm=False, beehive=True)
+        if not cfg.beehive.has_api_key:
+            raise Unauthorised("sign in to upload assets (no platform credential)")
+        tok = RestrictedToken(access_key=cfg.beehive.access_key,
+                              secret_key=cfg.beehive.secret_key,
+                              account=cfg.beehive.user or cfg.beehive.uid,
+                              scope=DESKTOP_PROXY_SCOPE, trusted=True)
+        client = BeehiveClient(base_url=cfg.beehive.base_url, token=tok, timeout=60)
+        # multipart/form-data, RFC 7578. Boundary is a random token — the
+        # body is assembled here and never parsed anywhere.
+        boundary = "skilyst-" + uuid.uuid4().hex
+        parts = []
+        def _field(field_name: str, value: str) -> None:
+            parts.append(f"--{boundary}\r\n"
+                         f"Content-Disposition: form-data; name=\"{field_name}\"\r\n\r\n"
+                         f"{value}\r\n".encode())
+        _field("name", name)
+        _field("tags", ",".join(str(t) for t in tags))
+        parts.append(
+            f"--{boundary}\r\n"
+            f"Content-Disposition: form-data; name=\"file\"; filename=\"{filename}\"\r\n"
+            f"Content-Type: {mime_type}\r\n\r\n".encode() + data + b"\r\n")
+        parts.append(f"--{boundary}--\r\n".encode())
+        body = b"".join(parts)
+        status, resp = client.request(
+            "POST", "/api/v1/assets", body=body, raw=True, headers={
+                "Content-Type": f"multipart/form-data; boundary={boundary}"},
+        )
+        return self._upload_result(status, resp)
+
+    def _upload_result(self, status: int, resp) -> dict:
+        import json as _json
+        from beehive import BeehiveError
+        text = resp if isinstance(resp, str) else resp.decode("utf-8", "replace")
+        try:
+            body = _json.loads(text) if text else {}
+        except _json.JSONDecodeError:
+            body = {"raw": text[:300]}
+        if status not in (200, 201):
+            raise BeehiveError(f"POST /api/v1/assets failed: HTTP {status} "
+                               f"{_json.dumps(body, ensure_ascii=False)[:300]}")
+        if isinstance(body, dict) and "payload" in body and "code" in body:
+            return body["payload"]
+        return body if isinstance(body, dict) else {"payload": body}
 
     def _beehive_get(self, upstream_path: str, params: dict) -> dict:
         """One signed GET against the beehive API using the resolved platform
@@ -940,6 +1023,10 @@ def make_handler(api: RuntimeAPI, token: str, allowed_origins: tuple[str, ...],
                     self._ok(api.auth_logout())
                 elif path == "/auth/refresh":
                     self._ok(api.auth_refresh())
+                elif path == "/beehive/assets/upload":
+                    # #81: webview hands over {filename, mime_type, data_b64,
+                    # name, tags}; runtime assembles + signs the multipart.
+                    self._ok(api.beehive_upload(self._parse_json(raw)))
                 elif path == "/auth/deliver-code":
                     self._ok(api.auth_deliver_code(self._parse_json(raw)))
                 elif path == "/shutdown":

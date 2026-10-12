@@ -36,6 +36,8 @@ class ProxyRouteTableTests(unittest.TestCase):
                 ("workflows", "GET", "/api/v1/workflows"),
                 ("workflows/{}", "GET", "/api/v1/workflows/{}"),
                 ("billing/wallet", "GET", "/api/v1/billing/wallet"),
+                ("assets", "GET", "/api/v1/assets"),  # #81 read-back
+                ("assets/{}", "GET", "/api/v1/assets/{}"),  # #81 read-back
                 ("skills", "GET", "/api/v1/skills"),
                 ("skills/{}", "GET", "/api/v1/skills/{}"),
                 ("skills/{}/versions", "GET", "/api/v1/skills/{}/versions"),
