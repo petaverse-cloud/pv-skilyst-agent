@@ -207,6 +207,9 @@ export default function App() {
               onStopRuntime={() => void disconnect()}
               onStartRuntime={() => void connect()}
               connecting={connecting}
+              authStatus={authStatus}
+              onSignOut={() => void handleLogout()}
+              onRefreshCredential={() => void handleReauthorize()}
             />
           </Box>
         )}

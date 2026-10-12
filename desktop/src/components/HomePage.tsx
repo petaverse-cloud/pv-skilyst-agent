@@ -382,8 +382,9 @@ export default function HomePage({
             // predates skills:read. A fresh sign-in lights this section up.
             <Text size="sm" c="dimmed" py="md" maw={520}>
               The skill dimension is not available for this account yet —{" "}
-              {skillsNotice}. A fresh sign-in (Settings → Sign in) re-issues
-              the credential with skills:read and lights this section up.
+              {skillsNotice}. A fresh sign-in re-issues the credential
+              with skills:read and lights this section up — sign out from the
+              account menu (top-right), then sign in again.
             </Text>
           ) : skills === null ? (
             <Group gap="sm" py="md" justify="center">

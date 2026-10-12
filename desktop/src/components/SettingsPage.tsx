@@ -15,6 +15,7 @@ import {
 import { IconRefresh } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
 import { api, type DoctorReport, type RedactedConfig, type RuntimeInfo } from "../api";
+import type { AuthStatus } from "./LoginScreen";
 
 /**
  * Settings (phase 1): show what the runtime actually resolved, and let the operator
@@ -33,6 +34,9 @@ export default function SettingsPage({
   onStopRuntime,
   onStartRuntime,
   connecting,
+  authStatus,
+  onSignOut,
+  onRefreshCredential,
 }: {
   info: RuntimeInfo | null;
   model: string;
@@ -41,6 +45,11 @@ export default function SettingsPage({
   onStopRuntime: () => void;
   onStartRuntime: () => void;
   connecting: boolean;
+  /** The account card: who is signed in, what scopes the pair carries,
+   * when it expires — plus the two actions (sign out / refresh). */
+  authStatus: AuthStatus | null;
+  onSignOut: () => void;
+  onRefreshCredential: () => void;
 }) {
   const [config, setConfig] = useState<RedactedConfig | null>(null);
   const [doctor, setDoctor] = useState<DoctorReport | null>(null);
@@ -86,6 +95,83 @@ export default function SettingsPage({
       </Group>
 
       {error ? <Alert color="red" title="Runtime error">{error}</Alert> : null}
+
+      <Card withBorder>
+        <Group justify="space-between" mb="xs">
+          <Title order={5}>Account</Title>
+          {authStatus?.authenticated ? (
+            <Group gap="xs">
+              <Button
+                size="xs"
+                variant="default"
+                onClick={onRefreshCredential}
+                title="Rotate the stored pair server-side (72h overlap on the old key). Falls back to the full sign-in when the pair is past the window."
+                data-testid="refresh-credential"
+              >
+                Refresh credential
+              </Button>
+              <Button size="xs" color="red" variant="light" onClick={onSignOut} data-testid="settings-sign-out">
+                Sign out
+              </Button>
+            </Group>
+          ) : (
+            <Badge size="sm" color="orange">
+              {authStatus?.dev_mode ? "dev mode (no account)" : "not signed in"}
+            </Badge>
+          )}
+        </Group>
+        {authStatus?.authenticated ? (
+          <Table variant="vertical" withRowBorders={false} fz="sm">
+            <Table.Tbody>
+              <Table.Tr>
+                <Table.Th w={200}>Account</Table.Th>
+                <Table.Td>
+                  {authStatus.account?.name ?? "—"}
+                  {authStatus.account?.uid ? <Text size="xs" c="dimmed" span> · {authStatus.account.uid}</Text> : null}
+                </Table.Td>
+              </Table.Tr>
+              <Table.Tr>
+                <Table.Th>Scopes</Table.Th>
+                <Table.Td>
+                  <Group gap={4}>
+                    {(authStatus.scopes ?? []).map((scope) => (
+                      <Badge key={scope} size="xs" variant="light" data-testid="scope-badge">{scope}</Badge>
+                    ))}
+                    {(authStatus.scopes ?? []).length === 0 ? <Text size="xs" c="dimmed">none reported</Text> : null}
+                  </Group>
+                </Table.Td>
+              </Table.Tr>
+              <Table.Tr>
+                <Table.Th>Expires in</Table.Th>
+                <Table.Td>
+                  {authStatus.expires_in != null ? (
+                    <Badge
+                      size="xs"
+                      color={authStatus.expires_in > 7 * 24 * 3600 ? "teal" : authStatus.expires_in > 72 * 3600 ? "yellow" : "red"}
+                      data-testid="credential-expiry"
+                    >
+                      {Math.floor(authStatus.expires_in / 86400)} days
+                    </Badge>
+                  ) : "—"}
+                </Table.Td>
+              </Table.Tr>
+              <Table.Tr>
+                <Table.Th>Stored in</Table.Th>
+                <Table.Td>
+                  <Badge size="xs" variant="light" color="teal">macOS keychain</Badge>
+                  <Text size="xs" c="dimmed" span> · the pair never touches the webview</Text>
+                </Table.Td>
+              </Table.Tr>
+            </Table.Tbody>
+          </Table>
+        ) : (
+          <Text size="sm" c="dimmed">
+            {authStatus?.dev_mode
+              ? "Running in dev mode: requests stay local, no platform account is signed in."
+              : "No account is signed in. The app gate should be showing the sign-in screen."}
+          </Text>
+        )}
+      </Card>
 
       <Card withBorder>
         <Title order={5} mb="xs">
@@ -241,7 +327,12 @@ export default function SettingsPage({
               <Table.Td>
                 <Badge size="xs" color={info?.dry_run ? "yellow" : "red"}>
                   {info?.dry_run ? "dry run" : "live (paid jobs allowed)"}
-                </Badge>
+                </Badge>{" "}
+                {info?.dry_run ? (
+                  <Text size="xs" c="dimmed" span>
+                    Paid jobs are refused until the runtime restarts with --live.
+                  </Text>
+                ) : null}
               </Table.Td>
             </Table.Tr>
             <Table.Tr>
