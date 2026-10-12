@@ -205,9 +205,6 @@ class LifecycleCommandTests(unittest.TestCase):
         self.assertIn("create", PURPOSES)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class PackageDownloadTests(unittest.TestCase):
     """The clone download leg (#730): binary-safe transport + digest verify.
@@ -249,7 +246,7 @@ class PackageDownloadTests(unittest.TestCase):
 
     def test_download_returns_raw_bytes_and_declared_digest(self):
         import gzip
-        from beehive import BeehiveClient  # binary path must not go through transport
+        from cli import _digest_matches  # pin the production function
         blob = gzip.compress(b"\x00binary\xfe\xff package bytes")  # non-utf8-safe
         declared = "sha256:" + __import__("hashlib").sha256(blob).hexdigest()
         srv = self._serve(blob, declared)
@@ -258,34 +255,35 @@ class PackageDownloadTests(unittest.TestCase):
             body, got = c.download_skill_package("skl-1")
             self.assertEqual(body, blob)  # bytes identity — no utf-8 replace damage
             self.assertEqual(got, declared)
-            self.assertTrue(_digest_helper(body, declared))
+            self.assertIs(_digest_matches(body, declared), True)
         finally:
             srv.shutdown()
 
     def test_digest_mismatch_is_reported_not_raised(self):
         # clone surfaces verification as data; the caller decides. A wrong
         # declared digest (or fork-of: reference) must not crash the CLI.
+        from cli import _digest_matches  # pin the production function
         blob = b"some package"
         srv = self._serve(blob, "sha256:" + "0" * 64)
         try:
             c = client_for("AK", "SK", "usr-1", f"http://127.0.0.1:{srv.server_port}")
             body, got = c.download_skill_package("skl-1")
-            self.assertFalse(_digest_helper(body, got))
+            self.assertIs(_digest_matches(body, got), False)
         finally:
             srv.shutdown()
 
 
-def _digest_helper(body: bytes, declared: str):
-    """Mirrors cli._digest_matches semantics for the tests below."""
-    import hashlib, re
-    m = re.search(r"sha256[-:]?([0-9a-f]+)", str(declared))
-    if not m:
-        return False
-    hexpart = m.group(1)
-    if len(hexpart) != 64:
-        return None  # manifest/identity digest — not a body hash
-    return hashlib.sha256(body).hexdigest() == hexpart
+class DigestSemanticsTests(unittest.TestCase):
+    """Pin the PRODUCTION _digest_matches (review follow-up: the earlier
+    mirror helper hid dead-nested tests that were never collected)."""
 
+    def test_full_digest_verifies_and_mismatches(self):
+        from cli import _digest_matches
+        import hashlib
+        blob = b"package"
+        full = "sha256:" + hashlib.sha256(blob).hexdigest()
+        self.assertIs(_digest_matches(blob, full), True)
+        self.assertIs(_digest_matches(blob + b"x", full), False)
 
     def test_manifest_digest_is_not_verifiable_as_body(self):
         # 16-hex 'sha256-<16>' is the MANIFEST content-digest (#723: hash of
@@ -293,17 +291,31 @@ def _digest_helper(body: bytes, declared: str):
         # cut prefix-compared it, which always yields a misleading False.
         # The honest answer is None (verification not applicable) until
         # core#740's package_digest lands in storage.location.
+        from cli import _digest_matches
         import hashlib
         blob = b"package"
         short = "sha256-" + hashlib.sha256(blob).hexdigest()[:16]
-        self.assertIsNone(_digest_helper(blob, short))
-        self.assertIsNone(_digest_helper(blob, "sha256-d1bf326902882d3a"))
+        self.assertIsNone(_digest_matches(blob, short))
+        self.assertIsNone(_digest_matches(blob, "sha256-d1bf326902882d3a"))
 
     def test_fork_of_reference_digest(self):
         # 'fork-of:sha256-<64>' is a reference snapshot of the upstream, not
         # a digest of THIS body — verification is not applicable (None),
-        # not a pass and not a misleading fail.
+        # not a pass and not a misleading fail. The explicit branch (not
+        # regex accident) makes the docstring and the code agree.
+        from cli import _digest_matches
         import hashlib
         blob = b"package"
         fork_ref = "fork-of:sha256-" + hashlib.sha256(blob).hexdigest()
-        self.assertIsNone(_digest_helper(blob, fork_ref))
+        self.assertIsNone(_digest_matches(blob, fork_ref))
+
+    def test_no_digest_is_false_not_none(self):
+        # Absent/garbage declared digest: verification RAN and failed —
+        # False, not the 'not applicable' None.
+        from cli import _digest_matches
+        self.assertIs(_digest_matches(b"package", ""), False)
+        self.assertIs(_digest_matches(b"package", "md5-abcdef"), False)
+
+
+if __name__ == "__main__":
+    unittest.main()

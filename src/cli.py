@@ -589,10 +589,11 @@ def _digest_matches(body: bytes, declared: str) -> bool | None:
     - 'fork-of:sha256-<hex>' — a fork reference snapshot, not this body.
 
     Returns True/False when the declared digest is a verifiable body
-    digest, None when it is a manifest/identity digest (verification not
-    applicable — the package's own body digest arrives with core#740's
-    package_digest in storage.location). Callers surface the distinction
-    instead of collapsing it into a misleading False."""
+    digest, None when it is a manifest/identity digest or a fork-of
+    reference (verification not applicable — the package's own body
+    digest arrives with core#740's package_digest in storage.location).
+    Callers surface the distinction instead of collapsing it into a
+    misleading False."""
     import hashlib
     import re as _re
     m = _re.search(r"sha256[-:]?([0-9a-f]+)", str(declared))
@@ -601,6 +602,8 @@ def _digest_matches(body: bytes, declared: str) -> bool | None:
     hexpart = m.group(1)
     if len(hexpart) != 64:
         return None  # manifest/identity digest — not a body hash
+    if str(declared).startswith("fork-of:"):
+        return None  # a reference snapshot of the upstream, not THIS body
     actual = hashlib.sha256(body).hexdigest()
     return actual == hexpart
 
