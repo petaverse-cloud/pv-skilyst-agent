@@ -24,6 +24,16 @@ export type PendingAsset = {
   url: string;
 };
 
+/**
+ * #87 r2: the message contract for an attached asset — the URL rides the
+ * message as EXPLICIT markdown context (visible in the transcript, not a
+ * hidden field). Exported so the host and the tests share ONE source for
+ * the composition (a test-side copy would be a tautology).
+ */
+export function withAssetContext(text: string, asset: PendingAsset | null): string {
+  return asset ? `${text}\n\n[attached asset: ${asset.name}](${asset.url})` : text;
+}
+
 export default function Composer({
   onSend,
   busy,

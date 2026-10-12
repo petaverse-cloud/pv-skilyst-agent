@@ -20,7 +20,7 @@ import { resolveConfirm, sendMessage } from "../api";
 import { getWalletBalance, getWorkflow, type WorkflowRow } from "../beehiveClient";
 import { appendDelta, emptyStream, freezeTurn, type StreamState } from "../stream";
 import { recordSession, sessionsFor, type WorkflowSessions } from "../workflowRegistry";
-import Composer, { type PendingAsset, type SkillOption as ComposerSkillOption } from "./Composer";
+import Composer, { type PendingAsset, type SkillOption as ComposerSkillOption, withAssetContext } from "./Composer";
 import ConversationView from "./ConversationView";
 import SessionList from "./SessionList";
 import { CanvasView, type CanvasFocus } from "./CanvasView";
@@ -149,12 +149,9 @@ export default function WorkbenchPage({
       // when you comment) — the input bar must not fire into a void.
       setHistoryOpen(true);
       try {
-        const withAsset = attachedAsset
-          ? `${text}\n\n[attached asset: ${attachedAsset.name}](${attachedAsset.url})`
-          : text;
         const summary: RunSummary = await sendMessage(
           {
-            message: withAsset,
+            message: withAssetContext(text, attachedAsset),
             session_id: detail?.session_id,
             skill: skill || undefined,
             model: model || undefined,
