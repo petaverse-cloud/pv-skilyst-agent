@@ -17,6 +17,7 @@ import { IconHistory, IconMessage } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, type RunSummary, type SessionDetail, type SessionRow, type TranscriptMessage } from "../api";
 import { resolveConfirm, sendMessage } from "../api";
+import { notifyRunEnd } from "../notifications";
 import { getWalletBalance, getWorkflow, type WorkflowRow } from "../beehiveClient";
 import { appendDelta, emptyStream, freezeTurn, type StreamState } from "../stream";
 import { recordSession, sessionsFor, type WorkflowSessions } from "../workflowRegistry";
@@ -192,9 +193,25 @@ export default function WorkbenchPage({
         if (!summary.ok) {
           setError(`${summary.stop_reason}: ${summary.error ?? "the run did not complete"}`);
         }
+        // #82: minute-long runs deserve a signal when the window is not
+        // focused — BOTH outcomes notify (a failed run more than a
+        // successful one); the dock badge counts unseen completions and
+        // clears on focus.
+        void notifyRunEnd({
+          ok: summary.ok,
+          body: summary.ok
+            ? `${text.slice(0, 80)}${text.length > 80 ? "…" : ""}`
+            : `${summary.stop_reason}: ${summary.error ?? "the run did not complete"}`,
+          focused: document.hasFocus(),
+        });
       } catch (exc) {
         setStream((state) => freezeTurn(state));
         setError(exc instanceof Error ? exc.message : String(exc));
+        void notifyRunEnd({
+          ok: false,
+          body: exc instanceof Error ? exc.message : String(exc),
+          focused: document.hasFocus(),
+        });
       } finally {
         setSending(false);
       }

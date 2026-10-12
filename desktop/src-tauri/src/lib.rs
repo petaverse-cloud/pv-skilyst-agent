@@ -558,6 +558,20 @@ fn handle_deep_link(app: &AppHandle, url: &tauri::Url) {
 
 /// `None` means "not connected"; a runtime whose process has exited is reported as
 /// gone rather than as a stale port the frontend would keep talking to.
+/// #82: dock badge for completed-but-unseen runs. None/0 clears. The count
+/// itself lives in the webview (it knows how many runs finished unseen);
+/// the shell only owns the AppKit surface. macOS-only in effect — on other
+/// platforms the call is a no-op that logs, never an error to the UI.
+#[tauri::command]
+fn set_dock_badge(app: tauri::AppHandle, count: Option<i64>) -> Result<(), String> {
+    if let Some(window) = app.get_webview_window("main") {
+        window
+            .set_badge_count(count)
+            .map_err(|e| format!("set_badge_count failed: {e}"))?;
+    }
+    Ok(())
+}
+
 #[tauri::command]
 fn runtime_status(state: State<'_, RuntimeState>) -> Option<RuntimeStatus> {
     let alive = {
@@ -723,11 +737,16 @@ pub fn run() {
         }))
         .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_opener::init())
+        // #82: run completion notifications. The plugin handles the macOS
+        // permission flow; the JS side fires notify() on run end and badge
+        // state via the runtime_request bridge stays untouched.
+        .plugin(tauri_plugin_notification::init())
         .manage(RuntimeState::default())
         .invoke_handler(tauri::generate_handler![
             runtime_start,
             runtime_stop,
             runtime_status,
+            set_dock_badge,
             runtime_request,
             runtime_request_stream,
             shell_open
