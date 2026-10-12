@@ -125,18 +125,31 @@ describe("skill picker (M3a)", () => {
   });
 });
 
-// M3b (#52) storyboard S-3: the run-end board refresh. The package's load
-// effect latches per workflowId (a same-id board never re-fetches), so the
-// desktop lever is a remount key — refreshBoard() bumps it. The pins:
-// the refresh is registered (the ref route) and CanvasView exposes it.
-describe("run-end board refresh (M3b)", () => {
-  it("registers the refresh callback and keys the canvas remount", async () => {
-    const { api } = await import("../api");
-    vi.mocked(api).mockResolvedValue({ skills: [] });
-    // CanvasView mounts inside WorkbenchPage; the registration route is
-    // onBoardRefresh -> refreshBoardRef. The SSR render pins the prop
-    // contract; the behavioral firing (send -> refresh) is pinned by the
-    // runtime drill in #52's acceptance.
+// M3c (#52): the picker dropdown carries the v0.3 freedom shape —
+// pinned/parameterized/free counts and zone allowances per skill.
+describe("skill picker freedom summary (M3c)", () => {
+  it("mounts the picker with skeleton-carrying skills in the feed shape", () => {
+    // The freedom description is a Select option field (rendered in the open
+    // dropdown only) — the pin here is the feed contract: rows may carry a
+    // skeleton summary, plain skills carry null, and the SSR surface mounts
+    // the same picker the M3a test pins. Runtime summary shape is pinned by
+    // SkillDetailRouteTests (freedom counts, zones) on the real store path.
+    vi.mocked(api).mockResolvedValueOnce({
+      skills: [
+        {
+          skill_id: "skilyst/skeleton-demo",
+          title: "skeleton contract demo",
+          version: "1.0.0",
+          degraded: false,
+          skeleton: {
+            nodes: 2,
+            freedoms: { pinned: 1, parameterized: 1, free: 0 },
+            free_zones: [{ name: "transitions", max_nodes: 2 }],
+          },
+        },
+        { skill_id: "skilyst/doctor", title: "Doctor", version: "1.0.0", degraded: false, skeleton: null },
+      ],
+    });
     const html = renderToString(
       <MantineProvider>
         <WorkbenchPage

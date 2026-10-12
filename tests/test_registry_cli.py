@@ -130,6 +130,15 @@ class PriceDisplayTests(unittest.TestCase):
         self.assertEqual(_display_price(2000000), "$2.00")
         self.assertEqual(_display_price(10000), "$0.01")
 
+    def test_price_to_micro_round_trip(self):
+        # E2E 2026-10-10 caught the unit mismatch: --price 2 (USD) went over
+        # the wire as the raw int 2 (µUSD) and rendered back as $0.00.
+        from cli import _display_price, _price_to_micro
+        self.assertEqual(_price_to_micro(2), 2_000_000)
+        self.assertEqual(_price_to_micro(0), 0)
+        self.assertEqual(_price_to_micro("1.5"), 1_500_000)
+        self.assertEqual(_display_price(_price_to_micro(2)), "$2.00")
+
 
 class LifecycleCommandTests(unittest.TestCase):
     """#56 second half: publish / fork / clone against the #723 contract."""
