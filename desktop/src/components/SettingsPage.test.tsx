@@ -11,6 +11,18 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("../api", () => ({
   api: vi.fn(),
 }));
+// #99 billing card: the ledger fetchers are mocked — the pins are about the
+// CARD (structure + states), not the network (beehiveClient has its own file).
+vi.mock("../beehiveClient", () => ({
+  getBillingHistory: vi.fn().mockResolvedValue({
+    events: [
+      { event_id: 1, event_type: "settle", amount: -12500, job_id: "job-9", created_at: "2026-10-13T10:00:00Z" },
+      { event_id: 2, event_type: "topup", amount: 2_000_000, created_at: "2026-10-12T09:00:00Z" },
+    ],
+    total: 2,
+  }),
+  getWalletBalance: vi.fn().mockResolvedValue(1.875),
+}));
 
 import SettingsPage from "./SettingsPage";
 import type { AuthStatus } from "./LoginScreen";
@@ -77,5 +89,22 @@ describe("SettingsPage account card", () => {
     const html = view(baseAuth);
     expect(html).toContain("dry run");
     expect(html).toContain("--live");
+  });
+
+  // #99: the billing card exists in the settings surface (structure pin —
+  // the data path is a happy-dom concern below).
+  it("renders the billing card section with a refresh action", () => {
+    const html = view(baseAuth);
+    expect(html).toContain("Billing");
+    expect(html).toContain("billing-refresh");
+    expect(html).toContain("Loading billing");
+  });
+
+  it("unauthenticated stays out of the billing fetch (no dev-mode noise)", () => {
+    // authStatus null -> the loader effect never fires; the card shows the
+    // loading state (never an error) — dev mode is not a billing failure.
+    const html = view({ state: "unauthenticated", authenticated: false });
+    expect(html).toContain("Loading billing");
+    expect(html).not.toContain("Could not load the billing ledger");
   });
 });

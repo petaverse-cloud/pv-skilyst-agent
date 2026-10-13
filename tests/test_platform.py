@@ -20,6 +20,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from beehive import (BeehiveClient, BeehiveError, DEFAULT_SCOPE, FORBIDDEN_SCOPES, RestrictedToken,  # noqa: E402
                      ScopeRefusal, artifact_url, client_from_bearer, job_handle, verify_artifact)
+from beehive.scope import DESKTOP_PROXY_SCOPE  # noqa: E402
 from config import ConfigError, read_env_file, resolve                                     # noqa: E402
 from llm import ChatClient, LLMConfig, LLMError, ModelRouter                                # noqa: E402
 
@@ -59,10 +60,34 @@ class ScopeTests(unittest.TestCase):
         token = RestrictedToken("ak", "sk")
         for method in ("GET", "POST", "PUT", "DELETE"):
             for path in ("/api/v1/admin/users", "/api/v1/billing/wallet",
-                         "/api/v1/billing/history", "/api/v1/auth/api-keys"):
+                         "/api/v1/auth/api-keys"):
                 allowed, why = token.allows(method, path)
                 self.assertFalse(allowed, f"{method} {path}")
                 self.assertIn("never granted", why)
+            # #99: the billing ledger READS are no longer prefix-denied for
+            # skill tokens — they fall through to the scope check instead,
+            # which refuses because DEFAULT_SCOPE carries no billing:read.
+            # The refusal is different in wording, same in effect.
+            allowed, _ = token.allows(method, "/api/v1/billing/history")
+            self.assertFalse(allowed, f"{method} /api/v1/billing/history")
+
+    def test_trusted_proxy_reads_the_billing_ledger_but_not_wallet_writes(self):
+        # #99: the desktop proxy (trusted token, billing:read) may GET the
+        # wallet balance, the history, and per-job cost — but the wallet
+        # WRITE family (topup, grant) and api-key management stay refused
+        # for everyone (money red line D3 + #99 ruling B pending).
+        token = RestrictedToken("ak", "sk", scope=DESKTOP_PROXY_SCOPE, trusted=True)
+        for path in ("/api/v1/billing/wallet", "/api/v1/billing/history",
+                     "/api/v1/billing/history?limit=20",
+                     "/api/v1/billing/jobs/job-42"):
+            allowed, why = token.allows("GET", path)
+            self.assertTrue(allowed, f"GET {path}: {why}")
+        for method in ("POST", "PUT", "DELETE"):
+            for path in ("/api/v1/billing/wallet/topup",
+                         "/api/v1/billing/wallet/usr-1/grant",
+                         "/api/v1/auth/api-keys"):
+                allowed, why = token.allows(method, path)
+                self.assertFalse(allowed, f"{method} {path}")
 
     def test_unlisted_routes_are_refused_rather_than_allowed(self):
         token = RestrictedToken("ak", "sk")

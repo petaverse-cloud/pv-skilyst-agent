@@ -338,6 +338,10 @@ class RuntimeAPI:
         ("workflows",        "GET", "/api/v1/workflows"),           # list (+limit/offset fwd)
         ("workflows/{}",     "GET", "/api/v1/workflows/{}"),        # detail
         ("billing/wallet",   "GET", "/api/v1/billing/wallet"),      # quote-UX balance
+        # #99 billing face: the ledger views — history (paged) and per-job
+        # cost detail. Read-only, same trusted-token carve-out as the wallet.
+        ("billing/history",  "GET", "/api/v1/billing/history"),
+        ("billing/jobs/",    "GET", "/api/v1/billing/jobs/"),
         # #81 asset upload: read-back paths (list + detail) so the Composer
         # can show what the user uploaded; the upload itself is the dedicated
         # POST route below (multipart does not fit the GET table).

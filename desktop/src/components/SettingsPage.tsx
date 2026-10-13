@@ -15,7 +15,26 @@ import {
 import { IconRefresh } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
 import { api, type DoctorReport, type RedactedConfig, type RuntimeInfo } from "../api";
+import {
+  getBillingHistory,
+  getWalletBalance,
+  type BillingEvent,
+} from "../beehiveClient";
 import type { AuthStatus } from "./LoginScreen";
+
+/** #99: core amounts are micro-USD integers — display at the edge, only here. */
+function formatMicroUsd(micro: number): string {
+  const usd = micro / 1_000_000;
+  return `${usd < 0 ? "-" : "+"}$${Math.abs(usd).toFixed(4)}`;
+}
+
+/** Ledger timestamps render as locale dates; the zero-value 0001-01-01
+ *  sentinel (core's unset) renders as "—" instead of a nonsense year. */
+function formatLedgerTime(iso: string): string {
+  if (!iso || iso.startsWith("0001-")) return "—";
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? iso : d.toLocaleString();
+}
 
 /**
  * Settings (phase 1): show what the runtime actually resolved, and let the operator
@@ -55,6 +74,26 @@ export default function SettingsPage({
   const [doctor, setDoctor] = useState<DoctorReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  // #99 billing ledger: read-only wallet + history.
+  const [billing, setBilling] = useState<{ events: BillingEvent[]; total: number } | null>(null);
+  const [billingError, setBillingError] = useState<string | null>(null);
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
+
+  const reloadBilling = useCallback(async () => {
+    setBillingError(null);
+    setBilling(null);
+    try {
+      const [history, balance] = await Promise.all([
+        getBillingHistory(20, 0),
+        getWalletBalance().catch(() => null),
+      ]);
+      setBilling(history);
+      setWalletBalance(balance);
+    } catch (err) {
+      setBilling(null);
+      setBillingError(err instanceof Error ? err.message : String(err));
+    }
+  }, []);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -72,6 +111,12 @@ export default function SettingsPage({
       setLoading(false);
     }
   }, []);
+
+  // The billing face needs an authenticated proxy; in dev mode (no account)
+  // it stays in the not-loaded state rather than erroring per render.
+  useEffect(() => {
+    if (authStatus?.authenticated) void reloadBilling();
+  }, [authStatus?.authenticated, reloadBilling]);
 
   useEffect(() => {
     if (info) void refresh();
@@ -170,6 +215,74 @@ export default function SettingsPage({
               ? "Running in dev mode: requests stay local, no platform account is signed in."
               : "No account is signed in. The app gate should be showing the sign-in screen."}
           </Text>
+        )}
+      </Card>
+
+      {/* ── Billing (#99): the ledger read face — wallet balance + history.
+          Read-only by design; the top-up flow waits on the money ruling. ── */}
+      <Card withBorder>
+        <Group justify="space-between" mb="xs">
+          <Title order={5}>Billing</Title>
+          <Button
+            size="xs"
+            variant="subtle"
+            leftSection={<IconRefresh size={14} />}
+            onClick={() => void reloadBilling()}
+            data-testid="billing-refresh"
+          >
+            Refresh
+          </Button>
+        </Group>
+        {billingError ? (
+          <Alert color="red" title="Could not load the billing ledger">
+            {billingError}
+          </Alert>
+        ) : billing === null ? (
+          <Text size="sm" c="dimmed" data-testid="billing-loading">
+            Loading billing…
+          </Text>
+        ) : (
+          <Stack gap={4}>
+            <Group gap="xs">
+              <Text size="sm" fw={600}>Balance</Text>
+              <Text size="sm" c="teal" data-testid="billing-balance">
+                ${(walletBalance ?? 0).toFixed(2)}
+              </Text>
+            </Group>
+            {billing.events.length === 0 ? (
+              <Text size="sm" c="dimmed" py="xs" data-testid="billing-empty">
+                No billing events yet — runs and top-ups will appear here.
+              </Text>
+            ) : (
+              <Table variant="vertical" withRowBorders={false} fz="sm">
+                <Table.Tbody>
+                  {billing.events.slice(0, 8).map((e) => (
+                    <Table.Tr key={e.event_id}>
+                      <Table.Td w={110}>
+                        <Badge size="xs" variant="light" color={e.amount < 0 ? "grape" : "teal"}>
+                          {e.event_type}
+                        </Badge>
+                      </Table.Td>
+                      <Table.Td>
+                        <Text size="xs" c="dimmed">
+                          {formatMicroUsd(e.amount)}
+                          {e.job_id ? ` · ${e.job_id}` : ""}
+                        </Text>
+                      </Table.Td>
+                      <Table.Td w={170}>
+                        <Text size="xs" c="dimmed">{formatLedgerTime(e.created_at)}</Text>
+                      </Table.Td>
+                    </Table.Tr>
+                  ))}
+                </Table.Tbody>
+              </Table>
+            )}
+            {billing.total > billing.events.length ? (
+              <Text size="xs" c="dimmed">
+                Showing the latest {billing.events.length} of {billing.total} events.
+              </Text>
+            ) : null}
+          </Stack>
         )}
       </Card>
 
