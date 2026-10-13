@@ -33,7 +33,12 @@ DEFAULT_SCOPE = ("jobs:write", "jobs:read", "assets:read", "workflows:read", "wo
 # skills:read (core#714, registry read API): the works-wall skill dimension
 # (#54) and the M3a picker's cloud side browse the registry through the
 # desktop proxy — read-only, same preset the AgentScopes login grants.
-DESKTOP_PROXY_SCOPE = DEFAULT_SCOPE + ("billing:read", "skills:read", "assets:write")
+# auth:self (#99 profile face): account self-service — password change +
+# OAuth connection management. The core AgentScopes preset does not carry
+# this scope yet (client-side only until the preset catches up); the
+# server side authorizes these routes to ANY authenticated AK/SK caller,
+# so the desktop gate is the enforcing layer for skill tokens.
+DESKTOP_PROXY_SCOPE = DEFAULT_SCOPE + ("billing:read", "skills:read", "assets:write", "auth:self")
 
 # Scopes that must never be handed to skill-facing code, whatever the caller asks.
 FORBIDDEN_SCOPES = ("billing:write", "billing:read", "admin:read", "admin:write")
@@ -86,6 +91,14 @@ SCOPE_RULES = [
     # (skill) scope still refuses via the scope check below.
     ("GET", "/api/v1/billing/history", "billing:read"),
     ("GET", "/api/v1/billing/jobs/", "billing:read"),
+    # #99 profile face: account self-service — password change and OAuth
+    # connection management. Authenticated self-service, not a skill
+    # capability: the DESKTOP_PROXY preset grants it via the new
+    # auth:self scope (core preset pending — see the trusted-gate note);
+    # skill tokens (DEFAULT_SCOPE) never see these routes.
+    ("PUT", "/api/v1/auth/password", "auth:self"),
+    ("GET", "/api/v1/auth/oauth/connections", "auth:self"),
+    ("POST", "/api/v1/auth/oauth/", "auth:self"),
     ("POST", "/api/v1/workflows", "workflows:write"),
     ("PUT", "/api/v1/workflows", "workflows:write"),
     ("DELETE", "/api/v1/workflows", "workflows:write"),

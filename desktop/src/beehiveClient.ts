@@ -128,6 +128,37 @@ export async function getJobBilling(jobId: string): Promise<JobBilling> {
   return api<JobBilling>(`/beehive/billing/jobs/${encodeURIComponent(jobId)}`);
 }
 
+// -- Profile: account self-service (#99 face 4) ------------------------------
+// Password change + OAuth connection management. Bind (the browser relay)
+// stays a web-console action; the desktop shows what is bound and unbinds.
+
+export interface OAuthConnection {
+  provider: string;
+  email?: string;
+  created_at?: string;
+}
+
+export async function getOAuthConnections(): Promise<OAuthConnection[]> {
+  const data = await api<{ connections?: OAuthConnection[] }>(
+    "/beehive/auth/oauth/connections",
+  );
+  return data?.connections ?? [];
+}
+
+export async function changePassword(oldPassword: string, newPassword: string): Promise<void> {
+  await api<void>("/beehive/auth/password", {
+    method: "PUT",
+    body: JSON.stringify({ old_password: oldPassword, new_password: newPassword }),
+  });
+}
+
+export async function unbindOAuth(provider: string): Promise<void> {
+  await api<void>(`/beehive/auth/oauth/${encodeURIComponent(provider)}/unbind`, {
+    method: "POST",
+    body: "{}",
+  });
+}
+
 // -- Skills registry (#54, core#714) ---------------------------------------
 // The works-wall skill dimension: list the published/owned skills with
 // their materialization snapshots. Field mapping is isolated HERE (the
