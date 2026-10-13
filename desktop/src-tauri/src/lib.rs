@@ -558,6 +558,90 @@ fn handle_deep_link(app: &AppHandle, url: &tauri::Url) {
 
 /// `None` means "not connected"; a runtime whose process has exited is reported as
 /// gone rather than as a stale port the frontend would keep talking to.
+/// #84: export an artifact to disk. The URL is the CDN link the session
+/// transcript already carries (public, no credential); the shell adds the
+/// two pieces the webview must never do: the save panel and the actual
+/// bytes-to-disk stream. https-only — anything else is refused loudly
+/// (file:// and friends stay out of shell-reachable surfaces).
+/// The export gate, split out so the security-relevant refusal is unit-
+/// testable without a save panel: https-only, sanitized filename, never
+/// empty. Returns (url-is-allowed, sanitized-name).
+fn export_gate(url: &str, suggested_name: &str) -> Result<String, String> {
+    let parsed = tauri::Url::parse(url).map_err(|e| format!("invalid artifact url: {e}"))?;
+    if parsed.scheme() != "https" {
+        return Err(format!("refusing non-https artifact url: {}", parsed.scheme()));
+    }
+    let safe_name: String = suggested_name
+        .chars()
+        .map(|c| if c.is_ascii_alphanumeric() || c == '.' || c == '-' || c == '_' { c } else { '_' })
+        .collect();
+    if safe_name.is_empty() {
+        return Err("empty artifact name".into());
+    }
+    Ok(safe_name)
+}
+
+#[tauri::command]
+async fn save_artifact(
+    app: tauri::AppHandle,
+    url: String,
+    suggested_name: String,
+) -> Result<Option<String>, String> {
+    let safe_name = export_gate(&url, &suggested_name)?;
+    // The save panel (user picks where). Cancel returns None — not an error.
+    let file = rfd::AsyncFileDialog::new()
+        .set_file_name(&safe_name)
+        .set_title("Save artifact")
+        .save_file()
+        .await;
+    let Some(file) = file else {
+        return Ok(None);
+    };
+    let client = reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(300))
+        .build()
+        .map_err(|e| format!("http client build failed: {e}"))?;
+    let response = client
+        .get(&url)
+        .send()
+        .await
+        .map_err(|e| format!("artifact download failed: {e}"))?;
+    if !response.status().is_success() {
+        return Err(format!(
+            "artifact download failed: HTTP {}",
+            response.status().as_u16()
+        ));
+    }
+    let total = response.content_length().unwrap_or(0);
+    let mut file_handle = tokio::fs::File::create(file.path())
+        .await
+        .map_err(|e| format!("could not create file: {e}"))?;
+    use futures_util::StreamExt;
+    let mut stream = response.bytes_stream();
+    let mut written: u64 = 0;
+    use tokio::io::AsyncWriteExt;
+    while let Some(chunk) = stream.next().await {
+        let chunk = chunk.map_err(|e| format!("download stream failed: {e}"))?;
+        file_handle
+            .write_all(&chunk)
+            .await
+            .map_err(|e| format!("disk write failed: {e}"))?;
+        written += chunk.len() as u64;
+        if total > 0 {
+            let _ = tauri::Emitter::emit(
+                &app,
+                "artifact-export-progress",
+                serde_json::json!({ "written": written, "total": total }),
+            );
+        }
+    }
+    file_handle
+        .flush()
+        .await
+        .map_err(|e| format!("disk flush failed: {e}"))?;
+    Ok(Some(file.path().to_string_lossy().into_owned()))
+}
+
 /// #82: dock badge for completed-but-unseen runs. None/0 clears. The count
 /// itself lives in the webview (it knows how many runs finished unseen);
 /// the shell only owns the AppKit surface. macOS-only in effect — on other
@@ -746,6 +830,7 @@ pub fn run() {
             runtime_start,
             runtime_stop,
             runtime_status,
+            save_artifact,
             set_dock_badge,
             runtime_request,
             runtime_request_stream,
@@ -834,6 +919,28 @@ mod tests {
         assert_eq!(info.token, "tok");
         assert_eq!(info.sessions_dir, "/tmp/sessions");
         assert!(info.dry_run);
+    }
+
+    // #84: the export gate — https-only and filename sanitization are
+    // security-relevant refusals, so they get unit pins.
+    #[test]
+    fn export_gate_refuses_non_https() {
+        assert!(export_gate("file:///etc/passwd", "x").unwrap_err().contains("non-https"));
+        assert!(export_gate("http://cdn.example/a.png", "a.png").unwrap_err().contains("non-https"));
+        assert!(export_gate("ftp://host/a", "a").unwrap_err().contains("non-https"));
+    }
+
+    #[test]
+    fn export_gate_sanitizes_the_filename() {
+        assert_eq!(
+            export_gate("https://cdn.example/a.png", "a b/c:d*e").unwrap(),
+            "a_b_c_d_e"
+        );
+    }
+
+    #[test]
+    fn export_gate_refuses_empty_names() {
+        assert!(export_gate("https://cdn.example/a.png", "").unwrap_err().contains("empty"));
     }
 
     #[test]

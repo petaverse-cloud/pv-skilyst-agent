@@ -12,8 +12,10 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { IconArrowDown, IconInfoCircle, IconLock, IconUserEdit, IconExclamationCircle } from "@tabler/icons-react";
-import { useEffect, useRef, useState } from "react";
+import { IconArrowDown, IconInfoCircle, IconLock, IconUserEdit, IconExclamationCircle, IconDownload } from "@tabler/icons-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { invoke } from "@tauri-apps/api/core";
+import { inShell } from "../api";
 import type { SessionDetail, TranscriptMessage } from "../api";
 import { describeActivity, formatElapsed, type StreamState } from "../stream";
 import ActionCard from "./ActionCard";
@@ -123,6 +125,42 @@ export default function ConversationView({
 }) {
   const messages = detail?.messages ?? [];
   const artifacts = detail?.artifacts ?? [];
+  // #84: export state — the busy index disables the OTHER rows too (one
+  // save panel at a time), errors render loudly under the card.
+  const [downloading, setDownloading] = useState<number | null>(null);
+  const [exportError, setExportError] = useState<string | null>(null);
+  const [exportedPath, setExportedPath] = useState<string | null>(null);
+  const exportArtifact = useCallback(
+    async (index: number, artifact: { artifact_url?: string; job_id?: string }) => {
+      setExportError(null);
+      setExportedPath(null);
+      if (!artifact.artifact_url) {
+        setExportError("this artifact carries no url (nothing to download)");
+        return;
+      }
+      setDownloading(index);
+      try {
+        // The command is shell-only by nature (save panel + disk): the
+        // browser dev fallback gets a LOUD, honest refusal — not a silent
+        // no-op and not a raw invoke crash.
+        if (!inShell()) {
+          setExportError("artifact export runs in the desktop app (save panel needs the shell)");
+          return;
+        }
+        const name = artifact.artifact_url.split("/").pop() || `artifact-${artifact.job_id ?? index}`;
+        const saved = await invoke<string | null>("save_artifact", {
+          url: artifact.artifact_url,
+          suggestedName: name,
+        });
+        if (saved) setExportedPath(saved);
+      } catch (error) {
+        setExportError(String((error as Error)?.message ?? error));
+      } finally {
+        setDownloading(null);
+      }
+    },
+    [],
+  );
   const elapsed = useBusySeconds(busy);
 
   const viewport = useRef<HTMLDivElement>(null);
@@ -235,10 +273,36 @@ export default function ConversationView({
                 Artifacts
               </Text>
               {artifacts.map((artifact, index) => (
-                <Anchor key={index} href={artifact.artifact_url} target="_blank" size="xs">
-                  {artifact.artifact_url ?? JSON.stringify(artifact)}
-                </Anchor>
+                <Group key={index} gap="xs" wrap="nowrap">
+                  <Anchor href={artifact.artifact_url} target="_blank" size="xs" style={{ overflowWrap: "anywhere" }}>
+                    {artifact.artifact_url ?? JSON.stringify(artifact)}
+                  </Anchor>
+                  {/* #84: export to disk. The shell owns the save panel and
+                      the download stream; failures render loudly below. */}
+                  <ActionIcon
+                    size="xs"
+                    variant="subtle"
+                    aria-label="download artifact"
+                    data-testid="download-artifact"
+                    title="Save this artifact to disk"
+                    loading={downloading === index}
+                    disabled={downloading !== null && downloading !== index}
+                    onClick={() => void exportArtifact(index, artifact)}
+                  >
+                    <IconDownload size={14} />
+                  </ActionIcon>
+                </Group>
               ))}
+              {exportError ? (
+                <Text size="xs" c="red" mt={4} data-testid="export-error">
+                  {exportError}
+                </Text>
+              ) : null}
+              {exportedPath ? (
+                <Text size="xs" c="teal" mt={4} data-testid="exported-path">
+                  Saved to {exportedPath}
+                </Text>
+              ) : null}
             </Card>
           ) : null}
           <div ref={bottom} />
