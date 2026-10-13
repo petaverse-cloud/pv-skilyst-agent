@@ -39,7 +39,14 @@ export function CanvasView({
   runtimeReady?: boolean;
 }) {
   const host = useMemo(() => desktopHostAdapter(), []);
-  // MaterialPanel (package) rides react-query; readOnly mode never mounts it
+  // MaterialPanel (package) rides react-query. NOTE: the canvas runs in
+  // WRITE mode (readOnly was never passed — the desktop is the web console's
+  // MVP subset, and the studio editor's write path goes through the
+  // runtime's signed /api/v1/* relay, verified end-to-end: POST 201 /
+  // PUT 200 / DELETE 200 against real staging). Concurrency: the agent's
+  // tool sequences wrap lock/unlock (A3-S2); MANUAL edits are unguarded
+  // today — the same as the web console — until core#817 lands the lock
+  // 409, after which the collision UX (held-by notice) follows.
   // but the provider stays up so the whole package surface is usable.
   const queryClient = useMemo(() => new QueryClient(), []);
   // The web-token login stage is retired (#36 unified posture): the app gate
