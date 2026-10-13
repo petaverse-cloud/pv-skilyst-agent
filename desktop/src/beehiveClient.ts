@@ -35,6 +35,48 @@ export async function getWorkflow(id: string): Promise<WorkflowRow> {
 }
 
 /** Quote-confirm wallet check (S4). Returns null when unavailable. */
+/** #91: a creation on the public wall (core#756 publicWorkView — the shared
+ * card contract web#386 pins; the desktop is the MVP subset consumer). */
+export type CreationWork = {
+  id: string;
+  name: string;
+  asset_type: string;
+  mime_type: string;
+  url: string;
+  thumbnail_url?: string;
+  duration?: number;
+  created_at: string;
+};
+
+/** #91: the Creations feed — media-first, newest first. */
+export async function listPublicWorks(limit = 24, offset = 0): Promise<CreationWork[]> {
+  const payload = await api<Record<string, unknown>>(
+    `/beehive/public/works?limit=${limit}&offset=${offset}`);
+  const rows = Array.isArray(payload?.works) ? (payload?.works as Record<string, unknown>[]) : [];
+  // raw rows are the passthrough floor; pinned fields land last so upstream
+  // garbage never overrides the normalized shape (#70's spread-order lesson)
+  return rows.map((row) => ({
+    ...row,
+    id: String(row.id ?? ""),
+    name: String(row.name ?? "untitled"),
+    asset_type: String(row.asset_type ?? "image"),
+    mime_type: String(row.mime_type ?? ""),
+    url: String(row.url ?? ""),
+    thumbnail_url: row.thumbnail_url ? String(row.thumbnail_url) : undefined,
+    duration: typeof row.duration === "number" ? row.duration : undefined,
+    created_at: String(row.created_at ?? ""),
+  }));
+}
+
+/** #91: like = the favorite toggle (core#632/#633 — the existing contract;
+ * a creation-card "like" lands on the asset's favorite surface). */
+export async function setCreationFavorite(id: string, liked: boolean): Promise<void> {
+  await api(liked ? "/beehive/assets/favorite" : "/beehive/assets/unfavorite", {
+    method: "POST",
+    body: { id },
+  });
+}
+
 export async function getWalletBalance(): Promise<number | null> {
   const data = await api<{ balance_usd?: number; balance?: number } | number>(
     "/beehive/billing/wallet",

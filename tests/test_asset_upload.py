@@ -141,3 +141,45 @@ class AssetUploadRouteTests(EnvIsolation):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FavoriteToggleTests(EnvIsolation):
+    """#91: the like toggle rides the favorite contract (core#632/#633)."""
+
+    def setUp(self):
+        super().setUp()
+        import beehive.client as bc
+        self.transport_calls = []
+
+        def fake_transport(method, url, headers, data, timeout):
+            self.transport_calls.append((method, url))
+            return 200, json.dumps({"code": 0, "payload": {"ok": True}})
+
+        self._real = bc._urllib_transport
+        bc._urllib_transport = fake_transport
+        self.addCleanup(setattr, bc, "_urllib_transport", self._real)
+        from test_serve import ServeFixture as SF
+        self.fx = SF()
+        self.addCleanup(self.fx.cleanup)
+
+    def test_favorite_post_goes_to_the_assets_favorite_route(self):
+        status, _h, body = self.fx.request(
+            "POST", "/beehive/assets/favorite", body={"id": "asset-x1"})
+        self.assertEqual(status, 200)
+        method, url = self.transport_calls[-1]
+        self.assertEqual(method, "POST")
+        self.assertIn("/api/v1/assets/asset-x1/favorite", url)
+
+    def test_unfavorite_uses_delete_on_the_same_route(self):
+        status, _h, body = self.fx.request(
+            "POST", "/beehive/assets/unfavorite", body={"id": "asset-x1"})
+        self.assertEqual(status, 200)
+        method, url = self.transport_calls[-1]
+        self.assertEqual(method, "DELETE")
+        self.assertIn("/api/v1/assets/asset-x1/favorite", url)
+
+    def test_favorite_without_id_is_a_loud_400(self):
+        status, _h, body = self.fx.request(
+            "POST", "/beehive/assets/favorite", body={})
+        self.assertEqual(status, 400)
+        self.assertIn("id is required", body["error"]["message"])

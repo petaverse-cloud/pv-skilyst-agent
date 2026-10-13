@@ -58,9 +58,17 @@ SCOPE_RULES = [
     # Composer attachments, never skill-driven (the canvas tools add pool
     # entries by URL — they do not upload).
     ("POST", "/api/v1/assets", "assets:write"),
+    # #91: the like toggle — favorite rides the asset write surface.
+    ("POST", "/api/v1/assets/", "assets:write"),
+    ("DELETE", "/api/v1/assets/", "assets:write"),
     ("GET", "/api/v1/nodes", "jobs:read"),
     ("POST", "/api/v1/billing/quote", "jobs:write"),
     ("GET", "/api/v1/skills", "skills:read"),
+    # #91 Creations feed: the anonymous wall route — core#756 mounts it on
+    # the ROOT mux outside /api/v1 (Wesley's one-unauthenticated-permission
+    # ruling). Reached through the desktop proxy WITH the user credential:
+    # the runtime never sends unauthenticated egress.
+    ("GET", "/public/works", "skills:read"),
     # core#714 registry: list/detail/fork-tree under /skills (startswith
     # matching covers /{id} and sub-routes like the workflows family).
     ("GET", "/api/v1/workflows", "workflows:read"),

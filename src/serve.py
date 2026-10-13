@@ -343,6 +343,13 @@ class RuntimeAPI:
         # POST route below (multipart does not fit the GET table).
         ("assets",           "GET", "/api/v1/assets"),
         ("assets/{}",        "GET", "/api/v1/assets/{}"),
+        # #91 Creations feed: the public wall. core#756 mounts this on the
+        # ROOT mux, deliberately OUTSIDE /api/v1's auth chain (verified
+        # against staging: /api/v1/public/works -> 404, /public/works -> 200;
+        # the openapi.yaml /api/v1 spelling is a doc drift). The proxy signs
+        # it with the user credential anyway — one posture, no
+        # unauthenticated egress from the runtime.
+        ("public/works",     "GET", "/public/works"),
         # #54 skills registry (core#714): list/detail/versions/fork-tree.
         ("skills",           "GET", "/api/v1/skills"),
         ("skills/{}",        "GET", "/api/v1/skills/{}"),
@@ -461,6 +468,27 @@ class RuntimeAPI:
         if isinstance(body, dict) and "payload" in body and "code" in body:
             return body["payload"]
         return body if isinstance(body, dict) else {"payload": body}
+
+    def beehive_favorite(self, asset_id: str, liked: bool) -> dict:
+        """#91: like/un-like a creation. Rides the asset favorite contract
+        (core#632/#633): POST /assets/{id}/favorite to like, DELETE for the
+        idempotent un-like. Loud refusals only."""
+        from beehive.client import BeehiveClient
+        from beehive.scope import RestrictedToken, DESKTOP_PROXY_SCOPE
+        asset_id = (asset_id or "").strip()
+        if not asset_id:
+            raise BadRequest("id is required")
+        cfg = self._resolve(llm=False, beehive=True)
+        if not cfg.beehive.has_api_key:
+            raise Unauthorised("sign in to like a creation (no platform credential)")
+        tok = RestrictedToken(access_key=cfg.beehive.access_key,
+                              secret_key=cfg.beehive.secret_key,
+                              account=cfg.beehive.user or cfg.beehive.uid,
+                              scope=DESKTOP_PROXY_SCOPE, trusted=True)
+        client = BeehiveClient(base_url=cfg.beehive.base_url, token=tok, timeout=30)
+        method = "POST" if liked else "DELETE"
+        route = f"/api/v1/assets/{urllib.parse.quote(asset_id, safe='')}/favorite"
+        return client._payload(method, route, body={}, ok=(200, 201))
 
     def _beehive_get(self, upstream_path: str, params: dict) -> dict:
         """One signed GET against the beehive API using the resolved platform
@@ -1023,6 +1051,12 @@ def make_handler(api: RuntimeAPI, token: str, allowed_origins: tuple[str, ...],
                     self._ok(api.auth_logout())
                 elif path == "/auth/refresh":
                     self._ok(api.auth_refresh())
+                elif path in ("/beehive/assets/favorite", "/beehive/assets/unfavorite"):
+                    # #91: the like toggle rides the favorite contract —
+                    # POST /assets/{id}/favorite to like, DELETE to un-like.
+                    body = self._parse_json(raw)
+                    liked = path.endswith("/favorite")
+                    self._ok(api.beehive_favorite(str(body.get("id") or ""), liked))
                 elif path == "/beehive/assets/upload":
                     # #81: webview hands over {filename, mime_type, data_b64,
                     # name, tags}; runtime assembles + signs the multipart.

@@ -26,7 +26,8 @@ import {
 import { IconArrowRight, IconMessage, IconSparkles } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
 import type { SessionRow } from "../api";
-import { listWorkflows, listSkills, type WorkflowRow, type SkillCardData } from "../beehiveClient";
+import { listWorkflows, listSkills, listPublicWorks, type WorkflowRow, type SkillCardData, type CreationWork } from "../beehiveClient";
+import { CreationCard } from "./CreationCard";
 import { sessionsFor, type WorkflowSessions } from "../workflowRegistry";
 import { navigate } from "../router";
 
@@ -231,6 +232,10 @@ export default function HomePage({
   // (a fresh login walks the new AgentScopes preset), this answers 403 and
   // the section degrades to the notice below — loud, not broken.
   const [skills, setSkills] = useState<SkillCardData[] | null>(null);
+  // #91: the Creations feed — the public wall through the runtime proxy.
+  // This is Home's FIRST-LEVEL content (web#386: app = web's MVP subset).
+  const [creations, setCreations] = useState<CreationWork[] | null>(null);
+  const [creationsError, setCreationsError] = useState<string | null>(null);
   const [skillsNotice, setSkillsNotice] = useState<string | null>(null);
 
   const loadSkills = useCallback(async () => {
@@ -262,6 +267,17 @@ export default function HomePage({
     }
   }, []);
 
+  const loadCreations = useCallback(async () => {
+    setCreationsError(null);
+    setCreations(null);
+    try {
+      setCreations(await listPublicWorks(24, 0));
+    } catch (exc) {
+      setCreationsError(exc instanceof Error ? exc.message : String(exc));
+      setCreations([]);
+    }
+  }, []);
+
   useEffect(() => {
     // Re-run when the runtime connects: on a cold start HomePage mounts
     // before startRuntime() finishes, and api() would fail its first
@@ -269,7 +285,8 @@ export default function HomePage({
     // stayed dead even though the runtime was perfectly healthy.
     void loadWorkflows();
     void loadSkills();
-  }, [loadWorkflows, loadSkills, runtimeConnected]);
+    void loadCreations();
+  }, [loadWorkflows, loadSkills, loadCreations, runtimeConnected]);
 
   const artifactCount = sessions.reduce((sum, s) => sum + (s.artifacts ?? 0), 0);
   const agentCount = (workflows ?? []).filter((w) => w.created_via === "agent").length;
@@ -322,6 +339,53 @@ export default function HomePage({
             </Button>
           </Group>
         </Stack>
+      </Box>
+
+      {/* ── Creations feed (#91: Home = the PUBLIC wall, web#386/#388 plan-A
+          alignment). Masonry: cards keep their media's native aspect —
+          no cropping, no letterboxing — flowing into 2-4 columns by
+          window width (same column-flow idea as the web console's
+          pinterest layout; CSS columns is the MVP-subset vehicle). ── */}
+      <Box px="xl" py="lg">
+        <Group justify="space-between" mb="sm">
+          <div>
+            <Title order={4}>Creations</Title>
+            <Text size="xs" c="dimmed">
+              The public wall — published creations, newest first
+            </Text>
+          </div>
+        </Group>
+        {creationsError ? (
+          <Alert color="red" title="Could not load the creations feed">
+            {creationsError}
+          </Alert>
+        ) : creations === null ? (
+          <Group gap="sm" py="xl" justify="center">
+            <Loader size="sm" />
+            <Text size="sm" c="dimmed">Loading creations…</Text>
+          </Group>
+        ) : creations.length === 0 ? (
+          <Text size="sm" c="dimmed" py="md" ta="center">
+            No published creations on the wall yet.
+          </Text>
+        ) : (
+          <Box
+            className="creations-masonry"
+            style={{
+              columns: "3 320px",
+              columnGap: "var(--mantine-spacing-md)",
+            }}
+          >
+            {creations.map((work) => (
+              <Box
+                key={work.id}
+                style={{ breakInside: "avoid", marginBottom: "var(--mantine-spacing-md)" }}
+              >
+                <CreationCard work={work} />
+              </Box>
+            ))}
+          </Box>
+        )}
       </Box>
 
       {/* ── Works wall ── */}
