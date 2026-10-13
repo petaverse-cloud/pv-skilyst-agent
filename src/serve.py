@@ -343,10 +343,13 @@ class RuntimeAPI:
         # POST route below (multipart does not fit the GET table).
         ("assets",           "GET", "/api/v1/assets"),
         ("assets/{}",        "GET", "/api/v1/assets/{}"),
-        # #91 Creations feed: the public wall (anonymous route upstream; the
-        # proxy signs it with the user credential — one posture, no
-        # unauthenticated egress from the runtime).
-        ("public/works",     "GET", "/api/v1/public/works"),
+        # #91 Creations feed: the public wall. core#756 mounts this on the
+        # ROOT mux, deliberately OUTSIDE /api/v1's auth chain (verified
+        # against staging: /api/v1/public/works -> 404, /public/works -> 200;
+        # the openapi.yaml /api/v1 spelling is a doc drift). The proxy signs
+        # it with the user credential anyway — one posture, no
+        # unauthenticated egress from the runtime.
+        ("public/works",     "GET", "/public/works"),
         # #54 skills registry (core#714): list/detail/versions/fork-tree.
         ("skills",           "GET", "/api/v1/skills"),
         ("skills/{}",        "GET", "/api/v1/skills/{}"),

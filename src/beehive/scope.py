@@ -64,11 +64,11 @@ SCOPE_RULES = [
     ("GET", "/api/v1/nodes", "jobs:read"),
     ("POST", "/api/v1/billing/quote", "jobs:write"),
     ("GET", "/api/v1/skills", "skills:read"),
-    # #91 Creations feed: the anonymous wall route, reached through the
-    # desktop proxy WITH the user credential (the server accepts both
-    # shapes; the proxy never sends an unauthenticated request because its
-    # whole posture is the signed user data plane).
-    ("GET", "/api/v1/public/works", "skills:read"),
+    # #91 Creations feed: the anonymous wall route — core#756 mounts it on
+    # the ROOT mux outside /api/v1 (Wesley's one-unauthenticated-permission
+    # ruling). Reached through the desktop proxy WITH the user credential:
+    # the runtime never sends unauthenticated egress.
+    ("GET", "/public/works", "skills:read"),
     # core#714 registry: list/detail/fork-tree under /skills (startswith
     # matching covers /{id} and sub-routes like the workflows family).
     ("GET", "/api/v1/workflows", "workflows:read"),
@@ -76,11 +76,11 @@ SCOPE_RULES = [
     # Read-only, no write surface — publish/fork writes are #56's second half,
     # gated on core's P2 lifecycle API (#704).
     ("GET", "/api/v1/skills", "skills:read"),
-    # #91 Creations feed: the anonymous wall route, reached through the
-    # desktop proxy WITH the user credential (the server accepts both
-    # shapes; the proxy never sends an unauthenticated request because its
-    # whole posture is the signed user data plane).
-    ("GET", "/api/v1/public/works", "skills:read"),
+    # #91 Creations feed: the anonymous wall route — core#756 mounts it on
+    # the ROOT mux outside /api/v1 (Wesley's one-unauthenticated-permission
+    # ruling). Reached through the desktop proxy WITH the user credential:
+    # the runtime never sends unauthenticated egress.
+    ("GET", "/public/works", "skills:read"),
     # Wallet display for the desktop quote card (#36 proxy, core#684):
     # read-only, granted only to DESKTOP_PROXY_SCOPE holders — skills keep
     # the DENIED_PREFIXES wall below.
