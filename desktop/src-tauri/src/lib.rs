@@ -543,6 +543,18 @@ pub fn bootstrap_dev_url_scheme() {
 /// the token and the HTTP client), so the code is forwarded as an event the
 /// login screen turns into POST /auth/deliver-code.
 fn handle_deep_link(app: &AppHandle, url: &tauri::Url) {
+    // #83: skilyst://workflow?edit=<id> — the "open this board" handoff
+    // (web console "open in app", Recent links). The id is a public
+    // workflow uid, not a credential — it routes the webview and is safe
+    // to log.
+    if let Some(id) = workflow_id_from_url(url) {
+        if let Err(exc) = app.emit("open-workflow", serde_json::json!({ "id": id })) {
+            eprintln!("[deep-link] could not deliver the workflow id to the window: {exc}");
+        } else {
+            eprintln!("[deep-link] workflow link received, routing to board {id}");
+        }
+        return;
+    }
     let Some(code) = code_from_url(url) else {
         eprintln!("[deep-link] not a sign-in callback (ignored): {url}");
         return;
@@ -554,6 +566,25 @@ fn handle_deep_link(app: &AppHandle, url: &tauri::Url) {
         // credential, so it must never appear in logs or any committed output.
         eprintln!("[deep-link] sign-in callback received, code delivered to the window");
     }
+}
+
+/// #83: extract the workflow id from `skilyst://workflow?edit=<id>` (and the
+/// petaverse.skilyst:// production spelling). The id must be a single
+/// URL-safe path segment — anything else is refused loudly (no traversal
+/// into other routes, no empty ids).
+fn workflow_id_from_url(url: &tauri::Url) -> Option<String> {
+    if url.host_str() != Some("workflow") {
+        return None;
+    }
+    let id = url
+        .query_pairs()
+        .find(|(key, _)| key == "edit")
+        .map(|(_, value)| value.to_string())?;
+    if id.is_empty() || id.contains('/') || id.contains('\\') {
+        eprintln!("[deep-link] refusing malformed workflow id: {id:?}");
+        return None;
+    }
+    Some(id)
 }
 
 /// `None` means "not connected"; a runtime whose process has exited is reported as
@@ -922,6 +953,32 @@ mod tests {
     #[test]
     fn export_gate_refuses_empty_names() {
         assert!(export_gate("https://cdn.example/a.png", "").unwrap_err().contains("empty"));
+    }
+
+    // #83: the workflow deep-link parser — happy path, wrong host, and the
+    // malformed-id refusal.
+    #[test]
+    fn workflow_links_parse() {
+        let url = tauri::Url::parse("skilyst://workflow?edit=wf_123").unwrap();
+        assert_eq!(workflow_id_from_url(&url).as_deref(), Some("wf_123"));
+        let prod = tauri::Url::parse("petaverse.skilyst://workflow?edit=abc").unwrap();
+        assert_eq!(workflow_id_from_url(&prod).as_deref(), Some("abc"));
+    }
+
+    #[test]
+    fn non_workflow_links_are_not_workflow_opens() {
+        let cb = tauri::Url::parse("skilyst://callback?code=x").unwrap();
+        assert_eq!(workflow_id_from_url(&cb), None);
+        let foreign = tauri::Url::parse("https://bee.verse4.pet/workflow?edit=x").unwrap();
+        assert_eq!(workflow_id_from_url(&foreign), None);
+    }
+
+    #[test]
+    fn malformed_workflow_ids_are_refused() {
+        let slash = tauri::Url::parse("skilyst://workflow?edit=a/b").unwrap();
+        assert_eq!(workflow_id_from_url(&slash), None);
+        let back = tauri::Url::parse("skilyst://workflow?edit=a\\b").unwrap();
+        assert_eq!(workflow_id_from_url(&back), None);
     }
 
     #[test]
