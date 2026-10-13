@@ -282,7 +282,7 @@ def build_registry(store: SkillStore, client: BeehiveClient | None, active: Skil
             def skeleton_gate(nodes, _pkg=active):
                 return check_skeleton(_pkg, {"nodes": nodes})
         _register_canvas_tools(registry, client, session_id, events, on_action, paid_confirm,
-                               skeleton_gate=skeleton_gate)
+                               skeleton_gate=skeleton_gate, dry_run=dry_run)
 
     # -- platform tools (only with an active skill that declares them) -------
     if active is None or client is None:
@@ -584,7 +584,7 @@ def _register_canvas_tools(registry: ToolRegistry, client, session_id: str,
                            events: Callable[[str], None],
                            on_action: Callable[[dict], None] | None,
                            paid_confirm: Callable[[dict], bool] | None = None,
-                           skeleton_gate=None) -> None:
+                           skeleton_gate=None, dry_run: bool = False) -> None:
     """Wire the canvas tools (FR-3 + S4 media-pool lifecycle).
 
     Every tool shares one wrapper (`_make`) that provides the R3 action
@@ -599,7 +599,8 @@ def _register_canvas_tools(registry: ToolRegistry, client, session_id: str,
     the quote view and returns True to proceed. A declined/timeout refusal
     raises PaidConfirmDeclined (the model is told; nothing is charged).
     """
-    ops = CanvasOps(client, session_id, paid_confirm=paid_confirm, skeleton_gate=skeleton_gate)
+    ops = CanvasOps(client, session_id, paid_confirm=paid_confirm,
+                    skeleton_gate=skeleton_gate, dry_run=dry_run)
     actions = on_action or (lambda _action: None)
 
     def _make(tool_name: str, method_name: str,

@@ -168,10 +168,11 @@ class CanvasAgentFixture:
     def gate(self, package):
         return PermissionGate(package.dir, package.permission, workspace=self.workspace)
 
-    def registry(self, package, session_id="sess-1", on_action=None, on_event=None):
+    def registry(self, package, session_id="sess-1", on_action=None, on_event=None,
+                 dry_run=False):
         return build_registry(self.sessions, self.client, package, self.gate(package),
                               self.workspace, session_id=session_id, on_action=on_action,
-                              on_event=on_event)
+                              on_event=on_event, dry_run=dry_run)
 
 
 class CanvasRegistryTests(unittest.TestCase):
@@ -260,6 +261,48 @@ class CanvasRegistryTests(unittest.TestCase):
         self.assertEqual(recorded[0]["cost"], {"estimate_usd": 0.25, "hold_micro_usd": 300000})
         self.assertEqual(recorded[0]["board_delta"]["submitted_job"], "job-7")
         self.assertEqual(recorded[0]["result_ref"]["job_id"], "job-7")
+
+    def test_canvas_dry_run_never_submits(self):
+        """agent#86: the canvas trio must respect dry-run exactly like
+        beehive_submit_job does. Quote (free) may happen; the POST that costs
+        money must not. This is the mirror of test_dry_run_never_submits in
+        test_agent.py -- the paid gate used to guard only the platform path,
+        so a dry-run serve could submit real paid jobs through a canvas-ops
+        session."""
+        fx = self.fx
+        submitted: list[tuple] = []
+        calls: list[tuple] = []
+
+        def dry_transport(method, url, headers, data, timeout):
+            calls.append((method, url))
+            if url.endswith("/api/v1/jobs"):
+                submitted.append((method, url))
+                return 201, _wrap({"id": "job-should-not-exist", "status": "queued"})
+            if url.endswith("/api/v1/billing/quote"):
+                return 200, _wrap({"total_estimate_usd": 250000, "total_hold": 300000,
+                                   "nodes": []})
+            return fx.transport(method, url, headers, data, timeout)
+
+        fx.client._transport = dry_transport
+        session = fx.session()
+        registry = fx.registry(fx.canvas_pkg, session_id=session.session_id, dry_run=True)
+
+        result = registry.call("canvas_submit_node_job",
+                               {"workflow_id": "wf-1", "node_type": "generate",
+                                "provider": "minimax-h3", "config": {"prompt": "a cat"}})
+
+        # the dry-run contract: quoted (free) is fine, submitted (paid) is not
+        self.assertTrue(result["dry_run"])
+        self.assertEqual(result["would_submit"][0]["provider"], "minimax-h3")
+        self.assertIn("quote", result)  # the reply still says what it WOULD cost
+        self.assertEqual(submitted, [], "dry-run must never POST /api/v1/jobs")
+        self.assertEqual([c for c in calls if c[1].endswith("/api/v1/jobs")], [])
+        # the whole canvas trio must stay gated, not just the one we called
+        for tool in ("canvas_run_workflow", "canvas_generate_image"):
+            result = registry.call(tool, {"workflow_id": "wf-1"} if tool == "canvas_run_workflow"
+                                   else {"workflow_id": "wf-1", "prompt": "a cat"})
+            self.assertTrue(result["dry_run"], f"{tool} bypassed the dry-run gate")
+        self.assertEqual(submitted, [], "no paid POST across the whole canvas trio")
 
     def test_lock_held_appends_a_lock_note_and_reraises(self):
         self.fx.wf_store.locked_by["wf-1"] = {"kind": "user-session", "id": "wes@web"}
