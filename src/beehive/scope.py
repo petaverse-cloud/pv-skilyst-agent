@@ -80,6 +80,12 @@ SCOPE_RULES = [
     # read-only, granted only to DESKTOP_PROXY_SCOPE holders — skills keep
     # the DENIED_PREFIXES wall below.
     ("GET", "/api/v1/billing/wallet", "billing:read"),
+    # #99 billing history + per-job cost detail: read-only ledger views for
+    # the Settings billing card. Same billing:read family as the wallet —
+    # the DESKTOP_PROXY_SCOPE holder sees their own ledger; the DEFAULT
+    # (skill) scope still refuses via the scope check below.
+    ("GET", "/api/v1/billing/history", "billing:read"),
+    ("GET", "/api/v1/billing/jobs/", "billing:read"),
     ("POST", "/api/v1/workflows", "workflows:write"),
     ("PUT", "/api/v1/workflows", "workflows:write"),
     ("DELETE", "/api/v1/workflows", "workflows:write"),
@@ -90,8 +96,17 @@ SCOPE_RULES = [
     ("POST", "/api/v1/skills", "skills:write"),
     ("POST", "/api/v1/skills/", "skills:write"),
 ]
+# Deny-list for SKILL-facing calls (the runtime checks this for every
+# non-desktop caller). Wallet/topup WRITE paths and api-key management stay
+# refused for everyone here — the #99 top-up face needs Wesley's money-ruling
+# before any wallet write is even considered, and api-keys return the SK in
+# plaintext (webview exposure question open, #99 ruling C).
 DENIED_PREFIXES = ("/api/v1/admin/", "/api/v1/billing/wallet", "/api/v1/billing/nodes",
-                   "/api/v1/billing/history", "/api/v1/auth/api-keys")
+                   "/api/v1/auth/api-keys")
+# Read-only wallet/balance + ledger: the trusted-token carve-out in
+# RestrictedToken.allows() lets DESKTOP_PROXY callers GET the wallet,
+# history, and per-job cost; every wallet SUB-route (topup, grant, ledger
+# writes) still trips this prefix wall for everyone.
 
 
 class ScopeRefusal(PermissionError):
@@ -121,10 +136,14 @@ class RestrictedToken:
         for prefix in DENIED_PREFIXES:
             if not path.startswith(prefix):
                 continue
-            # The single trusted carve-out (#36 desktop proxy): an exact
-            # read-only wallet lookup. Sub-paths (history, ...) stay walled.
-            if (self.trusted and prefix == "/api/v1/billing/wallet"
-                    and method.upper() == "GET" and path == prefix):
+            # The single trusted carve-out (#36 desktop proxy): the exact
+            # read-only wallet-balance GET. History/jobs ledger reads are NOT
+            # prefix-denied (#99) — they flow through SCOPE_RULES, where only
+            # a billing:read holder passes. Wallet WRITES (topup, grant),
+            # node pricing, and api-key management stay walled here for
+            # every caller including trusted.
+            if (self.trusted and method.upper() == "GET"
+                    and path == "/api/v1/billing/wallet"):
                 continue
             return False, (f"path {prefix} is outside every granted scope "
                            f"(billing/admin are never granted to a skill)")

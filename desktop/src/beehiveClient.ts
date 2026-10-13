@@ -86,6 +86,48 @@ export async function getWalletBalance(): Promise<number | null> {
   return typeof usd === "number" ? usd : null;
 }
 
+// -- Billing ledger (#99, web-console parity) --------------------------------
+// The Settings billing card: history (paged) + per-job cost detail.
+// Amounts are micro-USD integers (core contract) — formatted at the edge.
+
+export interface BillingEvent {
+  event_id: number;
+  event_type: string;
+  amount: number; // micro-USD
+  job_id?: string;
+  node_id?: string;
+  created_at: string;
+}
+
+export interface BillingHistory {
+  events: BillingEvent[];
+  total: number;
+}
+
+export async function getBillingHistory(
+  limit = 20,
+  offset = 0,
+): Promise<BillingHistory> {
+  const data = await api<{ events?: BillingEvent[]; total?: number }>(
+    `/beehive/billing/history?limit=${limit}&offset=${offset}`,
+  );
+  return { events: data?.events ?? [], total: data?.total ?? 0 };
+}
+
+export interface JobBilling {
+  job_id: string;
+  cost_estimated: number;
+  cost_actual: number;
+  sum_quoted: number;
+  sum_reserved: number;
+  sum_refunded: number;
+  events: BillingEvent[];
+}
+
+export async function getJobBilling(jobId: string): Promise<JobBilling> {
+  return api<JobBilling>(`/beehive/billing/jobs/${encodeURIComponent(jobId)}`);
+}
+
 // -- Skills registry (#54, core#714) ---------------------------------------
 // The works-wall skill dimension: list the published/owned skills with
 // their materialization snapshots. Field mapping is isolated HERE (the
