@@ -56,7 +56,16 @@ export function CreationCard({ work }: { work: CreationWork }) {
             data-testid="creation-media-video"
           />
         ) : isImage ? (
-          <Image src={work.url} alt={work.name} h={150} fit="cover" data-testid="creation-media-image" />
+          // Masonry (#388 plan-A): native aspect ratio — height auto, no
+          // crop, no letterbox.
+          <Image
+            src={work.url}
+            alt={work.name}
+            fit="contain"
+            w="100%"
+            style={{ height: "auto" }}
+            data-testid="creation-media-image"
+          />
         ) : (
           <Group justify="center" align="center" h={150}>
             <Text size="sm" c="dimmed" data-testid="creation-media-unknown">
@@ -78,6 +87,8 @@ export function CreationCard({ work }: { work: CreationWork }) {
       </Box>
 
       <Stack gap={6} p="sm">
+        {/* core#818 will add display_name; until then the work's name is
+            the best draft — slug is never shown on any face. */}
         <Text size="sm" fw={600} lineClamp={1} title={work.name}>
           {work.name}
         </Text>

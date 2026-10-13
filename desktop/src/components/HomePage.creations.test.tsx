@@ -76,4 +76,38 @@ describe("Home Creations feed (#91 seam)", () => {
     expect(host.textContent).toContain("Could not load the creations feed");
     expect(host.textContent).toContain("503");
   });
+
+  // #388 plan-A: masonry — the wall flows into multi-column, cards keep
+  // their media's native aspect. Pins the layout contract the web console
+  // shares (column-flow, no crop grid).
+  it("the feed is a multi-column masonry, not a cropped grid", async () => {
+    const work: CreationWork = {
+      id: "w1", name: "Dawn run", asset_type: "video", mime_type: "video/mp4",
+      url: "https://cdn/x.mp4", created_at: "2026-10-13T00:00:00Z",
+    };
+    listPublicWorksMock.mockResolvedValueOnce([work]);
+    const host = mountHome();
+    await act(async () => {});
+    const masonry = host.querySelector(".creations-masonry") as HTMLElement | null;
+    expect(masonry).toBeTruthy();
+    expect(masonry!.style.columns.startsWith("3")).toBe(true);
+    const cell = masonry!.firstElementChild as HTMLElement | null;
+    expect(cell).toBeTruthy();
+    expect(cell!.style.breakInside).toBe("avoid");
+  });
+
+  it("image cards keep their native aspect (no fixed-height crop)", async () => {
+    const work: CreationWork = {
+      id: "w2", name: "Poster", asset_type: "image", mime_type: "image/png",
+      url: "https://cdn/x.png", created_at: "2026-10-13T00:00:00Z",
+    };
+    listPublicWorksMock.mockResolvedValueOnce([work]);
+    const host = mountHome();
+    await act(async () => {});
+    const img = host.querySelector('[data-testid="creation-media-image"]') as HTMLElement | null;
+    expect(img).toBeTruthy();
+    // The Mantine Image's inner <img> must not carry a fixed height:
+    const real = img!.querySelector("img") ?? img!;
+    expect((real as HTMLElement).style.height).not.toBe("150px");
+  });
 });

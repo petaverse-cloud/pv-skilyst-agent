@@ -341,13 +341,17 @@ export default function HomePage({
         </Stack>
       </Box>
 
-      {/* ── Creations feed (#91: Home's first level — web#386 contract) ── */}
+      {/* ── Creations feed (#91: Home = the PUBLIC wall, web#386/#388 plan-A
+          alignment). Masonry: cards keep their media's native aspect —
+          no cropping, no letterboxing — flowing into 2-4 columns by
+          window width (same column-flow idea as the web console's
+          pinterest layout; CSS columns is the MVP-subset vehicle). ── */}
       <Box px="xl" py="lg">
         <Group justify="space-between" mb="sm">
           <div>
             <Title order={4}>Creations</Title>
             <Text size="xs" c="dimmed">
-              The wall — published creations, newest first
+              The public wall — published creations, newest first
             </Text>
           </div>
         </Group>
@@ -365,11 +369,22 @@ export default function HomePage({
             No published creations on the wall yet.
           </Text>
         ) : (
-          <SimpleGrid cols={{ base: 2, sm: 3, lg: 4 }} spacing="md" style={{ alignItems: "start" }}>
+          <Box
+            className="creations-masonry"
+            style={{
+              columns: "3 320px",
+              columnGap: "var(--mantine-spacing-md)",
+            }}
+          >
             {creations.map((work) => (
-              <CreationCard key={work.id} work={work} />
+              <Box
+                key={work.id}
+                style={{ breakInside: "avoid", marginBottom: "var(--mantine-spacing-md)" }}
+              >
+                <CreationCard work={work} />
+              </Box>
             ))}
-          </SimpleGrid>
+          </Box>
         )}
       </Box>
 
