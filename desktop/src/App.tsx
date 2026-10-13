@@ -1,6 +1,7 @@
 import { Alert, AppShell, Box, Group, Text } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
 import { LoginScreen, fetchAuthStatus, postAuthLogout, postAuthRefresh, type AuthStatus } from "./components/LoginScreen";
+import { clearUnseenRuns } from "./notifications";
 import {
   api,
   inShell,
@@ -111,6 +112,14 @@ export default function App() {
     }, SESSION_POLL_MS);
     return () => window.clearInterval(timer);
   }, [info, refreshSessions]);
+
+  // #82: focusing the window means the user has seen the runs — clear the
+  // dock badge ("completed but unseen" ends the moment focus returns).
+  useEffect(() => {
+    const onFocus = () => void clearUnseenRuns();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, []);
 
   const chooseModel = useCallback((value: string) => {
     setModel(value);

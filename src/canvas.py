@@ -251,10 +251,19 @@ class CanvasOps:
 
     def __init__(self, client, session_id: str,
                  paid_confirm: Callable[[dict], bool] | None = None,
-                 skeleton_gate=None):
+                 skeleton_gate=None, dry_run: bool = False):
         self.client = client
         self.session_id = session_id
         self.paid_confirm = paid_confirm
+        # agent#86: the SOUL contract (paid actions default to dry-run) is
+        # enforced HERE, at the single choke point every paid canvas
+        # submission funnels through (_submit_nodes). beehive_submit_job got
+        # its gate in tools.py long ago; the canvas trio registered by
+        # _register_canvas_tools bypassed it -- a dry-run serve could submit
+        # real paid jobs through a canvas-ops session. The gate sits AFTER
+        # quoting (the quote is free and keeps the dry-run reply useful) and
+        # BEFORE the POST /api/v1/jobs that costs money.
+        self.dry_run = dry_run
         # v0.3 skeleton gate (#55): an optional callable(package, materialized)
         # -> list of problems. The runner installs it when the active skill
         # declares a workflow_skeleton, so every board submission is compared
@@ -626,6 +635,19 @@ class CanvasOps:
                         f"paid submission declined before submit (quote "
                         f"hold={_micro_to_usd(hold)} USD, {len(nodes)} node(s)) -- nothing "
                         f"was charged; ask the user what to change before trying again")
+            # agent#86 dry-run gate: same contract as beehive_submit_job's
+            # tools.py gate. Placed after the (free) quote so a dry-run reply
+            # still carries what it WOULD have cost, and before the POST that
+            # creates a paid job. would_submit mirrors the dry_run reply of
+            # the platform path: the model (and the transcript) sees exactly
+            # what was about to be charged for.
+            if self.dry_run:
+                result["dry_run"] = True
+                result["would_submit"] = nodes
+                result["job_budget_note"] = (
+                    "dry-run: submission suppressed (no job was created, nothing "
+                    "was charged); quote above is what it would have cost")
+                return result
         body = {"nodes": nodes, "workflow_id": workflow_id}
         if execution_mode:
             body["execution_mode"] = execution_mode
