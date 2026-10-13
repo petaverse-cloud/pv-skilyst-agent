@@ -38,6 +38,9 @@ class ProxyRouteTableTests(unittest.TestCase):
                 ("billing/wallet", "GET", "/api/v1/billing/wallet"),
                 ("billing/history", "GET", "/api/v1/billing/history"),
                 ("billing/jobs/", "GET", "/api/v1/billing/jobs/"),
+                ("auth/password", "PUT", "/api/v1/auth/password"),
+                ("auth/oauth/connections", "GET", "/api/v1/auth/oauth/connections"),
+                ("auth/oauth/", "POST", "/api/v1/auth/oauth/"),
                 ("assets", "GET", "/api/v1/assets"),  # #81 read-back
                 ("assets/{}", "GET", "/api/v1/assets/{}"),  # #81 read-back
                 ("public/works", "GET", "/public/works"),  # #91 creations feed (root mux, core#756)

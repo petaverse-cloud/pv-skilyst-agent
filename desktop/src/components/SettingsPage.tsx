@@ -16,9 +16,13 @@ import { IconRefresh } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
 import { api, type DoctorReport, type RedactedConfig, type RuntimeInfo } from "../api";
 import {
+  changePassword,
   getBillingHistory,
+  getOAuthConnections,
   getWalletBalance,
+  unbindOAuth,
   type BillingEvent,
+  type OAuthConnection,
 } from "../beehiveClient";
 import type { AuthStatus } from "./LoginScreen";
 
@@ -74,6 +78,52 @@ export default function SettingsPage({
   const [doctor, setDoctor] = useState<DoctorReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  // #99 profile face: password change + OAuth connections.
+  const [connections, setConnections] = useState<OAuthConnection[] | null>(null);
+  const [pwBusy, setPwBusy] = useState(false);
+  const [pwMessage, setPwMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [oldPw, setOldPw] = useState("");
+  const [newPw, setNewPw] = useState("");
+  const [unbindBusy, setUnbindBusy] = useState<string | null>(null);
+
+  const reloadConnections = useCallback(async () => {
+    try {
+      setConnections(await getOAuthConnections());
+    } catch {
+      // The face degrades loudly-but-calmly: an empty list with the
+      // not-configured hint, never a crash. core 503s this when OAuth
+      // has no DB behind it.
+      setConnections([]);
+    }
+  }, []);
+
+  const submitPasswordChange = useCallback(async () => {
+    setPwBusy(true);
+    setPwMessage(null);
+    try {
+      await changePassword(oldPw, newPw);
+      setPwMessage({ ok: true, text: "Password changed." });
+      setOldPw("");
+      setNewPw("");
+    } catch (err) {
+      setPwMessage({ ok: false, text: err instanceof Error ? err.message : String(err) });
+    } finally {
+      setPwBusy(false);
+    }
+  }, [oldPw, newPw]);
+
+  const doUnbind = useCallback(async (provider: string) => {
+    setUnbindBusy(provider);
+    try {
+      await unbindOAuth(provider);
+      await reloadConnections();
+    } catch (err) {
+      setPwMessage({ ok: false, text: `Unbind ${provider} failed: ${err instanceof Error ? err.message : String(err)}` });
+    } finally {
+      setUnbindBusy(null);
+    }
+  }, [reloadConnections]);
+
   // #99 billing ledger: read-only wallet + history.
   const [billing, setBilling] = useState<{ events: BillingEvent[]; total: number } | null>(null);
   const [billingError, setBillingError] = useState<string | null>(null);
@@ -117,6 +167,10 @@ export default function SettingsPage({
   useEffect(() => {
     if (authStatus?.authenticated) void reloadBilling();
   }, [authStatus?.authenticated, reloadBilling]);
+
+  useEffect(() => {
+    if (authStatus?.authenticated) void reloadConnections();
+  }, [authStatus?.authenticated, reloadConnections]);
 
   useEffect(() => {
     if (info) void refresh();
@@ -216,6 +270,102 @@ export default function SettingsPage({
               : "No account is signed in. The app gate should be showing the sign-in screen."}
           </Text>
         )}
+
+        {/* ── #99 profile face: password change + OAuth connections.
+            Bind is a web-console action (the OAuth relay redirects to a
+            browser page); the desktop shows what is bound and unbinds. ── */}
+        {authStatus?.authenticated ? (
+          <Stack gap="md" mt="md">
+            <div>
+              <Title order={6} mb={6}>Connections</Title>
+              {connections === null ? (
+                <Text size="xs" c="dimmed" data-testid="connections-loading">Loading connections…</Text>
+              ) : connections.length === 0 ? (
+                <Text size="xs" c="dimmed" data-testid="connections-empty">
+                  No OAuth providers bound. Bind one from the web console (Profile → Connections).
+                </Text>
+              ) : (
+                <Table variant="vertical" withRowBorders={false} fz="sm">
+                  <Table.Tbody>
+                    {connections.map((c) => (
+                      <Table.Tr key={c.provider}>
+                        <Table.Td w={110}>
+                          <Badge size="xs" variant="light" color="indigo">{c.provider}</Badge>
+                        </Table.Td>
+                        <Table.Td>
+                          <Text size="xs" c="dimmed">{c.email ?? "—"}</Text>
+                        </Table.Td>
+                        <Table.Td w={90}>
+                          <Button
+                            size="compact-xs"
+                            variant="subtle"
+                            color="red"
+                            loading={unbindBusy === c.provider}
+                            disabled={unbindBusy !== null && unbindBusy !== c.provider}
+                            onClick={() => void doUnbind(c.provider)}
+                            data-testid={`unbind-${c.provider}`}
+                          >
+                            Unbind
+                          </Button>
+                        </Table.Td>
+                      </Table.Tr>
+                    ))}
+                  </Table.Tbody>
+                </Table>
+              )}
+            </div>
+            <div>
+              <Title order={6} mb={6}>Change password</Title>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (oldPw && newPw.length >= 8) void submitPasswordChange();
+                }}
+                data-testid="password-form"
+              >
+                <Stack gap={6} maw={320}>
+                  <TextInput
+                    type="password"
+                    size="xs"
+                    label="Current password"
+                    value={oldPw}
+                    onChange={(e) => setOldPw(e.target.value)}
+                    autoComplete="current-password"
+                    data-testid="password-old"
+                  />
+                  <TextInput
+                    type="password"
+                    size="xs"
+                    label="New password (min 8 characters)"
+                    value={newPw}
+                    onChange={(e) => setNewPw(e.target.value)}
+                    autoComplete="new-password"
+                    error={newPw.length > 0 && newPw.length < 8 ? "At least 8 characters" : null}
+                    data-testid="password-new"
+                  />
+                  <Button
+                    size="xs"
+                    type="submit"
+                    loading={pwBusy}
+                    disabled={!oldPw || newPw.length < 8}
+                    data-testid="password-submit"
+                  >
+                    Change password
+                  </Button>
+                  {pwMessage ? (
+                    <Text
+                      size="xs"
+                      c={pwMessage.ok ? "teal" : "red"}
+                      data-testid={pwMessage.ok ? "password-ok" : "password-error"}
+                    >
+                      {pwMessage.text}
+                    </Text>
+                  ) : null}
+                </Stack>
+              </form>
+            </div>
+          </Stack>
+        ) : null}
       </Card>
 
       {/* ── Billing (#99): the ledger read face — wallet balance + history.

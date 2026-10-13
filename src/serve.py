@@ -342,6 +342,12 @@ class RuntimeAPI:
         # cost detail. Read-only, same trusted-token carve-out as the wallet.
         ("billing/history",  "GET", "/api/v1/billing/history"),
         ("billing/jobs/",    "GET", "/api/v1/billing/jobs/"),
+        # #99 profile face: password change + OAuth connections (read +
+        # unbind). Bind (browser relay) stays a web-console action — the
+        # desktop does not rebuild the OAuth redirect dance.
+        ("auth/password",    "PUT", "/api/v1/auth/password"),
+        ("auth/oauth/connections", "GET", "/api/v1/auth/oauth/connections"),
+        ("auth/oauth/",      "POST", "/api/v1/auth/oauth/"),
         # #81 asset upload: read-back paths (list + detail) so the Composer
         # can show what the user uploaded; the upload itself is the dedicated
         # POST route below (multipart does not fit the GET table).
