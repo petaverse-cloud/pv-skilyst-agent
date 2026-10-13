@@ -17,12 +17,10 @@ import WorkbenchPage from "./components/WorkbenchPage";
 import SettingsPage from "./components/SettingsPage";
 import {
   currentRoute,
-  navigate,
   normalizeLegacySessionUrl,
   onRouteChange,
   type Route,
 } from "./router";
-import { listen } from "@tauri-apps/api/event";
 import { loadRegistry, type WorkflowSessions } from "./workflowRegistry";
 
 const MODEL_KEY = "skilyst.model";
@@ -121,22 +119,6 @@ export default function App() {
     const onFocus = () => void clearUnseenRuns();
     window.addEventListener("focus", onFocus);
     return () => window.removeEventListener("focus", onFocus);
-  }, []);
-
-  // #83: skilyst://workflow?edit=<id> deep links (console "open in app",
-  // Recent links) route to the workbench with the board bound. Outside the
-  // shell there is no deep-link source — the listener simply never fires.
-  useEffect(() => {
-    if (!inShell()) return;
-    const stop = listen<{ id: string }>("open-workflow", (event) => {
-      navigate({ module: "workbench", workflow: event.payload.id });
-    }).catch((error) => {
-      console.error("[deep-link] open-workflow listen failed:", error);
-      return null;
-    });
-    return () => {
-      void stop.then((unsubscribe) => unsubscribe?.());
-    };
   }, []);
 
   const chooseModel = useCallback((value: string) => {
