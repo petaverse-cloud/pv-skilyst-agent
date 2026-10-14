@@ -18,7 +18,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, type RunSummary, type SessionDetail, type SessionRow, type TranscriptMessage } from "../api";
 import { resolveConfirm, sendMessage } from "../api";
 import { notifyRunEnd } from "../notifications";
-import { getWalletBalance, getWorkflow, type WorkflowRow } from "../beehiveClient";
+import { getWalletBalance, getWorkflow, listSkillPreviews, type WorkflowRow } from "../beehiveClient";
 import { appendDelta, emptyStream, freezeTurn, type StreamState } from "../stream";
 import { recordSession, sessionsFor, type WorkflowSessions } from "../workflowRegistry";
 import Composer, { type PendingAsset, type SkillOption as ComposerSkillOption, withAssetContext } from "./Composer";
@@ -130,7 +130,21 @@ export default function WorkbenchPage({
     if (!info) return;
     let cancelled = false;
     api<{ skills: ComposerSkillOption[] }>("/skills")
-      .then((payload) => { if (!cancelled) setSkills(payload.skills ?? []); })
+      .then((payload) => {
+        if (cancelled) return;
+        const rows = payload.skills ?? [];
+        // #102 (core#833): attach the wall-card preview thumbnail to the
+        // picker rows — client-side join, the registry stays the source of
+        // truth for skill identity. A missing preview row stays plain;
+        // a failed preview fetch never blocks the picker (best-effort).
+        listSkillPreviews(50, 0)
+          .then(({ cards }) => {
+            if (cancelled) return;
+            const byId = new Map(cards.map((c) => [c.skill_id, c.previews[0]]));
+            setSkills(rows.map((r) => ({ ...r, preview_uri: byId.get(r.skill_id) })));
+          })
+          .catch(() => { if (!cancelled) setSkills(rows); });
+      })
       .catch((exc) => { if (!cancelled) setError(`skills unavailable: ${exc instanceof Error ? exc.message : String(exc)}`); });
     return () => { cancelled = true; };
     // keyed on info like the rest of the mount-fetch audit (#53)

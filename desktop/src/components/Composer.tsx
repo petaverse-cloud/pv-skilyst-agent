@@ -1,4 +1,4 @@
-import { ActionIcon, Badge, Group, Select, Stack, Switch, Text, Textarea } from "@mantine/core";
+import { ActionIcon, Avatar, Badge, Group, Select, Stack, Switch, Text, Textarea } from "@mantine/core";
 import { IconPaperclip, IconSend, IconX } from "@tabler/icons-react";
 import { useRef, useState } from "react";
 import { api } from "../api";
@@ -8,6 +8,11 @@ export type SkillOption = {
   title: string;
   version: string;
   degraded: boolean;
+  /** #102 (core#833): the skill's preview media thumbnail — first frame of
+   *  its wall card, injected client-side from the skill-preview feed. No
+   *  preview = undefined: the dropdown row renders without imagery, and
+   *  preview-less skills are NOT errors. */
+  preview_uri?: string;
   /** M3c (#52): v0.3 freedom shape at a glance — null when the skill
    * declares no skeleton (a plain prompt-flow skill). */
   skeleton?: {
@@ -158,7 +163,28 @@ export default function Composer({
                   ? ` · zones: ${s.skeleton.free_zones.map((z) => `${z.name} ≤${z.max_nodes}`).join(", ")}`
                   : "")
               : undefined,
+            // #102: the preview thumbnail rides the option (wall-card first
+            // frame); renders as a small avatar in renderOption below.
+            preview_uri: s.preview_uri,
           }))}
+          renderOption={({ option }) => {
+            const item = option as unknown as { label: string; description?: string; preview_uri?: string };
+            const inner = (
+              <div>
+                <div>{item.label}</div>
+                {item.description
+                  ? <Text size="xs" c="dimmed">{item.description}</Text>
+                  : null}
+              </div>
+            );
+            if (!item.preview_uri) return inner;
+            return (
+              <Group gap="xs" wrap="nowrap">
+                <Avatar src={item.preview_uri} size={28} radius="sm" />
+                {inner}
+              </Group>
+            );
+          }}
         />
         {/* #81: bring your own media — upload via the runtime proxy. */}
         <input

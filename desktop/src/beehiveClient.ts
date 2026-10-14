@@ -159,6 +159,31 @@ export async function unbindOAuth(provider: string): Promise<void> {
   });
 }
 
+// -- Skill-preview wall (#102, core#833/#834) ---------------------------------
+// The wall's subject is the SKILL (Wesley's ruling): generated content is
+// preview material attached to the card, not a first-class wall citizen.
+// Field mapping isolated here (API churn touches one layer only).
+
+export interface SkillPreviewCard {
+  skill_id: string;
+  display_name: string;
+  slug: string; // never rendered — display_name everywhere (#818)
+  tier: string; // official | community_verified (anonymous wall gate)
+  fork_count: number;
+  previews: string[]; // media URIs, media-first (video > image > audio), <=3
+  created_at: string;
+}
+
+export async function listSkillPreviews(
+  limit = 24,
+  offset = 0,
+): Promise<{ cards: SkillPreviewCard[]; total: number }> {
+  const data = await api<{ skills?: SkillPreviewCard[]; total?: number }>(
+    `/beehive/public/skill-previews?limit=${limit}&offset=${offset}`,
+  );
+  return { cards: data?.skills ?? [], total: data?.total ?? 0 };
+}
+
 // -- Skills registry (#54, core#714) ---------------------------------------
 // The works-wall skill dimension: list the published/owned skills with
 // their materialization snapshots. Field mapping is isolated HERE (the
