@@ -87,7 +87,9 @@ def board_section(workflow_id: str, snapshot: dict | None) -> str:
         lines.append("Nodes: none yet — the board is empty; create the first node.")
     edges = snapshot.get("edges") or []
     if edges:
-        lines.append(f"Edges: {len(edges)} ({', '.join(f'{e.get("from")}->{e.get("to")}' for e in edges[:12])})")
+        edge_desc = ", ".join(
+            "{}->{}".format(e.get("from"), e.get("to")) for e in edges[:12])
+        lines.append(f"Edges: {len(edges)} ({edge_desc})")
     pool = snapshot.get("media_pool") or []
     if pool:
         lines.append(f"Media pool: {len(pool)} entries.")

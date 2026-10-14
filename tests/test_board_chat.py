@@ -136,3 +136,24 @@ class StreamedActionTests(EnvIsolation):
         status, _headers, body = fx.request("POST", "/message", {"message": "plain turn"})
         self.assertEqual(status, 200)
         self.assertTrue(body["data"]["ok"])
+
+
+class BoardBindingDegradationTests(EnvIsolation):
+    """The shapes desktop-verify's round-1 probe observed and blessed —
+    pinned so they cannot drift: a bound turn with NO credential must be
+    the structured 409 ConfigError (loud, actionable), never a 500 and
+    never a silent unbound run."""
+
+    def setUp(self):
+        super().setUp()
+
+    def test_a_bound_turn_without_credentials_is_a_structured_409(self):
+        fx = ServeFixture(credentials=False,
+                          responses=[chat_response(content="unreachable")])
+        self.addCleanup(fx.cleanup)
+        status, headers, body = fx.request(
+            "POST", "/message",
+            {"message": "edit the board", "workflow_id": "wf-nocreds"})
+        self.assertEqual(status, 409, body)
+        self.assertEqual(body["error"]["kind"], "ConfigError")
+        self.assertIn("credential", body["error"]["message"].lower())
