@@ -124,6 +124,9 @@ export type MessageRequest = {
   dry_run?: boolean;
   /** S4 quote UX: gate paid submissions behind a confirm_request / POST /confirm exchange. */
   confirm_paid?: boolean;
+  /** #103: bind this turn to a board — the agent speaks board-aware and
+   *  canvas actions stream back as they happen. */
+  workflow_id?: string | null;
 };
 
 let current: RuntimeInfo | null = null;
@@ -251,6 +254,9 @@ export async function api<T>(path: string, options: ApiOptions = {}): Promise<T>
 export type StreamHandlers = {
   onDelta?: (text: string) => void;
   onNote?: (text: string) => void;
+  /** #103 live board stream: a canvas tool action happened mid-run — the
+   *  board changed and the canvas should re-render NOW, not at run end. */
+  onBoardAction?: (action: { tool?: string; workflow_id?: string; board_delta?: unknown }) => void;
   /** S4 quote UX: the runtime paused a paid submission at the quote and is
    *  waiting on POST /confirm/<session_id>. */
   onConfirmRequest?: (detail: {
@@ -320,6 +326,7 @@ export async function sendMessage(request: MessageRequest, handlers: StreamHandl
       if (event) {
         if (event.name === "delta") handlers.onDelta?.(String(event.data.text ?? ""));
         else if (event.name === "note") handlers.onNote?.(String(event.data.text ?? ""));
+        else if (event.name === "action") handlers.onBoardAction?.(event.data as never);
         else if (event.name === "confirm_request") handlers.onConfirmRequest?.(
           event.data as { session_id?: string; quote?: { total_hold?: number; total_hold_display?: number; nodes?: unknown[] } });
         else if (event.name === "done") {
@@ -355,6 +362,7 @@ async function sendMessageViaBridge(request: MessageRequest, handlers: StreamHan
       if (parsed) {
         if (parsed.name === "delta") handlers.onDelta?.(String(parsed.data.text ?? ""));
         else if (parsed.name === "note") handlers.onNote?.(String(parsed.data.text ?? ""));
+        else if (parsed.name === "action") handlers.onBoardAction?.(parsed.data as never);
         else if (parsed.name === "confirm_request") handlers.onConfirmRequest?.(
           parsed.data as { session_id?: string; quote?: { total_hold?: number; total_hold_display?: number; nodes?: unknown[] } });
         else if (parsed.name === "done") {

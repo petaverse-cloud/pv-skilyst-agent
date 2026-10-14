@@ -65,6 +65,9 @@ class RunContext:
     preflight: PreflightReport | None
     loop: AgentLoop
     skills: list[SkillPackage] = field(default_factory=list)
+    # #103: the dual-write hook (transcript + SSE wire). Exposed for tests
+    # and diagnostics — the production path is the runner's own wiring.
+    record_action: Callable[[dict], None] | None = None
 
     def result_payload(self, result: LoopResult) -> dict:
         return run_summary(result, self.session, self.active, self.preflight)
@@ -76,7 +79,9 @@ def open_run(cfg: RuntimeConfig, *, skill_id: str | None = None, session_id: str
              on_event: Callable[[str], None] | None = None,
              on_delta: Callable[[str], None] | None = None,
              client_factory: Callable[[LLMConfig], ChatClient] | None = None,
-             paid_confirm: Callable[[dict], bool] | None = None) -> RunContext:
+             paid_confirm: Callable[[dict], bool] | None = None,
+             workflow_id: str | None = None,
+             on_stream_action: Callable[[dict], None] | None = None) -> RunContext:
     """Build the run for one user turn.
 
     ``max_jobs`` is a spend guard carried over from the tool registry: a run gets
@@ -104,6 +109,21 @@ def open_run(cfg: RuntimeConfig, *, skill_id: str | None = None, session_id: str
         if active.requires_nodes:
             preflight = preflight_nodes(active, client, allow_fallback=allow_fallback)
 
+    # #103 conversational board editing: the turn is bound to a board. The
+    # snapshot feeds the prompt's current-board section (agent speaks
+    # board-aware from turn one). Best-effort: an unknown/unreachable board
+    # degrades to a "board unavailable" note — a context miss never 500s the
+    # whole turn.
+    board_snapshot: dict | None = None
+    if workflow_id:
+        if client is None:
+            client = gated_client(cfg)
+        try:
+            from canvas import CanvasOps
+            board_snapshot = CanvasOps(client, session_id="", dry_run=True).read_board(workflow_id)
+        except Exception as exc:            # noqa: BLE001
+            note(f"board[{workflow_id}]: unavailable ({exc})")
+
     cfg.workspace_dir.mkdir(parents=True, exist_ok=True)
     sessions = SessionStore(cfg.session_dir)
     session = (sessions.open(session_id) if session_id
@@ -123,10 +143,23 @@ def open_run(cfg: RuntimeConfig, *, skill_id: str | None = None, session_id: str
     def record_action(action: dict) -> None:
         note_kind = action.pop("note_kind", None)
         if note_kind:
-            session.append_note(action.pop("note_text", ""), origin="agent",
+            note_text = action.pop("note_text", "")
+            session.append_note(note_text, origin="agent",
                                 note_kind=note_kind, tool=action.get("tool"))
+            if on_stream_action is not None:
+                # The stream side keeps note_kind: the webview distinguishes
+                # a board mutation (refresh the canvas) from a note row (show
+                # the message; do NOT refresh).
+                on_stream_action({"tool": action.get("tool"), "note_kind": note_kind,
+                                  "note_text": note_text,
+                                  "workflow_id": action.get("workflow_id")})
             return
         session.append_action(action)
+        # #103 live board stream: the action ALSO flows out on the SSE wire
+        # (the transcript duty is unchanged) — the canvas re-renders during
+        # the run, once per action.
+        if on_stream_action is not None:
+            on_stream_action(action)
 
     registry = build_registry(store, client, active, gate, cfg.workspace_dir, dry_run=dry_run,
                               on_event=note, max_jobs=max_jobs,
@@ -134,11 +167,12 @@ def open_run(cfg: RuntimeConfig, *, skill_id: str | None = None, session_id: str
                               session_id=session.session_id, on_action=record_action,
                               paid_confirm=paid_confirm)
     prompt_ctx = PromptContext(skills=skills, active_skill=active, workspace=str(cfg.workspace_dir),
-                               model=cfg.llm.model, platform=cfg.beehive.base_url)
+                               model=cfg.llm.model, platform=cfg.beehive.base_url,
+                               workflow_id=workflow_id, board_snapshot=board_snapshot)
     loop = AgentLoop(ModelRouter(cfg.llm, client_factory=client_factory), registry, session, prompt_ctx,
                      LoopConfig(max_turns=max_turns, stream=stream), on_event=note, on_delta=on_delta)
     return RunContext(cfg=cfg, session=session, active=active, preflight=preflight, loop=loop,
-                      skills=skills)
+                      skills=skills, record_action=record_action)
 
 
 def run_summary(result: LoopResult, session: Session, active: SkillPackage | None,

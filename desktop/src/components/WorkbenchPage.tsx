@@ -158,9 +158,20 @@ export default function WorkbenchPage({
             model: model || undefined,
             dry_run: dryRun,
             confirm_paid: true,
+            // #103: bind the turn to the active board — the agent speaks
+            // board-aware and canvas actions stream back live.
+            workflow_id: activeWorkflowId || undefined,
           },
           {
             onDelta: (chunk) => setStream((state) => appendDelta(state, chunk)),
+            onBoardAction: (action) => {
+              // Live board stream: re-render the canvas the moment a canvas
+              // tool mutates the board — not once after the run (M3b was
+              // post-hoc; #103 makes it per-action).
+              if (action.workflow_id && (!activeWorkflowId || action.workflow_id === activeWorkflowId)) {
+                refreshBoardRef.current?.();
+              }
+            },
             onNote: (line) => {
               setStream((state) => freezeTurn(state));
               setNotes((current) => [...current, line]);

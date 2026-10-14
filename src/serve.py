@@ -814,6 +814,10 @@ class RuntimeAPI:
             raise BadRequest("message is required")
         skill_id = payload.get("skill") or self.skill
         session_id = payload.get("session_id") or None
+        # #103 conversational board editing: the chatbox binds the turn to a
+        # board. The runtime reads a snapshot for the prompt (agent speaks
+        # board-aware from turn one); absent id = today's context-free turn.
+        workflow_id = str(payload.get("workflow_id") or "").strip() or None
         requested_dry_run = payload.get("dry_run")
         # A server started in dry-run mode cannot be talked out of it per request: the
         # operator's `--live` decision is the gate, and the message flag can only be
@@ -843,6 +847,15 @@ class RuntimeAPI:
             if emit:
                 emit("delta", {"text": chunk})
 
+        # #103 live board stream: canvas tool actions keep their transcript
+        # duty AND flow out on the SSE wire, so the canvas re-renders during
+        # the run once per action instead of once after the run.
+        def on_action(action: dict) -> None:
+            if emit:
+                emit("action", {"tool": action.get("tool"),
+                                "workflow_id": action.get("workflow_id") or workflow_id,
+                                "board_delta": action.get("board_delta")})
+
         # S4 quote UX: `confirm_paid: true` installs the blocking confirm gate
         # (paid canvas submissions stop at the quote until the shell answers
         # POST /confirm/{session_id}). Opt-in per message: a caller that
@@ -855,7 +868,8 @@ class RuntimeAPI:
                          dry_run=dry_run, max_turns=max_turns,
                          allow_fallback=self.allow_fallback, max_jobs=self.max_jobs,
                          stream=stream, on_event=on_event, on_delta=on_delta,
-                         paid_confirm=paid_confirm)
+                         paid_confirm=paid_confirm,
+                         workflow_id=workflow_id, on_stream_action=on_action)
         if paid_confirm is not None:
             # publish the real session id so a gate opened for a brand-new
             # session (the callback saw session_id="") can be answered at
