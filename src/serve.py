@@ -360,6 +360,8 @@ class RuntimeAPI:
         # it with the user credential anyway — one posture, no
         # unauthenticated egress from the runtime.
         ("public/works",     "GET", "/public/works"),
+        # #102: the skill-preview wall (core#834) — same root-mux family.
+        ("public/skill-previews", "GET", "/public/skill-previews"),
         # #54 skills registry (core#714): list/detail/versions/fork-tree.
         ("skills",           "GET", "/api/v1/skills"),
         ("skills/{}",        "GET", "/api/v1/skills/{}"),

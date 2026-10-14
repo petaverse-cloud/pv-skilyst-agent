@@ -26,8 +26,9 @@ import {
 import { IconArrowRight, IconMessage, IconSparkles } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
 import type { SessionRow } from "../api";
-import { listWorkflows, listSkills, listPublicWorks, type WorkflowRow, type SkillCardData, type CreationWork } from "../beehiveClient";
+import { listWorkflows, listSkills, listPublicWorks, listSkillPreviews, type WorkflowRow, type SkillCardData, type CreationWork, type SkillPreviewCard } from "../beehiveClient";
 import { CreationCard } from "./CreationCard";
+import SkillWallCard from "./SkillWallCard";
 import { sessionsFor, type WorkflowSessions } from "../workflowRegistry";
 import { navigate } from "../router";
 
@@ -232,6 +233,24 @@ export default function HomePage({
   // (a fresh login walks the new AgentScopes preset), this answers 403 and
   // the section degrades to the notice below — loud, not broken.
   const [skills, setSkills] = useState<SkillCardData[] | null>(null);
+  // #102: the skill-preview wall (core#833) — the wall's subject is the
+  // SKILL. The Home feed's primary source; the works feed (below) stays
+  // mounted until the web console's demote decision lands, then follows.
+  const [wallCards, setWallCards] = useState<SkillPreviewCard[] | null>(null);
+  const [wallError, setWallError] = useState<string | null>(null);
+
+  const loadSkillWall = useCallback(async () => {
+    setWallError(null);
+    setWallCards(null);
+    try {
+      const { cards } = await listSkillPreviews(24, 0);
+      setWallCards(cards);
+    } catch (exc) {
+      setWallError(exc instanceof Error ? exc.message : String(exc));
+      setWallCards([]);
+    }
+  }, []);
+
   // #91: the Creations feed — the public wall through the runtime proxy.
   // This is Home's FIRST-LEVEL content (web#386: app = web's MVP subset).
   const [creations, setCreations] = useState<CreationWork[] | null>(null);
@@ -286,7 +305,8 @@ export default function HomePage({
     void loadWorkflows();
     void loadSkills();
     void loadCreations();
-  }, [loadWorkflows, loadSkills, loadCreations, runtimeConnected]);
+    void loadSkillWall();
+  }, [loadWorkflows, loadSkills, loadCreations, loadSkillWall, runtimeConnected]);
 
   const artifactCount = sessions.reduce((sum, s) => sum + (s.artifacts ?? 0), 0);
   const agentCount = (workflows ?? []).filter((w) => w.created_via === "agent").length;
@@ -339,6 +359,52 @@ export default function HomePage({
             </Button>
           </Group>
         </Stack>
+      </Box>
+
+      {/* ── Skill wall (#102, core#833): the wall's subject is the SKILL —
+          one card per skill, preview media up front, display_name + fork
+          count in the footer. Same masonry flow as the works feed; the
+          source switched per the web console's alignment. ── */}
+      <Box px="xl" py="lg">
+        <Group justify="space-between" mb="sm">
+          <div>
+            <Title order={4}>Skills</Title>
+            <Text size="xs" c="dimmed">
+              The public wall — skills with their demo previews, official first
+            </Text>
+          </div>
+        </Group>
+        {wallError ? (
+          <Alert color="red" title="Could not load the skill wall">
+            {wallError}
+          </Alert>
+        ) : wallCards === null ? (
+          <Group gap="sm" py="xl" justify="center">
+            <Loader size="sm" />
+            <Text size="sm" c="dimmed">Loading skills…</Text>
+          </Group>
+        ) : wallCards.length === 0 ? (
+          <Text size="sm" c="dimmed" py="md" ta="center">
+            No published skills on the wall yet.
+          </Text>
+        ) : (
+          <Box
+            className="skill-wall-masonry"
+            style={{
+              columns: "3 320px",
+              columnGap: "var(--mantine-spacing-md)",
+            }}
+          >
+            {wallCards.map((card) => (
+              <Box
+                key={card.skill_id}
+                style={{ breakInside: "avoid", marginBottom: "var(--mantine-spacing-md)" }}
+              >
+                <SkillWallCard card={card} />
+              </Box>
+            ))}
+          </Box>
+        )}
       </Box>
 
       {/* ── Creations feed (#91: Home = the PUBLIC wall, web#386/#388 plan-A

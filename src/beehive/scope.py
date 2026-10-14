@@ -74,6 +74,10 @@ SCOPE_RULES = [
     # ruling). Reached through the desktop proxy WITH the user credential:
     # the runtime never sends unauthenticated egress.
     ("GET", "/public/works", "skills:read"),
+    # #102 skill-preview wall (core#833/#834): the wall's subject is the
+    # SKILL — preview media rides the card. Same root-mux route family,
+    # same anonymous-wall discipline, reached with the user credential.
+    ("GET", "/public/skill-previews", "skills:read"),
     # core#714 registry: list/detail/fork-tree under /skills (startswith
     # matching covers /{id} and sub-routes like the workflows family).
     ("GET", "/api/v1/workflows", "workflows:read"),
