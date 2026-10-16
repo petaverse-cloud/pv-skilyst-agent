@@ -43,6 +43,9 @@ class PromptContext:
     model: str = ""
     platform: str = ""
     extra: list[str] = field(default_factory=list)
+    # #103 conversational board editing: the turn's bound board.
+    workflow_id: str | None = None
+    board_snapshot: dict | None = None
 
 
 def skill_index(skills: list[SkillPackage]) -> str:
@@ -53,6 +56,43 @@ def skill_index(skills: list[SkillPackage]) -> str:
     for pkg in sorted(skills, key=lambda p: p.skill_id):
         suffix = " [community/compat: no manifest]" if pkg.degraded else ""
         lines.append(pkg.prompt_index_line + suffix)
+    return "\n".join(lines)
+
+
+def board_section(workflow_id: str, snapshot: dict | None) -> str:
+    """#103: the current-board section. The agent sees the bound board's
+    shape (nodes with keys/types/config state, edges, media pool) so the
+    chatbox turn is board-aware without the user re-describing it. A board
+    that could not be read degrades to an explicit unavailable note — never
+    silent, never a crash."""
+    if not snapshot:
+        return (f"Current board: {workflow_id} (UNAVAILABLE — the snapshot could not be "
+                f"read; if the user asks for edits, say the board cannot be reached and "
+                f"ask them to check the board in the canvas).")
+    name = snapshot.get("name") or snapshot.get("workflow", {}).get("name") or workflow_id
+    nodes = snapshot.get("nodes") or []
+    lines = [f"Current board: {workflow_id} ({name}). The user is working on THIS board; "
+             f"canvas tool calls for it use this workflow_id."]
+    if nodes:
+        lines.append("Nodes:")
+        for n in nodes[:30]:
+            key = n.get("key")
+            ntype = n.get("node_type") or n.get("type")
+            connected = "connected" if (n.get("depends_on") or (n.get("config") or {}).get("material_deps")) else "unconnected"
+            cfg_keys = ", ".join(sorted(list((n.get("config") or {}).keys())[:8])) or "no config"
+            lines.append(f"- {key}: {ntype} ({connected}; {cfg_keys})")
+        if len(nodes) > 30:
+            lines.append(f"- … {len(nodes) - 30} more nodes")
+    else:
+        lines.append("Nodes: none yet — the board is empty; create the first node.")
+    edges = snapshot.get("edges") or []
+    if edges:
+        edge_desc = ", ".join(
+            "{}->{}".format(e.get("from"), e.get("to")) for e in edges[:12])
+        lines.append(f"Edges: {len(edges)} ({edge_desc})")
+    pool = snapshot.get("media_pool") or []
+    if pool:
+        lines.append(f"Media pool: {len(pool)} entries.")
     return "\n".join(lines)
 
 
@@ -79,6 +119,8 @@ def build_system_prompt(ctx: PromptContext) -> str:
                      "tools are only enabled for a run with an active skill (`skilyst run <skill-id> …`).")
     if ctx.workspace:
         parts.append(f"Workspace (the only directory you may write to): {ctx.workspace}")
+    if ctx.workflow_id:
+        parts.append(board_section(ctx.workflow_id, ctx.board_snapshot))
     if ctx.platform:
         parts.append(f"Platform API: {ctx.platform}")
     if ctx.model:
