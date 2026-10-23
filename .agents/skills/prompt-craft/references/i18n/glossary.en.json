@@ -1,0 +1,13 @@
+{
+  "locale": "en",
+  "terms": [
+    {"term_key": "skeleton", "source_term": "prompt skeleton", "target_term": "prompt skeleton", "note": "slot order: shot size, subject, action, scene, light, style, audio, constraints"},
+    {"term_key": "shot_size", "source_term": "shot size", "target_term": "shot size", "note": "the information dial, extreme wide to close-up"},
+    {"term_key": "reference_lock", "source_term": "reference lock", "target_term": "reference lock", "note": "five parts: token, inheritance list, non-inheritance, cross-shot restatement, negatives"},
+    {"term_key": "inheritance_list", "source_term": "inheritance list", "target_term": "inheritance list", "note": "enumerate the appearance items; 'keep consistent' inherits nothing"},
+    {"term_key": "non_inheritance", "source_term": "non-inheritance declaration", "target_term": "non-inheritance declaration", "note": "background/pose/angle/text do not carry over, or the reference composition migrates"},
+    {"term_key": "negative_prompt", "source_term": "negative prompt", "target_term": "negative prompt", "note": "supported by some models only; rewrite positively where unsupported"},
+    {"term_key": "pacing", "source_term": "dialogue pacing (words per 3s)", "target_term": "dialogue pacing (words per 3s)", "note": "max 8 words per 3 seconds; cut the line if over"},
+    {"term_key": "end_state", "source_term": "end state", "target_term": "end state", "note": "an i2v prompt without an end state drifts or stalls at the tail"}
+  ]
+}

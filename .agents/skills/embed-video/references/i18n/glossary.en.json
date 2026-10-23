@@ -1,0 +1,14 @@
+{
+  "locale": "en",
+  "terms": [
+    {"term_key": "first_frame", "source_term": "first_frame", "target_term": "first_frame", "note": "image role anchoring the opening frame; mutually exclusive with reference roles"},
+    {"term_key": "last_frame", "source_term": "last_frame", "target_term": "last_frame", "note": "optional end-state anchor in frame mode"},
+    {"term_key": "reference_image", "source_term": "reference_image", "target_term": "reference_image", "note": "identity/style role; illegal together with a frame role"},
+    {"term_key": "image_roles", "source_term": "image_roles", "target_term": "image_roles", "note": "positional with images; an un-roled image is read as reference_image upstream"},
+    {"term_key": "frame_mode", "source_term": "frame mode", "target_term": "frame mode", "note": "first/last frame drives the clip; motion has an explicit start and end"},
+    {"term_key": "reference_mode", "source_term": "reference mode", "target_term": "reference mode", "note": "reference image/video/audio drives the clip; includes r2v"},
+    {"term_key": "r2v", "source_term": "reference-video mode (r2v)", "target_term": "reference-video mode (r2v)", "note": "video_refs present lifts the seedance duration cap to 30s"},
+    {"term_key": "frame_chain", "source_term": "frame chain", "target_term": "frame chain", "note": "each shot inherits the previous shot's tail frame for a continuous splice"},
+    {"term_key": "identity_drift", "source_term": "identity drift", "target_term": "identity drift", "note": "falling face similarity across frames; i2v frames are scored with lower thresholds than stills"}
+  ]
+}

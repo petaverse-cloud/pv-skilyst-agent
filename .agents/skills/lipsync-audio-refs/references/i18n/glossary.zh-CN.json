@@ -1,0 +1,13 @@
+{
+  "locale": "zh-CN",
+  "terms": [
+    {"term_key": "audio_refs", "source_term": "audio_refs", "target_term": "音频参考", "note": "驱动口型的单条音轨，长度 2-15s"},
+    {"term_key": "tts_first", "source_term": "TTS first", "target_term": "TTS 先行", "note": "先合成语音再生成画面，音轨是口型的输入"},
+    {"term_key": "reference_image", "source_term": "reference_image", "target_term": "参考图", "note": "音频模式下唯一可用的图像角色；首帧角色与之互斥"},
+    {"term_key": "mouth_sync", "source_term": "mouth sync", "target_term": "口型同步", "note": "静默段嘴部冻结、语音段开合的量化判据"},
+    {"term_key": "dialogue_presence", "source_term": "dialogue presence", "target_term": "对白可听度", "note": "成片音轨里台词是否为主要人声"},
+    {"term_key": "tail_margin", "source_term": "tail margin", "target_term": "尾拍余量", "note": "时长 = 音频时长向上取整 + 尾拍，防止切掉表演"},
+    {"term_key": "resynthesized_voice", "source_term": "re-synthesized voice", "target_term": "重合成音色", "note": "成片内嵌人声与 TTS 原音非同一波形，基频会漂移"},
+    {"term_key": "pacing", "source_term": "pacing (words per 3s)", "target_term": "台词节奏", "note": "3 秒不超过 8 词；超了就砍词，不靠加速"}
+  ]
+}

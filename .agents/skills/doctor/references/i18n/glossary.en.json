@@ -1,0 +1,12 @@
+{
+  "locale": "en",
+  "terms": [
+    {"term_key": "preflight", "source_term": "preflight", "target_term": "preflight", "note": "manifest node requirements checked against the cluster registry before submission"},
+    {"term_key": "integrity_check", "source_term": "integrity check", "target_term": "integrity check", "note": "install receipt comparison; catches an installed skill edited on disk"},
+    {"term_key": "scope", "source_term": "scope", "target_term": "scope", "note": "the restricted key's jobs/assets boundary; admin/billing are never granted"},
+    {"term_key": "egress", "source_term": "egress", "target_term": "egress", "note": "the sandbox's declared host allowlist"},
+    {"term_key": "blocking", "source_term": "blocking", "target_term": "blocking", "note": "a required node is missing with no usable fallback; the run is refused"},
+    {"term_key": "fallback", "source_term": "fallback", "target_term": "fallback", "note": "declared alternative node; switching is a different model/price and needs explicit allowance"},
+    {"term_key": "env_file", "source_term": "env file", "target_term": "env file", "note": "default ~/.skilyst/env, mode 0600; its contents never appear in the report"}
+  ]
+}

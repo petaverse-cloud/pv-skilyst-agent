@@ -1,0 +1,12 @@
+{
+  "locale": "zh-CN",
+  "terms": [
+    {"term_key": "preflight", "source_term": "preflight", "target_term": "运行前校验", "note": "提交前比对 manifest 声明的节点与集群注册表"},
+    {"term_key": "integrity_check", "source_term": "integrity check", "target_term": "完整性校验", "note": "安装回执对比，发现被改动的已安装 skill"},
+    {"term_key": "scope", "source_term": "scope", "target_term": "权限范围", "note": "受限令牌的 jobs/assets 读写边界，admin/billing 永不授予"},
+    {"term_key": "egress", "source_term": "egress", "target_term": "网络出口", "note": "沙盒声明的域名白名单"},
+    {"term_key": "blocking", "source_term": "blocking", "target_term": "阻断", "note": "必需节点缺失且无可用回退时拒绝运行"},
+    {"term_key": "fallback", "source_term": "fallback", "target_term": "回退链", "note": "备用节点；切换等于换模型/换价格，需显式允许"},
+    {"term_key": "env_file", "source_term": "env file", "target_term": "凭据文件", "note": "默认 ~/.skilyst/env，权限 0600，内容永不出现在报告里"}
+  ]
+}

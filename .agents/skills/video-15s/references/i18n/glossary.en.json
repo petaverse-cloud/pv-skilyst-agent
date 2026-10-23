@@ -1,0 +1,11 @@
+{
+  "locale": "en",
+  "terms": [
+    {"term_key": "shot_size", "source_term": "shot size", "target_term": "shot size", "note": "extreme wide to close-up; the information dial of a shot"},
+    {"term_key": "camera_move", "source_term": "camera movement", "target_term": "camera movement", "note": "at most one per shot"},
+    {"term_key": "key_fill_ratio", "source_term": "key:fill ratio", "target_term": "key:fill ratio", "note": "state the ratio and the in-frame light source"},
+    {"term_key": "text_to_video", "source_term": "text-to-video", "target_term": "text-to-video", "note": "no source media, no reference image"},
+    {"term_key": "render_tier", "source_term": "render tier", "target_term": "render tier", "note": "resolution/duration billing tier; upgrading needs user confirmation"},
+    {"term_key": "artifact_url", "source_term": "artifact URL", "target_term": "artifact URL", "note": "the playable deliverable link; report verbatim, never substitute"}
+  ]
+}

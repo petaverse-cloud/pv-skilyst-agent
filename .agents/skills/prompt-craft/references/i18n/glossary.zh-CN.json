@@ -1,0 +1,13 @@
+{
+  "locale": "zh-CN",
+  "terms": [
+    {"term_key": "skeleton", "source_term": "prompt skeleton", "target_term": "结构骨架", "note": "景别→主体→动作→场景→光→风格→声音→约束的槽位顺序"},
+    {"term_key": "shot_size", "source_term": "shot size", "target_term": "景别", "note": "信息量旋钮：极远景到特写"},
+    {"term_key": "reference_lock", "source_term": "reference lock", "target_term": "参考锁定", "note": "五段语法：token 声明/继承清单/不继承声明/跨镜重申/负向"},
+    {"term_key": "inheritance_list", "source_term": "inheritance list", "target_term": "继承清单", "note": "逐条枚举要继承的外观项，禁止写“保持一致”"},
+    {"term_key": "non_inheritance", "source_term": "non-inheritance declaration", "target_term": "不继承声明", "note": "背景/姿势/画角/文字不再现，防止参考图构图搬进视频"},
+    {"term_key": "negative_prompt", "source_term": "negative prompt", "target_term": "负向提示", "note": "仅部分模型支持；不支持的宿主须改写为正向描述"},
+    {"term_key": "pacing", "source_term": "dialogue pacing (words per 3s)", "target_term": "台词节奏", "note": "3 秒不超过 8 词，超了砍词"},
+    {"term_key": "end_state", "source_term": "end state", "target_term": "动作终点", "note": "I2V 不写终点会尾部漂移/停滞"}
+  ]
+}

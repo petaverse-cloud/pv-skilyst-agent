@@ -150,12 +150,29 @@ def apply_derived(skill_dir: Path, check: bool) -> tuple[list[str], list[str]]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="pack or verify the official skills bundle")
+    parser.add_argument("--source", default=str(ROOT / ".agents" / "skills"),
+                        help="true-source dir (governance layout); skills are synced bundle<-source before packing")
     parser.add_argument("--bundle", default=str(ROOT / "skills" / "official"))
     parser.add_argument("--check", action="store_true",
                         help="verify on-disk state without writing (exit 1 on drift)")
     args = parser.parse_args(argv)
 
     bundle_dir = Path(args.bundle).resolve()
+    source_dir = Path(args.source).resolve()
+
+    # SKL-2 migration (2026-10-23): .agents/skills/ is the true source (governance
+    # rule "repo .agents/skills/ is the skills truth"); skills/official/ is the
+    # generated, signed distribution face the runtime/installer consumes. The
+    # packer syncs source -> bundle before deriving manifests, so editing a skill
+    # in the true source and running the packer updates the bundle.
+    import shutil
+    for src in sorted(d for d in source_dir.iterdir()
+                      if d.is_dir() and (d / "SKILL.md").is_file()):
+        dst = bundle_dir / src.name
+        if dst.exists():
+            shutil.rmtree(dst)
+        shutil.copytree(src, dst)
+
     dirs = skill_dirs(bundle_dir)
     if not dirs:
         print(f"pack: no skill packages under {bundle_dir}", file=sys.stderr)

@@ -1,0 +1,15 @@
+{
+  "locale": "en",
+  "terms": [
+    {"term_key": "board", "source_term": "board", "target_term": "board", "note": "the visual workbench rendering a workflow"},
+    {"term_key": "node", "source_term": "node", "target_term": "node", "note": "a blueprint processing unit (generate/process/material)"},
+    {"term_key": "port", "source_term": "port", "target_term": "port", "note": "material input role: reference_image/first_frame/last_frame"},
+    {"term_key": "material_node", "source_term": "material node", "target_term": "material node", "note": "blueprint reference to a media-pool entry; data only, never executed"},
+    {"term_key": "media_pool", "source_term": "media pool", "target_term": "media pool", "note": "workflow-private media library with auto-capture of outputs"},
+    {"term_key": "lock", "source_term": "lock", "target_term": "write lock", "note": "server-side board lock; explicit lock→write→unlock action pair"},
+    {"term_key": "quote", "source_term": "quote", "target_term": "quote", "note": "pre-submission cost estimate (micro-USD)"},
+    {"term_key": "first_frame", "source_term": "first_frame", "target_term": "first frame", "note": "image input role; exclusive with reference_image on minimax-h3"},
+    {"term_key": "reference_image", "source_term": "reference_image", "target_term": "reference image", "note": "image input role; exclusive with first_frame on minimax-h3"},
+    {"term_key": "workflow", "source_term": "workflow", "target_term": "workflow", "note": "the blueprint source of truth; the board renders it"}
+  ]
+}

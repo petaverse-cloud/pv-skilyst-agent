@@ -1,0 +1,15 @@
+{
+  "locale": "zh-CN",
+  "terms": [
+    {"term_key": "board", "source_term": "board", "target_term": "画板", "note": "workflow 的可视化主工作区"},
+    {"term_key": "node", "source_term": "node", "target_term": "节点", "note": "蓝图上的处理单元（generate/process/material）"},
+    {"term_key": "port", "source_term": "port", "target_term": "端口", "note": "素材输入角色：reference_image/first_frame/last_frame"},
+    {"term_key": "material_node", "source_term": "material node", "target_term": "素材节点", "note": "媒体池条目的蓝图引用，纯数据输入不执行"},
+    {"term_key": "media_pool", "source_term": "media pool", "target_term": "媒体池", "note": "workflow 私有素材库，产物自动收纳"},
+    {"term_key": "lock", "source_term": "lock", "target_term": "写锁", "note": "服务端画板写锁，显式 lock→写→unlock 动作对"},
+    {"term_key": "quote", "source_term": "quote", "target_term": "报价", "note": "付费提交前的费用预估（micro-USD）"},
+    {"term_key": "first_frame", "source_term": "first_frame", "target_term": "首帧", "note": "图像输入角色，与 reference_image 互斥（minimax-h3）"},
+    {"term_key": "reference_image", "source_term": "reference_image", "target_term": "参考图", "note": "图像输入角色，与 first_frame 互斥（minimax-h3）"},
+    {"term_key": "workflow", "source_term": "workflow", "target_term": "workflow", "note": "节点蓝图的真源，画板即其渲染"}
+  ]
+}

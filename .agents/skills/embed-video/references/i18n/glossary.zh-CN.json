@@ -1,0 +1,14 @@
+{
+  "locale": "zh-CN",
+  "terms": [
+    {"term_key": "first_frame", "source_term": "first_frame", "target_term": "首帧", "note": "图像角色之一；锚定起始画面，与参考图角色互斥"},
+    {"term_key": "last_frame", "source_term": "last_frame", "target_term": "尾帧", "note": "帧模式可选的终止画面锚"},
+    {"term_key": "reference_image", "source_term": "reference_image", "target_term": "参考图", "note": "身份/风格参考角色；出现帧角色时不得混用"},
+    {"term_key": "image_roles", "source_term": "image_roles", "target_term": "图像角色数组", "note": "与 images 逐位对应；未标注角色的图被上游视作参考图"},
+    {"term_key": "frame_mode", "source_term": "frame mode", "target_term": "帧模式", "note": "首/尾帧驱动，动作有明确起止"},
+    {"term_key": "reference_mode", "source_term": "reference mode", "target_term": "参考模式", "note": "参考图/参考视频/参考音频驱动，可含 r2v"},
+    {"term_key": "r2v", "source_term": "reference-video mode (r2v)", "target_term": "参考视频模式", "note": "携带 video_refs 时 seedance 时长上限放宽到 30s"},
+    {"term_key": "frame_chain", "source_term": "frame chain", "target_term": "帧链", "note": "后一镜继承前一镜尾帧，保证拼接连续"},
+    {"term_key": "identity_drift", "source_term": "identity drift", "target_term": "身份漂移", "note": "跨帧人脸相似度下降；i2v 帧的判定阈值低于静态图"}
+  ]
+}

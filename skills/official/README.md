@@ -56,3 +56,10 @@ the declared digest no longer matches the content. That is the intended failure.
 A bundle entry must be `kind: official-bundle` and must carry a platform
 signature entry; the preloader refuses anything else rather than silently
 installing an unsigned skill.
+
+## SKL-2 迁移说明(2026-10-23)
+
+技能**真源**在本仓 `.agents/skills/`(治理规则同构:core/web/gateway 一样);
+`skills/official/` 是**生成的签名分发面**(runtime/installer 消费,含 bundle.json/index.json)。
+改技能 → 改 `.agents/skills/<name>/` → 跑 `python3 tools/pack_official_bundle.py`
+(自动同步真源→bundle 并重算 digest;`--check` 验证一致性)。

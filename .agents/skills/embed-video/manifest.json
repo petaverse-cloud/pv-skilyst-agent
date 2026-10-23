@@ -1,0 +1,154 @@
+{
+  "skill_id": "skilyst/embed-video",
+  "version": "1.2.0",
+  "display_name": "图生视频工艺（首帧锚 + 帧链拼接）",
+  "description": "Image-to-video craft on the skilyst platform — animate a locked still (first-frame anchor) into a 4-15s clip that keeps the identity of that still, and cut several such clips together without a visible jump. Use when the user has a locked image (or needs one) and wants controlled motion from it, instead of a free text-to-video render.",
+  "kind": "official-bundle",
+  "content_digest": "sha256:4290ce47c61f172a1bd43a1e7bd2fa961dab78860a2320dc9b9ebc3c72776199",
+  "upstream": null,
+  "fork_depth": 0,
+  "supply_chain": {
+    "source": {
+      "origin": "skilyst-registry",
+      "repo": "petaverse-cloud/pv-skilyst-agent",
+      "commit": "local-poc"
+    },
+    "static_scan": {
+      "status": "passed",
+      "scanner": "skilyst-scanner@0.1",
+      "scanned_at": "2026-09-23T00:00:00+08:00"
+    },
+    "signatures": [
+      {
+        "key_id": "skilyst-platform",
+        "algo": "ed25519",
+        "sig": "platform-signature-pending",
+        "digest": "sha256:4290ce47c61f172a1bd43a1e7bd2fa961dab78860a2320dc9b9ebc3c72776199"
+      }
+    ]
+  },
+  "permission": {
+    "egress": [
+      "beehive-api.verse4.pet"
+    ],
+    "filesystem": "workspace",
+    "exec": "none",
+    "secrets": true
+  },
+  "plan": {
+    "provider": "minimax-h3",
+    "duration": 6,
+    "resolution": "768P",
+    "ratio": "9:16"
+  },
+  "requires": {
+    "nodes": [
+      {
+        "provider": "image-gen",
+        "node_id": "generate:nb2-image",
+        "node_definition_version": ">=1.0.0",
+        "optional": true,
+        "fallback": [
+          "generate:nb2-lite-image",
+          "generate:gpt-image-2"
+        ],
+        "binding": {
+          "tool": "beehive_submit_job",
+          "node_id": "generate:nb2-image",
+          "config_map": {
+            "prompt": "prompt",
+            "images": "images",
+            "ratio": "aspect_ratio"
+          }
+        }
+      },
+      {
+        "provider": "video-gen",
+        "node_id": "generate:minimax-h3",
+        "node_definition_version": ">=1.0.0",
+        "optional": false,
+        "fallback": [
+          "generate:byteplus-seedance-2.0",
+          "generate:drawnow"
+        ],
+        "binding": {
+          "tool": "beehive_submit_job",
+          "node_id": "generate:minimax-h3",
+          "config_map": {
+            "prompt": "prompt",
+            "images": "images",
+            "image_roles": "image_roles",
+            "duration": "duration",
+            "resolution": "resolution",
+            "ratio": "ratio"
+          }
+        }
+      }
+    ]
+  },
+  "i18n": {
+    "default_locale": "zh-CN",
+    "locales": [
+      "zh-CN",
+      "en"
+    ],
+    "glossary": {
+      "zh-CN": "references/i18n/glossary.zh-CN.json",
+      "en": "references/i18n/glossary.en.json"
+    }
+  },
+  "author": {
+    "name": "platform",
+    "handle": "@platform",
+    "verified": true
+  },
+  "attribution": {
+    "contributors": []
+  },
+  "license": {
+    "spdx": "MIT",
+    "file": "LICENSE"
+  },
+  "copyright": "Copyright (c) 2026 Petaverse",
+  "compatibility": {
+    "agent_runtime": {
+      "min": "0.1.0",
+      "tested": [
+        "0.1.0"
+      ]
+    },
+    "node_definitions": {
+      "min": "1.0.0"
+    }
+  },
+  "update": {
+    "channel": "official",
+    "policy": "auto",
+    "hot_reload": {
+      "allowed": true,
+      "exclusions": [
+        "node-schema"
+      ]
+    }
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-23",
+      "changes": "first official image-to-video skill: frame/reference mode exclusivity, first-frame identity anchor, i2v prompt discipline, mode-dependent duration caps, frame-chain splice craft, i2v identity QA thresholds",
+      "upstream_sync": false
+    },
+    {
+      "version": "1.1.0",
+      "date": "2026-09-24",
+      "changes": "A1 phase-2: beehive_submit_job forwards the binding's declared multimodal arguments (images / image_roles) under the manifest's config_map; the M1 note that an end-to-end run needs a direct API call is superseded",
+      "upstream_sync": false
+    },
+    {
+      "version": "1.2.0",
+      "date": "2026-09-29",
+      "changes": "rebrand: user-facing copy now says skilyst (the platform brand); no functional change, tool bindings and egress hostnames unchanged",
+      "upstream_sync": false
+    }
+  ]
+}
